@@ -24,12 +24,38 @@ Before coding:
 4. Read `CHECKPOINT_RULES.md`.
 5. Read `FUTURE_PROOF_ARCHITECTURE.md`.
 6. Read `SELF_IMPROVEMENT_AGENT.md`.
-7. Create/update an execution checklist.
-8. Identify risks and missing decisions.
-9. Decide what can be done without human input.
-10. Start the next safe phase.
+7. Read `HANDOFF_RULES.md`.
+8. Read checkpoint docs if they exist.
+9. Create/update an execution checklist.
+10. Identify risks and missing decisions.
+11. Decide what can be done without human input.
+12. Start the next safe phase.
 
 Do not ask the human to send every phase manually. Work phase by phase from the repo documents.
+
+---
+
+## Cross-account handoff rule
+
+Always read `HANDOFF_RULES.md`.
+
+Folqen may be continued by different Codex tasks, sessions, or accounts because of rate limits or availability.
+
+The repository itself is the source of truth.
+
+Do not assume memory from any previous Codex run.
+
+At the end of every phase, blocked state, or important change, update:
+
+- `docs/CURRENT_STATUS.md`
+- `docs/NEXT_STEPS.md`
+- `docs/CHANGELOG.md`
+- `docs/RISK_LOG.md`
+- `docs/HANDOFF_LOG.md`
+
+`docs/HANDOFF_LOG.md` must be detailed enough that another Codex account can continue from the last safe point.
+
+Work in small stable commits and avoid large uncommitted rewrites.
 
 ---
 
@@ -293,6 +319,7 @@ Maintain:
 - `docs/NEXT_STEPS.md`
 - `docs/CHANGELOG.md`
 - `docs/RISK_LOG.md`
+- `docs/HANDOFF_LOG.md`
 
 ---
 
