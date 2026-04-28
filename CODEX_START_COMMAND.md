@@ -1,6 +1,6 @@
 # CODEX_START_COMMAND.md
 
-Copy and paste this into Codex for the `saikumar0484/Folqen` repo.
+Copy and paste this into Codex cloud for the `saikumar0484/Folqen` repo.
 
 ---
 
@@ -15,7 +15,9 @@ Read these files first:
 
 You are responsible for completing Folqen phase by phase.
 
-This project will be built over multiple sessions. I may stop at any time.
+Work continuously in Codex cloud until the project is complete or until human intervention is required.
+
+Do not pause just because I close my PC, leave the browser, or stop watching the task.
 
 Do not ask me to manually send every phase prompt.
 
@@ -38,7 +40,9 @@ First, perform Phase 0 preparation:
 
 Then start Phase 1.
 
-After each phase:
+Proceed phase by phase automatically.
+
+After every phase:
 
 - run lint
 - run typecheck
@@ -51,29 +55,39 @@ After each phase:
   - `docs/CHANGELOG.md`
   - `docs/RISK_LOG.md`
 - commit the completed phase if possible
-- clearly say whether it is safe to stop now
 - summarize what changed, what was verified, known limitations, and the next phase
+- continue to the next phase automatically unless blocked
 
-Continue automatically through phases unless you need human approval for:
+Checkpoints are save points, not stopping points.
 
-- paid tools
-- credentials
-- public publishing
-- account connections
-- deployment secrets
-- destructive actions
-- permanent brand decisions
-- legal/copyright uncertainty
-- risky migrations
-- major provider architecture changes after initial setup
+Only stop if:
+
+- the project is complete
+- credentials are required
+- OAuth/account permissions are required
+- paid tools are required
+- public publishing permission is required
+- deployment secrets are required
+- destructive actions are required
+- permanent brand decisions are required
+- legal/copyright uncertainty needs human decision
+- a risky database/security/publishing/provider migration needs approval
+- verification fails and cannot be fixed safely
+- you need a human decision
+
+Do not ask me for small implementation choices. Make professional decisions yourself.
 
 Use minimal-cost local/free/open-source tools by default.
 
-Do not fake integrations.
-Do not expose secrets.
-Do not enable public publishing.
-Do not enable paid tools.
-Do not enable browser automation.
+Keep safe defaults:
+
+- public publishing disabled
+- paid tools disabled
+- browser automation disabled
+- human approval required
+- no secrets exposed
+- no fake integrations
+
 Do not access monetization/payment settings.
 
 Make the UI premium, smooth, simple, secure, user-friendly, and future-proof.
@@ -82,6 +96,14 @@ Folqen must be built as a modular platform using provider adapters, service inte
 
 Folqen must include a Self-Improvement Research Agent that researches improvements automatically but never executes upgrades without human approval.
 
+If you reach a blocker, create a safe checkpoint and clearly tell me:
+
+1. what is blocked
+2. why it is blocked
+3. what decision or permission is needed
+4. what has already been completed
+5. whether the project is safe to stop
+
 If I say “pause”, “stop”, “break”, “save point”, or “checkpoint”, immediately create a safe checkpoint and tell me whether the project is safe to stop.
 
-Begin now.
+Begin now and continue until blocked or complete.
