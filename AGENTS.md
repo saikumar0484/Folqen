@@ -25,13 +25,34 @@ Before coding:
 5. Read `FUTURE_PROOF_ARCHITECTURE.md`.
 6. Read `SELF_IMPROVEMENT_AGENT.md`.
 7. Read `HANDOFF_RULES.md`.
-8. Read checkpoint docs if they exist.
-9. Create/update an execution checklist.
-10. Identify risks and missing decisions.
-11. Decide what can be done without human input.
-12. Start the next safe phase.
+8. Read `FAILURE_RECOVERY_PLAYBOOK.md`.
+9. Read checkpoint docs if they exist.
+10. Create/update an execution checklist.
+11. Identify risks and missing decisions.
+12. Decide what can be done without human input.
+13. Start the next safe phase.
 
 Do not ask the human to send every phase manually. Work phase by phase from the repo documents.
+
+---
+
+## Failure-prevention rule
+
+Always read `FAILURE_RECOVERY_PLAYBOOK.md`.
+
+Before every major or risky phase, actively consider how the project can fail and prepare a prevention/recovery plan.
+
+For risky phases, update `docs/RISK_LOG.md` with:
+
+- possible failures
+- prevention steps
+- verification steps
+- rollback plan
+- human approval trigger
+
+When failure happens, do not hide it. Stop expanding scope, identify the failure, fix it if safe, or create a checkpoint and ask the human if unsafe.
+
+Folqen must be built with failure expected, documented, and recoverable.
 
 ---
 
