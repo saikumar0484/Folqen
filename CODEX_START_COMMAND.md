@@ -12,8 +12,16 @@ Read these files first:
 - `CHECKPOINT_RULES.md`
 - `FUTURE_PROOF_ARCHITECTURE.md`
 - `SELF_IMPROVEMENT_AGENT.md`
+- `HANDOFF_RULES.md`
+- `docs/CURRENT_STATUS.md` if it exists
+- `docs/NEXT_STEPS.md` if it exists
+- `docs/CHANGELOG.md` if it exists
+- `docs/RISK_LOG.md` if it exists
+- `docs/HANDOFF_LOG.md` if it exists
 
 You are responsible for completing Folqen phase by phase.
+
+This task may be started by a different Codex account or session than previous work. Do not assume prior chat memory. The repository files are the source of truth.
 
 Work continuously in Codex cloud until the project is complete or until human intervention is required.
 
@@ -21,44 +29,48 @@ Do not pause just because I close my PC, leave the browser, or stop watching the
 
 Do not ask me to manually send every phase prompt.
 
-First, perform Phase 0 preparation:
+First, perform Phase 0 preparation or resume from the latest checkpoint if Phase 0 already exists:
 
 - inspect the repo
 - confirm the current stack
 - identify the package manager
-- create the execution checklist
-- prepare the project structure plan
-- create the route/page plan
-- create the database/schema plan
-- create the security plan
-- create checkpoint files
-- create future-proof provider/plugin architecture plan
-- create self-improvement research and upgrade approval plan
+- create/read the execution checklist
+- prepare/read the project structure plan
+- create/read the route/page plan
+- create/read the database/schema plan
+- create/read the security plan
+- create/read checkpoint files
+- create/read future-proof provider/plugin architecture plan
+- create/read self-improvement research and upgrade approval plan
+- read `docs/HANDOFF_LOG.md` if it exists
 - identify risks
 - identify missing decisions
 - decide what can be done without human input
 
-Then start Phase 1.
+Then continue from the next safe phase/task.
 
 Proceed phase by phase automatically.
 
-After every phase:
+After every meaningful change or phase:
 
 - run lint
 - run typecheck
 - run tests if available
 - run build
 - fix errors
-- create/update checkpoint docs:
+- create/update checkpoint and handoff docs:
   - `docs/CURRENT_STATUS.md`
   - `docs/NEXT_STEPS.md`
   - `docs/CHANGELOG.md`
   - `docs/RISK_LOG.md`
-- commit the completed phase if possible
+  - `docs/HANDOFF_LOG.md`
+- commit stable changes if possible
 - summarize what changed, what was verified, known limitations, and the next phase
 - continue to the next phase automatically unless blocked
 
 Checkpoints are save points, not stopping points.
+
+Handoff docs are required so another Codex account can continue if this task hits rate limits or stops.
 
 Only stop if:
 
@@ -103,6 +115,7 @@ If you reach a blocker, create a safe checkpoint and clearly tell me:
 3. what decision or permission is needed
 4. what has already been completed
 5. whether the project is safe to stop
+6. how another Codex account can continue from the handoff docs
 
 If I say “pause”, “stop”, “break”, “save point”, or “checkpoint”, immediately create a safe checkpoint and tell me whether the project is safe to stop.
 
