@@ -1,6 +1,6 @@
 import { Sidebar } from './Sidebar'
 import { Topbar } from './Topbar'
-import { MiniAgentChat } from '@/components/agent/MiniAgentChat'
+import { MiniAgentChat } from '@/components/MiniAgentChat'
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
