@@ -1,57 +1,84 @@
 # Handoff Log
 
-## Current phase
+## Current Phase
 
-Phase 0 / Phase 1 foundation started.
+Phase 1 foundation verified. Phase 2 app shell and placeholder routes started.
 
 ## Branch
 
 `build/phase-0-foundation`
 
-## Completed work
+## Completed Work
 
-- Read required root docs.
-- Created the foundation branch.
-- Added Next.js app configuration and TypeScript setup.
-- Added Tailwind styling foundation and initial premium landing page.
-- Added a reusable status badge component.
-- Added health check API route.
-- Added `.env.example` safe defaults and local PostgreSQL Docker Compose file.
-- Added checkpoint docs.
+- Synced branch with latest `main` AGENTS.md update.
+- Installed dependencies using npm and generated `package-lock.json`.
+- Added explicit ESLint compatibility dependency and `tsx` test runner.
+- Replaced deprecated lint command with ESLint CLI.
+- Added Prisma schema foundation for all planned MVP entities and enums.
+- Added safe environment validation and server-side guard functions.
+- Added tests for publishing, paid tool, and upgrade guard defaults and allowed paths.
+- Added provider registry types and not-connected provider placeholders.
+- Added app shell, route placeholders, mini agent chat, command palette, notifications, and reusable UI components.
+- Added documentation for architecture, security, route map, providers, plugins, upgrades, and failure recovery.
+- Expanded README setup instructions.
+- Added security headers and expanded health route.
 
-## Pending work
+## Commands Run
 
-- Install dependencies and create package lockfile.
-- Verify lint/typecheck/test/build.
-- Add Prisma schema.
-- Expand README with setup instructions.
-- Add architecture/security docs.
-- Continue app shell implementation.
+```bash
+git fetch origin main build/phase-0-foundation
+git checkout -B build/phase-0-foundation origin/build/phase-0-foundation
+git merge origin/main --no-edit
+npm install
+npm install --save-dev @eslint/eslintrc tsx
+npm run lint
+npm run typecheck
+npm run test
+DATABASE_URL="postgresql://folqen:folqen_password@localhost:5432/folqen?schema=public" npx prisma validate
+npm run build
+npm run dev -- --hostname 127.0.0.1 --port 3000
+```
 
-## Commands run
+## Command Results
 
-No local shell commands were run. GitHub connector file operations were used.
+- `npm install`: passed.
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run test`: passed, 6 tests.
+- `prisma validate`: passed with local development database URL.
+- `npm run build`: passed, 23 app routes generated.
+- HTTP checks passed:
+  - `/` returned 200.
+  - `/dashboard` contained `Command overview`.
+  - `/platforms` contained `Not connected`.
 
-## Known broken areas
+## Known Broken Areas
 
-Unknown until dependency install and build verification are run.
+No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
-## Known mock-only areas
+## Known Mock-Only Areas
 
-All current app behavior is foundation/placeholder. No live integrations exist.
+- All route data is mock/placeholder.
+- All integrations are `Not connected`.
+- Mini agent chat is a mock UI shell.
+- Command palette and notifications are mock interactions.
+- Authentication is not implemented.
+- Upload validation is not implemented.
+- Database migrations and seed data are not applied.
 
-## Environment assumptions
+## Environment Assumptions
 
-- Next.js App Router.
-- TypeScript.
-- Tailwind CSS.
-- PostgreSQL locally through Docker Compose.
-- Safe defaults remain disabled for risky actions.
+- npm is the package manager.
+- Local dev database URL is `postgresql://folqen:folqen_password@localhost:5432/folqen?schema=public`.
+- Node/npm were provided through a temporary local Node runtime because global npm was not available on PATH.
+- The UI should continue using the neon green dark cyber/glass template direction.
 
-## Safe to continue from another account
+## Safe To Continue From Another Account
 
-Yes. Continue from `build/phase-0-foundation` and run verification first.
+Yes. The repo is verified and safe to continue from this checkpoint.
 
-## Next recommended command
+## Next Recommended Command
 
-Install dependencies, then run lint, typecheck, tests, and build.
+```text
+Read root docs and checkpoint docs, run npm install if needed, run lint/typecheck/test/build, then continue Phase 2 route-specific UI refinement before Phase 3 authentication.
+```

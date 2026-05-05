@@ -1,26 +1,50 @@
-# Folqen Execution Checklist
+# Execution Checklist
 
-## Phase 0 — Preparation
+## Phase 0 / Phase 1 Foundation
 
-- [x] Inspect repository root documentation.
-- [x] Confirm project goal and safety gates.
-- [x] Create foundation branch.
-- [x] Add Next.js package manifest.
-- [x] Add TypeScript configuration.
-- [x] Add Tailwind configuration.
-- [x] Add PostCSS configuration.
-- [x] Add root layout and global styles.
-- [x] Add landing page foundation.
-- [x] Add health check route.
-- [x] Add environment example with safe defaults.
-- [x] Add local PostgreSQL Docker Compose file.
-- [ ] Install dependencies and generate lockfile.
-- [ ] Run lint, typecheck, tests, and build.
+- [x] Read root project instruction docs.
+- [x] Sync foundation branch with latest main instructions.
+- [x] Identify package manager.
+- [x] Install dependencies.
+- [x] Generate lockfile.
+- [x] Run lint.
+- [x] Run typecheck.
+- [x] Run tests.
+- [x] Run production build.
+- [x] Validate Prisma schema.
+- [x] Add safe `.env.example`.
+- [x] Add Docker Compose PostgreSQL setup.
+- [x] Add Prisma schema foundation.
+- [x] Add environment validation.
+- [x] Add safety guards.
+- [x] Add guard tests.
+- [x] Add README setup instructions.
+- [x] Add architecture/security/provider/plugin/upgrade docs.
+- [x] Add failure recovery playbook.
 
-## Phase 1 — Project foundation next
+## Phase 2 App Shell
 
-- [ ] Add Prisma schema.
-- [ ] Add README setup instructions.
-- [ ] Add app route map.
-- [ ] Add security headers after verification.
-- [ ] Add initial app shell placeholders.
+- [x] Add app shell.
+- [x] Add sidebar navigation.
+- [x] Add topbar.
+- [x] Add command palette shell.
+- [x] Add notification center shell.
+- [x] Add global mini agent chat shell.
+- [x] Add reusable stat/status/risk/empty/loading/confirm UI components.
+- [x] Add placeholders for all required routes.
+- [ ] Replace placeholders with route-specific detailed pages.
+- [ ] Add mobile sidebar drawer behavior.
+- [ ] Add toasts.
+- [ ] Add richer dashboard widgets.
+
+## Later Phases
+
+- [ ] Authentication and roles.
+- [ ] Database migrations and seed data.
+- [ ] Settings persistence.
+- [ ] Approval backend routes.
+- [ ] File upload validation.
+- [ ] Service interfaces and provider adapters.
+- [ ] n8n placeholder endpoints.
+- [ ] Posting package system.
+- [ ] Security hardening.

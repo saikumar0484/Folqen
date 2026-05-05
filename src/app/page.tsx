@@ -4,7 +4,6 @@ import {
   BarChart3,
   Bot,
   CheckCircle2,
-  Clock3,
   FileText,
   FolderKanban,
   Inbox,
