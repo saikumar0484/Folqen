@@ -6,16 +6,16 @@ type StatusBadgeProps = {
 };
 
 const tones = {
-  safe: "border-emerald-400/25 bg-emerald-400/10 text-emerald-200",
+  safe: "border-neon/30 bg-neon/10 text-neon",
   warning: "border-amber-400/25 bg-amber-400/10 text-amber-200",
   danger: "border-rose-400/25 bg-rose-400/10 text-rose-200",
-  neutral: "border-white/15 bg-white/8 text-slate-200",
-  premium: "border-violet-400/25 bg-violet-400/10 text-violet-100",
+  neutral: "border-white/10 bg-white/[0.03] text-muted-foreground",
+  premium: "border-neon/35 bg-neon/10 text-foreground shadow-glow",
 };
 
 export function StatusBadge({ children, tone = "neutral" }: StatusBadgeProps) {
   return (
-    <span className={cn("inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium", tones[tone])}>
+    <span className={cn("inline-flex items-center rounded-full border px-3.5 py-1.5 font-mono text-[11px] font-medium uppercase tracking-widest", tones[tone])}>
       {children}
     </span>
   );
