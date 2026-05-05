@@ -52,15 +52,10 @@ const config: Config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
-        // Folqen brand colors
-        folqen: {
-          purple: '#7C3AED',
-          violet: '#6D28D9',
-          indigo: '#4F46E5',
-          dark: '#0F0A1E',
-          darker: '#080612',
-          glass: 'rgba(255,255,255,0.05)',
-        },
+      },
+      backgroundImage: {
+        'folqen-gradient': 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 50%, #2563eb 100%)',
+        'folqen-gradient-dark': 'linear-gradient(135deg, #5b21b6 0%, #3730a3 50%, #1d4ed8 100%)',
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -77,24 +72,14 @@ const config: Config = {
           to: { height: '0' },
         },
         'pulse-glow': {
-          '0%, 100%': { opacity: '1', boxShadow: '0 0 20px rgba(124,58,237,0.3)' },
-          '50%': { opacity: '0.8', boxShadow: '0 0 40px rgba(124,58,237,0.6)' },
-        },
-        'slide-up': {
-          from: { transform: 'translateY(10px)', opacity: '0' },
-          to: { transform: 'translateY(0)', opacity: '1' },
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.5' },
         },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
-        'slide-up': 'slide-up 0.3s ease-out',
-      },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'folqen-gradient': 'linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%)',
-        'dark-glass': 'linear-gradient(135deg, rgba(124,58,237,0.1) 0%, rgba(79,70,229,0.1) 100%)',
       },
     },
   },
