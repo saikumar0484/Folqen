@@ -12,6 +12,21 @@ The user wants 99% automation, but not reckless automation. The human should onl
 
 ---
 
+## GitHub source-of-truth rule
+
+Always work from the GitHub repository `saikumar0484/Folqen`, not from a random local folder, temporary workspace, or unsynced directory.
+
+For every future Codex/ChatGPT project chat or task:
+
+- Treat GitHub `main` as the source of truth unless the human explicitly asks for another branch.
+- Read files directly from the GitHub repo/environment before making decisions.
+- Any code, documentation, config, or setup change must be committed/pushed to GitHub so it is reflected in the remote repository.
+- If a change is risky or large, create a branch/PR instead of directly changing `main`, but still keep the work in GitHub.
+- If local git diff, local cwd setup, or a local folder path fails, do not block on the local folder. Use the GitHub repository contents and explain the local issue separately.
+- Do not rely on unsynced local files. Local files are only useful if they are committed or pushed to GitHub.
+
+---
+
 ## Codex operating mode
 
 Do not jump directly into coding.
