@@ -1,5 +1,19 @@
 # Changelog
 
+## May 6, 2026 - Sidebar overlap hotfix
+
+### Fixed
+
+- Fixed the authenticated app sidebar so the `Approval gates active` safety card no longer overlaps the lower navigation items on desktop-height screens.
+- Converted the sidebar into a vertical flex layout with a scrollable route list and a fixed-in-flow safety card.
+
+### Verification
+
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run test`: passed, 6 guard tests.
+- `npm run build`: passed.
+
 ## May 6, 2026 - End-of-session handoff checkpoint
 
 ### Changed

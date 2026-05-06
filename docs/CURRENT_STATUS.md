@@ -6,6 +6,7 @@ Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/
 
 ## Completed Work
 
+- Fixed the authenticated sidebar layout so the `Approval gates active` safety card no longer overlaps route links on shorter desktop screens.
 - Synced the newer `main` update into the foundation branch.
 - Installed dependencies with npm and generated `package-lock.json`.
 - Migrated lint script from deprecated `next lint` to `eslint .`.
@@ -207,6 +208,13 @@ Latest May 6, 2026 test viewer and live dashboard update:
 - Production `/dashboard` contained `Live database` and `Now powered by Supabase records`.
 - `GET https://folqen.vercel.app/api/health`: returned database status `live`.
 
+Latest May 6, 2026 sidebar overlap hotfix:
+
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run test`: passed, 6 guard tests.
+- `npm run build`: passed.
+
 Browser/runtime checks:
 
 - Dev server started at `http://127.0.0.1:3000`.
@@ -227,4 +235,4 @@ Browser/runtime checks:
 
 ## Safe To Stop
 
-Yes. This session is intentionally stopped at a safe checkpoint after README and docs are committed and pushed. No feature work should continue in this session unless the user explicitly resumes.
+Yes. The latest work is a small verified sidebar layout hotfix. Continue by committing, pushing, and deploying this hotfix if that has not already happened in the current session.

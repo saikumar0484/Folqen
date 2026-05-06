@@ -10,6 +10,7 @@ Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. D
 
 ## Completed Work
 
+- Fixed the authenticated sidebar layout so the bottom safety card stays separate from the navigation and the route list scrolls when vertical space is tight.
 - Synced branch with latest `main` AGENTS.md update.
 - Installed dependencies using npm and generated `package-lock.json`.
 - Added explicit ESLint compatibility dependency and `tsx` test runner.
@@ -129,6 +130,10 @@ npm run test
 npm run build
 vercel deploy --prod --yes
 curl https://folqen.vercel.app/dashboard
+npm run lint
+npm run typecheck
+npm run test
+npm run build
 ```
 
 ## Command Results
@@ -206,6 +211,7 @@ Latest deployment/data foundation verification:
 - Test viewer production login: returned 200.
 - Test viewer production `/dashboard`: returned 200.
 - Dashboard live data update verification: lint, typecheck, tests, build, production deploy, `/dashboard`, and `/api/health` passed.
+- Sidebar overlap hotfix verification: lint, typecheck, tests, and build passed.
 
 ## Known Broken Areas
 
@@ -237,7 +243,7 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
 ## Safe To Continue From Another Account
 
-Yes. The repo is safe to continue from this checkpoint. This session was stopped intentionally by the user after the test viewer and live dashboard data checkpoint. No source files are half-edited.
+Yes. The repo is safe to continue from this checkpoint. The latest change is a verified sidebar layout hotfix for the `Approval gates active` card overlap. No source files should be left half-edited after this hotfix is committed and pushed.
 
 ## Next Recommended Command
 
