@@ -2,18 +2,18 @@
 
 ## Immediate Next Phase
 
-Complete Phase 3 authentication hardening, then continue real backend data flows.
+Continue real backend data flows and the next safety-focused UX work.
 
 ## Exact Next Tasks
 
 1. Resume from branch `build/phase-0-foundation` and confirm `git status` is clean.
 2. Pull/install dependencies if needed, then run `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build`.
-3. Add a password-change flow for the seeded admin and clearly warn the user to change `ChangeMe123!`.
-4. Add role-aware UI/API checks for admin/operator/viewer.
-5. Continue replacing generic route placeholders with database-backed route-specific pages.
+3. Use `/settings` to change the seeded admin password from `ChangeMe123!`.
+4. Add stronger role-aware UI states for admin/operator/viewer and tests around forbidden actions.
+5. Continue replacing generic route placeholders with database-backed route-specific pages, starting with dashboard, pipeline, and library.
 6. Configure Oracle n8n webhook env values only when the human provides the URL/secret, then test `POST /api/integrations/n8n/test`.
 7. Add mobile sidebar behavior, toasts, refined command palette interactions, and file upload validation.
-8. Add backend APIs for settings, approvals, audit logs, and route data persistence.
+8. Add posting package generation for platforms that remain `Not connected`.
 
 ## Human Decisions Needed
 
@@ -46,4 +46,4 @@ Needed through safe secret flow only:
 
 ## Resume Command
 
-Continue from branch `build/phase-0-foundation`, read all root project docs and checkpoint docs, run verification, then continue Phase 3 auth hardening with password change and role-aware checks. Supabase schema/seed/Vercel production database env are already complete; avoid destructive database resets.
+Continue from branch `build/phase-0-foundation`, read all root project docs and checkpoint docs, run verification, then continue database-backed dashboard/pipeline/library work or n8n setup if the human provides webhook secrets. Supabase, login, password change API, settings, approvals, audit logs, and agent message persistence are already verified.

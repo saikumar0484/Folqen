@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, and production login is verified.
+Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, and the first real backend controls are live.
 
 ## Branch
 
@@ -51,6 +51,12 @@ Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. D
 - Fixed Vercel Prisma generation by changing `npm run build` to `prisma generate && next build`.
 - Redeployed production and verified `/api/health`, `/api/auth/login`, and authenticated `/dashboard`.
 - Fixed the live landing page gradient text rendering issue that showed a solid green rectangle in Chrome.
+- Added admin password-change route and settings-page form.
+- Added database-backed settings save API and `/settings` page.
+- Added database-backed approvals page and decision API.
+- Added database-backed audit page.
+- Added persistent mock agent chat page and message API.
+- Added shared audit logging helper and role permission helpers.
 
 ## Commands Run
 
@@ -103,6 +109,17 @@ npm run test
 npm run build
 vercel deploy --prod --yes
 chrome --headless --screenshot https://folqen.vercel.app/
+npm run lint
+npm run typecheck
+npm run test
+npm run build
+vercel deploy --prod --yes
+curl https://folqen.vercel.app/settings
+curl https://folqen.vercel.app/approvals
+curl https://folqen.vercel.app/audit
+curl https://folqen.vercel.app/agent
+curl https://folqen.vercel.app/api/settings
+curl https://folqen.vercel.app/api/agent/messages
 ```
 
 ## Command Results
@@ -175,6 +192,7 @@ Latest deployment/data foundation verification:
 - Production `/api/auth/login`: returned 200 for seeded admin credentials.
 - Production authenticated `/dashboard`: returned 200 and contained dashboard/logout UI.
 - Landing gradient text hotfix verification: lint, typecheck, tests, build, production deploy, live screenshot, and health check passed.
+- Backend controls update verification: lint, typecheck, tests, build, production deploy, login, `/settings`, `/approvals`, `/audit`, `/agent`, settings save, and agent message save passed.
 
 ## Known Broken Areas
 
@@ -182,13 +200,13 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
 ## Known Mock-Only Areas
 
-- All route data is mock/placeholder.
+- Several route surfaces are now real: settings, approvals, audit, and agent chat persistence. Remaining route data is still mock/placeholder.
 - All integrations are `Not connected`.
 - Mini agent chat is a mock UI shell.
 - Command palette and notifications are mock interactions.
 - Upload validation is not implemented.
 - Oracle n8n webhook is not configured.
-- Default admin password change flow is not implemented yet.
+- The password change flow exists; the seeded password still needs to be changed by the user.
 - Do not run destructive Supabase resets now that the production database is seeded.
 
 ## Environment Assumptions
@@ -210,5 +228,5 @@ Yes. The repo is safe to continue from this checkpoint. No source files are half
 ## Next Recommended Command
 
 ```text
-Read root docs and checkpoint docs, run lint/typecheck/test/build if needed, then continue Phase 3 auth hardening: password change flow, role-aware checks, and database-backed settings/approvals/audit APIs. Supabase schema, seed, Vercel `DATABASE_URL`, production redeploy, health, and login are already verified.
+Read root docs and checkpoint docs, run lint/typecheck/test/build if needed, then continue database-backed dashboard/pipeline/library work or n8n setup if webhook secrets are available. Supabase, login, password change API, settings, approvals, audit logs, and persistent mock agent chat are already verified.
 ```

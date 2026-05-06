@@ -2,7 +2,7 @@
 
 ## Phase
 
-Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, and Supabase-backed production login verified on branch `build/phase-0-foundation`.
+Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, and the first backend controls phase completed on branch `build/phase-0-foundation`.
 
 ## Completed Work
 
@@ -51,10 +51,16 @@ Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/
 - Fixed Vercel Prisma Client generation by changing the build script to `prisma generate && next build`.
 - Redeployed production and verified database health plus login.
 - Fixed the landing page neon gradient text so Chrome renders it as clipped text instead of a solid green rectangle.
+- Added admin password-change API and settings-page form.
+- Added database-backed settings persistence with risky automation flags locked off.
+- Added database-backed approval center with approve/reject API and audit logging.
+- Added database-backed audit trail page.
+- Added persistent agent chat page and API using Supabase `AgentMessage` rows.
+- Added shared audit and role permission helpers.
 
 ## App Status
 
-The app installs, lints, typechecks, tests, validates Prisma schema, builds successfully, deploys to Vercel, connects to Supabase, and supports seeded database-backed login.
+The app installs, lints, typechecks, tests, validates Prisma schema, builds successfully, deploys to Vercel, connects to Supabase, supports seeded database-backed login, and now has working database-backed settings, approvals, audit logs, and mock agent chat persistence.
 
 ## Safety Status
 
@@ -174,6 +180,18 @@ Latest May 6, 2026 landing visual hotfix:
 - Headless Chrome screenshot of the live homepage confirmed the green rectangle issue is fixed.
 - `GET https://folqen.vercel.app/api/health`: returned database status `live`.
 
+Latest May 6, 2026 backend controls update:
+
+- `npm run lint`: passed.
+- `npm run typecheck`: initially found a Prisma JSON metadata typing issue, then passed after fixing `src/lib/audit.ts`.
+- `npm run test`: passed, 6 guard tests.
+- `npm run build`: passed and generated new API routes for settings, approvals, agent messages, and password changes.
+- `vercel deploy --prod --yes`: passed and aliased `https://folqen.vercel.app`.
+- Production login returned 200.
+- Production `/settings`, `/approvals`, `/audit`, and `/agent` returned 200 and contained expected page text.
+- Production settings save returned 200 using safe values.
+- Production agent message save returned 200 and returned persisted messages.
+
 Browser/runtime checks:
 
 - Dev server started at `http://127.0.0.1:3000`.
@@ -185,11 +203,11 @@ Browser/runtime checks:
 ## Known Issues
 
 - `npm audit` still reports two moderate advisories through Next's bundled PostCSS dependency even after upgrading to Next `16.2.4`. npm recommends `npm audit fix --force`, but that would downgrade Next and is not safe. Track and resolve when Next ships a compatible patched dependency.
-- Default seeded admin password still needs a password-change flow and should be changed after first login.
+- Default seeded admin password now has a password-change flow, but the user still needs to actually change it in `/settings`.
 - Supabase direct database hostname remained unreliable from this Windows environment; use the Supabase session pooler or `supabase db query --linked`.
 - File uploads, live integrations, and publishing are not implemented yet.
 - Oracle n8n webhook testing still requires account-specific secrets and must be completed through safe environment variable setup.
-- Production URL exists, protected routes are live, and database-backed login works, but it is not a complete MVP yet because uploads, backend route data flows, n8n, platform integrations, and publishing/package workflows are still pending.
+- Production URL exists, protected routes are live, and several database-backed flows work, but it is not a complete MVP yet because uploads, broader backend route data flows, n8n, platform integrations, and posting package workflows are still pending.
 
 ## Safe To Stop
 

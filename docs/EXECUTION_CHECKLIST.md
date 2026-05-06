@@ -60,11 +60,13 @@
 - [x] Authentication and roles foundation.
 - [x] Protected routes.
 - [x] Login/logout API foundation.
-- [ ] Password change flow.
+- [x] Password change flow.
 - [x] Database-backed login verification.
 - [x] Database migrations and seed data.
-- [ ] Settings persistence.
-- [ ] Approval backend routes.
+- [x] Settings persistence.
+- [x] Approval backend routes.
+- [x] Audit log page backed by database.
+- [x] Agent chat persistence.
 - [ ] File upload validation.
 - [ ] Service interfaces and provider adapters.
 - [ ] n8n placeholder endpoints.

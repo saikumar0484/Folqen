@@ -1,5 +1,35 @@
 # Changelog
 
+## May 6, 2026 - Real backend controls phase
+
+### Added
+
+- Admin password-change API and settings-page form.
+- Database-backed settings page and safe settings update API.
+- Approval center backed by Supabase records with approve/reject API and audit logging.
+- Audit trail page backed by Supabase `AuditLog` records.
+- Persistent agent chat page and message API using Supabase `AgentMessage` records.
+- Shared audit helper and role permission helpers.
+
+### Safety
+
+- Settings updates keep public publishing, paid tools, and browser automation locked off.
+- Approval decisions do not publish content or execute paid tools.
+- Agent replies remain clearly marked as mock until a real AI provider is configured.
+- Password changes and approval decisions create audit entries.
+
+### Verification
+
+- `npm run lint`: passed.
+- `npm run typecheck`: passed after tightening Prisma JSON metadata typing.
+- `npm run test`: passed, 6 guard tests.
+- `npm run build`: passed.
+- `vercel deploy --prod --yes`: passed and aliased `https://folqen.vercel.app`.
+- Production login returned 200.
+- Production `/settings`, `/approvals`, `/audit`, and `/agent` returned 200 with expected page text.
+- Production settings save returned 200 using safe values.
+- Production agent message save returned 200 and returned persisted messages.
+
 ## May 6, 2026 - Landing gradient text hotfix
 
 ### Fixed
