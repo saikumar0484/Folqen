@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 1 foundation verified. Phase 2 app shell and placeholder routes started.
+Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. Deployment/data foundation for Vercel + free Postgres + Oracle n8n worker added.
 
 ## Branch
 
@@ -24,6 +24,15 @@ Phase 1 foundation verified. Phase 2 app shell and placeholder routes started.
 - Added security headers and expanded health route.
 - Re-inspected the uploaded template zip and aligned the landing page more closely to its design structure.
 - Started next Phase 2 route-specific UI by replacing `/dashboard` with a Folqen-specific dashboard screen.
+- Selected and documented the hybrid deployment path: Vercel app, free PostgreSQL database, Oracle Free Tier n8n worker.
+- Upgraded framework packages to Next.js `16.2.4`, React `19.2.5`, and React DOM `19.2.5`.
+- Updated ESLint config for Next 16 flat config.
+- Added Node engine requirement `>=20.9.0`.
+- Added Prisma database scripts and seed script.
+- Added lazy Prisma client, database status helper, integration status API, and n8n test API.
+- Updated health API to include dynamic integration status.
+- Added deployment and real-data testing docs.
+- Updated README and checkpoint docs for the new deployment plan.
 
 ## Commands Run
 
@@ -39,6 +48,9 @@ npm run test
 DATABASE_URL="postgresql://folqen:folqen_password@localhost:5432/folqen?schema=public" npx prisma validate
 npm run build
 npm run dev -- --hostname 127.0.0.1 --port 3000
+npm install next@latest react@latest react-dom@latest eslint-config-next@latest @types/react@latest @types/react-dom@latest
+npx prisma generate
+npm audit --omit=dev
 ```
 
 ## Command Results
@@ -62,6 +74,17 @@ Latest template/dashboard update verification:
 - `prisma validate`: passed with local development `DATABASE_URL`.
 - `npm run build`: passed, 23 app routes generated.
 
+Latest deployment/data foundation verification:
+
+- `npm install next@latest react@latest react-dom@latest eslint-config-next@latest @types/react@latest @types/react-dom@latest`: passed.
+- `npx prisma generate`: passed.
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run test`: passed, 6 tests.
+- `prisma validate`: passed with local development `DATABASE_URL`.
+- `npm run build`: passed on Next.js `16.2.4`; routes include `/api/integrations/status` and `/api/integrations/n8n/test`.
+- `npm audit --omit=dev`: reports 2 moderate advisories through Next/PostCSS; unsafe forced downgrade not applied.
+
 ## Known Broken Areas
 
 No known broken build, lint, typecheck, test, or Prisma schema validation areas.
@@ -75,6 +98,9 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 - Authentication is not implemented.
 - Upload validation is not implemented.
 - Database migrations and seed data are not applied.
+- Vercel project is not linked in this repo yet.
+- Free database credentials are not configured.
+- Oracle n8n webhook is not configured.
 
 ## Environment Assumptions
 
@@ -82,6 +108,8 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 - Local dev database URL is `postgresql://folqen:folqen_password@localhost:5432/folqen?schema=public`.
 - Node/npm were provided through a temporary local Node runtime because global npm was not available on PATH.
 - The UI should continue using the neon green dark cyber/glass template direction.
+- Next.js now requires Node `>=20.9.0`; this is recorded in `package.json`.
+- Real deployment/testing needs secrets set outside git.
 
 ## Safe To Continue From Another Account
 
@@ -90,5 +118,5 @@ Yes. The repo is verified and safe to continue from this checkpoint.
 ## Next Recommended Command
 
 ```text
-Read root docs and checkpoint docs, run npm install if needed, run lint/typecheck/test/build, then continue Phase 2 route-specific UI refinement. Recommended next routes: `/agent`, `/approvals`, `/platforms`, `/tools`, and `/settings`.
+Read root docs and checkpoint docs, run npm install if needed, run lint/typecheck/test/build, then configure Vercel/free database/n8n secrets if available. If secrets are not available, continue Phase 3 authentication and Phase 2 route-specific UI refinement. Recommended next routes: `/agent`, `/approvals`, `/platforms`, `/tools`, and `/settings`.
 ```

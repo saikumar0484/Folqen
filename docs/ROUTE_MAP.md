@@ -24,3 +24,11 @@ All required MVP routes exist as Phase 2 placeholders under the app shell.
 | `/upgrades` | Self-improvement proposals | Needs approval |
 
 The public landing page remains at `/`.
+
+## API Routes
+
+| Route | Purpose | Current State |
+| --- | --- | --- |
+| `GET /api/health` | App, safety, and integration status | Dynamic status |
+| `GET /api/integrations/status` | Database, Vercel, worker, n8n, ComfyUI, and FFmpeg status | Dynamic status |
+| `POST /api/integrations/n8n/test` | Sends a safe connection-test event to configured n8n webhook | Not connected until env is configured |

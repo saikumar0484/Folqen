@@ -19,8 +19,12 @@ export const envSchema = z.object({
   DATABASE_URL: z.string().optional(),
   AUTH_SECRET: z.string().optional(),
   NEXTAUTH_URL: z.string().optional(),
+  APP_BASE_URL: z.string().optional(),
   N8N_WEBHOOK_URL: z.string().optional(),
   N8N_WEBHOOK_SECRET: z.string().optional(),
+  ORACLE_N8N_INSTANCE_URL: z.string().optional(),
+  LOCAL_WORKER_BASE_URL: z.string().optional(),
+  LOCAL_WORKER_SHARED_SECRET: z.string().optional(),
   COMFYUI_BASE_URL: z.string().optional(),
   FFMPEG_PATH: z.string().optional(),
   SELF_IMPROVEMENT_ENABLED: z

@@ -40,6 +40,17 @@
 
 ## Later Phases
 
+- [x] Choose Vercel + free database + Oracle n8n worker deployment model.
+- [x] Add deployment plan.
+- [x] Add real-data testing plan.
+- [x] Add database seed script.
+- [x] Add database and integration health/status APIs.
+- [ ] Link Vercel project.
+- [ ] Configure free Postgres `DATABASE_URL`.
+- [ ] Run database push against approved free database.
+- [ ] Seed approved free database.
+- [ ] Configure Oracle n8n webhook env values.
+- [ ] Test Oracle n8n webhook from Folqen.
 - [ ] Authentication and roles.
 - [ ] Database migrations and seed data.
 - [ ] Settings persistence.

@@ -47,6 +47,27 @@ npm run build
 npm run dev
 ```
 
+## Deployment Direction
+
+The selected MVP deployment plan is:
+
+- Vercel for the Folqen web app and API routes.
+- A free PostgreSQL database such as Supabase or Neon for real app data.
+- The user's Oracle Free Tier server for self-hosted n8n automation workers.
+- Local/worker execution for heavy jobs like FFmpeg, ComfyUI, browser automation, and long-running workflows.
+
+See `docs/DEPLOYMENT_PLAN.md` and `docs/REAL_DATA_TESTING.md` before connecting real infrastructure.
+
+Useful deployment/data commands:
+
+```bash
+npm run db:generate
+npm run db:push
+npm run db:seed
+```
+
+Run `db:push` only after confirming `DATABASE_URL` points to the intended free database. Do not commit real database URLs or n8n secrets.
+
 ## Safety Defaults
 
 Folqen must stay safe by default:
@@ -63,7 +84,9 @@ Do not add real secrets to the repository. Do not claim any integration is live 
 
 The foundation branch includes a neon green dark cyber/glass UI direction, app shell placeholders, provider honesty states, environment validation, safety guards, Prisma schema foundation, and checkpoint docs. The landing page now follows the uploaded `display-perfect-mirror-main.zip` template more closely with a sticky glass header, long product sections, clean empty states, FAQ, CTA, and footer. The dashboard next phase has started with Folqen-specific cards for jobs, approvals, platform status, tool limits, and activity.
 
-Authentication, live integrations, database migrations, uploads, and real publishing are not implemented yet.
+The project now also includes deployment-readiness docs, database seed scripts, and safe health/integration status APIs for testing the Vercel + free database + Oracle n8n worker plan.
+
+Authentication, protected routes, uploads, live social integrations, and real publishing are not implemented yet.
 
 ## Design Template Direction
 
@@ -88,6 +111,7 @@ Do not revert to the earlier purple/cyan style.
 3. Run `npm install` if dependencies are missing.
 4. Run `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build` before continuing.
 5. Continue Phase 2 route-specific UI work, then move to Phase 3 authentication only after the UI shell stays verified.
+6. For deployment continuation, read `docs/DEPLOYMENT_PLAN.md` and `docs/REAL_DATA_TESTING.md` before adding Vercel, database, or n8n secrets.
 
 ## Default Admin User Later
 

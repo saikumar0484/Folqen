@@ -2,7 +2,7 @@
 
 ## Phase
 
-Phase 1 foundation verified and Phase 2 app shell placeholders started on branch `build/phase-0-foundation`.
+Phase 1 foundation verified, Phase 2 app shell placeholders started, and deployment/data foundation for Vercel + free Postgres + Oracle n8n worker added on branch `build/phase-0-foundation`.
 
 ## Completed Work
 
@@ -23,6 +23,15 @@ Phase 1 foundation verified and Phase 2 app shell placeholders started on branch
 - Preserved the neon green dark cyber/glass UI direction.
 - Re-inspected `display-perfect-mirror-main.zip` and ported more of its visual structure into the Folqen homepage.
 - Started the next Phase 2 task by replacing the generic dashboard placeholder with a Folqen-specific dashboard screen.
+- Selected the deployment architecture: Vercel app, free PostgreSQL database, and Oracle Free Tier n8n worker.
+- Upgraded Next.js/React packages to the latest versions available in this environment: Next.js `16.2.4`, React `19.2.5`, React DOM `19.2.5`.
+- Updated ESLint config to Next 16 flat config.
+- Added database scripts: `db:generate`, `db:push`, `db:seed`, and `db:studio`.
+- Added lazy Prisma database client and database status checks.
+- Added safe integration status APIs for Vercel/database/Oracle n8n/local tools.
+- Added an explicit n8n webhook test endpoint that only sends a connection-test payload.
+- Added realistic seed data for admin placeholder, safety settings, content, approvals, platforms, providers, analytics, notifications, and upgrade proposal records.
+- Added deployment and real-data testing docs.
 
 ## App Status
 
@@ -67,6 +76,17 @@ Latest May 6, 2026 template/dashboard update:
 - `prisma validate`: passed with local development `DATABASE_URL`.
 - `npm run build`: passed, generated 23 app pages.
 
+Latest May 6, 2026 deployment/data foundation update:
+
+- `npm install next@latest react@latest react-dom@latest eslint-config-next@latest @types/react@latest @types/react-dom@latest`: passed.
+- `npx prisma generate`: passed.
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run test`: passed, 6 guard tests passing.
+- `prisma validate`: passed with local development `DATABASE_URL`.
+- `npm run build`: passed on Next.js `16.2.4`, generated 24 routes including dynamic integration APIs.
+- `npm audit --omit=dev`: still reports 2 moderate advisories through Next's bundled PostCSS dependency; npm proposes an unsafe forced downgrade, not applied.
+
 Browser/runtime checks:
 
 - Dev server started at `http://127.0.0.1:3000`.
@@ -77,8 +97,9 @@ Browser/runtime checks:
 
 ## Known Issues
 
-- `npm audit` reports two moderate advisories through Next's bundled PostCSS dependency. npm recommends `npm audit fix --force`, but that would downgrade Next and is not safe. Track and resolve by upgrading Next when a patched compatible release is available.
+- `npm audit` still reports two moderate advisories through Next's bundled PostCSS dependency even after upgrading to Next `16.2.4`. npm recommends `npm audit fix --force`, but that would downgrade Next and is not safe. Track and resolve when Next ships a compatible patched dependency.
 - Authentication, real database migrations, file uploads, live integrations, and publishing are not implemented yet.
+- Real Vercel deployment, free database connection, and Oracle n8n webhook testing require secrets/account access and must be completed through safe environment variable setup.
 
 ## Safe To Stop
 

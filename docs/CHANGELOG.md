@@ -1,5 +1,37 @@
 # Changelog
 
+## May 6, 2026 - Deployment and real-data foundation
+
+### Added
+
+- Deployment plan for Vercel + free PostgreSQL + Oracle Free Tier n8n worker.
+- Real-data testing plan with safe testing order and recovery notes.
+- Database scripts for Prisma generate, push, seed, and studio.
+- Prisma seed script with realistic mock records for safety settings, content, approvals, platform statuses, provider registry items, analytics, notifications, and upgrade proposal data.
+- Lazy Prisma client and database status helper.
+- Integration status API at `GET /api/integrations/status`.
+- n8n webhook test API at `POST /api/integrations/n8n/test`.
+- Expanded health API with dynamic integration status.
+- Additional env placeholders for app base URL, Oracle n8n, and local worker secrets.
+
+### Changed
+
+- Upgraded Next.js to `16.2.4`, React to `19.2.5`, React DOM to `19.2.5`, and matching Next ESLint config/types.
+- Updated ESLint to use Next's flat config exports.
+- Added Node engine requirement `>=20.9.0`.
+- Updated README with the selected deployment architecture.
+
+### Verification
+
+- `npm install next@latest react@latest react-dom@latest eslint-config-next@latest @types/react@latest @types/react-dom@latest`: passed.
+- `npx prisma generate`: passed.
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run test`: passed, 6 tests.
+- `prisma validate`: passed with local development `DATABASE_URL`.
+- `npm run build`: passed on Next.js `16.2.4`.
+- `npm audit --omit=dev`: still reports 2 moderate Next/PostCSS advisories; no unsafe forced downgrade applied.
+
 ## May 5, 2026 - Phase 1 verification and Phase 2 shell start
 
 ### Added

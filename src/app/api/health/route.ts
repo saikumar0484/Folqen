@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
 import { getEnv } from "@/lib/env";
+import { getIntegrationStatus } from "@/lib/integrations/status";
 
-export function GET() {
+export const dynamic = "force-dynamic";
+
+export async function GET() {
   const env = getEnv();
+  const integrations = await getIntegrationStatus();
 
   return NextResponse.json({
     app: "Folqen",
@@ -14,10 +18,6 @@ export function GET() {
       allowBrowserAutomation: env.ALLOW_BROWSER_AUTOMATION,
       defaultUploadPrivacy: env.DEFAULT_UPLOAD_PRIVACY,
     },
-    integrations: {
-      n8n: env.N8N_WEBHOOK_URL ? "configured" : "not_connected",
-      comfyui: env.COMFYUI_BASE_URL ? "configured" : "not_connected",
-      ffmpeg: env.FFMPEG_PATH ? "configured" : "not_connected",
-    },
+    integrations,
   });
 }

@@ -18,12 +18,18 @@ The UI does not call external tools directly. Pages call app services, services 
 ## Foundation Choices
 
 - Next.js App Router keeps route UI under `src/app`.
+- Vercel is the intended app hosting target.
+- Free PostgreSQL is the intended database target for MVP real data.
+- Oracle Free Tier n8n is the intended self-hosted workflow worker.
+- Heavy media/automation jobs stay outside Vercel Functions and run through worker/provider adapters.
 - Shared UI shell components live under `src/components/app`.
 - Reusable route definitions live in `src/lib/app-routes.ts`.
 - Provider registry types live in `src/lib/providers.ts`.
 - Environment validation lives in `src/lib/env.ts`.
 - Safety guard functions live in `src/lib/security/guards.ts`.
 - Prisma schema foundation lives in `prisma/schema.prisma`.
+- Lazy Prisma client and database status helpers live in `src/lib/db.ts`.
+- Integration status helpers live in `src/lib/integrations`.
 
 ## Future-Proof Rules
 
