@@ -214,6 +214,8 @@ Latest May 6, 2026 sidebar overlap hotfix:
 - `npm run typecheck`: passed.
 - `npm run test`: passed, 6 guard tests.
 - `npm run build`: passed.
+- `vercel deploy --prod --yes`: passed and aliased `https://folqen.vercel.app`.
+- `GET https://folqen.vercel.app/api/health`: returned database status `live`.
 
 Browser/runtime checks:
 
@@ -235,4 +237,4 @@ Browser/runtime checks:
 
 ## Safe To Stop
 
-Yes. The latest work is a small verified sidebar layout hotfix. Continue by committing, pushing, and deploying this hotfix if that has not already happened in the current session.
+Yes. The latest work is a small verified sidebar layout hotfix that has been committed, pushed, and deployed to production.

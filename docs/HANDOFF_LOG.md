@@ -134,6 +134,8 @@ npm run lint
 npm run typecheck
 npm run test
 npm run build
+vercel deploy --prod --yes
+curl https://folqen.vercel.app/api/health
 ```
 
 ## Command Results
@@ -211,7 +213,7 @@ Latest deployment/data foundation verification:
 - Test viewer production login: returned 200.
 - Test viewer production `/dashboard`: returned 200.
 - Dashboard live data update verification: lint, typecheck, tests, build, production deploy, `/dashboard`, and `/api/health` passed.
-- Sidebar overlap hotfix verification: lint, typecheck, tests, and build passed.
+- Sidebar overlap hotfix verification: lint, typecheck, tests, build, production deploy, and health check passed.
 
 ## Known Broken Areas
 
@@ -243,7 +245,7 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
 ## Safe To Continue From Another Account
 
-Yes. The repo is safe to continue from this checkpoint. The latest change is a verified sidebar layout hotfix for the `Approval gates active` card overlap. No source files should be left half-edited after this hotfix is committed and pushed.
+Yes. The repo is safe to continue from this checkpoint. The latest change is a verified and deployed sidebar layout hotfix for the `Approval gates active` card overlap. No source files are half-edited.
 
 ## Next Recommended Command
 
