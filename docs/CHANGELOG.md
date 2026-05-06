@@ -1,5 +1,21 @@
 # Changelog
 
+## May 6, 2026 - Landing gradient text hotfix
+
+### Fixed
+
+- Fixed neon gradient text rendering as a solid green rectangle on the live landing page in Chrome.
+
+### Verification
+
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run test`: passed, 6 guard tests.
+- `npm run build`: passed.
+- `vercel deploy --prod --yes`: passed and aliased `https://folqen.vercel.app`.
+- Headless Chrome screenshot of the live homepage confirmed the headline renders as text, not a block.
+- `GET /api/health`: returned database status `live`.
+
 ## May 6, 2026 - Supabase production database live
 
 ### Added

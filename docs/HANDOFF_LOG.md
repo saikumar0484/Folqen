@@ -50,6 +50,7 @@ Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. D
 - Added sensitive Vercel production `DATABASE_URL` without printing or committing the value.
 - Fixed Vercel Prisma generation by changing `npm run build` to `prisma generate && next build`.
 - Redeployed production and verified `/api/health`, `/api/auth/login`, and authenticated `/dashboard`.
+- Fixed the live landing page gradient text rendering issue that showed a solid green rectangle in Chrome.
 
 ## Commands Run
 
@@ -96,6 +97,12 @@ vercel deploy --prod --yes
 curl https://folqen.vercel.app/api/health
 curl https://folqen.vercel.app/api/auth/login
 curl https://folqen.vercel.app/dashboard
+npm run lint
+npm run typecheck
+npm run test
+npm run build
+vercel deploy --prod --yes
+chrome --headless --screenshot https://folqen.vercel.app/
 ```
 
 ## Command Results
@@ -167,6 +174,7 @@ Latest deployment/data foundation verification:
 - Production `/api/health`: returned database `live`.
 - Production `/api/auth/login`: returned 200 for seeded admin credentials.
 - Production authenticated `/dashboard`: returned 200 and contained dashboard/logout UI.
+- Landing gradient text hotfix verification: lint, typecheck, tests, build, production deploy, live screenshot, and health check passed.
 
 ## Known Broken Areas
 

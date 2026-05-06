@@ -112,10 +112,12 @@ a {
   }
 
   .text-gradient-neon {
-    background: linear-gradient(135deg, oklch(0.97 0.012 130) 0%, var(--neon) 60%, oklch(0.78 0.18 165) 100%);
+    display: inline;
+    background-image: linear-gradient(135deg, #f7fff1 0%, #a3ff12 55%, #20e68f 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    -webkit-text-fill-color: transparent;
   }
 
   .grid-bg {

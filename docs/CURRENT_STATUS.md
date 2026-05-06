@@ -50,6 +50,7 @@ Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/
 - Added Vercel production `DATABASE_URL` as a sensitive env var without committing or printing the value.
 - Fixed Vercel Prisma Client generation by changing the build script to `prisma generate && next build`.
 - Redeployed production and verified database health plus login.
+- Fixed the landing page neon gradient text so Chrome renders it as clipped text instead of a solid green rectangle.
 
 ## App Status
 
@@ -162,6 +163,16 @@ Latest May 6, 2026 Supabase production database update:
 - `GET https://folqen.vercel.app/api/health`: returned database status `live`.
 - `POST https://folqen.vercel.app/api/auth/login`: returned 200 for seeded admin credentials.
 - Authenticated `GET https://folqen.vercel.app/dashboard`: returned 200 and contained dashboard/logout UI.
+
+Latest May 6, 2026 landing visual hotfix:
+
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run test`: passed, 6 guard tests.
+- `npm run build`: passed.
+- `vercel deploy --prod --yes`: passed and aliased `https://folqen.vercel.app`.
+- Headless Chrome screenshot of the live homepage confirmed the green rectangle issue is fixed.
+- `GET https://folqen.vercel.app/api/health`: returned database status `live`.
 
 Browser/runtime checks:
 
