@@ -1,5 +1,5 @@
-import { RoutePage } from "@/components/app/route-page";
+import { DashboardScreen } from "@/components/app/dashboard-screen";
 
 export default function DashboardPage() {
-  return <RoutePage routeId="dashboard" />;
+  return <DashboardScreen />;
 }

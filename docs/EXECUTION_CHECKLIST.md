@@ -32,10 +32,11 @@
 - [x] Add global mini agent chat shell.
 - [x] Add reusable stat/status/risk/empty/loading/confirm UI components.
 - [x] Add placeholders for all required routes.
-- [ ] Replace placeholders with route-specific detailed pages.
+- [x] Start replacing placeholders with route-specific detailed pages.
+- [x] Add dedicated dashboard screen.
 - [ ] Add mobile sidebar drawer behavior.
 - [ ] Add toasts.
-- [ ] Add richer dashboard widgets.
+- [x] Add richer dashboard widgets.
 
 ## Later Phases
 

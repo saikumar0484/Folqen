@@ -22,6 +22,8 @@ Phase 1 foundation verified. Phase 2 app shell and placeholder routes started.
 - Added documentation for architecture, security, route map, providers, plugins, upgrades, and failure recovery.
 - Expanded README setup instructions.
 - Added security headers and expanded health route.
+- Re-inspected the uploaded template zip and aligned the landing page more closely to its design structure.
+- Started next Phase 2 route-specific UI by replacing `/dashboard` with a Folqen-specific dashboard screen.
 
 ## Commands Run
 
@@ -52,6 +54,14 @@ npm run dev -- --hostname 127.0.0.1 --port 3000
   - `/dashboard` contained `Command overview`.
   - `/platforms` contained `Not connected`.
 
+Latest template/dashboard update verification:
+
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run test`: passed, 6 tests.
+- `prisma validate`: passed with local development `DATABASE_URL`.
+- `npm run build`: passed, 23 app routes generated.
+
 ## Known Broken Areas
 
 No known broken build, lint, typecheck, test, or Prisma schema validation areas.
@@ -80,5 +90,5 @@ Yes. The repo is verified and safe to continue from this checkpoint.
 ## Next Recommended Command
 
 ```text
-Read root docs and checkpoint docs, run npm install if needed, run lint/typecheck/test/build, then continue Phase 2 route-specific UI refinement before Phase 3 authentication.
+Read root docs and checkpoint docs, run npm install if needed, run lint/typecheck/test/build, then continue Phase 2 route-specific UI refinement. Recommended next routes: `/agent`, `/approvals`, `/platforms`, `/tools`, and `/settings`.
 ```

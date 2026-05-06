@@ -2,6 +2,14 @@
 
 ## Current Risks
 
+### Template port is a design adaptation, not a framework replacement
+
+- Risk: The uploaded template uses Vite/TanStack/Tailwind v4 patterns, while Folqen is a Next.js/Tailwind v3 app.
+- Prevention: Port visual structure and CSS tokens, not incompatible framework files.
+- Verification: Run lint, typecheck, tests, and build after every template-related change.
+- Rollback: Revert only the adapted landing/dashboard changes if they break the app.
+- Human approval trigger: None unless the user wants a full framework migration, which is not recommended now.
+
 ### Next/PostCSS npm audit advisories
 
 - Risk: `npm audit` reports two moderate vulnerabilities through Next's bundled PostCSS dependency.

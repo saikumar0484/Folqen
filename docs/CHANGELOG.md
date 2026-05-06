@@ -38,3 +38,25 @@
 
 - In-app browser screenshot verification was unavailable due missing `agent-browser` CLI and browser-use Node runtime access denial.
 - `npm audit` reports two moderate Next/PostCSS advisories; no safe automatic fix was applied.
+
+## May 6, 2026 - Template alignment and dashboard next phase
+
+### Added
+
+- Re-inspected the uploaded `display-perfect-mirror-main.zip` template.
+- Ported more template structure into the Folqen landing page: sticky glass header, expanded feature sections, how-it-works, product preview, empty states, use cases, build-ready section, CTA, FAQ, and footer.
+- Added missing template-inspired theme tokens for card, popover, accent, secondary, destructive, chart, sidebar, input, and ring colors.
+- Started the next Phase 2 UI step with a dedicated dashboard screen showing active jobs, approvals, platform status, tool limits, activity, and safe next steps.
+
+### Changed
+
+- Updated README with design template direction and another-account continuation notes.
+- Removed remaining negative tracking utility from page header and landing hero.
+
+### Verification
+
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run test`: passed, 6 tests.
+- `prisma validate`: passed with local development `DATABASE_URL`.
+- `npm run build`: passed, 23 app routes generated.
