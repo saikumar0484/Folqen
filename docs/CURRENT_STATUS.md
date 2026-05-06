@@ -40,6 +40,10 @@ Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/
 - Added custom authentication foundation: `/login`, login/logout/me APIs, signed HTTP-only session cookies, protected app route proxy, authenticated app layout guard, and topbar logout.
 - Added `bcryptjs` password hashing and updated `npm run db:seed` to hash the default admin password.
 - Generated and added production Vercel `AUTH_SECRET` without printing the value.
+- Connected the fresh Supabase project for Folqen through the Supabase CLI.
+- Confirmed Supabase project `Folqen` is active and linked with reference `eobvgajgyvydqydlfken` in the Seoul region.
+- Verified Supabase Management API database query access with `supabase db query --linked`.
+- Generated a Prisma schema SQL file in the local temp directory only; it was not applied to Supabase before this safe checkpoint.
 
 ## App Status
 
@@ -117,6 +121,15 @@ Latest May 6, 2026 authentication update:
 - `GET https://folqen.vercel.app/dashboard` without session: returned 307 redirect to `/login?next=%2Fdashboard`.
 - `GET https://folqen.vercel.app/api/health`: returned status `ok`, Vercel/app base configured, database/n8n not connected.
 
+Latest May 6, 2026 Supabase setup checkpoint:
+
+- `supabase projects list`: passed; linked project is `Folqen`, ref `eobvgajgyvydqydlfken`, region `Northeast Asia (Seoul)`, status active/healthy.
+- `supabase db query "select current_database() as database_name, current_user as user_name;" --linked -o json`: passed; returned database `postgres` and user `postgres`.
+- Direct DB hostname `db.eobvgajgyvydqydlfken.supabase.co:5432` could not be resolved from this Windows environment.
+- Supabase pooler hostname was reachable, but an earlier Prisma `db push` attempt through the pooler hung and was stopped.
+- Prisma schema SQL was generated successfully to a temporary local file using the explicit temporary Node runtime.
+- No schema was applied, no seed was run, no `DATABASE_URL` was added to Vercel, and no production redeploy was started after this partial Supabase step.
+
 Browser/runtime checks:
 
 - Dev server started at `http://127.0.0.1:3000`.
@@ -129,10 +142,12 @@ Browser/runtime checks:
 
 - `npm audit` still reports two moderate advisories through Next's bundled PostCSS dependency even after upgrading to Next `16.2.4`. npm recommends `npm audit fix --force`, but that would downgrade Next and is not safe. Track and resolve when Next ships a compatible patched dependency.
 - Real database connection and seed are still pending, so login cannot complete yet.
+- Supabase is connected, but schema/seed/Vercel database env are still pending.
+- Continue database setup through `supabase db query --linked --file <temp schema sql>` rather than retrying the direct Supabase DB host from this machine.
 - File uploads, live integrations, and publishing are not implemented yet.
 - Free database connection and Oracle n8n webhook testing require account-specific secrets and must be completed through safe environment variable setup.
 - Production URL exists and protected routes are live, but it is not a complete MVP yet because real database-backed login, backend data flows, uploads, and n8n are still pending.
 
 ## Safe To Stop
 
-Yes after this checkpoint is committed.
+Yes after this checkpoint is committed. The only active local work from the interrupted Supabase step is documentation for this checkpoint; no production database or Vercel env changes were made.

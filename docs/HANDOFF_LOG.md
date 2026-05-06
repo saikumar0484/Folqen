@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. Deployment/data foundation added. Phase 3 authentication foundation implemented.
+Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase project connection was verified, then paused at a safe checkpoint before schema application.
 
 ## Branch
 
@@ -40,6 +40,10 @@ Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. D
 - Preserved generated/conflicted prototype files under `docs/prototypes/ai-studio-generated/`.
 - Added login page, auth APIs, signed session cookies, protected proxy, layout auth guard, logout button, and bcrypt seed hashing.
 - Added generated Vercel production `AUTH_SECRET` without printing or committing it.
+- Connected the fresh Supabase project through CLI login/link.
+- Confirmed linked Supabase project `Folqen`, ref `eobvgajgyvydqydlfken`, region `Northeast Asia (Seoul)`.
+- Verified linked database API query access with `supabase db query --linked`.
+- Generated Prisma schema SQL to a local temp file only; it was not applied before the user requested a safe stop.
 
 ## Commands Run
 
@@ -69,6 +73,9 @@ npm install bcryptjs
 vercel env add AUTH_SECRET production
 curl https://folqen.vercel.app/login
 curl https://folqen.vercel.app/dashboard
+supabase projects list
+supabase db query "select current_database() as database_name, current_user as user_name;" --linked -o json
+node node_modules/prisma/build/index.js migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script
 ```
 
 ## Command Results
@@ -118,6 +125,11 @@ Latest deployment/data foundation verification:
 - Latest `vercel deploy --prod --yes`: passed.
 - Production `/login`: returned 200.
 - Production `/dashboard` without session: returned 307 redirect to `/login?next=%2Fdashboard`.
+- `supabase projects list`: passed; linked project is `Folqen`, ref `eobvgajgyvydqydlfken`, region `Northeast Asia (Seoul)`.
+- `supabase db query --linked`: passed; returned database `postgres` and user `postgres`.
+- Direct Supabase DB hostname failed DNS resolution in this Windows session.
+- Prisma schema SQL generation to temp file passed.
+- Supabase schema application, seed, Vercel `DATABASE_URL`, redeploy, and database-backed login verification were not performed before this checkpoint.
 
 ## Known Broken Areas
 
@@ -135,6 +147,8 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 - Free database credentials are not configured.
 - Oracle n8n webhook is not configured.
 - Login cannot complete until free database is configured and seeded.
+- Supabase project is connected but not migrated or seeded.
+- Do not retry a long-running Prisma `db push` through the pooler without a short timeout and a clear stop plan; prefer `supabase db query --linked --file`.
 
 ## Environment Assumptions
 
@@ -148,10 +162,10 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
 ## Safe To Continue From Another Account
 
-Yes. The repo is verified and safe to continue from this checkpoint.
+Yes. The repo is safe to continue from this checkpoint. No source files are half-edited and no production database/env changes were made during the paused Supabase schema step.
 
 ## Next Recommended Command
 
 ```text
-Read root docs and checkpoint docs, run npm install if needed, run lint/typecheck/test/build, then configure a free database if available. If database secrets are not available, continue auth hardening, password change flow, service interfaces, and route-specific backend work while keeping integrations `Not connected`.
+Read root docs and checkpoint docs, confirm Supabase project `eobvgajgyvydqydlfken`, run lint/typecheck/test/build if needed, then apply Prisma schema through `supabase db query --linked --file` using a temporary SQL file. After schema and seed are verified, add `DATABASE_URL` to Vercel production env through the CLI secret flow and redeploy.
 ```

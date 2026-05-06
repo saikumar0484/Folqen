@@ -6,21 +6,32 @@ Continue database setup gates, then complete Phase 3 authentication hardening an
 
 ## Exact Next Tasks
 
-1. Configure a free Postgres provider outside git and add `DATABASE_URL` safely to Vercel/local env.
-2. Run `npm run db:generate`, `npm run db:push`, and `npm run db:seed` only after confirming the target database.
-3. Verify login at `/login` with `admin@example.com` / `ChangeMe123!`, then change the seed password.
-4. Add password-change flow and role-aware UI checks for admin/operator/viewer.
-5. Configure Oracle n8n webhook env values and test `POST /api/integrations/n8n/test`.
-6. Continue replacing generic route placeholders with database-backed route-specific pages.
-7. Add mobile sidebar behavior, toasts, refined command palette interactions, and file upload validation.
+1. Resume from branch `build/phase-0-foundation` and confirm `git status` is clean except checkpoint docs if this commit was not pushed.
+2. Confirm Supabase CLI is still linked to project `eobvgajgyvydqydlfken` with `supabase projects list`.
+3. Apply the Prisma schema through Supabase Management API, not the direct database hostname from this Windows environment:
+
+```powershell
+$nodeDir="$env:TEMP\folqen-node-runtime\node-v24.14.0-win-x64"
+$schemaFile=Join-Path $env:TEMP "folqen_prisma_schema.sql"
+& (Join-Path $nodeDir "node.exe") node_modules\prisma\build\index.js migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script | Set-Content -LiteralPath $schemaFile -Encoding utf8
+& (Join-Path $nodeDir "npx.cmd") supabase db query --linked --file $schemaFile
+```
+
+4. Seed the approved Supabase database. Prefer `npm run db:seed` with the Supabase pooler URL only if it responds quickly; if Prisma hangs again, create a temporary SQL seed and run it with `supabase db query --linked --file`.
+5. Add Supabase pooler `DATABASE_URL` to Vercel production env without printing or committing the password.
+6. Redeploy production and verify `/api/health` changes database from `not_connected` to `live`.
+7. Verify `/login` with the seeded admin account, then add a password-change flow and role-aware UI checks.
+8. Configure Oracle n8n webhook env values and test `POST /api/integrations/n8n/test`.
+9. Continue replacing generic route placeholders with database-backed route-specific pages.
+10. Add mobile sidebar behavior, toasts, refined command palette interactions, and file upload validation.
 
 ## Human Decisions Needed
 
-Required before real deployment/database/n8n testing:
+Required before real database/n8n testing:
 
-- Free database provider choice and connection string.
+- Supabase database schema application approval if the next account treats it as production-like.
 - Oracle n8n webhook URL and shared secret.
-- Approval before pushing schema to any production-like database.
+- Approval before destructive migrations, public publishing, paid tools, browser automation, or OAuth/platform connections.
 
 ## Credentials Needed
 
@@ -47,4 +58,4 @@ Needed through safe secret flow only:
 
 ## Resume Command
 
-Continue from branch `build/phase-0-foundation`, read all root project docs and checkpoint docs, run verification, then configure free database credentials if available. If credentials are not available, continue auth hardening and backend service interfaces with mock/not-connected states.
+Continue from branch `build/phase-0-foundation`, read all root project docs and checkpoint docs, run verification, then resume Supabase schema setup through `supabase db query --linked`. Do not retry the direct Supabase database hostname from this Windows environment unless DNS is confirmed fixed.

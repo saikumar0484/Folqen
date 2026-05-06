@@ -2,6 +2,22 @@
 
 ## Current Risks
 
+### Supabase direct database hostname is unreliable from this Windows environment
+
+- Risk: Direct Prisma commands against `db.eobvgajgyvydqydlfken.supabase.co:5432` fail DNS resolution locally, and a prior pooler `db push` attempt hung.
+- Prevention: Use `supabase db query --linked` through the Supabase Management API for schema SQL application; keep SQL files temporary and out of git.
+- Verification: `supabase db query --linked` successfully returned current database and user from the linked project.
+- Rollback: If schema application fails partway, inspect Supabase tables through `supabase db query --linked`, document the failed SQL statement, and ask before destructive cleanup.
+- Human approval trigger: Any destructive database operation, reset, drop, migration against production-like data, or credential rotation.
+
+### Supabase database password was shared in chat
+
+- Risk: The DB password is now visible in conversation history even though it was not committed to git.
+- Prevention: Do not print it again, do not write it to repository files, and add the final connection string only through Vercel/local secret flows.
+- Verification: `git status` and `git diff` must show no committed secret files or connection strings.
+- Rollback: Rotate the Supabase database password after the app is connected, or sooner if there is any concern the chat history is exposed.
+- Human approval trigger: Password rotation, Vercel secret replacement, or any credential-bearing operation.
+
 ### Database-backed login is blocked until DATABASE_URL is configured
 
 - Risk: Users may expect login to work immediately because the login UI is live.

@@ -50,6 +50,9 @@
 - [x] Verify production `/` and `/api/health`.
 - [x] Add non-secret production app URL env values.
 - [ ] Configure free Postgres `DATABASE_URL`.
+- [x] Connect fresh Supabase project.
+- [x] Verify Supabase linked query access.
+- [ ] Apply Prisma schema to Supabase through Management API.
 - [ ] Run database push against approved free database.
 - [ ] Seed approved free database.
 - [ ] Configure Oracle n8n webhook env values.

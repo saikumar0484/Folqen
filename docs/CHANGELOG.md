@@ -1,5 +1,26 @@
 # Changelog
 
+## May 6, 2026 - Safe Supabase checkpoint
+
+### Added
+
+- Documented the fresh Supabase project connection as a safe continuation checkpoint.
+- Recorded the linked Supabase project reference `eobvgajgyvydqydlfken` and Seoul region.
+- Added next-step guidance to apply schema through `supabase db query --linked` instead of the failing direct database host path.
+
+### Verification
+
+- `supabase projects list`: passed and showed linked project `Folqen`.
+- `supabase db query "select current_database() as database_name, current_user as user_name;" --linked -o json`: passed.
+- Prisma schema SQL generation to a temporary local file: passed.
+
+### Not Changed
+
+- No Supabase schema was applied.
+- No seed data was inserted.
+- No Vercel `DATABASE_URL` was added.
+- No production redeploy was started from this partial Supabase step.
+
 ## May 6, 2026 - Authentication foundation
 
 ### Added
