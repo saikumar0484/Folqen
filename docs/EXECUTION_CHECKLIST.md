@@ -45,7 +45,10 @@
 - [x] Add real-data testing plan.
 - [x] Add database seed script.
 - [x] Add database and integration health/status APIs.
-- [ ] Link Vercel project.
+- [x] Link Vercel project.
+- [x] Deploy production app to Vercel.
+- [x] Verify production `/` and `/api/health`.
+- [x] Add non-secret production app URL env values.
 - [ ] Configure free Postgres `DATABASE_URL`.
 - [ ] Run database push against approved free database.
 - [ ] Seed approved free database.

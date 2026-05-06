@@ -6,9 +6,9 @@ Continue deployment setup gates, then Phase 3 authentication and security base.
 
 ## Exact Next Tasks
 
-1. Configure a free Postgres provider outside git and add `DATABASE_URL` safely.
-2. Run `npm run db:generate`, `npm run db:push`, and `npm run db:seed` only after confirming the target database.
-3. Configure Vercel project/env variables through the dashboard or CLI without printing secrets.
+1. Configure a free Postgres provider outside git and add `DATABASE_URL` safely to Vercel/local env.
+2. Add a secure `AUTH_SECRET` in Vercel before Phase 3 authentication goes live.
+3. Run `npm run db:generate`, `npm run db:push`, and `npm run db:seed` only after confirming the target database.
 4. Configure Oracle n8n webhook env values and test `POST /api/integrations/n8n/test`.
 5. Continue replacing generic route placeholders with route-specific page layouts while keeping `Mock` and `Not connected` honesty.
 6. Add mobile sidebar behavior, toasts, and refined command palette interactions.
@@ -18,7 +18,6 @@ Continue deployment setup gates, then Phase 3 authentication and security base.
 
 Required before real deployment/database/n8n testing:
 
-- Vercel account/project authorization.
 - Free database provider choice and connection string.
 - Oracle n8n webhook URL and shared secret.
 - Approval before pushing schema to any production-like database.

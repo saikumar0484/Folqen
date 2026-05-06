@@ -5,6 +5,8 @@
 ### Added
 
 - Deployment plan for Vercel + free PostgreSQL + Oracle Free Tier n8n worker.
+- Vercel production deployment at `https://folqen.vercel.app`.
+- `.vercelignore` to keep env files out of CLI deployment uploads.
 - Real-data testing plan with safe testing order and recovery notes.
 - Database scripts for Prisma generate, push, seed, and studio.
 - Prisma seed script with realistic mock records for safety settings, content, approvals, platform statuses, provider registry items, analytics, notifications, and upgrade proposal data.
@@ -20,6 +22,8 @@
 - Updated ESLint to use Next's flat config exports.
 - Added Node engine requirement `>=20.9.0`.
 - Updated README with the selected deployment architecture.
+- Linked Vercel project `rayalasai874-4182s-projects/folqen`.
+- Added non-secret production env values for `APP_BASE_URL` and `NEXTAUTH_URL`.
 
 ### Verification
 
@@ -31,6 +35,10 @@
 - `prisma validate`: passed with local development `DATABASE_URL`.
 - `npm run build`: passed on Next.js `16.2.4`.
 - `npm audit --omit=dev`: still reports 2 moderate Next/PostCSS advisories; no unsafe forced downgrade applied.
+- `vercel link --yes --project folqen --scope rayalasai874-4182s-projects`: passed.
+- `vercel deploy --prod --yes`: passed.
+- `GET https://folqen.vercel.app`: returned 200.
+- `GET https://folqen.vercel.app/api/health`: returned `status: ok`, Vercel configured, database/n8n not connected.
 
 ## May 5, 2026 - Phase 1 verification and Phase 2 shell start
 

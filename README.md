@@ -58,6 +58,12 @@ The selected MVP deployment plan is:
 
 See `docs/DEPLOYMENT_PLAN.md` and `docs/REAL_DATA_TESTING.md` before connecting real infrastructure.
 
+Current Vercel production URL:
+
+- https://folqen.vercel.app
+
+This deployment is live for testing the shell and health/status endpoints. It is not a complete production MVP yet because authentication, real database setup, and live n8n secrets are still pending.
+
 Useful deployment/data commands:
 
 ```bash

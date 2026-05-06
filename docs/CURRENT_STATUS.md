@@ -32,6 +32,10 @@ Phase 1 foundation verified, Phase 2 app shell placeholders started, and deploym
 - Added an explicit n8n webhook test endpoint that only sends a connection-test payload.
 - Added realistic seed data for admin placeholder, safety settings, content, approvals, platforms, providers, analytics, notifications, and upgrade proposal records.
 - Added deployment and real-data testing docs.
+- Linked the local repo to Vercel project `rayalasai874-4182s-projects/folqen`.
+- Deployed production to `https://folqen.vercel.app`.
+- Added `.vercelignore` to prevent env files from being uploaded during CLI deploys.
+- Added production Vercel env values for non-secret `APP_BASE_URL` and `NEXTAUTH_URL`.
 
 ## App Status
 
@@ -86,6 +90,12 @@ Latest May 6, 2026 deployment/data foundation update:
 - `prisma validate`: passed with local development `DATABASE_URL`.
 - `npm run build`: passed on Next.js `16.2.4`, generated 24 routes including dynamic integration APIs.
 - `npm audit --omit=dev`: still reports 2 moderate advisories through Next's bundled PostCSS dependency; npm proposes an unsafe forced downgrade, not applied.
+- `vercel whoami`: passed as `rayalasai874-4182`.
+- `vercel link --yes --project folqen --scope rayalasai874-4182s-projects`: passed.
+- `vercel deploy --prod --yes`: passed; production alias is `https://folqen.vercel.app`.
+- `GET https://folqen.vercel.app`: returned 200.
+- `GET https://folqen.vercel.app/api/health`: returned status `ok`, safety gates disabled/approval-required, Vercel configured, database/n8n not connected.
+- `vercel env ls`: production has `APP_BASE_URL` and `NEXTAUTH_URL`; database/n8n/auth secrets are not set yet.
 
 Browser/runtime checks:
 
@@ -100,6 +110,7 @@ Browser/runtime checks:
 - `npm audit` still reports two moderate advisories through Next's bundled PostCSS dependency even after upgrading to Next `16.2.4`. npm recommends `npm audit fix --force`, but that would downgrade Next and is not safe. Track and resolve when Next ships a compatible patched dependency.
 - Authentication, real database migrations, file uploads, live integrations, and publishing are not implemented yet.
 - Real Vercel deployment, free database connection, and Oracle n8n webhook testing require secrets/account access and must be completed through safe environment variable setup.
+- Production URL exists, but it is not a complete MVP yet because authentication and real database setup are still pending.
 
 ## Safe To Stop
 

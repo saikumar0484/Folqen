@@ -14,6 +14,8 @@ This keeps Vercel fast and simple while avoiding serverless limits for heavy aut
 ## Current Deployment Readiness
 
 - App builds successfully locally before deployment.
+- Vercel project is linked as `rayalasai874-4182s-projects/folqen`.
+- Production URL is `https://folqen.vercel.app`.
 - Safe env defaults exist in `.env.example`.
 - Prisma schema exists.
 - Seed script exists for realistic mock data.
@@ -22,11 +24,13 @@ This keeps Vercel fast and simple while avoiding serverless limits for heavy aut
   - `GET /api/integrations/status`
   - `POST /api/integrations/n8n/test`
 - All integrations remain `Not connected` until real env values are configured.
+- Production currently has non-secret `APP_BASE_URL` and `NEXTAUTH_URL` configured.
+- Production still needs `DATABASE_URL`, `AUTH_SECRET`, `N8N_WEBHOOK_URL`, `N8N_WEBHOOK_SECRET`, and `ORACLE_N8N_INSTANCE_URL` before real data/worker testing.
 
 ## Vercel Setup Steps
 
-1. Import `saikumar0484/Folqen` into Vercel.
-2. Use branch `build/phase-0-foundation` for preview testing until merged.
+1. Vercel project has already been created and linked to `saikumar0484/Folqen`.
+2. Use branch `build/phase-0-foundation` for continued testing until merged.
 3. Set framework preset to Next.js.
 4. Add environment variables in Vercel, never in git:
 
@@ -45,7 +49,7 @@ N8N_WEBHOOK_SECRET=<shared-secret>
 ORACLE_N8N_INSTANCE_URL=<oracle-n8n-base-url>
 ```
 
-5. Run Vercel preview deploy.
+5. Run Vercel deploy.
 6. Verify `/api/health` and `/api/integrations/status`.
 7. Run database push/seed only after confirming the database URL points to the intended free database.
 

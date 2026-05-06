@@ -5,7 +5,7 @@
 ### Real deployment requires secret handling
 
 - Risk: Vercel, database, and n8n secrets could be leaked if added to files or terminal logs.
-- Prevention: Keep only placeholders in `.env.example`; add real values through Vercel/local env secret flows only.
+- Prevention: Keep only placeholders in `.env.example`; add real values through Vercel/local env secret flows only; `.vercelignore` excludes env files from CLI deployment uploads.
 - Verification: Check git diff before commits; verify `.env` and `.env.*` remain ignored except `.env.example`.
 - Rollback: Rotate exposed credentials immediately if any secret is accidentally printed or committed.
 - Human approval trigger: Any real credential, Vercel production env change, database connection string, or n8n shared secret.

@@ -33,6 +33,10 @@ Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. D
 - Updated health API to include dynamic integration status.
 - Added deployment and real-data testing docs.
 - Updated README and checkpoint docs for the new deployment plan.
+- Linked Vercel project `rayalasai874-4182s-projects/folqen`.
+- Deployed production app at `https://folqen.vercel.app`.
+- Added `.vercelignore` so env files are not uploaded by Vercel CLI deploys.
+- Added non-secret production env values `APP_BASE_URL` and `NEXTAUTH_URL`.
 
 ## Commands Run
 
@@ -51,6 +55,13 @@ npm run dev -- --hostname 127.0.0.1 --port 3000
 npm install next@latest react@latest react-dom@latest eslint-config-next@latest @types/react@latest @types/react-dom@latest
 npx prisma generate
 npm audit --omit=dev
+vercel whoami
+vercel link --yes --project folqen --scope rayalasai874-4182s-projects
+vercel deploy --prod --yes
+vercel env add APP_BASE_URL production
+vercel env add NEXTAUTH_URL production
+curl https://folqen.vercel.app
+curl https://folqen.vercel.app/api/health
 ```
 
 ## Command Results
@@ -84,6 +95,12 @@ Latest deployment/data foundation verification:
 - `prisma validate`: passed with local development `DATABASE_URL`.
 - `npm run build`: passed on Next.js `16.2.4`; routes include `/api/integrations/status` and `/api/integrations/n8n/test`.
 - `npm audit --omit=dev`: reports 2 moderate advisories through Next/PostCSS; unsafe forced downgrade not applied.
+- `vercel whoami`: passed as `rayalasai874-4182`.
+- `vercel link`: passed and created `.vercel/project.json` locally, ignored by git.
+- `vercel deploy --prod --yes`: passed; production alias is `https://folqen.vercel.app`.
+- HTTP check for production `/`: returned 200.
+- HTTP check for production `/api/health`: returned `status: ok`; Vercel configured; database/n8n not connected.
+- `vercel env ls`: production has `APP_BASE_URL` and `NEXTAUTH_URL`.
 
 ## Known Broken Areas
 
@@ -98,9 +115,9 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 - Authentication is not implemented.
 - Upload validation is not implemented.
 - Database migrations and seed data are not applied.
-- Vercel project is not linked in this repo yet.
 - Free database credentials are not configured.
 - Oracle n8n webhook is not configured.
+- Authentication secret is not configured in Vercel yet.
 
 ## Environment Assumptions
 
@@ -110,6 +127,7 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 - The UI should continue using the neon green dark cyber/glass template direction.
 - Next.js now requires Node `>=20.9.0`; this is recorded in `package.json`.
 - Real deployment/testing needs secrets set outside git.
+- Vercel project link exists locally under `.vercel/` and is ignored by git.
 
 ## Safe To Continue From Another Account
 
