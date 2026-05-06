@@ -1,76 +1,15 @@
-import {
-  AlertTriangle,
-  BarChart3,
-  Bot,
-  CheckCircle2,
-  Clock3,
-  FileText,
-  Gauge,
-  Megaphone,
-  ShieldCheck,
-  Sparkles,
-  Workflow,
-  Wrench,
-} from "lucide-react";
+import { BarChart3, Bot, CheckCircle2, Clock3, FileText, Gauge, Megaphone, Sparkles, Workflow, Wrench } from "lucide-react";
 import { ConfirmDialog } from "@/components/app/confirm-dialog";
 import { PageHeader } from "@/components/app/page-header";
 import { RiskBadge } from "@/components/app/risk-badge";
 import { StatCard } from "@/components/app/stat-card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { routeById } from "@/lib/app-routes";
+import type { getDashboardData } from "@/lib/dashboard-data";
 
-const dashboardStats = [
-  { label: "Active jobs", value: "3", hint: "Draft-only content operations", tone: "premium" as const },
-  { label: "Pending approvals", value: "4", hint: "Publishing and upgrades blocked", tone: "warning" as const },
-  { label: "Connected platforms", value: "0", hint: "Manual packages only", tone: "safe" as const },
-];
+type DashboardData = Awaited<ReturnType<typeof getDashboardData>>;
 
-const activeJobs = [
-  {
-    title: "Haunted fort short package",
-    stage: "Script review",
-    progress: "68%",
-    status: "Mock",
-    detail: "Hook, outline, and caption draft are ready for review.",
-  },
-  {
-    title: "Cursed object carousel",
-    stage: "Storyboard",
-    progress: "44%",
-    status: "Mock",
-    detail: "Panel prompts are prepared; image generation remains Not connected.",
-  },
-  {
-    title: "Weekly mystery newsletter",
-    stage: "Research",
-    progress: "31%",
-    status: "Mock",
-    detail: "Sources need fact review before the draft can move forward.",
-  },
-];
-
-const approvalItems = [
-  "Public publishing request blocked",
-  "Paid video tool request blocked",
-  "Upgrade proposal needs review",
-  "Copyright uncertainty needs decision",
-];
-
-const platformStatuses = ["YouTube", "Instagram", "Facebook", "Snapchat", "Threads"];
-
-const toolStatuses = [
-  { name: "n8n", note: "Webhook missing", icon: Workflow },
-  { name: "ComfyUI", note: "Base URL missing", icon: Sparkles },
-  { name: "FFmpeg", note: "Path missing", icon: Wrench },
-  { name: "Analytics", note: "No API connected", icon: BarChart3 },
-];
-
-const timeline = [
-  { time: "09:10", title: "Safety gates checked", icon: ShieldCheck },
-  { time: "09:24", title: "Draft package prepared", icon: FileText },
-  { time: "09:41", title: "Publishing blocked by default", icon: AlertTriangle },
-  { time: "10:05", title: "Upgrade proposal saved as mock", icon: Sparkles },
-];
+const toolIcons = [Workflow, Sparkles, Wrench, BarChart3];
 
 function ProgressBar({ value }: { value: string }) {
   return (
@@ -80,13 +19,17 @@ function ProgressBar({ value }: { value: string }) {
   );
 }
 
-export function DashboardScreen() {
+function formatPlatformName(name: string) {
+  return name.charAt(0) + name.slice(1).toLowerCase();
+}
+
+export function DashboardScreen({ data }: { data: DashboardData }) {
   return (
     <div className="space-y-5 pb-24">
       <PageHeader route={routeById.dashboard} />
 
       <section className="grid gap-3 md:grid-cols-3">
-        {dashboardStats.map((stat) => (
+        {data.stats.map((stat) => (
           <StatCard key={stat.label} {...stat} />
         ))}
       </section>
@@ -98,18 +41,21 @@ export function DashboardScreen() {
               <div className="font-mono text-[10px] uppercase tracking-widest text-neon">Active pipeline</div>
               <h2 className="mt-1 font-display text-xl font-semibold">Creator jobs in progress</h2>
             </div>
-            <StatusBadge tone="premium">Mock data</StatusBadge>
+            <StatusBadge tone="premium">Live database</StatusBadge>
           </div>
 
           <div className="mt-4 grid gap-3">
-            {activeJobs.map((job) => (
-              <article key={job.title} className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+            {data.jobs.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-white/10 p-5 text-sm text-muted-foreground">No active jobs yet. The agent can create draft tasks after the workflow layer is expanded.</div>
+            ) : null}
+            {data.jobs.map((job) => (
+              <article key={job.id} className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <h3 className="font-display text-base font-semibold">{job.title}</h3>
                     <p className="mt-1 text-sm text-muted-foreground">{job.detail}</p>
                   </div>
-                  <StatusBadge tone="neutral">{job.status}</StatusBadge>
+                  <StatusBadge tone={job.status === "FAILED" ? "danger" : job.status === "COMPLETED" ? "safe" : "neutral"}>{job.status}</StatusBadge>
                 </div>
                 <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
                   <span>{job.stage}</span>
@@ -128,12 +74,15 @@ export function DashboardScreen() {
                 <div className="font-mono text-[10px] uppercase tracking-widest text-neon">Approvals</div>
                 <h2 className="mt-1 font-display text-xl font-semibold">Human gates</h2>
               </div>
-              <RiskBadge level="medium" />
+              <RiskBadge level={data.approvals.length > 0 ? "medium" : "low"} />
             </div>
             <div className="mt-4 space-y-2">
-              {approvalItems.map((item) => (
-                <div key={item} className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3">
-                  <span className="text-sm text-muted-foreground">{item}</span>
+              {data.approvals.length === 0 ? (
+                <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-sm text-muted-foreground">No pending approvals.</div>
+              ) : null}
+              {data.approvals.map((approval) => (
+                <div key={approval.id} className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3">
+                  <span className="text-sm text-muted-foreground">{approval.title}</span>
                   <StatusBadge tone="safe">Needs approval</StatusBadge>
                 </div>
               ))}
@@ -149,7 +98,7 @@ export function DashboardScreen() {
               <div>
                 <h3 className="font-display text-base font-semibold">Safe assistant mode</h3>
                 <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                  The agent can prepare work and explain blockers, but it cannot publish, spend, connect accounts, or upgrade itself.
+                  The agent can save chat messages and prepare work, but it cannot publish, spend, connect accounts, or upgrade itself.
                 </p>
               </div>
             </div>
@@ -167,10 +116,10 @@ export function DashboardScreen() {
             <h2 className="font-display text-lg font-semibold">Platform status</h2>
           </div>
           <div className="mt-4 space-y-2">
-            {platformStatuses.map((platform) => (
-              <div key={platform} className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] p-3">
-                <span className="text-sm">{platform}</span>
-                <StatusBadge tone="warning">Not connected</StatusBadge>
+            {data.platforms.map((platform) => (
+              <div key={platform.id} className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] p-3">
+                <span className="text-sm">{formatPlatformName(platform.name)}</span>
+                <StatusBadge tone={platform.status === "LIVE" || platform.status === "CONFIGURED" ? "safe" : "warning"}>{platform.status.replaceAll("_", " ")}</StatusBadge>
               </div>
             ))}
           </div>
@@ -182,17 +131,23 @@ export function DashboardScreen() {
             <h2 className="font-display text-lg font-semibold">Tool limits</h2>
           </div>
           <div className="mt-4 space-y-2">
-            {toolStatuses.map((tool) => (
-              <div key={tool.name} className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-3">
-                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-neon/10 text-neon">
-                  <tool.icon className="h-4 w-4" />
-                </span>
-                <div>
-                  <div className="text-sm font-medium">{tool.name}</div>
-                  <div className="text-xs text-muted-foreground">{tool.note}</div>
+            {data.tools.length === 0 ? (
+              <div className="rounded-xl border border-white/10 bg-white/[0.02] p-3 text-sm text-muted-foreground">No tool limits configured yet.</div>
+            ) : null}
+            {data.tools.map((tool, index) => {
+              const Icon = toolIcons[index % toolIcons.length];
+              return (
+                <div key={tool.id} className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-3">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-neon/10 text-neon">
+                    <Icon className="h-4 w-4" />
+                  </span>
+                  <div>
+                    <div className="text-sm font-medium">{tool.name}</div>
+                    <div className="text-xs text-muted-foreground">{tool.note}</div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
@@ -202,14 +157,15 @@ export function DashboardScreen() {
             <h2 className="font-display text-lg font-semibold">Recent activity</h2>
           </div>
           <div className="mt-4 space-y-3">
-            {timeline.map((item) => (
-              <div key={`${item.time}-${item.title}`} className="flex gap-3">
+            {data.activity.map((item) => (
+              <div key={item.id} className="flex gap-3">
                 <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-neon/10 text-neon">
-                  <item.icon className="h-4 w-4" />
+                  <FileText className="h-4 w-4" />
                 </span>
                 <div>
                   <div className="font-mono text-[10px] text-muted-foreground">{item.time}</div>
                   <div className="text-sm text-foreground">{item.title}</div>
+                  <div className="text-xs text-muted-foreground">{item.actor}</div>
                 </div>
               </div>
             ))}
@@ -220,17 +176,17 @@ export function DashboardScreen() {
       <section className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
         <div className="grid gap-5 md:grid-cols-[0.8fr_1.2fr] md:items-center">
           <div>
-            <div className="font-mono text-[10px] uppercase tracking-widest text-neon">Next phase started</div>
-            <h2 className="mt-2 font-display text-2xl font-semibold">Dashboard moved beyond a placeholder</h2>
+            <div className="font-mono text-[10px] uppercase tracking-widest text-neon">Dashboard upgraded</div>
+            <h2 className="mt-2 font-display text-2xl font-semibold">Now powered by Supabase records</h2>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">
-              This screen now shows the structure the real app will use: jobs, approvals, platform health, tool limits, activity, and safety status.
+              The dashboard uses real jobs, approvals, platforms, tool limits, and audit events while keeping integrations honest and safe.
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
             {[
-              ["Build auth", "Next major risk"],
-              ["Seed data", "Database phase"],
-              ["Route polish", "Current phase"],
+              ["Database", "Live"],
+              ["Publishing", "Blocked"],
+              ["Paid tools", "Blocked"],
             ].map(([title, note]) => (
               <div key={title} className="rounded-2xl border border-dashed border-white/10 bg-white/[0.02] p-4">
                 <CheckCircle2 className="h-4 w-4 text-neon" />

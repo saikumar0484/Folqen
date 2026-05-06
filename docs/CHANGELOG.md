@@ -1,5 +1,31 @@
 # Changelog
 
+## May 6, 2026 - Test viewer and live dashboard data
+
+### Added
+
+- Created a low-privilege `VIEWER` test account in Supabase for dashboard testing.
+- Added server-side dashboard data loading from Supabase.
+- Updated `/dashboard` to show real counts, active jobs, pending approvals, platform statuses, tool limits, and recent audit activity.
+
+### Safety
+
+- Test account is viewer-only and cannot change settings or approve/reject items.
+- Test password is not committed to the repository docs.
+- Dashboard still shows platform/tool integrations as `Not connected` unless truly configured.
+
+### Verification
+
+- Test viewer production login returned 200.
+- Test viewer production `/dashboard` returned 200.
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run test`: passed, 6 guard tests.
+- `npm run build`: passed.
+- `vercel deploy --prod --yes`: passed and aliased `https://folqen.vercel.app`.
+- Live dashboard contained `Live database` and `Now powered by Supabase records`.
+- `GET /api/health`: returned database status `live`.
+
 ## May 6, 2026 - Real backend controls phase
 
 ### Added

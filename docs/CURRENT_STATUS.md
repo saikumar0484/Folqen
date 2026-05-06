@@ -2,7 +2,7 @@
 
 ## Phase
 
-Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, and the first backend controls phase completed on branch `build/phase-0-foundation`.
+Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, and dashboard now reads live Supabase data on branch `build/phase-0-foundation`.
 
 ## Completed Work
 
@@ -57,10 +57,12 @@ Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/
 - Added database-backed audit trail page.
 - Added persistent agent chat page and API using Supabase `AgentMessage` rows.
 - Added shared audit and role permission helpers.
+- Created a low-privilege Supabase `VIEWER` test account for dashboard testing.
+- Added server-side dashboard data loader and updated `/dashboard` to use Supabase records for counts, jobs, approvals, platform statuses, tool limits, and audit activity.
 
 ## App Status
 
-The app installs, lints, typechecks, tests, validates Prisma schema, builds successfully, deploys to Vercel, connects to Supabase, supports seeded database-backed login, and now has working database-backed settings, approvals, audit logs, and mock agent chat persistence.
+The app installs, lints, typechecks, tests, validates Prisma schema, builds successfully, deploys to Vercel, connects to Supabase, supports seeded database-backed login, and now has working database-backed settings, approvals, audit logs, mock agent chat persistence, and dashboard data.
 
 ## Safety Status
 
@@ -192,6 +194,19 @@ Latest May 6, 2026 backend controls update:
 - Production settings save returned 200 using safe values.
 - Production agent message save returned 200 and returned persisted messages.
 
+Latest May 6, 2026 test viewer and live dashboard update:
+
+- Created test viewer account in Supabase with role `VIEWER`; password was not committed to docs.
+- Test viewer production login returned 200.
+- Test viewer production `/dashboard` returned 200.
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run test`: passed, 6 guard tests.
+- `npm run build`: passed.
+- `vercel deploy --prod --yes`: passed and aliased `https://folqen.vercel.app`.
+- Production `/dashboard` contained `Live database` and `Now powered by Supabase records`.
+- `GET https://folqen.vercel.app/api/health`: returned database status `live`.
+
 Browser/runtime checks:
 
 - Dev server started at `http://127.0.0.1:3000`.
@@ -204,6 +219,7 @@ Browser/runtime checks:
 
 - `npm audit` still reports two moderate advisories through Next's bundled PostCSS dependency even after upgrading to Next `16.2.4`. npm recommends `npm audit fix --force`, but that would downgrade Next and is not safe. Track and resolve when Next ships a compatible patched dependency.
 - Default seeded admin password now has a password-change flow, but the user still needs to actually change it in `/settings`.
+- Test viewer account exists for temporary dashboard testing and should be removed or rotated later.
 - Supabase direct database hostname remained unreliable from this Windows environment; use the Supabase session pooler or `supabase db query --linked`.
 - File uploads, live integrations, and publishing are not implemented yet.
 - Oracle n8n webhook testing still requires account-specific secrets and must be completed through safe environment variable setup.

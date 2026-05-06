@@ -67,6 +67,8 @@
 - [x] Approval backend routes.
 - [x] Audit log page backed by database.
 - [x] Agent chat persistence.
+- [x] Test viewer account for dashboard testing.
+- [x] Dashboard backed by Supabase data.
 - [ ] File upload validation.
 - [ ] Service interfaces and provider adapters.
 - [ ] n8n placeholder endpoints.

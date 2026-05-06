@@ -2,6 +2,14 @@
 
 ## Current Risks
 
+### Temporary viewer test account exists
+
+- Risk: A shared test account can remain active longer than needed.
+- Prevention: It has role `VIEWER`, cannot change settings, and cannot approve/reject items.
+- Verification: Production login and dashboard access were tested; privileged APIs remain role-gated.
+- Rollback: Delete or rotate the test account from Supabase after dashboard testing.
+- Human approval trigger: Keeping, deleting, or changing role/password for the test account.
+
 ### Supabase direct database hostname is unreliable from this Windows environment
 
 - Risk: Direct Prisma commands against `db.eobvgajgyvydqydlfken.supabase.co:5432` fail DNS resolution locally, and a prior pooler `db push` attempt hung.

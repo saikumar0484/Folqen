@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, and the first real backend controls are live.
+Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, and dashboard now reads live Supabase data.
 
 ## Branch
 
@@ -57,6 +57,8 @@ Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. D
 - Added database-backed audit page.
 - Added persistent mock agent chat page and message API.
 - Added shared audit logging helper and role permission helpers.
+- Created a low-privilege viewer test account in Supabase for dashboard testing.
+- Added `src/lib/dashboard-data.ts` and updated `/dashboard` to show live Supabase counts and records.
 
 ## Commands Run
 
@@ -120,6 +122,13 @@ curl https://folqen.vercel.app/audit
 curl https://folqen.vercel.app/agent
 curl https://folqen.vercel.app/api/settings
 curl https://folqen.vercel.app/api/agent/messages
+supabase db query --linked --file <temp test viewer sql>
+npm run lint
+npm run typecheck
+npm run test
+npm run build
+vercel deploy --prod --yes
+curl https://folqen.vercel.app/dashboard
 ```
 
 ## Command Results
@@ -193,6 +202,10 @@ Latest deployment/data foundation verification:
 - Production authenticated `/dashboard`: returned 200 and contained dashboard/logout UI.
 - Landing gradient text hotfix verification: lint, typecheck, tests, build, production deploy, live screenshot, and health check passed.
 - Backend controls update verification: lint, typecheck, tests, build, production deploy, login, `/settings`, `/approvals`, `/audit`, `/agent`, settings save, and agent message save passed.
+- Test viewer creation: passed through Supabase Management API SQL.
+- Test viewer production login: returned 200.
+- Test viewer production `/dashboard`: returned 200.
+- Dashboard live data update verification: lint, typecheck, tests, build, production deploy, `/dashboard`, and `/api/health` passed.
 
 ## Known Broken Areas
 
@@ -207,6 +220,7 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 - Upload validation is not implemented.
 - Oracle n8n webhook is not configured.
 - The password change flow exists; the seeded password still needs to be changed by the user.
+- Temporary viewer test account exists and should be deleted or rotated after testing.
 - Do not run destructive Supabase resets now that the production database is seeded.
 
 ## Environment Assumptions
@@ -228,5 +242,5 @@ Yes. The repo is safe to continue from this checkpoint. No source files are half
 ## Next Recommended Command
 
 ```text
-Read root docs and checkpoint docs, run lint/typecheck/test/build if needed, then continue database-backed dashboard/pipeline/library work or n8n setup if webhook secrets are available. Supabase, login, password change API, settings, approvals, audit logs, and persistent mock agent chat are already verified.
+Read root docs and checkpoint docs, run lint/typecheck/test/build if needed, then continue database-backed pipeline/library work or n8n setup if webhook secrets are available. Supabase, login, password change API, settings, approvals, audit logs, persistent mock agent chat, and dashboard live data are already verified.
 ```
