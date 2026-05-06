@@ -33,15 +33,15 @@ npm run test
 npm run build
 ```
 
-2. Configure a free Postgres `DATABASE_URL` outside git.
-3. Generate and push the Prisma schema:
+2. Confirm Supabase production database remains connected through Vercel `DATABASE_URL`.
+3. For a new database only, generate and push the Prisma schema:
 
 ```bash
 npm run db:generate
 npm run db:push
 ```
 
-4. Seed realistic starter data:
+4. For a new database only, seed realistic starter data:
 
 ```bash
 npm run db:seed
@@ -69,18 +69,18 @@ curl -X POST http://localhost:3000/api/integrations/n8n/test
 
 ## Expected Results
 
-- Database status becomes `live` when `DATABASE_URL` is valid.
+- Database status is `live` in production when `DATABASE_URL` is valid.
 - n8n status remains `configured` until the test endpoint succeeds.
 - n8n test returns `live` only after the webhook accepts the health-check payload.
 - All platform integrations continue showing `Not connected`.
 
 ## Recovery
 
-If database setup fails:
+If future database setup fails:
 
 - Remove or correct `DATABASE_URL`.
 - Re-run `npm run db:generate`.
-- Re-run `npm run db:push` only after confirming the target database.
+- Re-run schema changes only after confirming the target database and avoiding destructive resets.
 
 If n8n test fails:
 

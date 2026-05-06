@@ -104,11 +104,11 @@ This test does not publish content or use paid tools. It only sends a connection
 
 Folqen should ask the Oracle/local worker to do those jobs and store status back in the database.
 
-## Blockers Before Production
+## Remaining Production Blockers
 
-- Authentication is not implemented yet.
-- Protected routes are not implemented yet.
-- Real database migration must be approved.
+- Password-change flow is not implemented yet.
+- Role-aware admin/operator/viewer checks need hardening.
 - Real n8n webhook secret must be configured safely.
 - Platform OAuth credentials are not configured.
+- Upload validation and file storage are not implemented yet.
 - Public publishing remains blocked.

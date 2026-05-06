@@ -52,7 +52,7 @@ npm run dev
 The selected MVP deployment plan is:
 
 - Vercel for the Folqen web app and API routes.
-- A free PostgreSQL database such as Supabase or Neon for real app data.
+- Supabase free PostgreSQL for real app data.
 - The user's Oracle Free Tier server for self-hosted n8n automation workers.
 - Local/worker execution for heavy jobs like FFmpeg, ComfyUI, browser automation, and long-running workflows.
 
@@ -62,7 +62,7 @@ Current Vercel production URL:
 
 - https://folqen.vercel.app
 
-This deployment is live for testing the shell, login screen, protected-route behavior, and health/status endpoints. It is not a complete production MVP yet because real database setup and live n8n secrets are still pending.
+This deployment is live for testing the shell, login screen, protected-route behavior, health/status endpoints, and database-backed authentication. It is not a complete production MVP yet because live n8n secrets, uploads, platform integrations, and real content workflows are still pending.
 
 Useful deployment/data commands:
 
@@ -90,9 +90,9 @@ Do not add real secrets to the repository. Do not claim any integration is live 
 
 The foundation branch includes a neon green dark cyber/glass UI direction, app shell placeholders, provider honesty states, environment validation, safety guards, Prisma schema foundation, and checkpoint docs. The landing page now follows the uploaded `display-perfect-mirror-main.zip` template more closely with a sticky glass header, long product sections, clean empty states, FAQ, CTA, and footer. The dashboard next phase has started with Folqen-specific cards for jobs, approvals, platform status, tool limits, and activity.
 
-The project now also includes deployment-readiness docs, database seed scripts, safe health/integration status APIs, and a custom authentication foundation for testing the Vercel + free database + Oracle n8n worker plan.
+The project now also includes deployment-readiness docs, database seed scripts, safe health/integration status APIs, and a custom authentication foundation for testing the Vercel + Supabase + Oracle n8n worker plan.
 
-Authentication routes and protected dashboard routes are implemented. Real login becomes usable after `DATABASE_URL` is configured and `npm run db:seed` creates the admin user.
+Authentication routes and protected dashboard routes are implemented. Supabase is connected in production, the Prisma schema has been applied, seed data exists, and login works with the default seeded admin user.
 
 Uploads, live social integrations, and real publishing are not implemented yet.
 
@@ -118,12 +118,12 @@ Do not revert to the earlier purple/cyan style.
 2. Read `AGENTS.md`, `IMPLEMENTATION_PLAN.md`, `CHECKPOINT_RULES.md`, `FUTURE_PROOF_ARCHITECTURE.md`, `SELF_IMPROVEMENT_AGENT.md`, `HANDOFF_RULES.md`, this README, and all checkpoint docs in `docs/`.
 3. Run `npm install` if dependencies are missing.
 4. Run `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build` before continuing.
-5. Continue Phase 3 auth hardening and real database setup, then continue route-specific backend work.
+5. Continue Phase 3 auth hardening with password change and role-aware checks, then continue route-specific backend work.
 6. For deployment continuation, read `docs/DEPLOYMENT_PLAN.md` and `docs/REAL_DATA_TESTING.md` before adding Vercel, database, or n8n secrets.
 
 ## Default Admin User
 
-The seed script creates this admin user after a database is connected:
+The seed script creates this admin user:
 
 - Email: `admin@example.com`
 - Password: `ChangeMe123!`

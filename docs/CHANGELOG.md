@@ -1,5 +1,39 @@
 # Changelog
 
+## May 6, 2026 - Supabase production database live
+
+### Added
+
+- Applied the Prisma schema to Supabase project `eobvgajgyvydqydlfken` through `supabase db query --linked`.
+- Enabled row level security on all 22 public Folqen tables.
+- Seeded the Supabase database with the admin user, safety settings, platform statuses, content, approval, analytics, notification, and upgrade proposal data.
+- Added Vercel production `DATABASE_URL` as a sensitive env var without committing or printing the value.
+
+### Changed
+
+- Updated `npm run build` to run `prisma generate && next build` so Vercel deployments generate a fresh Prisma Client.
+- Redeployed production at `https://folqen.vercel.app`.
+
+### Verification
+
+- `npm install`: passed in the fresh worktree after setting the temporary Node runtime on PATH.
+- `supabase projects list`: passed; linked project is `Folqen`.
+- Supabase table count check: passed; 22 public tables created.
+- RLS verification: passed; all 22 public tables report RLS enabled.
+- `npm run db:generate`: passed.
+- `npm run db:seed`: passed against the Supabase session pooler.
+- Seed verification: passed; admin user, 10 platforms, safety settings, approval, and upgrade proposal exist.
+- `vercel env add DATABASE_URL production --sensitive`: passed.
+- First Vercel redeploy exposed a Prisma stale-client issue.
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run test`: passed, 6 guard tests.
+- `npm run build`: passed and generated Prisma Client before Next build.
+- Second `vercel deploy --prod --yes`: passed and aliased `https://folqen.vercel.app`.
+- `GET /api/health`: returned database status `live`.
+- `POST /api/auth/login`: returned 200 for the seeded admin account.
+- Authenticated `GET /dashboard`: returned 200 and contained the dashboard/logout UI.
+
 ## May 6, 2026 - Safe Supabase checkpoint
 
 ### Added

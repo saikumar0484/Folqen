@@ -49,20 +49,20 @@
 - [x] Deploy production app to Vercel.
 - [x] Verify production `/` and `/api/health`.
 - [x] Add non-secret production app URL env values.
-- [ ] Configure free Postgres `DATABASE_URL`.
+- [x] Configure free Postgres `DATABASE_URL`.
 - [x] Connect fresh Supabase project.
 - [x] Verify Supabase linked query access.
-- [ ] Apply Prisma schema to Supabase through Management API.
-- [ ] Run database push against approved free database.
-- [ ] Seed approved free database.
+- [x] Apply Prisma schema to Supabase through Management API.
+- [x] Run database push against approved free database.
+- [x] Seed approved free database.
 - [ ] Configure Oracle n8n webhook env values.
 - [ ] Test Oracle n8n webhook from Folqen.
 - [x] Authentication and roles foundation.
 - [x] Protected routes.
 - [x] Login/logout API foundation.
 - [ ] Password change flow.
-- [ ] Database-backed login verification.
-- [ ] Database migrations and seed data.
+- [x] Database-backed login verification.
+- [x] Database migrations and seed data.
 - [ ] Settings persistence.
 - [ ] Approval backend routes.
 - [ ] File upload validation.

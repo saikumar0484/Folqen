@@ -18,13 +18,13 @@
 - Rollback: Rotate the Supabase database password after the app is connected, or sooner if there is any concern the chat history is exposed.
 - Human approval trigger: Password rotation, Vercel secret replacement, or any credential-bearing operation.
 
-### Database-backed login is blocked until DATABASE_URL is configured
+### Default seeded admin password must be changed
 
-- Risk: Users may expect login to work immediately because the login UI is live.
-- Prevention: Login API returns a clear database-not-connected error until `DATABASE_URL` is configured and seeded.
-- Verification: `/dashboard` redirects to `/login`; `/api/health` reports database `not_connected`.
-- Rollback: Remove `DATABASE_URL` or clear the session cookie to return to locked mode.
-- Human approval trigger: Adding database credentials or pushing schema to a real database.
+- Risk: The seeded admin account uses the documented first-run password.
+- Prevention: Add a password-change flow next and treat the seeded password as temporary first-login-only access.
+- Verification: Production login works; password-change flow is still pending.
+- Rollback: Rotate the user password directly in Supabase or reseed with a new hash if needed.
+- Human approval trigger: Password rotation policy, account recovery decisions, or inviting additional real users.
 
 ### Generated prototype files are preserved but not active
 

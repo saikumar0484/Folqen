@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase project connection was verified, then paused at a safe checkpoint before schema application.
+Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, and production login is verified.
 
 ## Branch
 
@@ -44,6 +44,12 @@ Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. D
 - Confirmed linked Supabase project `Folqen`, ref `eobvgajgyvydqydlfken`, region `Northeast Asia (Seoul)`.
 - Verified linked database API query access with `supabase db query --linked`.
 - Generated Prisma schema SQL to a local temp file only; it was not applied before the user requested a safe stop.
+- Applied Prisma schema to Supabase project `eobvgajgyvydqydlfken` through `supabase db query --linked`.
+- Enabled RLS on all 22 public Folqen tables.
+- Seeded Supabase using Prisma through the Supabase session pooler.
+- Added sensitive Vercel production `DATABASE_URL` without printing or committing the value.
+- Fixed Vercel Prisma generation by changing `npm run build` to `prisma generate && next build`.
+- Redeployed production and verified `/api/health`, `/api/auth/login`, and authenticated `/dashboard`.
 
 ## Commands Run
 
@@ -76,6 +82,20 @@ curl https://folqen.vercel.app/dashboard
 supabase projects list
 supabase db query "select current_database() as database_name, current_user as user_name;" --linked -o json
 node node_modules/prisma/build/index.js migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script
+supabase db query --linked --file <temp schema sql>
+supabase db query --linked --file <temp rls sql>
+npm run db:generate
+npm run db:seed
+vercel env add DATABASE_URL production --sensitive
+vercel deploy --prod --yes
+npm run lint
+npm run typecheck
+npm run test
+npm run build
+vercel deploy --prod --yes
+curl https://folqen.vercel.app/api/health
+curl https://folqen.vercel.app/api/auth/login
+curl https://folqen.vercel.app/dashboard
 ```
 
 ## Command Results
@@ -130,6 +150,23 @@ Latest deployment/data foundation verification:
 - Direct Supabase DB hostname failed DNS resolution in this Windows session.
 - Prisma schema SQL generation to temp file passed.
 - Supabase schema application, seed, Vercel `DATABASE_URL`, redeploy, and database-backed login verification were not performed before this checkpoint.
+- Latest Supabase schema application: passed after removing UTF-8 BOM from the temp SQL file.
+- Supabase public table count: 22.
+- RLS verification: all 22 public tables enabled.
+- `npm run db:generate`: passed.
+- `npm run db:seed`: passed using the Supabase session pooler.
+- Seed verification: 1 admin user, 10 platform statuses, 1 setting, 1 approval, and 1 upgrade proposal exist.
+- `vercel env add DATABASE_URL production --sensitive`: passed; value not printed.
+- First redeploy with database env: passed, but runtime logs showed stale Prisma Client.
+- Build script fix `prisma generate && next build`: verified locally.
+- Latest `npm run lint`: passed.
+- Latest `npm run typecheck`: passed.
+- Latest `npm run test`: passed, 6 tests.
+- Latest `npm run build`: passed.
+- Latest `vercel deploy --prod --yes`: passed; production alias is `https://folqen.vercel.app`.
+- Production `/api/health`: returned database `live`.
+- Production `/api/auth/login`: returned 200 for seeded admin credentials.
+- Production authenticated `/dashboard`: returned 200 and contained dashboard/logout UI.
 
 ## Known Broken Areas
 
@@ -141,14 +178,10 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 - All integrations are `Not connected`.
 - Mini agent chat is a mock UI shell.
 - Command palette and notifications are mock interactions.
-- Authentication is not implemented.
 - Upload validation is not implemented.
-- Database migrations and seed data are not applied.
-- Free database credentials are not configured.
 - Oracle n8n webhook is not configured.
-- Login cannot complete until free database is configured and seeded.
-- Supabase project is connected but not migrated or seeded.
-- Do not retry a long-running Prisma `db push` through the pooler without a short timeout and a clear stop plan; prefer `supabase db query --linked --file`.
+- Default admin password change flow is not implemented yet.
+- Do not run destructive Supabase resets now that the production database is seeded.
 
 ## Environment Assumptions
 
@@ -157,8 +190,10 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 - Node/npm were provided through a temporary local Node runtime because global npm was not available on PATH.
 - The UI should continue using the neon green dark cyber/glass template direction.
 - Next.js now requires Node `>=20.9.0`; this is recorded in `package.json`.
-- Database/n8n real testing needs secrets set outside git.
+- Oracle n8n real testing needs secrets set outside git.
 - Vercel project link exists locally under `.vercel/` and is ignored by git.
+- Supabase production `DATABASE_URL` is set in Vercel as a sensitive env var.
+- Direct Supabase DB host remained unreliable from this Windows environment; use the session pooler or `supabase db query --linked`.
 
 ## Safe To Continue From Another Account
 
@@ -167,5 +202,5 @@ Yes. The repo is safe to continue from this checkpoint. No source files are half
 ## Next Recommended Command
 
 ```text
-Read root docs and checkpoint docs, confirm Supabase project `eobvgajgyvydqydlfken`, run lint/typecheck/test/build if needed, then apply Prisma schema through `supabase db query --linked --file` using a temporary SQL file. After schema and seed are verified, add `DATABASE_URL` to Vercel production env through the CLI secret flow and redeploy.
+Read root docs and checkpoint docs, run lint/typecheck/test/build if needed, then continue Phase 3 auth hardening: password change flow, role-aware checks, and database-backed settings/approvals/audit APIs. Supabase schema, seed, Vercel `DATABASE_URL`, production redeploy, health, and login are already verified.
 ```

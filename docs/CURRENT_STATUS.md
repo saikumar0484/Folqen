@@ -2,7 +2,7 @@
 
 ## Phase
 
-Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, and Phase 3 authentication foundation implemented on branch `build/phase-0-foundation`.
+Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, and Supabase-backed production login verified on branch `build/phase-0-foundation`.
 
 ## Completed Work
 
@@ -44,10 +44,16 @@ Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/
 - Confirmed Supabase project `Folqen` is active and linked with reference `eobvgajgyvydqydlfken` in the Seoul region.
 - Verified Supabase Management API database query access with `supabase db query --linked`.
 - Generated a Prisma schema SQL file in the local temp directory only; it was not applied to Supabase before this safe checkpoint.
+- Applied the Prisma schema to Supabase through `supabase db query --linked`.
+- Enabled row level security on all 22 public Folqen tables.
+- Seeded Supabase with the default admin, safety settings, platform statuses, starter content, approval, analytics, notification, and upgrade proposal records.
+- Added Vercel production `DATABASE_URL` as a sensitive env var without committing or printing the value.
+- Fixed Vercel Prisma Client generation by changing the build script to `prisma generate && next build`.
+- Redeployed production and verified database health plus login.
 
 ## App Status
 
-The app installs, lints, typechecks, tests, validates Prisma schema, and builds successfully in this environment. The latest template/dashboard update has also been verified.
+The app installs, lints, typechecks, tests, validates Prisma schema, builds successfully, deploys to Vercel, connects to Supabase, and supports seeded database-backed login.
 
 ## Safety Status
 
@@ -55,9 +61,11 @@ The app installs, lints, typechecks, tests, validates Prisma schema, and builds 
 - Paid tools remain disabled by default.
 - Browser automation remains disabled by default.
 - Human approval remains required by default.
-- No real database, n8n, platform, or paid-tool credentials were added.
+- Supabase database is configured in Vercel production through an encrypted/sensitive env var.
+- No n8n, platform, or paid-tool credentials were added.
 - Production `AUTH_SECRET` is configured in Vercel; its value was never printed or committed.
 - All integrations remain `Not connected` or `Mock`.
+- Database is the only live backend integration.
 
 ## Verification Status
 
@@ -130,6 +138,31 @@ Latest May 6, 2026 Supabase setup checkpoint:
 - Prisma schema SQL was generated successfully to a temporary local file using the explicit temporary Node runtime.
 - No schema was applied, no seed was run, no `DATABASE_URL` was added to Vercel, and no production redeploy was started after this partial Supabase step.
 
+Latest May 6, 2026 Supabase production database update:
+
+- `npm install`: initially failed in this fresh worktree until the temporary Node runtime was added to PATH, then passed.
+- `supabase link --project-ref eobvgajgyvydqydlfken`: passed.
+- Public table count before schema: 0.
+- Prisma schema SQL application through `supabase db query --linked --file`: passed after regenerating the SQL file without a UTF-8 BOM.
+- Public table count after schema: 22.
+- RLS enablement through `supabase db query --linked --file`: passed.
+- RLS verification: all 22 public tables report `rls_enabled = true`.
+- `npm run db:generate`: passed.
+- `npm run db:seed`: passed using the Supabase session pooler.
+- Seed verification: 1 admin user, 10 platform statuses, 1 setting, 1 approval, and 1 upgrade proposal exist.
+- `vercel link --yes --project folqen --scope rayalasai874-4182s-projects`: passed in the fresh worktree.
+- `vercel env add DATABASE_URL production --sensitive`: passed; value not printed.
+- First redeploy after adding `DATABASE_URL`: passed but Prisma Client was stale in Vercel runtime.
+- `npm run build` script changed to `prisma generate && next build`.
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run test`: passed, 6 guard tests.
+- `npm run build`: passed.
+- Second `vercel deploy --prod --yes`: passed and aliased to `https://folqen.vercel.app`.
+- `GET https://folqen.vercel.app/api/health`: returned database status `live`.
+- `POST https://folqen.vercel.app/api/auth/login`: returned 200 for seeded admin credentials.
+- Authenticated `GET https://folqen.vercel.app/dashboard`: returned 200 and contained dashboard/logout UI.
+
 Browser/runtime checks:
 
 - Dev server started at `http://127.0.0.1:3000`.
@@ -141,13 +174,12 @@ Browser/runtime checks:
 ## Known Issues
 
 - `npm audit` still reports two moderate advisories through Next's bundled PostCSS dependency even after upgrading to Next `16.2.4`. npm recommends `npm audit fix --force`, but that would downgrade Next and is not safe. Track and resolve when Next ships a compatible patched dependency.
-- Real database connection and seed are still pending, so login cannot complete yet.
-- Supabase is connected, but schema/seed/Vercel database env are still pending.
-- Continue database setup through `supabase db query --linked --file <temp schema sql>` rather than retrying the direct Supabase DB host from this machine.
+- Default seeded admin password still needs a password-change flow and should be changed after first login.
+- Supabase direct database hostname remained unreliable from this Windows environment; use the Supabase session pooler or `supabase db query --linked`.
 - File uploads, live integrations, and publishing are not implemented yet.
-- Free database connection and Oracle n8n webhook testing require account-specific secrets and must be completed through safe environment variable setup.
-- Production URL exists and protected routes are live, but it is not a complete MVP yet because real database-backed login, backend data flows, uploads, and n8n are still pending.
+- Oracle n8n webhook testing still requires account-specific secrets and must be completed through safe environment variable setup.
+- Production URL exists, protected routes are live, and database-backed login works, but it is not a complete MVP yet because uploads, backend route data flows, n8n, platform integrations, and publishing/package workflows are still pending.
 
 ## Safe To Stop
 
-Yes after this checkpoint is committed. The only active local work from the interrupted Supabase step is documentation for this checkpoint; no production database or Vercel env changes were made.
+Yes after this checkpoint is committed and pushed.
