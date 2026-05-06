@@ -2,6 +2,22 @@
 
 ## Current Risks
 
+### Database-backed login is blocked until DATABASE_URL is configured
+
+- Risk: Users may expect login to work immediately because the login UI is live.
+- Prevention: Login API returns a clear database-not-connected error until `DATABASE_URL` is configured and seeded.
+- Verification: `/dashboard` redirects to `/login`; `/api/health` reports database `not_connected`.
+- Rollback: Remove `DATABASE_URL` or clear the session cookie to return to locked mode.
+- Human approval trigger: Adding database credentials or pushing schema to a real database.
+
+### Generated prototype files are preserved but not active
+
+- Risk: Prototype files under `docs/prototypes/ai-studio-generated/` may confuse future agents or TypeScript if included accidentally.
+- Prevention: `docs/prototypes/**` is excluded from active TypeScript compilation.
+- Verification: `npm run typecheck` and `npm run build` pass.
+- Rollback: Delete or archive the prototype folder after human approval if it is no longer needed.
+- Human approval trigger: Replacing active Folqen UI with prototype code.
+
 ### Real deployment requires secret handling
 
 - Risk: Vercel, database, and n8n secrets could be leaked if added to files or terminal logs.

@@ -2,7 +2,7 @@
 
 ## Phase
 
-Phase 1 foundation verified, Phase 2 app shell placeholders started, and deployment/data foundation for Vercel + free Postgres + Oracle n8n worker added on branch `build/phase-0-foundation`.
+Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, and Phase 3 authentication foundation implemented on branch `build/phase-0-foundation`.
 
 ## Completed Work
 
@@ -36,6 +36,10 @@ Phase 1 foundation verified, Phase 2 app shell placeholders started, and deploym
 - Deployed production to `https://folqen.vercel.app`.
 - Added `.vercelignore` to prevent env files from being uploaded during CLI deploys.
 - Added production Vercel env values for non-secret `APP_BASE_URL` and `NEXTAUTH_URL`.
+- Preserved a conflicting/generated prototype under `docs/prototypes/ai-studio-generated/` and excluded it from active TypeScript builds.
+- Added custom authentication foundation: `/login`, login/logout/me APIs, signed HTTP-only session cookies, protected app route proxy, authenticated app layout guard, and topbar logout.
+- Added `bcryptjs` password hashing and updated `npm run db:seed` to hash the default admin password.
+- Generated and added production Vercel `AUTH_SECRET` without printing the value.
 
 ## App Status
 
@@ -47,7 +51,8 @@ The app installs, lints, typechecks, tests, validates Prisma schema, and builds 
 - Paid tools remain disabled by default.
 - Browser automation remains disabled by default.
 - Human approval remains required by default.
-- No real credentials were added.
+- No real database, n8n, platform, or paid-tool credentials were added.
+- Production `AUTH_SECRET` is configured in Vercel; its value was never printed or committed.
 - All integrations remain `Not connected` or `Mock`.
 
 ## Verification Status
@@ -95,7 +100,22 @@ Latest May 6, 2026 deployment/data foundation update:
 - `vercel deploy --prod --yes`: passed; production alias is `https://folqen.vercel.app`.
 - `GET https://folqen.vercel.app`: returned 200.
 - `GET https://folqen.vercel.app/api/health`: returned status `ok`, safety gates disabled/approval-required, Vercel configured, database/n8n not connected.
-- `vercel env ls`: production has `APP_BASE_URL` and `NEXTAUTH_URL`; database/n8n/auth secrets are not set yet.
+- `vercel env ls`: production has `APP_BASE_URL` and `NEXTAUTH_URL`; database/n8n secrets were not set yet at that checkpoint.
+
+Latest May 6, 2026 authentication update:
+
+- `npm install bcryptjs`: passed.
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run test`: passed, 6 guard tests passing.
+- `prisma validate`: passed with local development `DATABASE_URL`.
+- `npm run build`: passed; protected app routes are now dynamic and `src/proxy.ts` is active.
+- `vercel env add AUTH_SECRET production`: passed with generated secret, value not printed.
+- `vercel deploy --prod --yes`: passed; production alias remains `https://folqen.vercel.app`.
+- `GET https://folqen.vercel.app`: returned 200.
+- `GET https://folqen.vercel.app/login`: returned 200.
+- `GET https://folqen.vercel.app/dashboard` without session: returned 307 redirect to `/login?next=%2Fdashboard`.
+- `GET https://folqen.vercel.app/api/health`: returned status `ok`, Vercel/app base configured, database/n8n not connected.
 
 Browser/runtime checks:
 
@@ -108,9 +128,10 @@ Browser/runtime checks:
 ## Known Issues
 
 - `npm audit` still reports two moderate advisories through Next's bundled PostCSS dependency even after upgrading to Next `16.2.4`. npm recommends `npm audit fix --force`, but that would downgrade Next and is not safe. Track and resolve when Next ships a compatible patched dependency.
-- Authentication, real database migrations, file uploads, live integrations, and publishing are not implemented yet.
-- Real Vercel deployment, free database connection, and Oracle n8n webhook testing require secrets/account access and must be completed through safe environment variable setup.
-- Production URL exists, but it is not a complete MVP yet because authentication and real database setup are still pending.
+- Real database connection and seed are still pending, so login cannot complete yet.
+- File uploads, live integrations, and publishing are not implemented yet.
+- Free database connection and Oracle n8n webhook testing require account-specific secrets and must be completed through safe environment variable setup.
+- Production URL exists and protected routes are live, but it is not a complete MVP yet because real database-backed login, backend data flows, uploads, and n8n are still pending.
 
 ## Safe To Stop
 

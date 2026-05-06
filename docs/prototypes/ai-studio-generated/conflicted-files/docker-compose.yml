@@ -1,0 +1,32 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: folqen-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: folqen
+      POSTGRES_USER: folqen
+<<<<<<< ours
+      POSTGRES_PASSWORD: folqen_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - folqen-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  folqen-postgres-data:
+=======
+      POSTGRES_PASSWORD: folqen
+    ports:
+      - "5432:5432"
+    volumes:
+      - folqen_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U folqen -d folqen"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  folqen_postgres_data:
+>>>>>>> theirs

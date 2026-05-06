@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { Menu, Search, ShieldCheck, Sparkles } from "lucide-react";
 import { CommandPalette } from "@/components/app/command-palette";
+import { LogoutButton } from "@/components/app/logout-button";
 import { NotificationCenter } from "@/components/app/notification-center";
+import type { CurrentUser } from "@/lib/auth/current-user";
 
-export function Topbar() {
+export function Topbar({ user }: { user: CurrentUser }) {
   return (
     <header className="sticky top-0 z-30 border-b border-white/10 bg-background/75 px-4 py-3 backdrop-blur-xl sm:px-6 lg:px-8">
       <div className="mx-auto flex max-w-7xl items-center gap-3">
@@ -28,6 +30,11 @@ export function Topbar() {
           </div>
           <CommandPalette />
           <NotificationCenter />
+          <div className="hidden rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-xs text-muted-foreground sm:block">
+            <span className="text-foreground">{user.email}</span>
+            <span className="ml-2 font-mono text-[10px] uppercase text-neon">{user.role}</span>
+          </div>
+          <LogoutButton />
         </div>
       </div>
     </header>

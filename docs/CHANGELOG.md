@@ -1,5 +1,38 @@
 # Changelog
 
+## May 6, 2026 - Authentication foundation
+
+### Added
+
+- Custom login page at `/login`.
+- Auth APIs for login, logout, and current user.
+- Signed HTTP-only session cookie helpers.
+- Current-user lookup helper backed by Prisma.
+- Protected app route proxy in `src/proxy.ts`.
+- Authenticated app layout guard for dashboard routes.
+- Topbar user display and logout button.
+- `bcryptjs` password hashing.
+- Seed script now hashes `admin@example.com` / `ChangeMe123!`.
+- Preserved generated prototype files under `docs/prototypes/ai-studio-generated/`.
+
+### Changed
+
+- Excluded `docs/prototypes/**` from active TypeScript compilation.
+- Added production Vercel `AUTH_SECRET` without printing or committing the value.
+
+### Verification
+
+- `npm install bcryptjs`: passed.
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run test`: passed, 6 tests.
+- `prisma validate`: passed with local development `DATABASE_URL`.
+- `npm run build`: passed.
+- `vercel deploy --prod --yes`: passed.
+- `GET https://folqen.vercel.app`: returned 200.
+- `GET https://folqen.vercel.app/login`: returned 200.
+- `GET https://folqen.vercel.app/dashboard` without session: returned 307 redirect to login.
+
 ## May 6, 2026 - Deployment and real-data foundation
 
 ### Added

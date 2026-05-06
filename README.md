@@ -62,7 +62,7 @@ Current Vercel production URL:
 
 - https://folqen.vercel.app
 
-This deployment is live for testing the shell and health/status endpoints. It is not a complete production MVP yet because authentication, real database setup, and live n8n secrets are still pending.
+This deployment is live for testing the shell, login screen, protected-route behavior, and health/status endpoints. It is not a complete production MVP yet because real database setup and live n8n secrets are still pending.
 
 Useful deployment/data commands:
 
@@ -90,9 +90,11 @@ Do not add real secrets to the repository. Do not claim any integration is live 
 
 The foundation branch includes a neon green dark cyber/glass UI direction, app shell placeholders, provider honesty states, environment validation, safety guards, Prisma schema foundation, and checkpoint docs. The landing page now follows the uploaded `display-perfect-mirror-main.zip` template more closely with a sticky glass header, long product sections, clean empty states, FAQ, CTA, and footer. The dashboard next phase has started with Folqen-specific cards for jobs, approvals, platform status, tool limits, and activity.
 
-The project now also includes deployment-readiness docs, database seed scripts, and safe health/integration status APIs for testing the Vercel + free database + Oracle n8n worker plan.
+The project now also includes deployment-readiness docs, database seed scripts, safe health/integration status APIs, and a custom authentication foundation for testing the Vercel + free database + Oracle n8n worker plan.
 
-Authentication, protected routes, uploads, live social integrations, and real publishing are not implemented yet.
+Authentication routes and protected dashboard routes are implemented. Real login becomes usable after `DATABASE_URL` is configured and `npm run db:seed` creates the admin user.
+
+Uploads, live social integrations, and real publishing are not implemented yet.
 
 ## Design Template Direction
 
@@ -116,14 +118,14 @@ Do not revert to the earlier purple/cyan style.
 2. Read `AGENTS.md`, `IMPLEMENTATION_PLAN.md`, `CHECKPOINT_RULES.md`, `FUTURE_PROOF_ARCHITECTURE.md`, `SELF_IMPROVEMENT_AGENT.md`, `HANDOFF_RULES.md`, this README, and all checkpoint docs in `docs/`.
 3. Run `npm install` if dependencies are missing.
 4. Run `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build` before continuing.
-5. Continue Phase 2 route-specific UI work, then move to Phase 3 authentication only after the UI shell stays verified.
+5. Continue Phase 3 auth hardening and real database setup, then continue route-specific backend work.
 6. For deployment continuation, read `docs/DEPLOYMENT_PLAN.md` and `docs/REAL_DATA_TESTING.md` before adding Vercel, database, or n8n secrets.
 
-## Default Admin User Later
+## Default Admin User
 
-The implementation plan calls for a future seed user:
+The seed script creates this admin user after a database is connected:
 
 - Email: `admin@example.com`
 - Password: `ChangeMe123!`
 
-This password must be changed immediately once authentication is implemented. It is not active in the current foundation.
+This password must be changed immediately after first successful login.

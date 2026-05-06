@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. Deployment/data foundation for Vercel + free Postgres + Oracle n8n worker added.
+Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. Deployment/data foundation added. Phase 3 authentication foundation implemented.
 
 ## Branch
 
@@ -37,6 +37,9 @@ Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. D
 - Deployed production app at `https://folqen.vercel.app`.
 - Added `.vercelignore` so env files are not uploaded by Vercel CLI deploys.
 - Added non-secret production env values `APP_BASE_URL` and `NEXTAUTH_URL`.
+- Preserved generated/conflicted prototype files under `docs/prototypes/ai-studio-generated/`.
+- Added login page, auth APIs, signed session cookies, protected proxy, layout auth guard, logout button, and bcrypt seed hashing.
+- Added generated Vercel production `AUTH_SECRET` without printing or committing it.
 
 ## Commands Run
 
@@ -62,6 +65,10 @@ vercel env add APP_BASE_URL production
 vercel env add NEXTAUTH_URL production
 curl https://folqen.vercel.app
 curl https://folqen.vercel.app/api/health
+npm install bcryptjs
+vercel env add AUTH_SECRET production
+curl https://folqen.vercel.app/login
+curl https://folqen.vercel.app/dashboard
 ```
 
 ## Command Results
@@ -101,6 +108,16 @@ Latest deployment/data foundation verification:
 - HTTP check for production `/`: returned 200.
 - HTTP check for production `/api/health`: returned `status: ok`; Vercel configured; database/n8n not connected.
 - `vercel env ls`: production has `APP_BASE_URL` and `NEXTAUTH_URL`.
+- `npm install bcryptjs`: passed.
+- Latest `npm run lint`: passed.
+- Latest `npm run typecheck`: passed.
+- Latest `npm run test`: passed, 6 tests.
+- Latest `prisma validate`: passed.
+- Latest `npm run build`: passed.
+- `vercel env add AUTH_SECRET production`: passed; value not printed.
+- Latest `vercel deploy --prod --yes`: passed.
+- Production `/login`: returned 200.
+- Production `/dashboard` without session: returned 307 redirect to `/login?next=%2Fdashboard`.
 
 ## Known Broken Areas
 
@@ -117,7 +134,7 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 - Database migrations and seed data are not applied.
 - Free database credentials are not configured.
 - Oracle n8n webhook is not configured.
-- Authentication secret is not configured in Vercel yet.
+- Login cannot complete until free database is configured and seeded.
 
 ## Environment Assumptions
 
@@ -126,7 +143,7 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 - Node/npm were provided through a temporary local Node runtime because global npm was not available on PATH.
 - The UI should continue using the neon green dark cyber/glass template direction.
 - Next.js now requires Node `>=20.9.0`; this is recorded in `package.json`.
-- Real deployment/testing needs secrets set outside git.
+- Database/n8n real testing needs secrets set outside git.
 - Vercel project link exists locally under `.vercel/` and is ignored by git.
 
 ## Safe To Continue From Another Account
@@ -136,5 +153,5 @@ Yes. The repo is verified and safe to continue from this checkpoint.
 ## Next Recommended Command
 
 ```text
-Read root docs and checkpoint docs, run npm install if needed, run lint/typecheck/test/build, then configure Vercel/free database/n8n secrets if available. If secrets are not available, continue Phase 3 authentication and Phase 2 route-specific UI refinement. Recommended next routes: `/agent`, `/approvals`, `/platforms`, `/tools`, and `/settings`.
+Read root docs and checkpoint docs, run npm install if needed, run lint/typecheck/test/build, then configure a free database if available. If database secrets are not available, continue auth hardening, password change flow, service interfaces, and route-specific backend work while keeping integrations `Not connected`.
 ```

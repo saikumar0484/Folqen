@@ -54,7 +54,11 @@
 - [ ] Seed approved free database.
 - [ ] Configure Oracle n8n webhook env values.
 - [ ] Test Oracle n8n webhook from Folqen.
-- [ ] Authentication and roles.
+- [x] Authentication and roles foundation.
+- [x] Protected routes.
+- [x] Login/logout API foundation.
+- [ ] Password change flow.
+- [ ] Database-backed login verification.
 - [ ] Database migrations and seed data.
 - [ ] Settings persistence.
 - [ ] Approval backend routes.

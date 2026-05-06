@@ -12,20 +12,24 @@ import {
   UpgradeStatus,
   UserRole,
 } from "@prisma/client";
+import { hashPassword } from "../src/lib/auth/password";
 
 const prisma = new PrismaClient();
 
 async function main() {
+  const seededAdminPasswordHash = await hashPassword("ChangeMe123!");
+
   const admin = await prisma.user.upsert({
     where: { email: "admin@example.com" },
     update: {
       name: "Folqen Admin",
       role: UserRole.ADMIN,
+      passwordHash: seededAdminPasswordHash,
     },
     create: {
       email: "admin@example.com",
       name: "Folqen Admin",
-      passwordHash: "placeholder-auth-not-enabled-change-after-phase-3",
+      passwordHash: seededAdminPasswordHash,
       role: UserRole.ADMIN,
     },
   });
