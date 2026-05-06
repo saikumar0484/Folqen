@@ -62,7 +62,7 @@ Current Vercel production URL:
 
 - https://folqen.vercel.app
 
-This deployment is live for testing the shell, login screen, protected-route behavior, health/status endpoints, and database-backed authentication. It is not a complete production MVP yet because live n8n secrets, uploads, platform integrations, and real content workflows are still pending.
+This deployment is live for testing the shell, login screen, protected-route behavior, health/status endpoints, database-backed authentication, settings, approvals, audit logs, persistent mock agent chat, and a Supabase-backed dashboard. It is not a complete production MVP yet because live n8n secrets, uploads, platform integrations, posting packages, and real content workflows are still pending.
 
 Useful deployment/data commands:
 
@@ -88,13 +88,13 @@ Do not add real secrets to the repository. Do not claim any integration is live 
 
 ## Current Status
 
-The foundation branch includes a neon green dark cyber/glass UI direction, app shell placeholders, provider honesty states, environment validation, safety guards, Prisma schema foundation, and checkpoint docs. The landing page now follows the uploaded `display-perfect-mirror-main.zip` template more closely with a sticky glass header, long product sections, clean empty states, FAQ, CTA, and footer. The dashboard next phase has started with Folqen-specific cards for jobs, approvals, platform status, tool limits, and activity.
+The foundation branch includes a neon green dark cyber/glass UI direction, app shell, provider honesty states, environment validation, safety guards, Prisma schema foundation, Supabase production database, and checkpoint docs. The landing page follows the uploaded `display-perfect-mirror-main.zip` template style with a sticky glass header, long product sections, clean empty states, FAQ, CTA, and footer.
 
-The project now also includes deployment-readiness docs, database seed scripts, safe health/integration status APIs, and a custom authentication foundation for testing the Vercel + Supabase + Oracle n8n worker plan.
+The project now also includes deployment-readiness docs, database seed scripts, safe health/integration status APIs, custom authentication, password-change flow, database-backed settings, approval decisions, audit logs, persistent mock agent chat, and a dashboard reading live Supabase records.
 
-Authentication routes and protected dashboard routes are implemented. Supabase is connected in production, the Prisma schema has been applied, seed data exists, and login works with the default seeded admin user.
+Authentication routes and protected dashboard routes are implemented. Supabase is connected in production, the Prisma schema has been applied, seed data exists, and login works. A temporary low-privilege viewer test account exists for dashboard testing; keep its password out of repo docs and rotate/delete it after testing.
 
-Uploads, live social integrations, and real publishing are not implemented yet.
+Uploads, live social integrations, real n8n workflows, posting package generation, and real publishing are not implemented yet.
 
 ## Design Template Direction
 
@@ -118,8 +118,10 @@ Do not revert to the earlier purple/cyan style.
 2. Read `AGENTS.md`, `IMPLEMENTATION_PLAN.md`, `CHECKPOINT_RULES.md`, `FUTURE_PROOF_ARCHITECTURE.md`, `SELF_IMPROVEMENT_AGENT.md`, `HANDOFF_RULES.md`, this README, and all checkpoint docs in `docs/`.
 3. Run `npm install` if dependencies are missing.
 4. Run `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build` before continuing.
-5. Continue Phase 3 auth hardening with password change and role-aware checks, then continue route-specific backend work.
-6. For deployment continuation, read `docs/DEPLOYMENT_PLAN.md` and `docs/REAL_DATA_TESTING.md` before adding Vercel, database, or n8n secrets.
+5. Start by confirming the live app still passes health and login checks.
+6. Use `/settings` to change the seeded admin password, then rotate/delete the temporary viewer test account after testing.
+7. Continue database-backed pipeline/library work or n8n setup if webhook secrets are available.
+8. For deployment continuation, read `docs/DEPLOYMENT_PLAN.md` and `docs/REAL_DATA_TESTING.md` before adding Vercel, database, or n8n secrets.
 
 ## Default Admin User
 
@@ -129,3 +131,13 @@ The seed script creates this admin user:
 - Password: `ChangeMe123!`
 
 This password must be changed immediately after first successful login.
+
+## Latest Safe Checkpoint
+
+Last safe checkpoint: May 6, 2026 on branch `build/phase-0-foundation`.
+
+- Production URL: https://folqen.vercel.app
+- Latest pushed checkpoint commit before this stop: `fc95c3a`
+- Database status: live through Supabase.
+- Safe to stop: yes, after the final handoff commit is pushed.
+- Next recommended build task: database-backed pipeline and library pages, or Oracle n8n setup if webhook secrets are provided.

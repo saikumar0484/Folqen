@@ -237,10 +237,10 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
 ## Safe To Continue From Another Account
 
-Yes. The repo is safe to continue from this checkpoint. No source files are half-edited and no production database/env changes were made during the paused Supabase schema step.
+Yes. The repo is safe to continue from this checkpoint. This session was stopped intentionally by the user after the test viewer and live dashboard data checkpoint. No source files are half-edited.
 
 ## Next Recommended Command
 
 ```text
-Read root docs and checkpoint docs, run lint/typecheck/test/build if needed, then continue database-backed pipeline/library work or n8n setup if webhook secrets are available. Supabase, login, password change API, settings, approvals, audit logs, persistent mock agent chat, and dashboard live data are already verified.
+Read README, root docs, and checkpoint docs, run lint/typecheck/test/build if needed, then continue database-backed pipeline/library work or n8n setup if webhook secrets are available. Supabase, login, password change API, settings, approvals, audit logs, persistent mock agent chat, and dashboard live data are already verified. Do not put test account passwords or real secrets into repo files.
 ```

@@ -29,8 +29,8 @@
 ### Default seeded admin password must be changed
 
 - Risk: The seeded admin account uses the documented first-run password.
-- Prevention: Add a password-change flow next and treat the seeded password as temporary first-login-only access.
-- Verification: Production login works; password-change flow is still pending.
+- Prevention: Use the implemented password-change flow in `/settings` and treat the seeded password as temporary first-login-only access.
+- Verification: Production login works and the password-change API/page exist.
 - Rollback: Rotate the user password directly in Supabase or reseed with a new hash if needed.
 - Human approval trigger: Password rotation policy, account recovery decisions, or inviting additional real users.
 
@@ -90,13 +90,13 @@
 - Rollback: None needed.
 - Human approval trigger: None unless visual testing reveals design issues later.
 
-### Auth and database migrations not implemented
+### Future database migrations can affect real data
 
-- Risk: Route placeholders are publicly accessible until Phase 3 auth exists, and Prisma schema has not been migrated.
-- Prevention: Do not treat the app as production-ready.
-- Verification: Add auth tests and migration verification in later phases.
-- Rollback: Keep schema changes in branch until stable.
-- Human approval trigger: Real database migration or production auth changes.
+- Risk: Supabase is now live and seeded, so future schema changes can affect real data.
+- Prevention: Avoid destructive resets, inspect migration SQL, and use small reviewed schema changes.
+- Verification: Run lint, typecheck, tests, build, and targeted Supabase checks after changes.
+- Rollback: Use Supabase backups/snapshots where available or write explicit rollback SQL for small changes.
+- Human approval trigger: Any destructive migration, reset, drop, or production auth/security change.
 
 ### Live integrations not connected
 
@@ -113,4 +113,5 @@
 - Paid tools are blocked by default.
 - Browser automation is blocked by default.
 - Human approval is required by default.
-- Real upload validation, auth, sessions, rate limits, and audit persistence are still future work.
+- Auth, protected sessions, audit persistence, and database-backed settings/approvals exist.
+- Upload validation, rate limits, CSRF hardening, broader role tests, and platform OAuth security are still future work.

@@ -2,19 +2,20 @@
 
 ## Immediate Next Phase
 
-Continue real backend data flows and the next safety-focused UX work.
+Resume tomorrow or in another Codex account with real backend data flows and the next safety-focused UX work.
 
 ## Exact Next Tasks
 
 1. Resume from branch `build/phase-0-foundation` and confirm `git status` is clean.
 2. Pull/install dependencies if needed, then run `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build`.
-3. Use `/settings` to change the seeded admin password from `ChangeMe123!`.
-4. Remove or rotate the temporary viewer test account after dashboard testing is finished.
-5. Add stronger role-aware UI states for admin/operator/viewer and tests around forbidden actions.
-6. Continue replacing generic route placeholders with database-backed route-specific pages, starting with pipeline and library.
-7. Configure Oracle n8n webhook env values only when the human provides the URL/secret, then test `POST /api/integrations/n8n/test`.
-8. Add mobile sidebar behavior, toasts, refined command palette interactions, and file upload validation.
-9. Add posting package generation for platforms that remain `Not connected`.
+3. Check `https://folqen.vercel.app/api/health` and confirm database status remains `live`.
+4. Use `/settings` to change the seeded admin password from `ChangeMe123!`.
+5. Remove or rotate the temporary viewer test account after dashboard testing is finished.
+6. Add stronger role-aware UI states for admin/operator/viewer and tests around forbidden actions.
+7. Continue replacing generic route placeholders with database-backed route-specific pages, starting with pipeline and library.
+8. Configure Oracle n8n webhook env values only when the human provides the URL/secret, then test `POST /api/integrations/n8n/test`.
+9. Add mobile sidebar behavior, toasts, refined command palette interactions, and file upload validation.
+10. Add posting package generation for platforms that remain `Not connected`.
 
 ## Human Decisions Needed
 
@@ -47,4 +48,4 @@ Needed through safe secret flow only:
 
 ## Resume Command
 
-Continue from branch `build/phase-0-foundation`, read all root project docs and checkpoint docs, run verification, then continue database-backed pipeline/library work or n8n setup if the human provides webhook secrets. Supabase, login, password change API, settings, approvals, audit logs, agent message persistence, and dashboard live data are already verified.
+Continue from branch `build/phase-0-foundation`, read README, all root project docs, and checkpoint docs, run verification, then continue database-backed pipeline/library work or n8n setup if the human provides webhook secrets. Supabase, login, password change API, settings, approvals, audit logs, agent message persistence, and dashboard live data are already verified.

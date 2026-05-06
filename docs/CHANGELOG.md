@@ -1,5 +1,19 @@
 # Changelog
 
+## May 6, 2026 - End-of-session handoff checkpoint
+
+### Changed
+
+- Refreshed README continuation notes for another Codex account.
+- Clarified the current live state: Supabase, login, dashboard, settings, approvals, audit, and persistent mock agent chat are working.
+- Updated stale risk/handoff wording so tomorrow's continuation starts from the correct source of truth.
+
+### Verification
+
+- Repository status checked before handoff.
+- Production health endpoint still reports database `live`.
+- No code or production configuration changes were made in this checkpoint.
+
 ## May 6, 2026 - Test viewer and live dashboard data
 
 ### Added

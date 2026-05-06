@@ -227,4 +227,4 @@ Browser/runtime checks:
 
 ## Safe To Stop
 
-Yes after this checkpoint is committed and pushed.
+Yes. This session is intentionally stopped at a safe checkpoint after README and docs are committed and pushed. No feature work should continue in this session unless the user explicitly resumes.
