@@ -1,5 +1,25 @@
 # Changelog
 
+## May 7, 2026 - Platform-tab connection wizard
+
+### Added
+
+- Added the secure Connection Wizard directly to the `/platforms` page.
+- Limited the `/platforms` wizard to social providers: YouTube, Instagram, Facebook, Snapchat, and Threads.
+
+### Changed
+
+- Made `ConnectionWizard` reusable with filtered provider lists, custom initial provider, title, and description.
+
+### Verification
+
+- Direct-Node `eslint .`: passed.
+- Direct-Node `tsc --noEmit`: passed.
+- Direct-Node `tsx --test "src/**/*.test.ts"`: passed, 50 tests.
+- Direct-Node `prisma generate` plus `next build`: passed.
+- `vercel deploy --prod --yes`: passed and production deployment is `dpl_ALmjdGauRufNMLbwekdEvWQtb3jC`.
+- Production smoke test confirmed marked login returned 200, `/platforms` returned 200, the page contained `Connect your social platforms`, `YouTube`, and `Never enter social media passwords`, and health returned 200.
+
 ## May 7, 2026 - In-app connection wizard
 
 ### Added

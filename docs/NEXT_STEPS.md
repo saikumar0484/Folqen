@@ -8,6 +8,8 @@ Current save point: May 7, 2026, after app-marked mutation hardening, visible UI
 
 The user now wants a 2-day launch sprint so Folqen can be used with the channel from day 3. Treat `docs/2_DAY_LAUNCH_PLAN.md` as the practical launch scope: protected planning, manual posting packages, approvals, audit, and provider setup testing if credentials are available. Do not promise full auto-publishing, real media rendering, or complete multi-platform automation inside 2 days. Folqen now has a `/settings` Connection Wizard for encrypted credential intake inside the app.
 
+The `/platforms` tab now also has a social-platform Connection Wizard near the top, so YouTube/Instagram/Facebook/Snapchat/Threads setup can start from the exact platform manager view.
+
 ## Exact Next Tasks
 
 1. Resume from GitHub branch `build/phase-0-foundation` at or after commit `1a78e1b` and confirm `git status` is clean.

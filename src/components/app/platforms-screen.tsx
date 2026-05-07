@@ -1,4 +1,5 @@
 import { Globe2, LockKeyhole, PackageCheck, ShieldCheck } from "lucide-react";
+import { ConnectionWizard } from "@/components/app/connection-wizard";
 import { PageHeader } from "@/components/app/page-header";
 import { StatCard } from "@/components/app/stat-card";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -17,6 +18,13 @@ export function PlatformsScreen({ data }: { data: PlatformsData }) {
           <StatCard key={stat.label} {...stat} />
         ))}
       </section>
+
+      <ConnectionWizard
+        providerIds={["youtube", "instagram", "facebook", "snapchat", "threads"]}
+        initialProvider="youtube"
+        title="Connect your social platforms"
+        description="Start platform setup from here. Folqen asks for channel/page/profile details now, saves them securely, and keeps official OAuth/public posting blocked until that adapter is built and approved. Never enter social media passwords."
+      />
 
       <section className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-4">

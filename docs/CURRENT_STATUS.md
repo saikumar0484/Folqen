@@ -491,6 +491,17 @@ Latest May 7, 2026 in-app connection wizard update:
 - `vercel deploy --prod --yes`: passed and production is deployment `dpl_BAMpFrvAqbL3Kjup1zgmbrLsYrFi`.
 - Production smoke test with Node `fetch`: marked login returned 200, `/settings` returned 200 and contained `Connection wizard`, anonymous connection intake returned 401, and `/api/health` returned 200.
 
+Latest May 7, 2026 platform-tab connection wizard update:
+
+- Added the secure Connection Wizard directly to `/platforms` with only social providers visible: YouTube, Instagram, Facebook, Snapchat, and Threads.
+- The `/platforms` wizard is titled `Connect your social platforms` and warns never to enter social media passwords.
+- Direct-Node `eslint .`: passed.
+- Direct-Node `tsc --noEmit`: passed.
+- Direct-Node `tsx --test "src/**/*.test.ts"`: passed, 50 tests.
+- Direct-Node `prisma generate` plus `next build`: passed.
+- `vercel deploy --prod --yes`: passed and production is deployment `dpl_ALmjdGauRufNMLbwekdEvWQtb3jC`.
+- Production smoke test with Node `fetch`: marked login returned 200, `/platforms` returned 200, page contained `Connect your social platforms`, `YouTube`, and `Never enter social media passwords`, and `/api/health` returned 200.
+
 Browser/runtime checks:
 
 - Dev server started at `http://127.0.0.1:3000`.

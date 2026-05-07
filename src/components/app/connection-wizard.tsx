@@ -7,13 +7,27 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { mutationFetch } from "@/lib/client/mutation-fetch";
 import { connectionDefinitions, type ConnectionProviderId } from "@/lib/connections/definitions";
 
-export function ConnectionWizard() {
+type ConnectionWizardProps = {
+  providerIds?: ConnectionProviderId[];
+  initialProvider?: ConnectionProviderId;
+  title?: string;
+  description?: string;
+};
+
+export function ConnectionWizard({
+  providerIds,
+  initialProvider,
+  title = "Connect Folqen to your accounts",
+  description = "Choose a provider, enter the details Folqen asks for, and Folqen stores sensitive values encrypted. Social accounts use setup metadata now and official OAuth later. Never enter social media passwords.",
+}: ConnectionWizardProps) {
   const { toast } = useToast();
-  const [provider, setProvider] = useState<ConnectionProviderId>("google_drive");
+  const visibleDefinitions = providerIds?.length ? connectionDefinitions.filter((definition) => providerIds.includes(definition.id)) : connectionDefinitions;
+  const firstProvider = initialProvider && visibleDefinitions.some((definition) => definition.id === initialProvider) ? initialProvider : visibleDefinitions[0]?.id ?? "google_drive";
+  const [provider, setProvider] = useState<ConnectionProviderId>(firstProvider);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const definition = connectionDefinitions.find((item) => item.id === provider) ?? connectionDefinitions[0];
+  const definition = visibleDefinitions.find((item) => item.id === provider) ?? visibleDefinitions[0] ?? connectionDefinitions[0];
 
   return (
     <section className="rounded-3xl border border-neon/20 bg-neon/[0.06] p-5">
@@ -23,17 +37,15 @@ export function ConnectionWizard() {
             <KeyRound className="h-3.5 w-3.5" />
             Connection wizard
           </div>
-          <h2 className="mt-3 font-display text-2xl font-semibold">Connect Folqen to your accounts</h2>
-          <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
-            Choose a provider, enter the details Folqen asks for, and Folqen stores sensitive values encrypted. Social accounts use setup metadata now and official OAuth later. Never enter social media passwords.
-          </p>
+          <h2 className="mt-3 font-display text-2xl font-semibold">{title}</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">{description}</p>
         </div>
         <StatusBadge tone="warning">Approval gated</StatusBadge>
       </div>
 
       <div className="mt-5 grid gap-4 xl:grid-cols-[320px_1fr]">
         <div className="grid gap-2">
-          {connectionDefinitions.map((item) => (
+          {visibleDefinitions.map((item) => (
             <button
               key={item.id}
               type="button"
