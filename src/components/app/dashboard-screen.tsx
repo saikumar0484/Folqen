@@ -1,10 +1,8 @@
 import { BarChart3, Bot, CheckCircle2, Clock3, FileText, Gauge, Megaphone, Rocket, Sparkles, Workflow, Wrench } from "lucide-react";
 import { ConfirmDialog } from "@/components/app/confirm-dialog";
-import { PageHeader } from "@/components/app/page-header";
 import { RiskBadge } from "@/components/app/risk-badge";
 import { StatCard } from "@/components/app/stat-card";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { routeById } from "@/lib/app-routes";
 import type { getDashboardData } from "@/lib/dashboard-data";
 import { statusLabel, type LaunchReadinessStatus } from "@/lib/launch-readiness";
 
@@ -33,8 +31,6 @@ function launchTone(status: LaunchReadinessStatus) {
 export function DashboardScreen({ data }: { data: DashboardData }) {
   return (
     <div className="space-y-5 pb-24">
-      <PageHeader route={routeById.dashboard} />
-
       <section className="grid gap-3 md:grid-cols-3">
         {data.stats.map((stat) => (
           <StatCard key={stat.label} {...stat} />
