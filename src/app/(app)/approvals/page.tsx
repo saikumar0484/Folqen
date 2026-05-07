@@ -1,6 +1,8 @@
 import { ApprovalStatus } from "@prisma/client";
 import { ApprovalActions } from "@/components/app/approval-actions";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { getCurrentUser } from "@/lib/auth/current-user";
+import { canReviewApprovals, describeRoleLimit } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
@@ -12,6 +14,9 @@ function approvalTone(status: ApprovalStatus) {
 }
 
 export default async function ApprovalsPage() {
+  const user = await getCurrentUser();
+  const canReview = user ? canReviewApprovals(user) : false;
+  const roleMessage = user ? describeRoleLimit(user, "approval") : "Login required.";
   const approvals = await getDb().approval.findMany({
     orderBy: [{ status: "asc" }, { createdAt: "desc" }],
     include: {
@@ -57,7 +62,7 @@ export default async function ApprovalsPage() {
                 <StatusBadge tone={approval.riskLevel === "HIGH" || approval.riskLevel === "CRITICAL" ? "danger" : "neutral"}>{approval.riskLevel}</StatusBadge>
               </div>
             </div>
-            <ApprovalActions approvalId={approval.id} disabled={approval.status !== "PENDING"} />
+            <ApprovalActions approvalId={approval.id} disabled={approval.status !== "PENDING"} canReview={canReview} roleMessage={roleMessage} />
           </article>
         ))}
       </div>

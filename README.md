@@ -62,7 +62,7 @@ Current Vercel production URL:
 
 - https://folqen.vercel.app
 
-This deployment is live for testing the shell, login screen, protected-route behavior, health/status endpoints, database-backed authentication, settings, approvals, audit logs, persistent mock agent chat, and a Supabase-backed dashboard. It is not a complete production MVP yet because live n8n secrets, uploads, platform integrations, posting packages, and real content workflows are still pending.
+This deployment is live for testing the shell, login screen, protected-route behavior, health/status endpoints, database-backed authentication, settings, approvals, audit logs, persistent mock agent chat, route-specific protected pages, manual posting package generation, upload validation rules, and Supabase-backed dashboard/workspace data. It is not a complete production MVP yet because live n8n secrets, actual file storage writes, platform integrations, and real content workflows are still pending.
 
 Useful deployment/data commands:
 
@@ -90,11 +90,11 @@ Do not add real secrets to the repository. Do not claim any integration is live 
 
 The foundation branch includes a neon green dark cyber/glass UI direction, app shell, provider honesty states, environment validation, safety guards, Prisma schema foundation, Supabase production database, and checkpoint docs. The landing page follows the uploaded `display-perfect-mirror-main.zip` template style with a sticky glass header, long product sections, clean empty states, FAQ, CTA, and footer.
 
-The project now also includes deployment-readiness docs, database seed scripts, safe health/integration status APIs, custom authentication, password-change flow, database-backed settings, approval decisions, audit logs, persistent mock agent chat, and a dashboard reading live Supabase records.
+The project now also includes deployment-readiness docs, database seed scripts, safe health/integration status APIs, custom authentication, password-change flow, database-backed settings, approval decisions, audit logs, persistent mock agent chat, all required authenticated route surfaces, manual posting package generation, upload validation foundations, service interface mocks, and dashboard/workspace pages reading live Supabase records.
 
 Authentication routes and protected dashboard routes are implemented. Supabase is connected in production, the Prisma schema has been applied, seed data exists, and login works. A temporary low-privilege viewer test account exists for dashboard testing; keep its password out of repo docs and rotate/delete it after testing.
 
-Uploads, live social integrations, real n8n workflows, posting package generation, and real publishing are not implemented yet.
+Actual upload storage writes, live social integrations, real n8n workflows, and real publishing are not implemented yet. Manual posting package generation exists and remains manual-only.
 
 ## Design Template Direction
 
@@ -120,7 +120,7 @@ Do not revert to the earlier purple/cyan style.
 4. Run `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build` before continuing.
 5. Start by confirming the live app still passes health and login checks.
 6. Use `/settings` to change the seeded admin password, then rotate/delete the temporary viewer test account after testing.
-7. Continue database-backed pipeline/library work or n8n setup if webhook secrets are available.
+7. Continue actual file upload/storage, role-aware actions, richer posting-package workflows, or n8n setup if webhook secrets are available.
 8. For deployment continuation, read `docs/DEPLOYMENT_PLAN.md` and `docs/REAL_DATA_TESTING.md` before adding Vercel, database, or n8n secrets.
 
 ## Default Admin User
@@ -134,10 +134,10 @@ This password must be changed immediately after first successful login.
 
 ## Latest Safe Checkpoint
 
-Last safe checkpoint: May 6, 2026 on branch `build/phase-0-foundation`.
+Last safe checkpoint: May 7, 2026 on branch `build/phase-0-foundation`.
 
 - Production URL: https://folqen.vercel.app
-- Latest pushed checkpoint commit before this stop: `fc95c3a`
+- Latest pushed checkpoint commit before this stop: see latest `build/phase-0-foundation` commit.
 - Database status: live through Supabase.
 - Safe to stop: yes, after the final handoff commit is pushed.
-- Next recommended build task: database-backed pipeline and library pages, or Oracle n8n setup if webhook secrets are provided.
+- Next recommended build task: actual file upload/storage flow, richer posting package workflow, role-aware action states, or Oracle n8n setup if webhook secrets are provided.

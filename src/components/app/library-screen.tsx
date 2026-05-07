@@ -1,6 +1,7 @@
 import { Archive, Download, FileText, FolderOpen, PackageCheck, ShieldCheck } from "lucide-react";
 import { EmptyState } from "@/components/app/empty-state";
 import { PageHeader } from "@/components/app/page-header";
+import { PostingPackageAction } from "@/components/app/posting-package-action";
 import { StatCard } from "@/components/app/stat-card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { routeById } from "@/lib/app-routes";
@@ -91,6 +92,7 @@ export function LibraryScreen({ data }: { data: LibraryData }) {
                     <StatusBadge key={platform} tone="warning">{platform} not connected</StatusBadge>
                   ))}
                 </div>
+                <PostingPackageAction contentId={item.id} platform={item.platformTargets[0]} />
               </article>
             ))}
           </div>

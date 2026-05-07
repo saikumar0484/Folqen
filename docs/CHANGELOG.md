@@ -1,5 +1,29 @@
 # Changelog
 
+## May 7, 2026 - Manual posting packages and role-aware controls
+
+### Added
+
+- Added manual posting package generation for not-connected platforms.
+- Added `POST /api/posting-packages/manual`, which creates a `posting_package` asset and audit log without uploading or publishing.
+- Added a Library page action to create a manual package for the first target platform on a content item.
+- Added role-aware approval UI states so viewers see disabled actions with an explicit role message.
+- Added permission tests for admin/operator/viewer behavior.
+- Updated README continuation notes for the current state.
+
+### Safety
+
+- Manual package generation does not publish content, connect platform APIs, or spend money.
+- Only admins and operators can create posting packages or review approvals.
+- Viewers remain read-only for approval and posting-package actions.
+
+### Verification
+
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run test`: passed, 21 tests.
+- `npm run build`: passed.
+
 ## May 7, 2026 - Service interface foundation
 
 ### Added

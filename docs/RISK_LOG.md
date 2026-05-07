@@ -2,6 +2,22 @@
 
 ## Current Risks
 
+### Manual posting packages are not public publishing
+
+- Risk: A user may mistake package generation for platform upload/public posting.
+- Prevention: Packages are saved as `posting_package` assets with `manual://` paths and audit logs; the UI and API copy state that no upload or public publishing happened.
+- Verification: Posting package tests confirm manual mode and Not connected API wording. Full test suite passed with 21 tests.
+- Rollback: Delete generated `posting_package` asset rows if needed; no platform account is affected.
+- Human approval trigger: Any platform upload, OAuth connection, public publishing, scheduled posting, or credential use.
+
+### Role-aware UI is partial
+
+- Risk: Some future pages may expose action buttons before role-aware states are added.
+- Prevention: Permission helpers now cover system settings, approval review, and posting package creation; approval UI uses role-aware disabling.
+- Verification: Permission tests cover admin/operator/viewer behavior and passed.
+- Rollback: Revert role-aware UI changes if they cause runtime issues; server-side API role checks remain authoritative.
+- Human approval trigger: Any new action API that changes data, files, providers, credentials, publishing, or paid-tool behavior.
+
 ### Service interfaces are mock-only
 
 - Risk: Future code may assume service interfaces perform real AI, workflow, render, analytics, storage, or publishing actions.
