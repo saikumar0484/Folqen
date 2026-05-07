@@ -86,4 +86,5 @@
 - [x] Posting package system.
 - [x] Posting package detail/download controls.
 - [x] Start security hardening with mutation same-origin checks and rate limits.
+- [x] Add app-marked mutation requests for browser UI actions.
 - [ ] Complete broader security hardening.

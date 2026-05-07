@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useToast } from "@/components/app/toast-provider";
+import { mutationFetch } from "@/lib/client/mutation-fetch";
 
 export function ApprovalActions({ approvalId, disabled, canReview, roleMessage }: { approvalId: string; disabled: boolean; canReview: boolean; roleMessage?: string | null }) {
   const router = useRouter();
@@ -13,7 +14,7 @@ export function ApprovalActions({ approvalId, disabled, canReview, roleMessage }
   function decide(decision: "approve" | "reject") {
     setError(null);
     startTransition(async () => {
-      const response = await fetch(`/api/approvals/${approvalId}/decision`, {
+      const response = await mutationFetch(`/api/approvals/${approvalId}/decision`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ decision }),

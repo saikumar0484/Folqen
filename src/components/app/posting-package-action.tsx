@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import type { PlatformName } from "@prisma/client";
 import { useToast } from "@/components/app/toast-provider";
+import { mutationFetch } from "@/lib/client/mutation-fetch";
 
 type PostingPackageActionProps = {
   contentId: string;
@@ -20,7 +21,7 @@ export function PostingPackageAction({ contentId, platform }: PostingPackageActi
     if (!platform) return;
     setMessage(null);
     startTransition(async () => {
-      const response = await fetch("/api/posting-packages/manual", {
+      const response = await mutationFetch("/api/posting-packages/manual", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ contentId, platform }),

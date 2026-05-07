@@ -1,5 +1,28 @@
 # Changelog
 
+## May 7, 2026 - App-marked mutation hardening
+
+### Added
+
+- Added `src/lib/security/mutation-headers.ts` with a shared Folqen UI mutation marker.
+- Added `src/lib/client/mutation-fetch.ts` so client actions consistently send the app marker.
+- Added request-guard tests for missing app mutation markers.
+
+### Changed
+
+- Sensitive mutation guard logic now requires same-origin validation, the Folqen UI marker, and rate limiting.
+- Updated login, logout, settings, password change, approvals, provider approvals, file upload, posting packages, and agent actions to use the shared mutation fetch helper.
+
+### Verification
+
+- Direct-Node `eslint .`: passed.
+- Direct-Node `tsc --noEmit`: passed.
+- Direct-Node `tsx --test "src/**/*.test.ts"`: passed, 45 tests.
+- Direct-Node `prisma generate` plus `next build`: passed.
+- `vercel deploy --prod --yes`: passed and production deployment is `dpl_2RTVV3b99t492Fmz7QEKDzN7ztby`.
+- Production Node smoke test confirmed marked login returned 200, authenticated `/dashboard` returned 200, and unmarked login returned 403.
+- Production `/api/health` returned 200 with database `live`.
+
 ## May 7, 2026 - Visible hardening, mutation safety, and speed fix
 
 ### Added

@@ -2,6 +2,14 @@
 
 ## Current Risks
 
+### App-marked mutation requests are stricter than before
+
+- Risk: Direct API calls or scripts that do not send the Folqen UI mutation marker now receive `403`, even if they are otherwise same-origin.
+- Prevention: All current client-side mutation calls were updated to use the shared mutation fetch helper.
+- Verification: Test suite passed with 45 tests; production Node smoke test confirmed marked login returned 200, dashboard returned 200, and login without the marker returned 403.
+- Rollback: Relax `validateFolqenMutationHeader` or remove the header check from `getMutationSafetyError` if a legitimate app flow is blocked.
+- Human approval trigger: Any request to permit external automation clients, browser automation, cross-site mutation calls, or workflow-triggered mutations.
+
 ### Function region is now tied to Supabase Seoul
 
 - Risk: If the database is moved to another Supabase region later, DB-backed pages may become slow again.

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useRef, useState, useTransition } from "react";
 import { UploadCloud } from "lucide-react";
 import { useToast } from "@/components/app/toast-provider";
+import { mutationFetch } from "@/lib/client/mutation-fetch";
 
 export function FileUploadForm({ accept }: { accept: string }) {
   const router = useRouter();
@@ -30,7 +31,7 @@ export function FileUploadForm({ accept }: { accept: string }) {
       body.append("file", file);
       body.append("tags", tags);
 
-      const response = await fetch("/api/files/upload", {
+      const response = await mutationFetch("/api/files/upload", {
         method: "POST",
         body,
       });

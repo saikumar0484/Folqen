@@ -3,6 +3,7 @@ import { z } from "zod";
 import { AUTH_COOKIE_NAME, createSessionToken, isAuthConfigured, SESSION_MAX_AGE_SECONDS } from "@/lib/auth/session";
 import { verifyPassword } from "@/lib/auth/password";
 import { getDb, hasDatabaseUrl } from "@/lib/db";
+import { getMutationSafetyError } from "@/lib/security/request-guards";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -10,6 +11,13 @@ const loginSchema = z.object({
 });
 
 export async function POST(request: Request) {
+  const clientKey = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const safetyError = getMutationSafetyError(request, { key: `login:${clientKey}`, limit: 10, windowMs: 60_000 });
+
+  if (safetyError) {
+    return NextResponse.json({ error: safetyError.error }, { status: safetyError.status });
+  }
+
   if (!isAuthConfigured()) {
     return NextResponse.json(
       {

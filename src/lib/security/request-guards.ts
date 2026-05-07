@@ -1,3 +1,5 @@
+import { FOLQEN_MUTATION_HEADER, FOLQEN_MUTATION_HEADER_VALUE } from "@/lib/security/mutation-headers";
+
 type RateLimitOptions = {
   key: string;
   limit: number;
@@ -67,11 +69,25 @@ export function validateSameOriginRequest(request: Request) {
   return { ok: true };
 }
 
+export function validateFolqenMutationHeader(request: Request) {
+  if (request.headers.get(FOLQEN_MUTATION_HEADER) !== FOLQEN_MUTATION_HEADER_VALUE) {
+    return { ok: false, error: "Mutation must be sent from the Folqen app UI." };
+  }
+
+  return { ok: true };
+}
+
 export function getMutationSafetyError(request: Request, options: RateLimitOptions) {
   const origin = validateSameOriginRequest(request);
 
   if (!origin.ok) {
     return { status: 403, error: origin.error ?? "Mutation blocked." };
+  }
+
+  const appHeader = validateFolqenMutationHeader(request);
+
+  if (!appHeader.ok) {
+    return { status: 403, error: appHeader.error ?? "Mutation blocked." };
   }
 
   const rateLimit = checkRateLimit(options);

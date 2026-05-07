@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { KeyRound } from "lucide-react";
 import { useToast } from "@/components/app/toast-provider";
+import { mutationFetch } from "@/lib/client/mutation-fetch";
 
 export function PasswordChangeForm() {
   const { toast } = useToast();
@@ -21,7 +22,7 @@ export function PasswordChangeForm() {
         setMessage(null);
 
         startTransition(async () => {
-          const response = await fetch("/api/auth/change-password", {
+          const response = await mutationFetch("/api/auth/change-password", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

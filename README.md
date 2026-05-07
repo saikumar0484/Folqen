@@ -90,7 +90,7 @@ Do not add real secrets to the repository. Do not claim any integration is live 
 
 The foundation branch includes a neon green dark cyber/glass UI direction, app shell, provider honesty states, environment validation, safety guards, Prisma schema foundation, Supabase production database, and checkpoint docs. The landing page follows the uploaded `display-perfect-mirror-main.zip` template style with a sticky glass header, long product sections, clean empty states, FAQ, CTA, and footer.
 
-The project now also includes deployment-readiness docs, database seed scripts, safe health/integration status APIs, custom authentication, password-change flow, database-backed settings, approval decisions, audit logs, persistent mock agent chat, all required authenticated route surfaces, manual posting package generation, upload validation foundations, service interface mocks, mobile navigation, toast notifications, command palette navigation, mutation same-origin/rate-limit guards, Vercel `icn1` function placement for faster Supabase access, and dashboard/workspace pages reading live Supabase records.
+The project now also includes deployment-readiness docs, database seed scripts, safe health/integration status APIs, custom authentication, password-change flow, database-backed settings, approval decisions, audit logs, persistent mock agent chat, all required authenticated route surfaces, manual posting package generation, upload validation foundations, service interface mocks, mobile navigation, toast notifications, command palette navigation, mutation same-origin/rate-limit guards, app-marked mutation requests for browser UI actions, Vercel `icn1` function placement for faster Supabase access, and dashboard/workspace pages reading live Supabase records.
 
 Authentication routes and protected dashboard routes are implemented. Supabase is connected in production, the Prisma schema has been applied, seed data exists, and login works. A temporary low-privilege viewer test account exists for dashboard testing; keep its password out of repo docs and rotate/delete it after testing.
 
@@ -142,5 +142,6 @@ Last safe checkpoint: May 7, 2026 on branch `build/phase-0-foundation`.
 - Latest pushed checkpoint commit before this stop: see latest `build/phase-0-foundation` commit.
 - Database status: live through Supabase using the Vercel production transaction pooler env.
 - Performance note: Vercel Functions are pinned to Seoul (`icn1`) because the current Supabase project is in Seoul.
+- Security note: sensitive browser mutations now require same-origin/rate-limit checks plus the Folqen UI mutation marker.
 - Safe to stop: yes, after the final handoff commit is pushed.
 - Next recommended build task: admin password rotation, actual Google Drive live upload setup, Oracle n8n setup if webhook secrets are provided, or deeper security hardening.

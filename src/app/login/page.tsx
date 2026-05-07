@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { KeyRound, LockKeyhole, ShieldCheck, Sparkles } from "lucide-react";
+import { mutationFetch } from "@/lib/client/mutation-fetch";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -16,7 +17,7 @@ export default function LoginPage() {
     setError(null);
     setLoading(true);
 
-    const response = await fetch("/api/auth/login", {
+    const response = await mutationFetch("/api/auth/login", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ email, password }),

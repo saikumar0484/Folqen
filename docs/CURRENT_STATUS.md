@@ -449,6 +449,20 @@ Latest May 7, 2026 visible hardening, mutation safety, and speed fix:
 - Timing check from this machine: `/api/health` improved from about `1.47s` before the region fix to about `0.56s`; authenticated `/dashboard` measured about `0.09s`.
 - Admin password was not rotated because no new password was provided; `/settings` password-change flow remains the safe path.
 
+Latest May 7, 2026 app-marked mutation hardening:
+
+- Added a shared Folqen browser mutation header helper for client-side mutation calls.
+- Updated login, logout, settings, password change, approvals, provider approval requests, file upload, posting package, and agent mutation calls to send the Folqen UI marker.
+- Updated sensitive mutation guard logic to require same-origin validation, the Folqen UI marker, and rate limiting.
+- Added tests that confirm same-origin requests without the app marker are blocked.
+- Direct-Node `eslint .`: passed.
+- Direct-Node `tsc --noEmit`: passed.
+- Direct-Node `tsx --test "src/**/*.test.ts"`: passed, 45 tests.
+- Direct-Node `prisma generate` plus `next build`: passed.
+- `vercel deploy --prod --yes`: passed and production is deployment `dpl_2RTVV3b99t492Fmz7QEKDzN7ztby`.
+- Production smoke test with Node `fetch`: marked login returned 200, authenticated `/dashboard` returned 200, and login without the marker returned 403.
+- `GET https://folqen.vercel.app/api/health`: returned 200 with database status `live`.
+
 Browser/runtime checks:
 
 - Dev server started at `http://127.0.0.1:3000`.

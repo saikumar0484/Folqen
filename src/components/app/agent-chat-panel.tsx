@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { Bot, Send, UserRound } from "lucide-react";
 import { useToast } from "@/components/app/toast-provider";
+import { mutationFetch } from "@/lib/client/mutation-fetch";
 
 type ChatMessage = {
   id: string;
@@ -25,7 +26,7 @@ export function AgentChatPanel({ initialMessages }: { initialMessages: ChatMessa
     setError(null);
     setActionMessage(null);
     startActionTransition(async () => {
-      const response = await fetch("/api/agent/content-package", {
+      const response = await mutationFetch("/api/agent/content-package", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ topic }),
@@ -93,7 +94,7 @@ export function AgentChatPanel({ initialMessages }: { initialMessages: ChatMessa
             if (!text) return;
             setError(null);
             startTransition(async () => {
-              const response = await fetch("/api/agent/messages", {
+              const response = await mutationFetch("/api/agent/messages", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ content: text, pageContext: "agent" }),

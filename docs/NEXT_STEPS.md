@@ -4,7 +4,7 @@
 
 Continue from provider setup surfaces into credential-backed integrations. All required authenticated routes now have dedicated pages, manual posting package creation/download is live, file registration is live, safe mock-agent draft creation is live, and setup panels exist for Google Drive storage, OpenAI model selection, n8n, and media tools. Binary object storage, paid AI calls, embedded n8n execution, rendering, and real automation are still pending.
 
-Current save point: May 7, 2026, after visible hardening and the Vercel speed fix. The live app is deployed at `https://folqen.vercel.app`, health reports database `live`, Vercel Functions run in Seoul (`icn1`) near Supabase, and real Drive uploads remain blocked until Google OAuth env values plus a private folder id are configured.
+Current save point: May 7, 2026, after app-marked mutation hardening, visible UI hardening, and the Vercel speed fix. The live app is deployed at `https://folqen.vercel.app`, health reports database `live`, Vercel Functions run in Seoul (`icn1`) near Supabase, and real Drive uploads remain blocked until Google OAuth env values plus a private folder id are configured.
 
 ## Exact Next Tasks
 
@@ -17,10 +17,9 @@ Current save point: May 7, 2026, after visible hardening and the Vercel speed fi
 7. Configure `ORACLE_N8N_INSTANCE_URL`, iframe embedding, `N8N_WEBHOOK_URL`, and `N8N_WEBHOOK_SECRET`; then test `POST /api/integrations/n8n/test`.
 8. Add `OPENAI_API_KEY` through secret env, request/approve the OpenAI provider approval in Folqen, then add a real-generation endpoint that still checks paid-tool guards before every call.
 9. Configure local or Oracle worker endpoints for FFmpeg, ComfyUI, and TTS, then add test-only connection checks.
-10. Add copy-to-clipboard controls for posting package descriptions and checklist items.
-11. Expand role-aware UI states across settings, packages, files, providers, and future action APIs.
-12. Wire the service interface foundation into workflow test APIs while keeping real execution blocked.
-13. Add mobile sidebar behavior, toasts, and refined command palette interactions.
+10. Continue expanding role-aware UI states across settings, packages, files, providers, and future action APIs.
+11. Wire the service interface foundation into workflow test APIs while keeping real execution blocked.
+12. Continue broader security hardening, including stronger CSRF patterns, server-side action audits, and provider-secret isolation.
 
 ## Human Decisions Needed
 

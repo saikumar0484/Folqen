@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useToast } from "@/components/app/toast-provider";
+import { mutationFetch } from "@/lib/client/mutation-fetch";
 import type { ProviderApprovalRequestType } from "@/lib/provider-approval-requests";
 
 type ProviderApprovalAction = {
@@ -29,7 +30,7 @@ export function ProviderApprovalActions() {
     setPendingType(requestType);
 
     startTransition(async () => {
-      const response = await fetch("/api/provider-approvals/request", {
+      const response = await mutationFetch("/api/provider-approvals/request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ requestType }),

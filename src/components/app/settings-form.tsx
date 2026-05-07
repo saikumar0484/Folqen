@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useToast } from "@/components/app/toast-provider";
 import { openAiModelOptions } from "@/lib/ai-models";
+import { mutationFetch } from "@/lib/client/mutation-fetch";
 import type { FolqenSettings } from "@/lib/settings";
 
 const autonomyOptions = [
@@ -31,7 +32,7 @@ export function SettingsForm({ settings }: { settings: FolqenSettings }) {
         setError(null);
 
         startTransition(async () => {
-          const response = await fetch("/api/settings", {
+          const response = await mutationFetch("/api/settings", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
