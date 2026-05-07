@@ -90,7 +90,7 @@ Do not add real secrets to the repository. Do not claim any integration is live 
 
 The foundation branch includes a neon green dark cyber/glass UI direction, app shell, provider honesty states, environment validation, safety guards, Prisma schema foundation, Supabase production database, and checkpoint docs. The landing page follows the uploaded `display-perfect-mirror-main.zip` template style with a sticky glass header, long product sections, clean empty states, FAQ, CTA, and footer.
 
-The project now also includes deployment-readiness docs, database seed scripts, safe health/integration status APIs, custom authentication, password-change flow, database-backed settings, approval decisions, audit logs, persistent mock agent chat, all required authenticated route surfaces, manual posting package generation, upload validation foundations, service interface mocks, mobile navigation, toast notifications, command palette navigation, mutation same-origin/rate-limit guards, app-marked mutation requests for browser UI actions, Vercel `icn1` function placement for faster Supabase access, and dashboard/workspace pages reading live Supabase records.
+The project now also includes deployment-readiness docs, a 2-day launch plan, database seed scripts, safe health/integration status APIs, custom authentication, password-change flow, database-backed settings, approval decisions, audit logs, persistent mock agent chat, all required authenticated route surfaces, manual posting package generation, upload validation foundations, service interface mocks, mobile navigation, toast notifications, command palette navigation, mutation same-origin/rate-limit guards, app-marked mutation requests for browser UI actions, Vercel `icn1` function placement for faster Supabase access, a day-3 launch readiness dashboard section, and dashboard/workspace pages reading live Supabase records.
 
 Authentication routes and protected dashboard routes are implemented. Supabase is connected in production, the Prisma schema has been applied, seed data exists, and login works. A temporary low-privilege viewer test account exists for dashboard testing; keep its password out of repo docs and rotate/delete it after testing.
 
@@ -124,6 +124,7 @@ Do not revert to the earlier purple/cyan style.
 6. Use `/settings` to change the seeded admin password, then rotate/delete the temporary viewer test account after testing.
 7. Continue Google Drive OAuth/storage setup, n8n embed/webhook setup, OpenAI paid-tool approval flow, rendering worker setup, or broader security hardening if the needed secrets are available.
 8. For deployment continuation, read `docs/DEPLOYMENT_PLAN.md` and `docs/REAL_DATA_TESTING.md` before adding Vercel, database, or n8n secrets.
+9. For the requested 2-day channel launch sprint, read `docs/2_DAY_LAUNCH_PLAN.md` and keep day-3 use limited to protected planning, manual posting packages, approvals, and audited preparation unless real provider credentials are configured and tested.
 
 ## Default Admin User
 

@@ -1,5 +1,26 @@
 # Changelog
 
+## May 7, 2026 - Two-day launch readiness
+
+### Added
+
+- Added `docs/2_DAY_LAUNCH_PLAN.md` for the requested two-day launch sprint.
+- Added launch readiness logic and tests in `src/lib/launch-readiness.ts`.
+- Added a Day-3 channel launch readiness section to the dashboard.
+
+### Changed
+
+- README and checkpoint docs now clarify the practical day-3 scope: protected planning, manual posting packages, approvals, audit, and carefully tested provider setup if secrets are available.
+
+### Verification
+
+- Direct-Node `eslint .`: passed.
+- Direct-Node `tsc --noEmit`: passed.
+- Direct-Node `tsx --test "src/**/*.test.ts"`: passed, 47 tests.
+- Direct-Node `prisma generate` plus `next build`: passed.
+- `vercel deploy --prod --yes`: passed and production deployment is `dpl_BFZXN75c5GikDQHHLMcVLFmCPAYc`.
+- Production smoke test confirmed marked login returned 200, authenticated `/dashboard` returned 200, the dashboard contained `Day-3 channel launch readiness`, and `/api/health` returned 200.
+
 ## May 7, 2026 - App-marked mutation hardening
 
 ### Added

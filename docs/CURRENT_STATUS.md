@@ -463,6 +463,19 @@ Latest May 7, 2026 app-marked mutation hardening:
 - Production smoke test with Node `fetch`: marked login returned 200, authenticated `/dashboard` returned 200, and login without the marker returned 403.
 - `GET https://folqen.vercel.app/api/health`: returned 200 with database status `live`.
 
+Latest May 7, 2026 2-day launch readiness update:
+
+- Added `docs/2_DAY_LAUNCH_PLAN.md` with an honest day-1/day-2/day-3 launch plan.
+- Added `src/lib/launch-readiness.ts` to classify day-3 channel launch items as `Ready`, `Needs human`, `Needs secret`, or `Later`.
+- Added launch readiness tests that confirm live integrations remain honestly blocked without secrets and configured OpenAI still needs paid-tool approval.
+- Added a Day-3 channel launch readiness section to `/dashboard` so the user can see what is usable now and what is blocked before channel work begins.
+- Direct-Node `eslint .`: passed.
+- Direct-Node `tsc --noEmit`: passed.
+- Direct-Node `tsx --test "src/**/*.test.ts"`: passed, 47 tests.
+- Direct-Node `prisma generate` plus `next build`: passed.
+- `vercel deploy --prod --yes`: passed and production is deployment `dpl_BFZXN75c5GikDQHHLMcVLFmCPAYc`.
+- Production smoke test with Node `fetch`: marked login returned 200, authenticated `/dashboard` returned 200, the dashboard contained `Day-3 channel launch readiness`, and `/api/health` returned 200.
+
 Browser/runtime checks:
 
 - Dev server started at `http://127.0.0.1:3000`.

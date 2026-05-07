@@ -1,5 +1,8 @@
 import { ConnectionStatus, TaskStatus } from "@prisma/client";
 import { getDb } from "@/lib/db";
+import { buildLaunchReadiness } from "@/lib/launch-readiness";
+import { getProviderConfig } from "@/lib/provider-config";
+import { getFolqenSettings } from "@/lib/settings";
 
 function progressForStatus(status: TaskStatus) {
   if (status === "COMPLETED") return "100%";
@@ -10,7 +13,7 @@ function progressForStatus(status: TaskStatus) {
 }
 
 export async function getDashboardData() {
-  const [activeJobCount, pendingApprovalCount, connectedPlatformCount, jobs, approvals, platforms, tools, activity] = await Promise.all([
+  const [activeJobCount, pendingApprovalCount, connectedPlatformCount, jobs, approvals, platforms, tools, activity, settings] = await Promise.all([
     getDb().agentTask.count({
       where: { status: { in: ["QUEUED", "RUNNING", "PAUSED"] } },
     }),
@@ -41,7 +44,9 @@ export async function getDashboardData() {
       take: 5,
       include: { actor: { select: { email: true } } },
     }),
+    getFolqenSettings(),
   ]);
+  const launchReadiness = buildLaunchReadiness(getProviderConfig(settings.openAiModel));
 
   return {
     stats: [
@@ -81,5 +86,6 @@ export async function getDashboardData() {
       title: event.action,
       actor: event.actor?.email ?? "system",
     })),
+    launchReadiness,
   };
 }

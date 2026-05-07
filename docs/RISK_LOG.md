@@ -2,6 +2,14 @@
 
 ## Current Risks
 
+### Two-day launch target can be misunderstood as full automation
+
+- Risk: The user may expect fully automated public publishing, media generation, OAuth platform posting, and real n8n/OpenAI execution within 2 days.
+- Prevention: Added `docs/2_DAY_LAUNCH_PLAN.md` and a dashboard readiness section that clearly labels `Ready`, `Needs human`, `Needs secret`, and `Later`.
+- Verification: Launch readiness tests passed and confirm blocked integrations remain honest without secrets.
+- Rollback: Remove the dashboard launch readiness section if it confuses the app UX, but keep the docs for handoff clarity.
+- Human approval trigger: Any request to enable public publishing, paid OpenAI calls, workflow execution, media rendering, OAuth connections, or browser automation.
+
 ### App-marked mutation requests are stricter than before
 
 - Risk: Direct API calls or scripts that do not send the Folqen UI mutation marker now receive `403`, even if they are otherwise same-origin.
