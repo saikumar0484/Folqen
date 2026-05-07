@@ -88,4 +88,5 @@
 - [x] Start security hardening with mutation same-origin checks and rate limits.
 - [x] Add app-marked mutation requests for browser UI actions.
 - [x] Add two-day/day-3 launch readiness plan and dashboard visibility.
+- [x] Add in-app encrypted connection wizard and credential intake API.
 - [ ] Complete broader security hardening.

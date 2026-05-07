@@ -2,6 +2,22 @@
 
 ## Current Risks
 
+### In-app credential intake must not become unsafe account takeover
+
+- Risk: Users may paste raw social media passwords or assume saved credentials automatically connect/publish.
+- Prevention: The Connection Wizard explicitly asks for OAuth/API/setup details, not social passwords. Saving details does not publish, spend credits, run workflows, or enable OAuth posting.
+- Verification: Credential vault tests passed; connection intake is admin-only and anonymous production intake returned 401.
+- Rollback: Remove the Connection Wizard and `/api/connections/intake` route if credential handling is deemed too risky for the MVP.
+- Human approval trigger: Any real OAuth connection, paid API call, n8n workflow execution, public publishing, media rendering, or browser automation.
+
+### Credential vault depends on server secret stability
+
+- Risk: Credentials saved through the wizard are encrypted with `CREDENTIAL_ENCRYPTION_KEY` if set, otherwise `AUTH_SECRET`. Rotating that key without migration can make saved credentials unreadable.
+- Prevention: Prefer setting a dedicated `CREDENTIAL_ENCRYPTION_KEY` before serious production credential storage. Keep key rotation documented and deliberate.
+- Verification: Vault encrypt/decrypt tests passed and no plaintext secrets are returned in API responses.
+- Rollback: Re-enter credentials through `/settings` if the vault key changes and old entries cannot decrypt.
+- Human approval trigger: Key rotation, credential deletion, provider connection, or production secret change.
+
 ### Two-day launch target can be misunderstood as full automation
 
 - Risk: The user may expect fully automated public publishing, media generation, OAuth platform posting, and real n8n/OpenAI execution within 2 days.

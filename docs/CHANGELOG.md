@@ -1,5 +1,30 @@
 # Changelog
 
+## May 7, 2026 - In-app connection wizard
+
+### Added
+
+- Added `/settings` Connection Wizard for Google Drive, OpenAI, n8n, YouTube, Instagram, Facebook, Snapchat, and Threads setup details.
+- Added encrypted credential vault helpers and credential-vault tests.
+- Added admin-only `POST /api/connections/intake` for encrypted provider credential intake.
+- Added connection definitions for required provider fields and safety notes.
+
+### Changed
+
+- Google Drive upload and n8n connection test paths can read saved encrypted credentials from Supabase when env values are not present.
+- Preserved an inactive generated root scaffold under `docs/prototypes/ai-studio-generated/root-scaffold/` so the real app builds from `src/app`.
+- Restored conflicted config/docs/schema files to the active Folqen branch content and regenerated `package-lock.json`.
+
+### Verification
+
+- `npm install`: passed and regenerated a valid lockfile.
+- Direct-Node `eslint .`: passed.
+- Direct-Node `tsc --noEmit`: passed.
+- Direct-Node `tsx --test "src/**/*.test.ts"`: passed, 50 tests.
+- Direct-Node `prisma generate` plus `next build`: passed.
+- `vercel deploy --prod --yes`: passed and production deployment is `dpl_BAMpFrvAqbL3Kjup1zgmbrLsYrFi`.
+- Production smoke test confirmed marked login returned 200, `/settings` returned 200 and contained `Connection wizard`, anonymous connection intake returned 401, and `/api/health` returned 200.
+
 ## May 7, 2026 - Two-day launch readiness
 
 ### Added

@@ -1,4 +1,5 @@
 import { getEnv, type FolqenEnv } from "@/lib/env";
+import { getConnectionCredentials } from "@/lib/credentials/store";
 import type { ServiceResult } from "@/lib/services/types";
 
 const tokenUrl = "https://oauth2.googleapis.com/token";
@@ -33,6 +34,26 @@ export function isGoogleDriveStorageConfigured(env: FolqenEnv = getEnv()) {
     hasValue(env.GOOGLE_DRIVE_REFRESH_TOKEN) &&
     hasValue(env.GOOGLE_DRIVE_FOLDER_ID)
   );
+}
+
+async function resolveGoogleDriveEnv(env: FolqenEnv) {
+  if (isGoogleDriveStorageConfigured(env)) {
+    return env;
+  }
+
+  const stored = await getConnectionCredentials("google_drive").catch(() => null);
+
+  if (!stored) {
+    return env;
+  }
+
+  return {
+    ...env,
+    GOOGLE_DRIVE_CLIENT_ID: env.GOOGLE_DRIVE_CLIENT_ID || stored.values.clientId,
+    GOOGLE_DRIVE_CLIENT_SECRET: env.GOOGLE_DRIVE_CLIENT_SECRET || stored.values.clientSecret,
+    GOOGLE_DRIVE_REFRESH_TOKEN: env.GOOGLE_DRIVE_REFRESH_TOKEN || stored.values.refreshToken,
+    GOOGLE_DRIVE_FOLDER_ID: env.GOOGLE_DRIVE_FOLDER_ID || stored.values.folderId,
+  };
 }
 
 async function getAccessToken(env: FolqenEnv, fetchImpl: FetchLike): Promise<ServiceResult<{ accessToken: string }>> {
@@ -85,7 +106,7 @@ export async function uploadPrivateFileToGoogleDrive(
   input: GoogleDriveUploadInput,
   options: { env?: FolqenEnv; fetchImpl?: FetchLike } = {},
 ): Promise<ServiceResult<GoogleDriveUploadResult>> {
-  const env = options.env ?? getEnv();
+  const env = options.env ?? (await resolveGoogleDriveEnv(getEnv()));
   const fetchImpl = options.fetchImpl ?? fetch;
   const token = await getAccessToken(env, fetchImpl);
 

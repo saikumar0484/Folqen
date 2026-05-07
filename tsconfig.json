@@ -37,6 +37,10 @@
   ],
   "exclude": [
     "node_modules",
-    "docs/prototypes/**"
+    "docs/prototypes/**",
+    "app/**",
+    "components/**",
+    "lib/**",
+    "prisma.config.ts"
   ]
 }

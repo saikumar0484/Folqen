@@ -1,4 +1,5 @@
 import { getEnv } from "@/lib/env";
+import { getConnectionCredentials } from "@/lib/credentials/store";
 
 export type N8nTestResult = {
   status: "not_connected" | "configured" | "live" | "failed";
@@ -7,8 +8,11 @@ export type N8nTestResult = {
 
 export async function testN8nWebhook(): Promise<N8nTestResult> {
   const env = getEnv();
+  const stored = await getConnectionCredentials("n8n").catch(() => null);
+  const webhookUrl = env.N8N_WEBHOOK_URL || stored?.values.webhookUrl;
+  const webhookSecret = env.N8N_WEBHOOK_SECRET || stored?.values.webhookSecret;
 
-  if (!env.N8N_WEBHOOK_URL) {
+  if (!webhookUrl) {
     return {
       status: "not_connected",
       message: "N8N_WEBHOOK_URL is not configured.",
@@ -16,11 +20,11 @@ export async function testN8nWebhook(): Promise<N8nTestResult> {
   }
 
   try {
-    const response = await fetch(env.N8N_WEBHOOK_URL, {
+    const response = await fetch(webhookUrl, {
       method: "POST",
       headers: {
         "content-type": "application/json",
-        ...(env.N8N_WEBHOOK_SECRET ? { "x-folqen-secret": env.N8N_WEBHOOK_SECRET } : {}),
+        ...(webhookSecret ? { "x-folqen-secret": webhookSecret } : {}),
       },
       body: JSON.stringify({
         source: "folqen",

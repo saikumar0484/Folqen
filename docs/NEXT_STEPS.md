@@ -6,7 +6,7 @@ Continue from provider setup surfaces into credential-backed integrations. All r
 
 Current save point: May 7, 2026, after app-marked mutation hardening, visible UI hardening, and the Vercel speed fix. The live app is deployed at `https://folqen.vercel.app`, health reports database `live`, Vercel Functions run in Seoul (`icn1`) near Supabase, and real Drive uploads remain blocked until Google OAuth env values plus a private folder id are configured.
 
-The user now wants a 2-day launch sprint so Folqen can be used with the channel from day 3. Treat `docs/2_DAY_LAUNCH_PLAN.md` as the practical launch scope: protected planning, manual posting packages, approvals, audit, and provider setup testing if credentials are available. Do not promise full auto-publishing, real media rendering, or complete multi-platform automation inside 2 days.
+The user now wants a 2-day launch sprint so Folqen can be used with the channel from day 3. Treat `docs/2_DAY_LAUNCH_PLAN.md` as the practical launch scope: protected planning, manual posting packages, approvals, audit, and provider setup testing if credentials are available. Do not promise full auto-publishing, real media rendering, or complete multi-platform automation inside 2 days. Folqen now has a `/settings` Connection Wizard for encrypted credential intake inside the app.
 
 ## Exact Next Tasks
 
@@ -16,13 +16,15 @@ The user now wants a 2-day launch sprint so Folqen can be used with the channel 
 4. Get a new admin password from the human, then use `/settings` or a safe server-side flow to rotate the seeded admin password.
 5. Get explicit human approval to delete or rotate the temporary viewer test account, then verify login/audit behavior.
 6. Configure Google Drive OAuth values through secret env only, redeploy, then live-test one small private upload and verify `binaryStored: true`.
-7. Configure `ORACLE_N8N_INSTANCE_URL`, iframe embedding, `N8N_WEBHOOK_URL`, and `N8N_WEBHOOK_SECRET`; then test `POST /api/integrations/n8n/test`.
-8. Add `OPENAI_API_KEY` through secret env, request/approve the OpenAI provider approval in Folqen, then add a real-generation endpoint that still checks paid-tool guards before every call.
+7. Alternatively, use `/settings` Connection Wizard to enter Google Drive details inside Folqen, then live-test one small private upload and verify `binaryStored: true`.
+8. Use `/settings` Connection Wizard for n8n instance/webhook/secret, then test `POST /api/integrations/n8n/test`.
+9. Use `/settings` Connection Wizard for OpenAI API key, request/approve the OpenAI provider approval in Folqen, then add a real-generation endpoint that still checks paid-tool guards before every call.
 9. Configure local or Oracle worker endpoints for FFmpeg, ComfyUI, and TTS, then add test-only connection checks.
-10. Use the dashboard Day-3 launch readiness section to drive the remaining 2-day launch tasks.
-11. Continue expanding role-aware UI states across settings, packages, files, providers, and future action APIs.
-12. Wire the service interface foundation into workflow test APIs while keeping real execution blocked.
-13. Continue broader security hardening, including stronger CSRF patterns, server-side action audits, and provider-secret isolation.
+10. Configure local or Oracle worker endpoints for FFmpeg, ComfyUI, and TTS, then add test-only connection checks.
+11. Use the dashboard Day-3 launch readiness section to drive the remaining 2-day launch tasks.
+12. Continue expanding role-aware UI states across settings, packages, files, providers, and future action APIs.
+13. Wire the service interface foundation into workflow test APIs while keeping real execution blocked.
+14. Continue broader security hardening, including stronger CSRF patterns, server-side action audits, and provider-secret isolation.
 
 ## Human Decisions Needed
 

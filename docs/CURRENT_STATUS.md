@@ -476,6 +476,21 @@ Latest May 7, 2026 2-day launch readiness update:
 - `vercel deploy --prod --yes`: passed and production is deployment `dpl_BFZXN75c5GikDQHHLMcVLFmCPAYc`.
 - Production smoke test with Node `fetch`: marked login returned 200, authenticated `/dashboard` returned 200, the dashboard contained `Day-3 channel launch readiness`, and `/api/health` returned 200.
 
+Latest May 7, 2026 in-app connection wizard update:
+
+- Added a Connection Wizard to `/settings` so Folqen asks for Google Drive, OpenAI, n8n, and social channel setup details inside the app.
+- Added encrypted credential vault helpers using `CREDENTIAL_ENCRYPTION_KEY` when configured, with `AUTH_SECRET` as the existing server-secret fallback.
+- Added `POST /api/connections/intake`, admin-only and protected by the Folqen mutation guard, to save provider details encrypted in Supabase `Setting` records.
+- Wired saved Google Drive credentials into the server Drive upload path and saved n8n credentials into the n8n connection test path.
+- Added credential-vault tests.
+- Moved an inactive generated root scaffold from `app/`, `components/`, `lib/`, and related root files into `docs/prototypes/ai-studio-generated/root-scaffold/` so the active app builds from `src/app`.
+- Direct-Node `eslint .`: passed.
+- Direct-Node `tsc --noEmit`: passed.
+- Direct-Node `tsx --test "src/**/*.test.ts"`: passed, 50 tests.
+- Direct-Node `prisma generate` plus `next build`: passed.
+- `vercel deploy --prod --yes`: passed and production is deployment `dpl_BAMpFrvAqbL3Kjup1zgmbrLsYrFi`.
+- Production smoke test with Node `fetch`: marked login returned 200, `/settings` returned 200 and contained `Connection wizard`, anonymous connection intake returned 401, and `/api/health` returned 200.
+
 Browser/runtime checks:
 
 - Dev server started at `http://127.0.0.1:3000`.

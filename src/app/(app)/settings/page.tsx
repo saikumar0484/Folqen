@@ -1,4 +1,5 @@
 import { PasswordChangeForm } from "@/components/app/password-change-form";
+import { ConnectionWizard } from "@/components/app/connection-wizard";
 import { ProviderApprovalActions } from "@/components/app/provider-approval-actions";
 import { ProviderSetupPanel } from "@/components/app/provider-setup-panel";
 import { SettingsForm } from "@/components/app/settings-form";
@@ -47,6 +48,7 @@ export default async function SettingsPage() {
       </section>
 
       <SettingsForm settings={settings} />
+      <ConnectionWizard />
       <ProviderSetupPanel config={providerConfig} />
       <ProviderApprovalActions />
       <PasswordChangeForm />

@@ -1,12 +1,22 @@
+import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTypescript from "eslint-config-next/typescript";
 
-const eslintConfig = [
-  {
-    ignores: [".next/**", "node_modules/**", "next-env.d.ts"],
-  },
+const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTypescript,
-];
+  globalIgnores([
+    ".next/**",
+    "out/**",
+    "build/**",
+    "next-env.d.ts",
+    "node_modules/**",
+    "docs/prototypes/**",
+    "app/**",
+    "components/**",
+    "lib/**",
+    "prisma.config.ts",
+  ]),
+]);
 
 export default eslintConfig;
