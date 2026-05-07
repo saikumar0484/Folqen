@@ -10,6 +10,7 @@ Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/
 - Added database-backed `/platforms` and `/tools` pages using existing Supabase records and runtime status checks without enabling live integrations.
 - Added database-backed `/notifications`, `/analytics`, `/errors`, `/workflows`, and `/upgrades` pages using existing Supabase records without enabling live execution.
 - Added route-specific `/calendar`, `/monetization`, `/brand`, and `/files` pages using existing Supabase records and safe read-only guidance.
+- Added file upload validation foundation with tests; actual upload/storage writes remain disabled.
 - Fixed the authenticated sidebar layout so the `Approval gates active` safety card no longer overlaps route links on shorter desktop screens.
 - Synced the newer `main` update into the foundation branch.
 - Installed dependencies with npm and generated `package-lock.json`.
@@ -267,6 +268,13 @@ Latest May 7, 2026 calendar/monetization/brand/files update:
 - `GET https://folqen.vercel.app/api/health`: returned database status `live`.
 - Unauthenticated `GET /files` and `GET /calendar`: returned 307 login redirects.
 
+Latest May 7, 2026 file validation foundation:
+
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run test`: passed, 11 tests.
+- `npm run build`: passed.
+
 Browser/runtime checks:
 
 - Dev server started at `http://127.0.0.1:3000`.
@@ -283,8 +291,8 @@ Browser/runtime checks:
 - Supabase direct database hostname remained unreliable from this Windows environment; use the Supabase session pooler or `supabase db query --linked`.
 - File uploads, live integrations, write actions for pipeline/library, and publishing are not implemented yet.
 - Oracle n8n webhook testing still requires account-specific secrets and must be completed through safe environment variable setup.
-- Production URL exists, protected routes are live, and all required authenticated pages now have route-specific surfaces, but it is not a complete MVP yet because uploads, action APIs, n8n, platform integrations, real AI/provider service layer, and posting package generation workflows are still pending.
+- Production URL exists, protected routes are live, all required authenticated pages now have route-specific surfaces, and upload validation rules exist. It is not a complete MVP yet because actual upload storage, action APIs, n8n, platform integrations, real AI/provider service layer, and posting package generation workflows are still pending.
 
 ## Safe To Stop
 
-Yes. The latest work is a verified and deployed calendar/monetization/brand/files route-specific page slice.
+Yes. The latest work is a verified file upload validation foundation. Commit and push this slice before stopping if that has not already happened in the current session.

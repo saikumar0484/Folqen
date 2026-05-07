@@ -14,6 +14,7 @@ Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/
 - Added database-backed platforms and tools pages using existing Supabase records and runtime integration status.
 - Added database-backed notifications, analytics, errors, workflows, and upgrades pages using existing Supabase records.
 - Added route-specific calendar, monetization, brand, and files pages using existing Supabase records and safe read-only guidance.
+- Added file upload validation foundation and focused tests; actual file upload/storage writes are still disabled.
 - Fixed the authenticated sidebar layout so the bottom safety card stays separate from the navigation and the route list scrolls when vertical space is tight.
 - Synced branch with latest `main` AGENTS.md update.
 - Installed dependencies using npm and generated `package-lock.json`.
@@ -70,6 +71,7 @@ Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/
 - Added `src/lib/tools-data.ts` and `src/components/app/tools-screen.tsx`; updated `/tools` to show live provider registry, tool limits, and runtime integration status.
 - Added `src/lib/operations-data.ts` and `src/components/app/operations-screens.tsx`; updated `/notifications`, `/analytics`, `/errors`, `/workflows`, and `/upgrades` with read-only live-data views.
 - Added `src/lib/foundation-pages-data.ts` and `src/components/app/foundation-pages-screens.tsx`; updated `/calendar`, `/monetization`, `/brand`, and `/files` with route-specific read-only views.
+- Added `src/lib/files/validation.ts` and `src/lib/files/validation.test.ts` for safe file candidate checks.
 
 ## Commands Run
 
@@ -178,6 +180,10 @@ vercel deploy --prod --yes
 curl https://folqen.vercel.app/api/health
 curl https://folqen.vercel.app/files
 curl https://folqen.vercel.app/calendar
+npm run lint
+npm run typecheck
+npm run test
+npm run build
 ```
 
 ## Command Results
@@ -260,6 +266,7 @@ Latest deployment/data foundation verification:
 - Platforms/tools live-data verification: lint, typecheck, tests, build, production deploy, health check, and unauthenticated route-protection checks passed.
 - Operations pages live-data verification: lint, typecheck, tests, build, production deploy, health check, and unauthenticated route-protection checks passed.
 - Calendar/monetization/brand/files route-specific verification: lint, typecheck, tests, build, production deploy, health check, and unauthenticated route-protection checks passed.
+- File validation foundation verification: lint, typecheck, tests, and build passed. Test count is now 11.
 
 ## Known Broken Areas
 
@@ -267,7 +274,7 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
 ## Known Mock-Only Areas
 
-- All required authenticated route surfaces are now route-specific. Many are real/read-only from Supabase; remaining actions, uploads, providers, publishing, and automation are still mock/placeholder.
+- All required authenticated route surfaces are now route-specific. Many are real/read-only from Supabase. File validation foundations exist, but remaining actions, actual uploads/storage writes, providers, publishing, and automation are still mock/placeholder.
 - All integrations are `Not connected`.
 - Mini agent chat is a mock UI shell.
 - Command palette and notifications are mock interactions.
@@ -291,10 +298,10 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
 ## Safe To Continue From Another Account
 
-Yes. The repo is safe to continue from this checkpoint. The latest calendar/monetization/brand/files slice has been committed, pushed, deployed, and checked for production health plus route protection. No source files are half-edited.
+Yes. The repo is safe to continue from this checkpoint after the latest file validation foundation is committed and pushed. No source files should be left half-edited.
 
 ## Next Recommended Command
 
 ```text
-Read README, root docs, and checkpoint docs, run lint/typecheck/test/build if needed, then continue file validation, posting packages, service interfaces, role-aware UI/tests, or n8n setup if webhook secrets are available. All required authenticated pages are route-specific and verified locally. Do not put test account passwords or real secrets into repo files.
+Read README, root docs, and checkpoint docs, run lint/typecheck/test/build if needed, then continue actual file upload/storage, posting packages, service interfaces, role-aware UI/tests, or n8n setup if webhook secrets are available. All required authenticated pages are route-specific and verified locally; file validation foundations are also verified. Do not put test account passwords or real secrets into repo files.
 ```

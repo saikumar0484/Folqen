@@ -2,6 +2,14 @@
 
 ## Current Risks
 
+### Upload validation exists but storage writes are not implemented
+
+- Risk: Future upload endpoints could bypass validation or store files unsafely.
+- Prevention: `src/lib/files/validation.ts` now centralizes allowed MIME/extension/size/name/path checks, and tests cover common unsafe cases.
+- Verification: `npm run test` now includes 5 file validation tests and passed with 11 total tests.
+- Rollback: Revert the validation files if they cause runtime/build issues; no database or storage changes were made.
+- Human approval trigger: Any file upload endpoint or storage configuration that accepts user files or writes to disk/cloud storage.
+
 ### Files page is inventory-only
 
 - Risk: Users may expect the Files page to accept uploads now that it has a route-specific UI.

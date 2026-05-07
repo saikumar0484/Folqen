@@ -1,5 +1,24 @@
 # Changelog
 
+## May 7, 2026 - File upload validation foundation
+
+### Added
+
+- Added upload candidate validation for allowed MIME types, matching extensions, safe file names, path traversal prevention, positive file size, and a 100 MB MVP limit.
+- Added focused tests for supported files, path traversal, MIME/extension mismatch, oversize files, and unsupported file types.
+
+### Safety
+
+- No upload endpoint, file storage write, or public file access was enabled.
+- This is a validation foundation only; actual uploads still require role checks, privacy defaults, storage path isolation, confirmations where needed, and audit logs.
+
+### Verification
+
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run test`: passed, 11 tests.
+- `npm run build`: passed.
+
 ## May 7, 2026 - Route-specific calendar monetization brand and files pages
 
 ### Added
