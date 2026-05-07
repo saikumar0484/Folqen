@@ -1,5 +1,10 @@
-import { RoutePage } from "@/components/app/route-page";
+import { BrandScreen } from "@/components/app/foundation-pages-screens";
+import { getBrandData } from "@/lib/foundation-pages-data";
 
-export default function BrandPage() {
-  return <RoutePage routeId="brand" />;
+export const dynamic = "force-dynamic";
+
+export default async function BrandPage() {
+  const data = await getBrandData();
+
+  return <BrandScreen data={data} />;
 }

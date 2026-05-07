@@ -1,5 +1,10 @@
-import { RoutePage } from "@/components/app/route-page";
+import { FilesScreen } from "@/components/app/foundation-pages-screens";
+import { getFilesData } from "@/lib/foundation-pages-data";
 
-export default function FilesPage() {
-  return <RoutePage routeId="files" />;
+export const dynamic = "force-dynamic";
+
+export default async function FilesPage() {
+  const data = await getFilesData();
+
+  return <FilesScreen data={data} />;
 }

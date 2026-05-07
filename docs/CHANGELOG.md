@@ -1,5 +1,28 @@
 # Changelog
 
+## May 7, 2026 - Route-specific calendar monetization brand and files pages
+
+### Added
+
+- Added server-side data loading for calendar, monetization, brand, and files pages.
+- Replaced `/calendar` placeholder with Supabase-backed content schedule and approval-blocker views.
+- Replaced `/monetization` placeholder with safe revenue-readiness and analytics signal views while payment access remains off.
+- Replaced `/brand` placeholder with brand direction, safety boundaries, and content record views.
+- Replaced `/files` placeholder with read-only uploaded-file and asset inventory views.
+
+### Safety
+
+- File uploads are still disabled until strict validation, storage, role checks, confirmations, and audit logs are implemented.
+- Payment/monetization actions remain disabled and require human approval.
+- Calendar auto-scheduling and public posting remain disabled.
+
+### Verification
+
+- `npm run lint`: passed.
+- `npm run typecheck`: passed after correcting the settings helper import.
+- `npm run test`: passed, 6 guard tests.
+- `npm run build`: passed.
+
 ## May 7, 2026 - Database-backed operations pages
 
 ### Added

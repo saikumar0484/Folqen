@@ -2,6 +2,22 @@
 
 ## Current Risks
 
+### Files page is inventory-only
+
+- Risk: Users may expect the Files page to accept uploads now that it has a route-specific UI.
+- Prevention: Upload controls are not enabled. The page explicitly states uploads are disabled until validation, storage, role checks, confirmations, and audit logs exist.
+- Verification: `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build` passed after adding the page.
+- Rollback: Revert the foundation pages data-loader and screen commit if a route causes runtime issues.
+- Human approval trigger: Any file upload/storage implementation that writes files, accepts user input, or changes storage configuration.
+
+### Monetization page is read-only
+
+- Risk: Users may expect payment or monetization actions.
+- Prevention: Payment access remains off, and the route only displays readiness/analytics signals.
+- Verification: `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build` passed.
+- Rollback: Revert the monetization screen if it causes confusion or runtime issues.
+- Human approval trigger: Any payment, ads, sponsorship commitment, revenue API, or monetization account connection.
+
 ### Operations pages are read-only
 
 - Risk: Users may expect notifications, analytics, errors, workflows, or upgrades pages to mark records read, resolve errors, execute workflows, or apply upgrades.

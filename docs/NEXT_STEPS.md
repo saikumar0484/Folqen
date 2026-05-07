@@ -2,7 +2,7 @@
 
 ## Immediate Next Phase
 
-Continue real backend data flows and the next safety-focused UX work. Most core app routes now use Supabase-backed records for read-only surfaces.
+Continue from route-specific read surfaces into safe actions and MVP workflows. All required authenticated routes now have dedicated pages, but uploads, posting packages, provider services, and real automation are still pending.
 
 ## Exact Next Tasks
 
@@ -13,11 +13,12 @@ Continue real backend data flows and the next safety-focused UX work. Most core 
 5. Remove or rotate the temporary viewer test account after dashboard testing is finished.
 6. Add stronger role-aware UI states for admin/operator/viewer and tests around forbidden actions.
 7. Add stronger role-aware UI states for admin/operator/viewer and tests around forbidden actions.
-8. Continue replacing the few remaining generic route placeholders with route-specific pages, especially calendar, monetization, brand, and files.
-9. Add role-aware UI states for admin/operator/viewer and tests around forbidden actions.
-10. Configure Oracle n8n webhook env values only when the human provides the URL/secret, then test `POST /api/integrations/n8n/test`.
-11. Add mobile sidebar behavior, toasts, refined command palette interactions, and file upload validation.
-12. Add posting package generation for platforms that remain `Not connected`.
+8. Add file upload validation and storage flow with MIME/type/size/path checks, role checks, privacy defaults, and audit logs.
+9. Add posting package generation for platforms that remain `Not connected`.
+10. Add role-aware UI states for admin/operator/viewer and tests around forbidden actions.
+11. Add service interfaces and mock implementations for agent, publishing, analytics, workflow, render, storage, and notifications.
+12. Configure Oracle n8n webhook env values only when the human provides the URL/secret, then test `POST /api/integrations/n8n/test`.
+13. Add mobile sidebar behavior, toasts, and refined command palette interactions.
 
 ## Human Decisions Needed
 
@@ -50,4 +51,4 @@ Needed through safe secret flow only:
 
 ## Resume Command
 
-Continue from branch `build/phase-0-foundation`, read README, all root project docs, and checkpoint docs, run verification, then continue route-specific pages, file validation, posting packages, or n8n setup if the human provides webhook secrets. Supabase, login, password change API, settings, approvals, audit logs, agent message persistence, dashboard, pipeline, library, platforms, tools, notifications, analytics, errors, workflows, and upgrades are already verified locally.
+Continue from branch `build/phase-0-foundation`, read README, all root project docs, and checkpoint docs, run verification, then continue file validation, posting packages, service interfaces, role-aware UI/tests, or n8n setup if the human provides webhook secrets. All required authenticated pages are route-specific and verified locally.

@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, and most core app routes now read live Supabase data.
+Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, and all required authenticated routes now have route-specific surfaces.
 
 ## Branch
 
@@ -13,6 +13,7 @@ Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/
 - Added database-backed pipeline and library pages using existing Supabase records.
 - Added database-backed platforms and tools pages using existing Supabase records and runtime integration status.
 - Added database-backed notifications, analytics, errors, workflows, and upgrades pages using existing Supabase records.
+- Added route-specific calendar, monetization, brand, and files pages using existing Supabase records and safe read-only guidance.
 - Fixed the authenticated sidebar layout so the bottom safety card stays separate from the navigation and the route list scrolls when vertical space is tight.
 - Synced branch with latest `main` AGENTS.md update.
 - Installed dependencies using npm and generated `package-lock.json`.
@@ -68,6 +69,7 @@ Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/
 - Added `src/lib/platforms-data.ts` and `src/components/app/platforms-screen.tsx`; updated `/platforms` to show live platform connection records with manual fallback states.
 - Added `src/lib/tools-data.ts` and `src/components/app/tools-screen.tsx`; updated `/tools` to show live provider registry, tool limits, and runtime integration status.
 - Added `src/lib/operations-data.ts` and `src/components/app/operations-screens.tsx`; updated `/notifications`, `/analytics`, `/errors`, `/workflows`, and `/upgrades` with read-only live-data views.
+- Added `src/lib/foundation-pages-data.ts` and `src/components/app/foundation-pages-screens.tsx`; updated `/calendar`, `/monetization`, `/brand`, and `/files` with route-specific read-only views.
 
 ## Commands Run
 
@@ -168,6 +170,10 @@ vercel deploy --prod --yes
 curl https://folqen.vercel.app/api/health
 curl https://folqen.vercel.app/notifications
 curl https://folqen.vercel.app/upgrades
+npm run lint
+npm run typecheck
+npm run test
+npm run build
 ```
 
 ## Command Results
@@ -249,6 +255,7 @@ Latest deployment/data foundation verification:
 - Pipeline/library live-data verification: lint, typecheck, tests, build, production deploy, health check, and unauthenticated route-protection checks passed.
 - Platforms/tools live-data verification: lint, typecheck, tests, build, production deploy, health check, and unauthenticated route-protection checks passed.
 - Operations pages live-data verification: lint, typecheck, tests, build, production deploy, health check, and unauthenticated route-protection checks passed.
+- Calendar/monetization/brand/files route-specific verification: lint, typecheck, tests, and build passed.
 
 ## Known Broken Areas
 
@@ -256,7 +263,7 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
 ## Known Mock-Only Areas
 
-- Many route surfaces are now real/read-only: dashboard, pipeline, library, platforms, tools, notifications, analytics, errors, workflows, upgrades, settings, approvals, audit, and agent chat persistence. Remaining route surfaces/actions are still mock/placeholder.
+- All required authenticated route surfaces are now route-specific. Many are real/read-only from Supabase; remaining actions, uploads, providers, publishing, and automation are still mock/placeholder.
 - All integrations are `Not connected`.
 - Mini agent chat is a mock UI shell.
 - Command palette and notifications are mock interactions.
@@ -280,10 +287,10 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
 ## Safe To Continue From Another Account
 
-Yes. The repo is safe to continue from this checkpoint. The latest operations pages live-data slice has been committed, pushed, deployed, and checked for production health plus route protection. No source files are half-edited.
+Yes. The repo is safe to continue from this checkpoint after the latest calendar/monetization/brand/files slice is committed, pushed, and optionally deployed. No source files should be left half-edited.
 
 ## Next Recommended Command
 
 ```text
-Read README, root docs, and checkpoint docs, run lint/typecheck/test/build if needed, then continue remaining route-specific pages, file validation, posting packages, role-aware UI/tests, or n8n setup if webhook secrets are available. Supabase, login, password change API, settings, approvals, audit logs, persistent mock agent chat, dashboard, pipeline, library, platforms, tools, notifications, analytics, errors, workflows, and upgrades are already verified locally. Do not put test account passwords or real secrets into repo files.
+Read README, root docs, and checkpoint docs, run lint/typecheck/test/build if needed, then continue file validation, posting packages, service interfaces, role-aware UI/tests, or n8n setup if webhook secrets are available. All required authenticated pages are route-specific and verified locally. Do not put test account passwords or real secrets into repo files.
 ```
