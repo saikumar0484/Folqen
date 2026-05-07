@@ -47,8 +47,8 @@ export default async function SettingsPage() {
         </div>
       </section>
 
-      <SettingsForm settings={settings} />
       <ConnectionWizard />
+      <SettingsForm settings={settings} />
       <ProviderSetupPanel config={providerConfig} />
       <ProviderApprovalActions />
       <PasswordChangeForm />

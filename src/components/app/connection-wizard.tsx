@@ -23,7 +23,7 @@ export function ConnectionWizard() {
             <KeyRound className="h-3.5 w-3.5" />
             Connection wizard
           </div>
-          <h2 className="mt-3 font-display text-2xl font-semibold">Let Folqen ask for connection details</h2>
+          <h2 className="mt-3 font-display text-2xl font-semibold">Connect Folqen to your accounts</h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
             Choose a provider, enter the details Folqen asks for, and Folqen stores sensitive values encrypted. Social accounts use setup metadata now and official OAuth later. Never enter social media passwords.
           </p>
