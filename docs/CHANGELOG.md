@@ -22,6 +22,9 @@
 - `npm run typecheck`: passed after correcting the settings helper import.
 - `npm run test`: passed, 6 guard tests.
 - `npm run build`: passed.
+- `vercel deploy --prod --yes`: passed and aliased `https://folqen.vercel.app`.
+- `GET https://folqen.vercel.app/api/health`: returned database status `live`.
+- Unauthenticated `GET /files` and `GET /calendar`: returned 307 login redirects.
 
 ## May 7, 2026 - Database-backed operations pages
 
