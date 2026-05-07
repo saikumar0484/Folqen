@@ -2,6 +2,14 @@
 
 ## Current Risks
 
+### Operations pages are read-only
+
+- Risk: Users may expect notifications, analytics, errors, workflows, or upgrades pages to mark records read, resolve errors, execute workflows, or apply upgrades.
+- Prevention: The pages only read Supabase records and display safety guidance. Write/execution actions remain out of scope until role checks, confirmations, service adapters, and audit logs exist.
+- Verification: `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build` passed after adding the pages.
+- Rollback: Revert the operations data-loader and page commits if a route causes runtime issues.
+- Human approval trigger: Any workflow execution, upgrade execution, external analytics connection, notification delivery channel, destructive error cleanup, paid provider call, or production code/security change.
+
 ### Platforms and tools pages are status-only
 
 - Risk: Users may expect platform connection cards or tool cards to connect accounts, run providers, render media, or publish content.

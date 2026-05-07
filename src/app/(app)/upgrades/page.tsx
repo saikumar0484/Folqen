@@ -1,5 +1,10 @@
-import { RoutePage } from "@/components/app/route-page";
+import { UpgradesScreen } from "@/components/app/operations-screens";
+import { getUpgradesData } from "@/lib/operations-data";
 
-export default function UpgradesPage() {
-  return <RoutePage routeId="upgrades" />;
+export const dynamic = "force-dynamic";
+
+export default async function UpgradesPage() {
+  const data = await getUpgradesData();
+
+  return <UpgradesScreen data={data} />;
 }

@@ -1,5 +1,29 @@
 # Changelog
 
+## May 7, 2026 - Database-backed operations pages
+
+### Added
+
+- Added shared server-side operations data loading for notifications, analytics, errors, workflows, and upgrades.
+- Replaced `/notifications` placeholder with Supabase-backed notification records and read/risk states.
+- Replaced `/analytics` placeholder with Supabase-backed analytics records while keeping live platform analytics marked as not connected.
+- Replaced `/errors` placeholder with Supabase-backed error records and recovery guidance.
+- Replaced `/workflows` placeholder with Supabase-backed workflow/provider status while keeping n8n execution gated.
+- Replaced `/upgrades` placeholder with Supabase-backed upgrade proposals, findings, scores, test plans, and rollback plans.
+
+### Safety
+
+- No workflows, upgrades, external analytics, platform publishing, paid tools, or browser automation were enabled.
+- All operations pages are read-only until role-checked actions, confirmations, and audit logs are added.
+- Upgrade execution remains blocked by default and requires human approval.
+
+### Verification
+
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run test`: passed, 6 guard tests.
+- `npm run build`: passed.
+
 ## May 7, 2026 - Database-backed platforms and tools pages
 
 ### Added

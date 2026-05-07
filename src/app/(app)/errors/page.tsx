@@ -1,5 +1,10 @@
-import { RoutePage } from "@/components/app/route-page";
+import { ErrorsScreen } from "@/components/app/operations-screens";
+import { getErrorsData } from "@/lib/operations-data";
 
-export default function ErrorsPage() {
-  return <RoutePage routeId="errors" />;
+export const dynamic = "force-dynamic";
+
+export default async function ErrorsPage() {
+  const data = await getErrorsData();
+
+  return <ErrorsScreen data={data} />;
 }

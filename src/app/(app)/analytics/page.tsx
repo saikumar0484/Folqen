@@ -1,5 +1,10 @@
-import { RoutePage } from "@/components/app/route-page";
+import { AnalyticsScreen } from "@/components/app/operations-screens";
+import { getAnalyticsData } from "@/lib/operations-data";
 
-export default function AnalyticsPage() {
-  return <RoutePage routeId="analytics" />;
+export const dynamic = "force-dynamic";
+
+export default async function AnalyticsPage() {
+  const data = await getAnalyticsData();
+
+  return <AnalyticsScreen data={data} />;
 }
