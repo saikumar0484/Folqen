@@ -2,6 +2,14 @@
 
 ## Current Risks
 
+### Pipeline and library pages are read-only
+
+- Risk: Users may expect the new live-data pages to execute retries, downloads, uploads, archive/delete, renders, or posting packages.
+- Prevention: The pages show existing Supabase records and keep write actions out of scope until service adapters, upload validation, role checks, confirmations, and audit logs are implemented.
+- Verification: `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build` passed after adding the pages.
+- Rollback: Revert the pipeline/library page and data-loader commits if a route causes runtime issues.
+- Human approval trigger: Any destructive archive/delete, real render, upload handling, public publishing, paid provider call, or n8n workflow trigger.
+
 ### Temporary viewer test account exists
 
 - Risk: A shared test account can remain active longer than needed.

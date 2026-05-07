@@ -1,5 +1,10 @@
-import { RoutePage } from "@/components/app/route-page";
+import { LibraryScreen } from "@/components/app/library-screen";
+import { getLibraryData } from "@/lib/library-data";
 
-export default function LibraryPage() {
-  return <RoutePage routeId="library" />;
+export const dynamic = "force-dynamic";
+
+export default async function LibraryPage() {
+  const data = await getLibraryData();
+
+  return <LibraryScreen data={data} />;
 }

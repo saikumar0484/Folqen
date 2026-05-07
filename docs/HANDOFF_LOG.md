@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, and dashboard now reads live Supabase data.
+Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, and dashboard/pipeline/library now read live Supabase data.
 
 ## Branch
 
@@ -10,6 +10,7 @@ Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. D
 
 ## Completed Work
 
+- Added database-backed pipeline and library pages using existing Supabase records.
 - Fixed the authenticated sidebar layout so the bottom safety card stays separate from the navigation and the route list scrolls when vertical space is tight.
 - Synced branch with latest `main` AGENTS.md update.
 - Installed dependencies using npm and generated `package-lock.json`.
@@ -60,6 +61,8 @@ Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. D
 - Added shared audit logging helper and role permission helpers.
 - Created a low-privilege viewer test account in Supabase for dashboard testing.
 - Added `src/lib/dashboard-data.ts` and updated `/dashboard` to show live Supabase counts and records.
+- Added `src/lib/pipeline-data.ts` and `src/components/app/pipeline-screen.tsx`; updated `/pipeline` to show live task, workflow, approval, and error records.
+- Added `src/lib/library-data.ts` and `src/components/app/library-screen.tsx`; updated `/library` to show live content, asset, uploaded-file, render, and manual posting package records.
 
 ## Commands Run
 
@@ -136,6 +139,10 @@ npm run test
 npm run build
 vercel deploy --prod --yes
 curl https://folqen.vercel.app/api/health
+npm run lint
+npm run typecheck
+npm run test
+npm run build
 ```
 
 ## Command Results
@@ -214,6 +221,7 @@ Latest deployment/data foundation verification:
 - Test viewer production `/dashboard`: returned 200.
 - Dashboard live data update verification: lint, typecheck, tests, build, production deploy, `/dashboard`, and `/api/health` passed.
 - Sidebar overlap hotfix verification: lint, typecheck, tests, build, production deploy, and health check passed.
+- Pipeline/library live-data verification: lint, typecheck, tests, and build passed.
 
 ## Known Broken Areas
 
@@ -221,11 +229,11 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
 ## Known Mock-Only Areas
 
-- Several route surfaces are now real: settings, approvals, audit, and agent chat persistence. Remaining route data is still mock/placeholder.
+- Several route surfaces are now real: dashboard, pipeline, library, settings, approvals, audit, and agent chat persistence. Remaining route data is still mock/placeholder.
 - All integrations are `Not connected`.
 - Mini agent chat is a mock UI shell.
 - Command palette and notifications are mock interactions.
-- Upload validation is not implemented.
+- Upload validation and library write actions are not implemented.
 - Oracle n8n webhook is not configured.
 - The password change flow exists; the seeded password still needs to be changed by the user.
 - Temporary viewer test account exists and should be deleted or rotated after testing.
@@ -245,10 +253,10 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
 ## Safe To Continue From Another Account
 
-Yes. The repo is safe to continue from this checkpoint. The latest change is a verified and deployed sidebar layout hotfix for the `Approval gates active` card overlap. No source files are half-edited.
+Yes. The repo is safe to continue from this checkpoint after the latest pipeline/library live-data slice is committed, pushed, and optionally deployed. No source files should be left half-edited.
 
 ## Next Recommended Command
 
 ```text
-Read README, root docs, and checkpoint docs, run lint/typecheck/test/build if needed, then continue database-backed pipeline/library work or n8n setup if webhook secrets are available. Supabase, login, password change API, settings, approvals, audit logs, persistent mock agent chat, and dashboard live data are already verified. Do not put test account passwords or real secrets into repo files.
+Read README, root docs, and checkpoint docs, run lint/typecheck/test/build if needed, then continue database-backed route work or n8n setup if webhook secrets are available. Supabase, login, password change API, settings, approvals, audit logs, persistent mock agent chat, dashboard, pipeline, and library live data are already verified locally. Do not put test account passwords or real secrets into repo files.
 ```

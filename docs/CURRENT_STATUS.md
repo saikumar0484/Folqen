@@ -2,10 +2,11 @@
 
 ## Phase
 
-Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, and dashboard now reads live Supabase data on branch `build/phase-0-foundation`.
+Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, and dashboard/pipeline/library now read live Supabase data on branch `build/phase-0-foundation`.
 
 ## Completed Work
 
+- Added database-backed `/pipeline` and `/library` pages using existing Supabase records without changing the schema.
 - Fixed the authenticated sidebar layout so the `Approval gates active` safety card no longer overlaps route links on shorter desktop screens.
 - Synced the newer `main` update into the foundation branch.
 - Installed dependencies with npm and generated `package-lock.json`.
@@ -60,10 +61,12 @@ Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/
 - Added shared audit and role permission helpers.
 - Created a low-privilege Supabase `VIEWER` test account for dashboard testing.
 - Added server-side dashboard data loader and updated `/dashboard` to use Supabase records for counts, jobs, approvals, platform statuses, tool limits, and audit activity.
+- Added server-side pipeline data loader and updated `/pipeline` to use Supabase task, workflow, approval, and error records.
+- Added server-side library data loader and updated `/library` to use Supabase content, asset, uploaded-file, and render records.
 
 ## App Status
 
-The app installs, lints, typechecks, tests, validates Prisma schema, builds successfully, deploys to Vercel, connects to Supabase, supports seeded database-backed login, and now has working database-backed settings, approvals, audit logs, mock agent chat persistence, and dashboard data.
+The app installs, lints, typechecks, tests, validates Prisma schema, builds successfully, deploys to Vercel, connects to Supabase, supports seeded database-backed login, and now has working database-backed settings, approvals, audit logs, mock agent chat persistence, dashboard data, pipeline data, and library data.
 
 ## Safety Status
 
@@ -217,6 +220,13 @@ Latest May 6, 2026 sidebar overlap hotfix:
 - `vercel deploy --prod --yes`: passed and aliased `https://folqen.vercel.app`.
 - `GET https://folqen.vercel.app/api/health`: returned database status `live`.
 
+Latest May 7, 2026 pipeline/library live-data update:
+
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run test`: passed, 6 guard tests.
+- `npm run build`: passed.
+
 Browser/runtime checks:
 
 - Dev server started at `http://127.0.0.1:3000`.
@@ -231,10 +241,10 @@ Browser/runtime checks:
 - Default seeded admin password now has a password-change flow, but the user still needs to actually change it in `/settings`.
 - Test viewer account exists for temporary dashboard testing and should be removed or rotated later.
 - Supabase direct database hostname remained unreliable from this Windows environment; use the Supabase session pooler or `supabase db query --linked`.
-- File uploads, live integrations, and publishing are not implemented yet.
+- File uploads, live integrations, write actions for pipeline/library, and publishing are not implemented yet.
 - Oracle n8n webhook testing still requires account-specific secrets and must be completed through safe environment variable setup.
-- Production URL exists, protected routes are live, and several database-backed flows work, but it is not a complete MVP yet because uploads, broader backend route data flows, n8n, platform integrations, and posting package workflows are still pending.
+- Production URL exists, protected routes are live, and several database-backed flows work, but it is not a complete MVP yet because uploads, remaining backend route data flows, n8n, platform integrations, and posting package workflows are still pending.
 
 ## Safe To Stop
 
-Yes. The latest work is a small verified sidebar layout hotfix that has been committed, pushed, and deployed to production.
+Yes. The latest work is a verified database-backed pipeline/library slice. Commit, push, and deploy this slice before stopping if that has not already happened in the current session.

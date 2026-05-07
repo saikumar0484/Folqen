@@ -1,5 +1,27 @@
 # Changelog
 
+## May 7, 2026 - Database-backed pipeline and library pages
+
+### Added
+
+- Added server-side pipeline data loading from Supabase `AgentTask`, `WorkflowRun`, `Approval`, and `ErrorLog` records.
+- Added a route-specific `/pipeline` screen with live task progress, approval/error attention queue, workflow run state, and publishing guard reminders.
+- Added server-side library data loading from Supabase `ContentItem`, `Asset`, `UploadedFile`, and `Render` records.
+- Added a route-specific `/library` screen with content package status, review/safety/copyright checks, asset/file/render sections, and manual posting package honesty.
+
+### Safety
+
+- No database schema changes or migrations were made.
+- Public publishing, paid tools, browser automation, n8n, ComfyUI, FFmpeg, and platform integrations remain blocked or `Not connected`.
+- Pipeline controls remain read-only until service adapters and role-checked actions are implemented.
+
+### Verification
+
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run test`: passed, 6 guard tests.
+- `npm run build`: passed.
+
 ## May 6, 2026 - Sidebar overlap hotfix
 
 ### Fixed
