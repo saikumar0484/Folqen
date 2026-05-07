@@ -1,5 +1,28 @@
 # Changelog
 
+## May 7, 2026 - Provider approval API test coverage
+
+### Added
+
+- Added route-independent provider approval handler logic so the API can be tested without real cookies or Supabase writes.
+- Added authenticated provider approval tests for anonymous users, viewers, admin success, duplicate pending approvals, invalid request types, and no-secret approval payloads.
+
+### Safety
+
+- No real account cleanup, provider secret, Google Drive write, OpenAI call, n8n workflow, media render, or database schema change was performed.
+- Admin password rotation and viewer account deletion/rotation remain blocked until the human provides a new password and approves the account action.
+
+### Verification
+
+- `npm install`: passed through the temporary Node runtime.
+- Direct-Node `eslint .`: passed.
+- Direct-Node `tsc --noEmit`: passed.
+- Direct-Node `tsx --test "src/**/*.test.ts"`: passed, 34 tests.
+- Direct-Node `prisma generate` plus `next build`: passed.
+- `vercel deploy --prod --yes`: passed and aliased `https://folqen.vercel.app`.
+- `GET https://folqen.vercel.app/api/health`: returned database status `live`.
+- Anonymous `POST /api/provider-approvals/request`: returned 401.
+
 ## May 7, 2026 - Cross-account save checkpoint
 
 ### Changed

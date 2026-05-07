@@ -79,6 +79,7 @@
 - [x] OpenAI model dropdown preference.
 - [x] Media tool setup/status surface.
 - [x] Provider setup approval request flow.
+- [x] Provider approval API authenticated tests.
 - [x] Posting package system.
 - [x] Posting package detail/download controls.
 - [ ] Security hardening.

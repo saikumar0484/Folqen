@@ -6,7 +6,7 @@ Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/
 
 ## Current Save Point
 
-May 7, 2026. Explicit cross-account save checkpoint created after provider setup approval requests. The latest completed feature slice is provider setup approval requests for Google Drive storage, OpenAI paid-agent calls, n8n workflow access, and media worker setup.
+May 7, 2026. The latest completed feature slice is provider approval API test coverage. Account cleanup is blocked on a human-provided admin password and explicit approval to delete or rotate the temporary viewer account.
 
 ## Branch
 
@@ -31,6 +31,7 @@ May 7, 2026. Explicit cross-account save checkpoint created after provider setup
 - Added n8n embedded workflow builder surface in `/workflows`; it stays hidden until a trusted n8n instance URL is configured.
 - Expanded `/tools`, `/settings`, `/workflows`, and `/api/health` provider status surfaces.
 - Added provider approval request definitions, admin-only API, Settings UI buttons, audit logging, and tests for Google Drive, OpenAI, n8n, and media worker setup approval requests.
+- Added injectable provider approval handler tests for anonymous, viewer, admin success, duplicate pending approval, invalid request, and no-secret payload cases.
 - Added role-aware approval UI states and permission tests for admin/operator/viewer behavior.
 - Fixed the authenticated sidebar layout so the bottom safety card stays separate from the navigation and the route list scrolls when vertical space is tight.
 - Synced branch with latest `main` AGENTS.md update.
@@ -245,6 +246,16 @@ tsx --test "src/**/*.test.ts"
 prisma generate
 next build
 git status --short --branch
+npm install
+eslint .
+tsc --noEmit
+tsx --test "src/**/*.test.ts"
+prisma generate
+next build
+curl https://folqen.vercel.app/api/health
+vercel deploy --prod --yes
+curl https://folqen.vercel.app/api/health
+curl -X POST https://folqen.vercel.app/api/provider-approvals/request
 ```
 
 ## Command Results
@@ -336,6 +347,7 @@ Latest deployment/data foundation verification:
 - Provider setup surfaces verification: direct-Node lint, typecheck, tests, Prisma generate, build, Vercel production deploy, health check, authenticated `/settings`, `/tools`, `/workflows`, and authenticated settings preference save all passed. Test count is now 27.
 - Provider approval request verification: direct-Node lint, typecheck, tests, Prisma generate, and build passed. Test count is now 29.
 - Cross-account save checkpoint: repo was clean before checkpoint docs, latest feature commit was `15ec121`, and no feature code, schema, env, Supabase data, or production credential was changed for the checkpoint.
+- Provider approval API test coverage: `npm install` passed; direct-Node lint, typecheck, tests, Prisma generate, and build passed. Test count is now 34. Vercel production deploy passed, live health returned database `live`, and anonymous provider approval request returned 401.
 
 ## Known Broken Areas
 
@@ -353,7 +365,7 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 - n8n embedding requires `ORACLE_N8N_INSTANCE_URL` and self-hosted iframe settings.
 - ComfyUI, FFmpeg, TTS, and local/Oracle worker endpoints are not configured.
 - The password change flow exists; the seeded password still needs to be changed by the user.
-- Temporary viewer test account exists and should be deleted or rotated after testing.
+- Temporary viewer test account exists and should be deleted or rotated after testing; do not perform this destructive account action without explicit human approval.
 - Do not run destructive Supabase resets now that the production database is seeded.
 
 ## Environment Assumptions
@@ -375,5 +387,5 @@ Yes. The repo is safe to continue from this checkpoint after this checkpoint com
 ## Next Recommended Command
 
 ```text
-Read README, AGENTS.md, root planning docs, and checkpoint docs from GitHub branch `build/phase-0-foundation`; run lint/typecheck/test/build if needed; then continue Google Drive storage, n8n embed/webhook setup, OpenAI paid-tool approval, media worker setup, posting package polish, service-backed mock APIs, or role-aware UI/tests. All required authenticated pages are route-specific; provider setup panels, provider approval requests, metadata-only file registration, service foundations, manual posting package generation/download, and safe mock-agent draft creation are verified. Do not put test account passwords or real secrets into repo files.
+Read README, AGENTS.md, root planning docs, and checkpoint docs from GitHub branch `build/phase-0-foundation`; run lint/typecheck/test/build if needed; then continue account cleanup after the human provides/approves the needed account changes, or continue Google Drive storage, n8n embed/webhook setup, OpenAI paid-tool approval, media worker setup, posting package polish, service-backed mock APIs, or role-aware UI/tests. All required authenticated pages are route-specific; provider setup panels, provider approval requests, metadata-only file registration, service foundations, manual posting package generation/download, and safe mock-agent draft creation are verified. Do not put test account passwords or real secrets into repo files.
 ```

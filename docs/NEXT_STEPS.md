@@ -4,15 +4,15 @@
 
 Continue from provider setup surfaces into credential-backed integrations. All required authenticated routes now have dedicated pages, manual posting package creation/download is live, file registration is live, safe mock-agent draft creation is live, and setup panels exist for Google Drive storage, OpenAI model selection, n8n, and media tools. Binary object storage, paid AI calls, embedded n8n execution, rendering, and real automation are still pending.
 
-Current save point: May 7, 2026. The live app is deployed at `https://folqen.vercel.app`, health reports database `live`, and the latest completed feature slice is admin-only provider setup approval requests for Google Drive, OpenAI, n8n, and media tools. An explicit cross-account handoff checkpoint was created after that slice.
+Current save point: May 7, 2026. The live app is deployed at `https://folqen.vercel.app`, health reports database `live`, and the latest completed feature slice is provider approval API test coverage. Account cleanup remains blocked on a new admin password and human approval to delete or rotate the temporary viewer account.
 
 ## Exact Next Tasks
 
 1. Resume from GitHub branch `build/phase-0-foundation` and confirm `git status` is clean.
 2. Pull/install dependencies if needed, then run `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build`.
 3. Check `https://folqen.vercel.app/api/health` and confirm database status remains `live`.
-4. Use `/settings` to change the seeded admin password from `ChangeMe123!`.
-5. Remove or rotate the temporary viewer test account after dashboard testing is finished.
+4. Get a new admin password from the human, then use `/settings` or a safe server-side flow to rotate the seeded admin password.
+5. Get explicit human approval to delete or rotate the temporary viewer test account, then verify login/audit behavior.
 6. Configure Google Drive OAuth values through secret env only, then replace metadata-only file registration with private Drive-backed binary storage.
 7. Configure `ORACLE_N8N_INSTANCE_URL`, iframe embedding, `N8N_WEBHOOK_URL`, and `N8N_WEBHOOK_SECRET`; then test `POST /api/integrations/n8n/test`.
 8. Add `OPENAI_API_KEY` through secret env, request/approve the OpenAI provider approval in Folqen, then add a real-generation endpoint that still checks paid-tool guards before every call.
@@ -21,7 +21,6 @@ Current save point: May 7, 2026. The live app is deployed at `https://folqen.ver
 11. Expand role-aware UI states across settings, packages, files, providers, and future action APIs.
 12. Wire the service interface foundation into workflow test APIs while keeping real execution blocked.
 13. Add mobile sidebar behavior, toasts, and refined command palette interactions.
-14. Add tests for the provider approval API with authenticated admin/viewer cases.
 
 ## Human Decisions Needed
 

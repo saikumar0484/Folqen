@@ -2,6 +2,14 @@
 
 ## Current Risks
 
+### Account safety cleanup requires human input
+
+- Risk: Rotating the seeded admin password requires a new secret, and deleting/rotating the temporary viewer account is a destructive account action.
+- Prevention: Do not guess or print a new admin password, and do not delete users without explicit human approval.
+- Verification: Account cleanup was not performed in the provider approval API test slice; the live app health remains database `live`.
+- Rollback: If a future password rotation locks the user out, rotate the admin password directly through a safe Supabase/server-side recovery flow.
+- Human approval trigger: New admin password, test viewer deletion, test viewer password rotation, or any real account access change.
+
 ### Cross-account continuation may miss latest pushed state
 
 - Risk: A future Codex account may rely on chat history or a stale local folder instead of the pushed GitHub branch.
