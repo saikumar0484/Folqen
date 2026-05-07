@@ -6,7 +6,7 @@ Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/
 
 ## Current Save Point
 
-May 7, 2026. The latest completed feature slice is the Google Drive private storage adapter plus production database health recovery. Vercel production `DATABASE_URL` now uses the verified Supabase transaction pooler, health is back to `live`, and real Drive uploads are blocked until Google OAuth env values and a private folder id are configured.
+May 7, 2026. Cross-account checkpoint after commit `1a78e1b Add Google Drive storage adapter`. The latest completed feature slice is the Google Drive private storage adapter plus production database health recovery. Vercel production `DATABASE_URL` now uses the verified Supabase transaction pooler, health is `live`, and real Drive uploads are blocked until Google OAuth env values and a private folder id are configured.
 
 ## Branch
 
@@ -352,6 +352,7 @@ Latest deployment/data foundation verification:
 - Cross-account save checkpoint: repo was clean before checkpoint docs, latest feature commit was `15ec121`, and no feature code, schema, env, Supabase data, or production credential was changed for the checkpoint.
 - Provider approval API test coverage: `npm install` passed; direct-Node lint, typecheck, tests, Prisma generate, and build passed. Test count is now 34. Vercel production deploy passed, live health returned database `live`, and anonymous provider approval request returned 401.
 - Google Drive private storage adapter and database health recovery: direct-Node lint, typecheck, tests, Prisma generate, and build passed. Test count is now 39. Local Prisma `SELECT 1` against the Supabase transaction pooler passed. Vercel production `DATABASE_URL` was rotated as a sensitive env var, production redeploy passed, live health returned database `live`, and anonymous upload returned 401. No live Drive upload was attempted because Google Drive OAuth env values are not configured.
+- Cross-account checkpoint after Drive adapter: repo was clean before checkpoint docs, latest feature commit was `1a78e1b`, production health returned database `live`, and no code/schema/secret/provider/data change was made for the checkpoint.
 
 ## Known Broken Areas
 

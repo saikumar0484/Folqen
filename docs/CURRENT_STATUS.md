@@ -4,7 +4,7 @@
 
 Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, and every required authenticated route now has a route-specific or database-backed surface on branch `build/phase-0-foundation`.
 
-Latest save point: May 7, 2026, after the Google Drive private storage adapter was added and the live Vercel database connection was repaired by rotating `DATABASE_URL` to the verified Supabase transaction pooler. Real Drive uploads still require Google OAuth env values and a private folder id.
+Latest save point: May 7, 2026, cross-account checkpoint after commit `1a78e1b Add Google Drive storage adapter`. The Google Drive private storage adapter is implemented, live Vercel database health is `live`, and real Drive uploads still require Google OAuth env values plus a private folder id.
 
 ## Completed Work
 
@@ -421,6 +421,13 @@ Latest May 7, 2026 Google Drive private storage adapter:
 - `GET https://folqen.vercel.app/api/health`: returned database status `live`, with Google Drive/OpenAI/n8n/media still `not_connected`.
 - Anonymous `POST https://folqen.vercel.app/api/files/upload`: returned 401 login required.
 
+Latest May 7, 2026 cross-account checkpoint:
+
+- `git status --short --branch`: clean before checkpoint docs.
+- Latest pushed feature commit: `1a78e1b Add Google Drive storage adapter`.
+- `GET https://folqen.vercel.app/api/health`: returned database status `live`.
+- No feature code, schema, secrets, provider credentials, Supabase data, or production settings were changed for this checkpoint.
+
 Browser/runtime checks:
 
 - Dev server started at `http://127.0.0.1:3000`.
@@ -442,4 +449,4 @@ Browser/runtime checks:
 
 ## Safe To Stop
 
-Yes after this checkpoint commit is pushed. The app is deployed, the repo is safe to continue, and no source files should be left half-edited.
+Yes after this checkpoint commit is pushed. The app is deployed, the database is live, the repo is safe to continue, and no source files should be left half-edited.

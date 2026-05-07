@@ -2,6 +2,14 @@
 
 ## Current Risks
 
+### Cross-account continuation after storage checkpoint
+
+- Risk: A future Codex account may miss that the Google Drive adapter is code-complete but not live-configured.
+- Prevention: Checkpoint docs now call out commit `1a78e1b`, live database health, and remaining credential requirements.
+- Verification: `git status --short --branch` was clean before checkpoint docs, and production `/api/health` returned database `live`.
+- Rollback: Re-read GitHub branch `build/phase-0-foundation` and continue from the latest pushed checkpoint commit.
+- Human approval trigger: None for this documentation-only checkpoint; credentials and account changes still require approval.
+
 ### Vercel database URL can go stale after Supabase credential changes
 
 - Risk: If the Supabase database password or pooler endpoint changes, production health can fail even when Supabase CLI queries still work.

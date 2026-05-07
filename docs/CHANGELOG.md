@@ -1,5 +1,19 @@
 # Changelog
 
+## May 7, 2026 - Cross-account checkpoint after Drive adapter
+
+### Changed
+
+- Added a documentation-only save point after the Google Drive adapter and Vercel database health recovery were committed and pushed.
+- Confirmed the next Codex account should resume from branch `build/phase-0-foundation` at or after commit `1a78e1b`.
+
+### Verification
+
+- `git status --short --branch`: clean.
+- Latest commit before this checkpoint: `1a78e1b Add Google Drive storage adapter`.
+- `GET https://folqen.vercel.app/api/health`: returned database status `live`.
+- No source code, schema, secrets, provider credentials, Supabase data, or production settings were changed for this checkpoint.
+
 ## May 7, 2026 - Google Drive private storage adapter
 
 ### Added

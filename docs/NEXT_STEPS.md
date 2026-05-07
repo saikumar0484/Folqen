@@ -4,11 +4,11 @@
 
 Continue from provider setup surfaces into credential-backed integrations. All required authenticated routes now have dedicated pages, manual posting package creation/download is live, file registration is live, safe mock-agent draft creation is live, and setup panels exist for Google Drive storage, OpenAI model selection, n8n, and media tools. Binary object storage, paid AI calls, embedded n8n execution, rendering, and real automation are still pending.
 
-Current save point: May 7, 2026. The live app is deployed at `https://folqen.vercel.app`, health reports database `live`, Vercel production `DATABASE_URL` uses the verified Supabase transaction pooler, and the latest completed feature slice is the Google Drive private storage adapter. Real Drive uploads remain blocked until Google OAuth env values and a private folder id are configured.
+Current save point: May 7, 2026, cross-account checkpoint after commit `1a78e1b Add Google Drive storage adapter`. The live app is deployed at `https://folqen.vercel.app`, health reports database `live`, Vercel production `DATABASE_URL` uses the verified Supabase transaction pooler, and real Drive uploads remain blocked until Google OAuth env values plus a private folder id are configured.
 
 ## Exact Next Tasks
 
-1. Resume from GitHub branch `build/phase-0-foundation` and confirm `git status` is clean.
+1. Resume from GitHub branch `build/phase-0-foundation` at or after commit `1a78e1b` and confirm `git status` is clean.
 2. Pull/install dependencies if needed, then run `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build`.
 3. Check `https://folqen.vercel.app/api/health` and confirm database status remains `live`.
 4. Get a new admin password from the human, then use `/settings` or a safe server-side flow to rotate the seeded admin password.
