@@ -2,6 +2,14 @@
 
 ## Current Risks
 
+### Platforms and tools pages are status-only
+
+- Risk: Users may expect platform connection cards or tool cards to connect accounts, run providers, render media, or publish content.
+- Prevention: The pages read Supabase/runtime status only and keep all setup/execution actions out of scope until credentials, role checks, approvals, and service adapters exist.
+- Verification: `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build` passed after adding the pages.
+- Rollback: Revert the platforms/tools page and data-loader commits if a route causes runtime issues.
+- Human approval trigger: Any OAuth setup, platform credential entry, paid provider enablement, n8n workflow trigger, render execution, or public publishing feature.
+
 ### Pipeline and library pages are read-only
 
 - Risk: Users may expect the new live-data pages to execute retries, downloads, uploads, archive/delete, renders, or posting packages.

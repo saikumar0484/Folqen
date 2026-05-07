@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, and dashboard/pipeline/library now read live Supabase data.
+Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, and dashboard/pipeline/library/platforms/tools now read live Supabase data.
 
 ## Branch
 
@@ -11,6 +11,7 @@ Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. D
 ## Completed Work
 
 - Added database-backed pipeline and library pages using existing Supabase records.
+- Added database-backed platforms and tools pages using existing Supabase records and runtime integration status.
 - Fixed the authenticated sidebar layout so the bottom safety card stays separate from the navigation and the route list scrolls when vertical space is tight.
 - Synced branch with latest `main` AGENTS.md update.
 - Installed dependencies using npm and generated `package-lock.json`.
@@ -63,6 +64,8 @@ Phase 1 foundation verified. Phase 2 app shell and placeholder routes started. D
 - Added `src/lib/dashboard-data.ts` and updated `/dashboard` to show live Supabase counts and records.
 - Added `src/lib/pipeline-data.ts` and `src/components/app/pipeline-screen.tsx`; updated `/pipeline` to show live task, workflow, approval, and error records.
 - Added `src/lib/library-data.ts` and `src/components/app/library-screen.tsx`; updated `/library` to show live content, asset, uploaded-file, render, and manual posting package records.
+- Added `src/lib/platforms-data.ts` and `src/components/app/platforms-screen.tsx`; updated `/platforms` to show live platform connection records with manual fallback states.
+- Added `src/lib/tools-data.ts` and `src/components/app/tools-screen.tsx`; updated `/tools` to show live provider registry, tool limits, and runtime integration status.
 
 ## Commands Run
 
@@ -147,6 +150,10 @@ vercel deploy --prod --yes
 curl https://folqen.vercel.app/api/health
 curl https://folqen.vercel.app/pipeline
 curl https://folqen.vercel.app/library
+npm run lint
+npm run typecheck
+npm run test
+npm run build
 ```
 
 ## Command Results
@@ -226,6 +233,7 @@ Latest deployment/data foundation verification:
 - Dashboard live data update verification: lint, typecheck, tests, build, production deploy, `/dashboard`, and `/api/health` passed.
 - Sidebar overlap hotfix verification: lint, typecheck, tests, build, production deploy, and health check passed.
 - Pipeline/library live-data verification: lint, typecheck, tests, build, production deploy, health check, and unauthenticated route-protection checks passed.
+- Platforms/tools live-data verification: lint, typecheck, tests, and build passed.
 
 ## Known Broken Areas
 
@@ -233,7 +241,7 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
 ## Known Mock-Only Areas
 
-- Several route surfaces are now real: dashboard, pipeline, library, settings, approvals, audit, and agent chat persistence. Remaining route data is still mock/placeholder.
+- Several route surfaces are now real: dashboard, pipeline, library, platforms, tools, settings, approvals, audit, and agent chat persistence. Remaining route data is still mock/placeholder.
 - All integrations are `Not connected`.
 - Mini agent chat is a mock UI shell.
 - Command palette and notifications are mock interactions.
@@ -257,10 +265,10 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
 ## Safe To Continue From Another Account
 
-Yes. The repo is safe to continue from this checkpoint. The latest pipeline/library live-data slice has been committed, pushed, deployed, and checked for production health plus route protection. No source files are half-edited.
+Yes. The repo is safe to continue from this checkpoint after the latest platforms/tools live-data slice is committed, pushed, and optionally deployed. No source files should be left half-edited.
 
 ## Next Recommended Command
 
 ```text
-Read README, root docs, and checkpoint docs, run lint/typecheck/test/build if needed, then continue database-backed route work or n8n setup if webhook secrets are available. Supabase, login, password change API, settings, approvals, audit logs, persistent mock agent chat, dashboard, pipeline, and library live data are already verified locally. Do not put test account passwords or real secrets into repo files.
+Read README, root docs, and checkpoint docs, run lint/typecheck/test/build if needed, then continue database-backed route work or n8n setup if webhook secrets are available. Supabase, login, password change API, settings, approvals, audit logs, persistent mock agent chat, dashboard, pipeline, library, platforms, and tools live data are already verified locally. Do not put test account passwords or real secrets into repo files.
 ```

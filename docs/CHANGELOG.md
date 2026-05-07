@@ -1,5 +1,27 @@
 # Changelog
 
+## May 7, 2026 - Database-backed platforms and tools pages
+
+### Added
+
+- Added server-side platform data loading from Supabase `PlatformConnection` records.
+- Added a route-specific `/platforms` screen with India-first platform tiers, connection status, manual posting fallback, and approval reminders.
+- Added server-side tool data loading from Supabase `ProviderRegistryItem`, `ToolLimit`, and runtime integration status checks.
+- Added a route-specific `/tools` screen with provider status, tool limits, runtime connection status, cost guard, and local-first setup notes.
+
+### Safety
+
+- No OAuth, platform credentials, paid tools, rendering, or workflow execution were enabled.
+- Every platform/tool that is not configured remains clearly labeled `Not connected` or equivalent.
+- Public publishing, paid tools, browser automation, and platform posting remain blocked.
+
+### Verification
+
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run test`: passed, 6 guard tests.
+- `npm run build`: passed.
+
 ## May 7, 2026 - Database-backed pipeline and library pages
 
 ### Added

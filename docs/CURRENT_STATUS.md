@@ -2,11 +2,12 @@
 
 ## Phase
 
-Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, and dashboard/pipeline/library now read live Supabase data on branch `build/phase-0-foundation`.
+Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, and dashboard/pipeline/library/platforms/tools now read live Supabase data on branch `build/phase-0-foundation`.
 
 ## Completed Work
 
 - Added database-backed `/pipeline` and `/library` pages using existing Supabase records without changing the schema.
+- Added database-backed `/platforms` and `/tools` pages using existing Supabase records and runtime status checks without enabling live integrations.
 - Fixed the authenticated sidebar layout so the `Approval gates active` safety card no longer overlaps route links on shorter desktop screens.
 - Synced the newer `main` update into the foundation branch.
 - Installed dependencies with npm and generated `package-lock.json`.
@@ -63,10 +64,12 @@ Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/
 - Added server-side dashboard data loader and updated `/dashboard` to use Supabase records for counts, jobs, approvals, platform statuses, tool limits, and audit activity.
 - Added server-side pipeline data loader and updated `/pipeline` to use Supabase task, workflow, approval, and error records.
 - Added server-side library data loader and updated `/library` to use Supabase content, asset, uploaded-file, and render records.
+- Added server-side platform data loader and updated `/platforms` to use Supabase platform connection records.
+- Added server-side tools data loader and updated `/tools` to use Supabase provider/tool-limit records plus runtime integration status.
 
 ## App Status
 
-The app installs, lints, typechecks, tests, validates Prisma schema, builds successfully, deploys to Vercel, connects to Supabase, supports seeded database-backed login, and now has working database-backed settings, approvals, audit logs, mock agent chat persistence, dashboard data, pipeline data, and library data.
+The app installs, lints, typechecks, tests, validates Prisma schema, builds successfully, deploys to Vercel, connects to Supabase, supports seeded database-backed login, and now has working database-backed settings, approvals, audit logs, mock agent chat persistence, dashboard data, pipeline data, library data, platform data, and tool data.
 
 ## Safety Status
 
@@ -230,6 +233,13 @@ Latest May 7, 2026 pipeline/library live-data update:
 - `GET https://folqen.vercel.app/api/health`: returned database status `live`.
 - Unauthenticated `GET /pipeline` and `GET /library`: returned 307 login redirects.
 
+Latest May 7, 2026 platforms/tools live-data update:
+
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run test`: passed, 6 guard tests.
+- `npm run build`: passed.
+
 Browser/runtime checks:
 
 - Dev server started at `http://127.0.0.1:3000`.
@@ -246,8 +256,8 @@ Browser/runtime checks:
 - Supabase direct database hostname remained unreliable from this Windows environment; use the Supabase session pooler or `supabase db query --linked`.
 - File uploads, live integrations, write actions for pipeline/library, and publishing are not implemented yet.
 - Oracle n8n webhook testing still requires account-specific secrets and must be completed through safe environment variable setup.
-- Production URL exists, protected routes are live, and several database-backed flows work, but it is not a complete MVP yet because uploads, remaining backend route data flows, n8n, platform integrations, and posting package workflows are still pending.
+- Production URL exists, protected routes are live, and several database-backed flows work, but it is not a complete MVP yet because uploads, remaining backend route data flows, n8n, platform integrations, and posting package generation workflows are still pending.
 
 ## Safe To Stop
 
-Yes. The latest work is a verified and deployed database-backed pipeline/library slice.
+Yes. The latest work is a verified database-backed platforms/tools slice. Commit, push, and deploy this slice before stopping if that has not already happened in the current session.

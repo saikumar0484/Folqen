@@ -2,7 +2,7 @@
 
 ## Immediate Next Phase
 
-Continue real backend data flows and the next safety-focused UX work. Dashboard, pipeline, library, settings, approvals, audit, and persistent mock agent chat now use Supabase-backed records.
+Continue real backend data flows and the next safety-focused UX work. Dashboard, pipeline, library, platforms, tools, settings, approvals, audit, and persistent mock agent chat now use Supabase-backed records.
 
 ## Exact Next Tasks
 
@@ -13,7 +13,7 @@ Continue real backend data flows and the next safety-focused UX work. Dashboard,
 5. Remove or rotate the temporary viewer test account after dashboard testing is finished.
 6. Add stronger role-aware UI states for admin/operator/viewer and tests around forbidden actions.
 7. Add stronger role-aware UI states for admin/operator/viewer and tests around forbidden actions.
-8. Continue replacing generic route placeholders with database-backed route-specific pages, next choosing platforms/tools/notifications or analytics.
+8. Continue replacing generic route placeholders with database-backed route-specific pages, next choosing notifications, analytics, errors, workflows, or upgrades.
 9. Configure Oracle n8n webhook env values only when the human provides the URL/secret, then test `POST /api/integrations/n8n/test`.
 10. Add mobile sidebar behavior, toasts, refined command palette interactions, and file upload validation.
 11. Add posting package generation for platforms that remain `Not connected`.
@@ -49,4 +49,4 @@ Needed through safe secret flow only:
 
 ## Resume Command
 
-Continue from branch `build/phase-0-foundation`, read README, all root project docs, and checkpoint docs, run verification, then continue database-backed route work or n8n setup if the human provides webhook secrets. Supabase, login, password change API, settings, approvals, audit logs, agent message persistence, dashboard, pipeline, and library live data are already verified locally.
+Continue from branch `build/phase-0-foundation`, read README, all root project docs, and checkpoint docs, run verification, then continue database-backed route work or n8n setup if the human provides webhook secrets. Supabase, login, password change API, settings, approvals, audit logs, agent message persistence, dashboard, pipeline, library, platforms, and tools live data are already verified locally.
