@@ -1,4 +1,5 @@
 import { Archive, Download, FileText, FolderOpen, PackageCheck, ShieldCheck } from "lucide-react";
+import { CopyButton } from "@/components/app/copy-button";
 import { EmptyState } from "@/components/app/empty-state";
 import { PageHeader } from "@/components/app/page-header";
 import { PostingPackageAction } from "@/components/app/posting-package-action";
@@ -131,12 +132,16 @@ export function LibraryScreen({ data }: { data: LibraryData }) {
                     </a>
                   </div>
                   <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3">
-                    <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Caption</div>
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Caption</div>
+                      <CopyButton value={pkg.caption} />
+                    </div>
                     <p className="mt-2 text-sm leading-6">{pkg.caption}</p>
                     <div className="mt-3 flex flex-wrap gap-2">
                       {pkg.hashtags.slice(0, 8).map((tag) => (
                         <span key={tag} className="rounded-full border border-white/10 px-2.5 py-1 font-mono text-[10px] text-muted-foreground">{tag}</span>
                       ))}
+                      {pkg.hashtags.length > 0 ? <CopyButton value={pkg.hashtags.join(" ")} label="Copy tags" /> : null}
                     </div>
                   </div>
                   <div className="mt-3 grid gap-2">

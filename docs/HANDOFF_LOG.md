@@ -2,11 +2,11 @@
 
 ## Current Phase
 
-Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, all required authenticated routes now have route-specific surfaces, and manual posting package detail/download is deployed.
+Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, all required authenticated routes now have route-specific surfaces, manual posting package detail/download is deployed, file registration is deployed, and safe mock-agent draft creation is deployed.
 
 ## Current Save Point
 
-May 7, 2026. The latest completed and deployed slice is manual posting package detail/download controls.
+May 7, 2026. The latest completed and deployed slice is file registration plus safe mock-agent draft creation.
 
 ## Branch
 
@@ -22,6 +22,9 @@ May 7, 2026. The latest completed and deployed slice is manual posting package d
 - Added service interface foundation and mock implementations for agent, workflow, render, publishing, analytics, storage, and notifications.
 - Added manual posting package generation API and Library page action; package creation creates database assets and audit logs only.
 - Added authenticated manual posting package JSON download API and Library detail cards for package captions, hashtags, and checklists.
+- Added metadata-only file registration API and Files page upload form with validation, private records, optional text preview, and audit logs.
+- Added posting package copy buttons for captions and hashtags.
+- Added safe mock-agent draft content package creation API and Agent page action.
 - Added role-aware approval UI states and permission tests for admin/operator/viewer behavior.
 - Fixed the authenticated sidebar layout so the bottom safety card stays separate from the navigation and the route list scrolls when vertical space is tight.
 - Synced branch with latest `main` AGENTS.md update.
@@ -216,6 +219,8 @@ next build
 vercel deploy --prod --yes
 curl https://folqen.vercel.app/api/posting-packages/not-real/download
 curl https://folqen.vercel.app/api/posting-packages/<assetId>/download
+curl https://folqen.vercel.app/api/files/upload
+curl https://folqen.vercel.app/api/agent/content-package
 ```
 
 ## Command Results
@@ -303,6 +308,7 @@ Latest deployment/data foundation verification:
 - Posting package and role-aware controls verification: lint, typecheck, tests, build, production deploy, health check, and unauthenticated API protection check passed. Test count is now 21.
 - Session save-point verification: repo was clean before save-point doc edits, and production health returned database `live`.
 - Posting package detail/download verification: direct-Node lint, typecheck, tests, Prisma generate, build, Vercel production deploy, production health, anonymous download protection, and authenticated package create/download smoke test all passed. Test count is now 23.
+- File registration and safe draft creation verification: direct-Node lint, typecheck, tests, Prisma generate, build, Vercel production deploy, health check, anonymous upload/draft protection, authenticated file registration, and authenticated draft creation all passed. Test count is now 25.
 
 ## Known Broken Areas
 
@@ -310,11 +316,11 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
 ## Known Mock-Only Areas
 
-- All required authenticated route surfaces are now route-specific. Many are real/read-only from Supabase. Manual posting package generation/download, file validation, and service interface foundations exist, but remaining actions, actual uploads/storage writes, real providers, publishing, and automation are still mock/placeholder.
+- All required authenticated route surfaces are now route-specific. Many are real/read-only from Supabase. Manual posting package generation/download, metadata-only file registration, and safe draft content creation exist, but binary object storage, real providers, publishing, and automation are still mock/placeholder.
 - All integrations are `Not connected`.
 - Mini agent chat is a mock UI shell.
 - Command palette and notifications are mock interactions.
-- Upload validation and library write actions are not implemented.
+- Supabase Storage binary object storage is not configured; file registration is metadata-only.
 - Oracle n8n webhook is not configured.
 - The password change flow exists; the seeded password still needs to be changed by the user.
 - Temporary viewer test account exists and should be deleted or rotated after testing.
@@ -334,10 +340,10 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
 ## Safe To Continue From Another Account
 
-Yes. The repo is safe to continue from this checkpoint after this commit is pushed. The latest posting package detail/download slice has been verified and deployed. No feature files are half-edited.
+Yes. The repo is safe to continue from this checkpoint after this commit is pushed. The latest file registration and safe draft creation slice has been verified and deployed. No feature files are half-edited.
 
 ## Next Recommended Command
 
 ```text
-Read README, root docs, and checkpoint docs, run lint/typecheck/test/build if needed, then continue actual file upload/storage, posting package copy controls, service-backed mock APIs, role-aware UI/tests, or n8n setup if webhook secrets are available. All required authenticated pages are route-specific; file validation, service foundations, and manual posting package generation/download are verified. Do not put test account passwords or real secrets into repo files.
+Read README, root docs, and checkpoint docs, run lint/typecheck/test/build if needed, then continue Supabase Storage setup, posting package copy polish, service-backed mock APIs, role-aware UI/tests, or n8n setup if webhook secrets are available. All required authenticated pages are route-specific; metadata-only file registration, service foundations, manual posting package generation/download, and safe mock-agent draft creation are verified. Do not put test account passwords or real secrets into repo files.
 ```

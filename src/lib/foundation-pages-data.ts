@@ -1,5 +1,6 @@
 import type { ContentStatus } from "@prisma/client";
 import { getDb } from "@/lib/db";
+import { getAllowedUploadTypes } from "@/lib/files/validation";
 import { getFolqenSettings } from "@/lib/settings";
 
 function formatDate(date: Date) {
@@ -137,5 +138,6 @@ export async function getFilesData() {
       contentTitle: asset.content?.title ?? "Unlinked",
       createdAt: formatDate(asset.createdAt),
     })),
+    accept: getAllowedUploadTypes().flatMap((type) => [type.mimeType, ...type.extensions]).join(","),
   };
 }

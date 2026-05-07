@@ -34,21 +34,21 @@
 - Rollback: Revert `src/lib/services/*` if the abstraction causes build or runtime issues; no provider or database behavior was changed.
 - Human approval trigger: Any real provider adapter, external API call, workflow execution, storage write, paid tool call, or public publishing action.
 
-### Upload validation exists but storage writes are not implemented
+### File upload registration is metadata-only until Supabase Storage is configured
 
-- Risk: Future upload endpoints could bypass validation or store files unsafely.
-- Prevention: `src/lib/files/validation.ts` now centralizes allowed MIME/extension/size/name/path checks, and tests cover common unsafe cases.
-- Verification: `npm run test` now includes 5 file validation tests and passed with 11 total tests.
-- Rollback: Revert the validation files if they cause runtime/build issues; no database or storage changes were made.
-- Human approval trigger: Any file upload endpoint or storage configuration that accepts user files or writes to disk/cloud storage.
+- Risk: Users may think uploaded binary files are stored permanently, but the current safe MVP only stores validated private metadata and optional small text previews.
+- Prevention: The Files UI and API response say binary storage is still Not connected; `binaryStored` is false and audit logs record `database_metadata_only`.
+- Verification: File validation tests passed, anonymous upload returned 401, authenticated upload returned 200 with `binaryStored: false`.
+- Rollback: Delete `UploadedFile` rows created by upload smoke tests if needed; no object storage bucket or platform account is affected.
+- Human approval trigger: Configuring Supabase Storage, adding service keys, changing storage policies, or persisting binary file bytes.
 
-### Files page is inventory-only
+### Files page accepts validated registration only
 
-- Risk: Users may expect the Files page to accept uploads now that it has a route-specific UI.
-- Prevention: Upload controls are not enabled. The page explicitly states uploads are disabled until validation, storage, role checks, confirmations, and audit logs exist.
-- Verification: `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build` passed after adding the page.
+- Risk: Users may expect registered files to be downloadable binary assets.
+- Prevention: The page states Supabase Storage is Not connected and that the MVP records metadata only.
+- Verification: `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build` passed after adding the registration flow.
 - Rollback: Revert the foundation pages data-loader and screen commit if a route causes runtime issues.
-- Human approval trigger: Any file upload/storage implementation that writes files, accepts user input, or changes storage configuration.
+- Human approval trigger: Any storage implementation that writes binary files, changes Supabase Storage policy, or exposes files publicly.
 
 ### Monetization page is read-only
 

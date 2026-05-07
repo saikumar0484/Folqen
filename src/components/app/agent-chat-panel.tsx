@@ -14,7 +14,31 @@ export function AgentChatPanel({ initialMessages }: { initialMessages: ChatMessa
   const [messages, setMessages] = useState(initialMessages);
   const [content, setContent] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [actionMessage, setActionMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [isActionPending, startActionTransition] = useTransition();
+
+  function createContentPackage() {
+    const topic = content.trim() || "Indian urban legend short";
+    setError(null);
+    setActionMessage(null);
+    startActionTransition(async () => {
+      const response = await fetch("/api/agent/content-package", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topic }),
+      });
+      const body = (await response.json().catch(() => ({}))) as { error?: string; content?: { title: string; message: string } };
+
+      if (!response.ok || !body.content) {
+        setError(body.error ?? "Could not create draft package.");
+        return;
+      }
+
+      setActionMessage(`${body.content.title}: ${body.content.message}`);
+      setContent("");
+    });
+  }
 
   return (
     <section className="grid gap-4 lg:grid-cols-[1fr_320px]">
@@ -93,6 +117,15 @@ export function AgentChatPanel({ initialMessages }: { initialMessages: ChatMessa
       </div>
 
       <aside className="space-y-3">
+        <button
+          type="button"
+          onClick={createContentPackage}
+          disabled={isActionPending}
+          className="w-full rounded-2xl border border-neon/30 bg-neon/10 p-4 text-left text-sm text-neon transition hover:bg-neon/[0.14] disabled:opacity-60"
+        >
+          {isActionPending ? "Creating draft..." : "Create draft package from typed topic"}
+        </button>
+        {actionMessage ? <div className="rounded-2xl border border-neon/20 bg-neon/10 p-4 text-xs leading-5 text-neon">{actionMessage}</div> : null}
         {["Create content package", "Review latest draft", "Show pending approvals", "Explain analytics"].map((command) => (
           <button
             key={command}

@@ -4,7 +4,7 @@
 
 Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, and every required authenticated route now has a route-specific or database-backed surface on branch `build/phase-0-foundation`.
 
-Latest save point: May 7, 2026, after manual posting package detail/download controls were deployed.
+Latest save point: May 7, 2026, after file registration and safe mock-agent draft creation were deployed.
 
 ## Completed Work
 
@@ -16,6 +16,9 @@ Latest save point: May 7, 2026, after manual posting package detail/download con
 - Added service interface foundation and mock implementations for agent, workflow, render, publishing, analytics, storage, and notifications.
 - Added manual posting package generation API and Library action; packages are saved as database assets and audited without publishing.
 - Added authenticated manual posting package JSON download API and Library package detail cards with caption, hashtags, and checklist preview.
+- Added authenticated file registration API and Files page upload form with strict validation, private metadata records, audit logging, and optional small text preview.
+- Added posting package copy buttons for captions and hashtags.
+- Added safe mock-agent draft content package creation that creates content, task, approval, and audit rows without using live AI or publishing.
 - Added role-aware approval UI and permission tests for admin/operator/viewer behavior.
 - Fixed the authenticated sidebar layout so the `Approval gates active` safety card no longer overlaps route links on shorter desktop screens.
 - Synced the newer `main` update into the foundation branch.
@@ -320,6 +323,24 @@ Latest May 7, 2026 posting package detail/download update:
 - Unauthenticated `GET /api/posting-packages/not-real/download`: returned 401.
 - Authenticated production smoke test created a manual YouTube package for seeded content and downloaded it as JSON; the downloaded file reported `mode: manual` and stated it does not publish.
 
+Latest May 7, 2026 upload registration and safe draft creation update:
+
+- Added `POST /api/files/upload` for authenticated validated file registration.
+- Added Files page upload form and allowed-type picker.
+- Added `CopyButton` and Library copy controls for package captions and hashtags.
+- Added `POST /api/agent/content-package` for safe mock-agent draft package creation.
+- Added draft-content permission helper and tests.
+- Direct-Node `eslint .`: passed.
+- Direct-Node `tsc --noEmit`: passed.
+- Direct-Node `tsx --test "src/**/*.test.ts"`: passed, 25 tests.
+- Direct-Node `prisma generate` plus `next build`: passed.
+- `vercel deploy --prod --yes`: passed and aliased `https://folqen.vercel.app`.
+- `GET https://folqen.vercel.app/api/health`: returned database status `live`.
+- Anonymous `POST /api/files/upload`: returned 401.
+- Anonymous `POST /api/agent/content-package`: returned 401.
+- Authenticated production file registration returned 200, created a private metadata record, and reported `binaryStored: false`.
+- Authenticated production draft package creation returned 200 and created a `DRAFT` content record.
+
 Browser/runtime checks:
 
 - Dev server started at `http://127.0.0.1:3000`.
@@ -336,7 +357,7 @@ Browser/runtime checks:
 - Supabase direct database hostname remained unreliable from this Windows environment; use the Supabase session pooler or `supabase db query --linked`.
 - File uploads, live integrations, write actions for pipeline/library, and publishing are not implemented yet.
 - Oracle n8n webhook testing still requires account-specific secrets and must be completed through safe environment variable setup.
-- Production URL exists, protected routes are live, all required authenticated pages now have route-specific surfaces, upload validation rules exist, service interfaces/mock implementations exist, and manual posting package generation/download exists. It is not a complete MVP yet because actual upload storage, more action APIs, n8n, platform integrations, and real AI/provider adapters are still pending.
+- Production URL exists, protected routes are live, all required authenticated pages now have route-specific surfaces, file upload registration exists, service interfaces/mock implementations exist, manual posting package generation/download exists, and safe mock-agent draft creation exists. It is not a complete MVP yet because binary object storage, n8n, platform integrations, and real AI/provider adapters are still pending.
 
 ## Safe To Stop
 

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { MAX_UPLOAD_SIZE_BYTES, validateUploadCandidate } from "@/lib/files/validation";
+import { canCaptureTextPreview, MAX_UPLOAD_SIZE_BYTES, validateUploadCandidate } from "@/lib/files/validation";
 
 test("allows a supported private content file candidate", () => {
   const result = validateUploadCandidate({
@@ -66,4 +66,11 @@ test("blocks unsupported file types", () => {
   if (!result.allowed) {
     assert.ok(result.reasons.some((reason) => reason.includes("not allowed")));
   }
+});
+
+test("captures previews only for small text-like files", () => {
+  assert.equal(canCaptureTextPreview("text/markdown", 1024), true);
+  assert.equal(canCaptureTextPreview("application/json", 1024), true);
+  assert.equal(canCaptureTextPreview("image/png", 1024), false);
+  assert.equal(canCaptureTextPreview("text/plain", 300 * 1024), false);
 });

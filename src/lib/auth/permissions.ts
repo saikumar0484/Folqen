@@ -12,7 +12,11 @@ export function canCreatePostingPackage(user: CurrentUser) {
   return user.role === "ADMIN" || user.role === "OPERATOR";
 }
 
-export function describeRoleLimit(user: CurrentUser, action: "approval" | "posting_package" | "settings") {
+export function canCreateDraftContent(user: CurrentUser) {
+  return user.role === "ADMIN" || user.role === "OPERATOR";
+}
+
+export function describeRoleLimit(user: CurrentUser, action: "approval" | "posting_package" | "settings" | "draft_content") {
   if (action === "settings" && !canManageSystem(user)) {
     return "Only admins can change system settings.";
   }
@@ -23,6 +27,10 @@ export function describeRoleLimit(user: CurrentUser, action: "approval" | "posti
 
   if (action === "posting_package" && !canCreatePostingPackage(user)) {
     return "Only admins and operators can create posting packages.";
+  }
+
+  if (action === "draft_content" && !canCreateDraftContent(user)) {
+    return "Only admins and operators can create draft content packages.";
   }
 
   return null;

@@ -1,4 +1,5 @@
 export const MAX_UPLOAD_SIZE_BYTES = 100 * 1024 * 1024;
+export const MAX_TEXT_PREVIEW_BYTES = 256 * 1024;
 
 const allowedTypes = new Map<string, Set<string>>([
   ["image/png", new Set([".png"])],
@@ -95,4 +96,14 @@ export function getAllowedUploadTypes() {
     mimeType,
     extensions: Array.from(extensions),
   }));
+}
+
+export function canCaptureTextPreview(mimeType: string, sizeBytes: number) {
+  return (
+    sizeBytes <= MAX_TEXT_PREVIEW_BYTES &&
+    (mimeType.startsWith("text/") ||
+      mimeType === "application/json" ||
+      mimeType === "application/yaml" ||
+      mimeType === "application/x-subrip")
+  );
 }

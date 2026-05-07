@@ -69,8 +69,10 @@
 - [x] Agent chat persistence.
 - [x] Test viewer account for dashboard testing.
 - [x] Dashboard backed by Supabase data.
-- [ ] File upload validation.
-- [ ] Service interfaces and provider adapters.
+- [x] File upload validation.
+- [x] Metadata-only file registration.
+- [x] Service interfaces and provider adapters.
+- [x] Safe mock-agent draft content creation.
 - [ ] n8n placeholder endpoints.
 - [x] Posting package system.
 - [x] Posting package detail/download controls.

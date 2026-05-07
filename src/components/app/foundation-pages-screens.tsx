@@ -1,5 +1,6 @@
 import { CalendarDays, CreditCard, FileUp, Palette, ShieldCheck } from "lucide-react";
 import { EmptyState } from "@/components/app/empty-state";
+import { FileUploadForm } from "@/components/app/file-upload-form";
 import { PageHeader } from "@/components/app/page-header";
 import { StatCard } from "@/components/app/stat-card";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -181,7 +182,8 @@ export function FilesScreen({ data }: { data: FilesData }) {
           </div>
         </div>
         <aside className="space-y-4">
-          <GuardCard title="Upload guard" text="Upload actions are not enabled yet. The next implementation must validate MIME type, size, extension, path traversal, privacy, role, and audit logging before accepting files." />
+          <FileUploadForm accept={data.accept} />
+          <GuardCard title="Storage guard" text="This MVP records validated private file metadata in Supabase. Binary object storage remains Not connected until Supabase Storage policies and secrets are configured." />
           <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-4">
             <div className="flex items-center gap-2"><FileUp className="h-4 w-4 text-neon" /><h2 className="font-display text-lg font-semibold">Allowed future types</h2></div>
             <div className="mt-4 grid gap-2">{["Images, video, audio", "PDF, DOCX, TXT, MD", "CSV, XLSX, JSON, YAML", "SRT and VTT captions"].map((item) => <div key={item} className="rounded-xl border border-white/10 bg-white/[0.02] p-3 text-sm">{item}</div>)}</div>

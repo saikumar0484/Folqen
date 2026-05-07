@@ -1,5 +1,34 @@
 # Changelog
 
+## May 7, 2026 - File registration and safe draft creation
+
+### Added
+
+- Added authenticated `POST /api/files/upload` for strict file validation and private Supabase `UploadedFile` records.
+- Added Files page upload form with allowed file picker, tags, validation feedback, and metadata-only storage honesty.
+- Added optional small text preview capture for text-like uploads.
+- Added Library copy controls for posting package captions and hashtags.
+- Added authenticated `POST /api/agent/content-package` to create draft content, task, approval, and audit records from a topic using the mock agent.
+- Added draft-content role permission helper and tests.
+
+### Safety
+
+- Upload registration does not claim binary object storage; `binaryStored` remains false until Supabase Storage is configured.
+- Draft package creation uses no live AI provider, paid tool, renderer, workflow, browser automation, platform upload, or public publishing.
+- Anonymous upload and draft creation return 401.
+
+### Verification
+
+- Direct-Node `eslint .`: passed.
+- Direct-Node `tsc --noEmit`: passed.
+- Direct-Node `tsx --test "src/**/*.test.ts"`: passed, 25 tests.
+- Direct-Node `prisma generate` plus `next build`: passed.
+- `vercel deploy --prod --yes`: passed and aliased `https://folqen.vercel.app`.
+- `GET https://folqen.vercel.app/api/health`: returned database status `live`.
+- Anonymous upload and draft creation checks returned 401.
+- Authenticated production file registration returned 200 and `binaryStored: false`.
+- Authenticated production draft creation returned 200 and created a `DRAFT` content record.
+
 ## May 7, 2026 - Posting package detail and download
 
 ### Added
