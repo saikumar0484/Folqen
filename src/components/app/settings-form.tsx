@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { openAiModelOptions } from "@/lib/ai-models";
 import type { FolqenSettings } from "@/lib/settings";
 
 const autonomyOptions = [
@@ -37,6 +38,9 @@ export function SettingsForm({ settings }: { settings: FolqenSettings }) {
               timezone: data.get("timezone"),
               autonomyLevel: data.get("autonomyLevel"),
               defaultUploadPrivacy: data.get("defaultUploadPrivacy"),
+              openAiModel: data.get("openAiModel"),
+              customOpenAiModel: data.get("customOpenAiModel"),
+              storageProvider: data.get("storageProvider"),
             }),
           });
           const body = (await response.json().catch(() => ({}))) as { error?: string };
@@ -91,6 +95,32 @@ export function SettingsForm({ settings }: { settings: FolqenSettings }) {
             <option value="private">Private</option>
             <option value="unlisted">Unlisted</option>
           </select>
+        </label>
+        <label className="space-y-1.5">
+          <span className="text-xs font-medium text-muted-foreground">Storage provider</span>
+          <select name="storageProvider" defaultValue={settings.storageProvider} className="w-full rounded-xl border border-white/10 bg-surface px-3 py-2 text-sm outline-none focus:border-neon/40">
+            <option value="google_drive">Google Drive cloud storage</option>
+          </select>
+        </label>
+        <label className="space-y-1.5">
+          <span className="text-xs font-medium text-muted-foreground">OpenAI model dropdown</span>
+          <select name="openAiModel" defaultValue={settings.customOpenAiModel ? "custom" : settings.openAiModel} className="w-full rounded-xl border border-white/10 bg-surface px-3 py-2 text-sm outline-none focus:border-neon/40">
+            {openAiModelOptions.map((model) => (
+              <option key={model.id} value={model.id}>
+                {model.label}
+              </option>
+            ))}
+            <option value="custom">Custom model id</option>
+          </select>
+        </label>
+        <label className="space-y-1.5">
+          <span className="text-xs font-medium text-muted-foreground">Custom OpenAI model id</span>
+          <input
+            name="customOpenAiModel"
+            defaultValue={settings.customOpenAiModel}
+            placeholder="Optional, for future model IDs"
+            className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm outline-none focus:border-neon/40"
+          />
         </label>
       </div>
 

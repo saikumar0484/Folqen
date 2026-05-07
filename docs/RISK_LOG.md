@@ -2,6 +2,30 @@
 
 ## Current Risks
 
+### Provider setup surfaces are not live integrations
+
+- Risk: Users may think the new Google Drive, OpenAI, n8n, and media setup panels mean those services are already connected.
+- Prevention: Runtime status keeps these services labeled `Not connected` unless the required env values are present; setup panels explain which secrets are still missing.
+- Verification: Production health returned database `live` while Google Drive, OpenAI, n8n, FFmpeg, ComfyUI, TTS, and worker statuses remained `not_connected`.
+- Rollback: Remove the provider setup panels and status rows if they cause confusion; no external account was connected.
+- Human approval trigger: Any credential entry, OAuth flow, paid OpenAI call, n8n workflow execution, binary file storage, or media rendering action.
+
+### OpenAI is a paid-tool provider
+
+- Risk: A real OpenAI agent could spend API credits if enabled without a clear approval gate.
+- Prevention: Folqen currently saves only a model preference; no API key is committed, no real OpenAI request is made, and paid tools remain disabled by default.
+- Verification: Provider config tests confirm OpenAI is `not_connected` without `OPENAI_API_KEY`; production status reports OpenAI as `not_connected`.
+- Rollback: Clear `OPENAI_API_KEY` from Vercel/local env to force OpenAI back to `Not connected`.
+- Human approval trigger: Adding an OpenAI API key, enabling paid-tool approval, or executing any real AI generation call.
+
+### n8n embedded builder depends on self-hosted security settings
+
+- Risk: The embedded n8n interface may fail if the Oracle n8n server blocks iframe embedding, or it may expose workflows if n8n is not protected by login.
+- Prevention: The iframe is hidden unless `ORACLE_N8N_INSTANCE_URL` is configured; Folqen still requires webhook URL/secret separately for execution tests.
+- Verification: Production `/workflows` shows setup guidance while n8n remains `Not connected`.
+- Rollback: Remove `ORACLE_N8N_INSTANCE_URL` from env to hide the embedded builder.
+- Human approval trigger: Configuring n8n iframe access, adding webhook secrets, or executing workflows that affect real services.
+
 ### Session continuation depends on checkpoint docs
 
 - Risk: A later Codex account may rely on chat memory instead of the repo state.

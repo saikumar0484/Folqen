@@ -4,6 +4,7 @@ import { createAuditLog } from "@/lib/audit";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { canManageSystem } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
+import { isKnownOpenAiModel, normalizeModelId } from "@/lib/ai-models";
 import { defaultFolqenSettings } from "@/lib/settings";
 
 const settingsSchema = z.object({
@@ -12,6 +13,9 @@ const settingsSchema = z.object({
   timezone: z.string().min(2).max(80),
   autonomyLevel: z.enum(["manual", "assisted", "draft_automation", "high_automation", "approval_99"]),
   defaultUploadPrivacy: z.enum(["private", "unlisted"]),
+  openAiModel: z.string().min(2).max(120),
+  customOpenAiModel: z.string().max(120).optional(),
+  storageProvider: z.enum(["google_drive"]).default("google_drive"),
 });
 
 export async function POST(request: Request) {
@@ -44,6 +48,14 @@ export async function POST(request: Request) {
     allowBrowserAutomation: false,
     defaultUploadPrivacy: parsed.data.defaultUploadPrivacy ?? defaultFolqenSettings.defaultUploadPrivacy,
   };
+  const customModel = parsed.data.customOpenAiModel?.trim();
+  const selectedModel = normalizeModelId(parsed.data.openAiModel === "custom" ? customModel || defaultFolqenSettings.openAiModel : parsed.data.openAiModel);
+  const providerValue = {
+    openAiModel: selectedModel,
+    customOpenAiModel: isKnownOpenAiModel(selectedModel) ? "" : selectedModel,
+    storageProvider: parsed.data.storageProvider,
+    paidToolGuard: "blocked_until_env_and_human_approval",
+  };
 
   await getDb().$transaction([
     getDb().setting.upsert({
@@ -56,6 +68,11 @@ export async function POST(request: Request) {
       update: { value: safetyValue, version: { increment: 1 } },
       create: { key: "safety.defaults", value: safetyValue },
     }),
+    getDb().setting.upsert({
+      where: { key: "provider.preferences" },
+      update: { value: providerValue, version: { increment: 1 } },
+      create: { key: "provider.preferences", value: providerValue },
+    }),
     getDb().auditLog.create({
       data: {
         actorId: user.id,
@@ -64,6 +81,7 @@ export async function POST(request: Request) {
         riskLevel: "MEDIUM",
         metadata: {
           changedKeys: ["brand.profile", "safety.defaults"],
+          providerPreferenceChanged: true,
           blockedRiskyFlags: ["allowPublicPublish", "allowPaidTools", "allowBrowserAutomation"],
         },
       },
@@ -78,5 +96,5 @@ export async function POST(request: Request) {
     metadata: safetyValue,
   });
 
-  return NextResponse.json({ ok: true, settings: { ...profileValue, ...safetyValue } });
+  return NextResponse.json({ ok: true, settings: { ...profileValue, ...safetyValue, ...providerValue } });
 }

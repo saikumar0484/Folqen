@@ -2,6 +2,7 @@ import type { PlatformName, RiskLevel, TaskStatus, UpgradeStatus } from "@prisma
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { getDb } from "@/lib/db";
 import { getIntegrationStatus } from "@/lib/integrations/status";
+import { getProviderConfig } from "@/lib/provider-config";
 
 function formatDate(date: Date) {
   return date.toLocaleString("en-IN", {
@@ -153,6 +154,7 @@ export async function getWorkflowsData() {
       commercialUse: provider.commercialUse,
     })),
     integrationStatus,
+    providerConfig: getProviderConfig(),
   };
 }
 

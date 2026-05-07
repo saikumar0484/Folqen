@@ -27,6 +27,13 @@ export const envSchema = z.object({
   LOCAL_WORKER_SHARED_SECRET: z.string().optional(),
   COMFYUI_BASE_URL: z.string().optional(),
   FFMPEG_PATH: z.string().optional(),
+  TTS_PROVIDER_URL: z.string().optional(),
+  GOOGLE_DRIVE_CLIENT_ID: z.string().optional(),
+  GOOGLE_DRIVE_CLIENT_SECRET: z.string().optional(),
+  GOOGLE_DRIVE_REFRESH_TOKEN: z.string().optional(),
+  GOOGLE_DRIVE_FOLDER_ID: z.string().optional(),
+  OPENAI_API_KEY: z.string().optional(),
+  OPENAI_MODEL: z.string().optional(),
   SELF_IMPROVEMENT_ENABLED: z
     .enum(["true", "false"])
     .default("true")

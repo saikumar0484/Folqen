@@ -1,9 +1,11 @@
 import { getDatabaseStatus } from "@/lib/db";
 import { getEnv } from "@/lib/env";
+import { getProviderConfig } from "@/lib/provider-config";
 
-export async function getIntegrationStatus() {
+export async function getIntegrationStatus(selectedOpenAiModel?: string) {
   const env = getEnv();
   const database = await getDatabaseStatus();
+  const providers = getProviderConfig(selectedOpenAiModel);
 
   return {
     database,
@@ -19,6 +21,8 @@ export async function getIntegrationStatus() {
     tools: {
       comfyui: env.COMFYUI_BASE_URL ? "configured" : "not_connected",
       ffmpeg: env.FFMPEG_PATH ? "configured" : "not_connected",
+      tts: env.TTS_PROVIDER_URL ? "configured" : "not_connected",
     },
+    providers,
   };
 }

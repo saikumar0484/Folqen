@@ -1,6 +1,7 @@
 import { ProviderStatus, ToolType } from "@prisma/client";
 import { getIntegrationStatus } from "@/lib/integrations/status";
 import { getDb } from "@/lib/db";
+import { getFolqenSettings } from "@/lib/settings";
 
 function statusTone(status: ProviderStatus | string) {
   if (status === "LIVE" || status === "CONFIGURED" || status === "configured") return "safe" as const;
@@ -25,11 +26,12 @@ function formatReset(date: Date | null) {
 }
 
 export async function getToolsData() {
-  const [providers, limits, integrationStatus] = await Promise.all([
+  const [providers, limits, settings] = await Promise.all([
     getDb().providerRegistryItem.findMany({ orderBy: { name: "asc" } }),
     getDb().toolLimit.findMany({ orderBy: { updatedAt: "desc" } }),
-    getIntegrationStatus(),
+    getFolqenSettings(),
   ]);
+  const integrationStatus = await getIntegrationStatus(settings.openAiModel);
 
   const configuredProviders = providers.filter((provider) => provider.status === "CONFIGURED" || provider.status === "LIVE").length;
   const localToolsConfigured = [integrationStatus.worker.localWorker, integrationStatus.tools.comfyui, integrationStatus.tools.ffmpeg].filter(

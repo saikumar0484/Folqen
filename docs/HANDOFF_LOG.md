@@ -2,11 +2,11 @@
 
 ## Current Phase
 
-Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, all required authenticated routes now have route-specific surfaces, manual posting package detail/download is deployed, file registration is deployed, and safe mock-agent draft creation is deployed.
+Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, all required authenticated routes now have route-specific surfaces, manual posting package detail/download is deployed, file registration is deployed, safe mock-agent draft creation is deployed, and provider setup surfaces for Google Drive, OpenAI, n8n, and media tools are deployed.
 
 ## Current Save Point
 
-May 7, 2026. The latest completed and deployed slice is file registration plus safe mock-agent draft creation.
+May 7, 2026. The latest completed and deployed slice is provider setup UI/status for Google Drive storage, OpenAI model selection, n8n workflow builder embedding, and media tool readiness.
 
 ## Branch
 
@@ -25,6 +25,11 @@ May 7, 2026. The latest completed and deployed slice is file registration plus s
 - Added metadata-only file registration API and Files page upload form with validation, private records, optional text preview, and audit logs.
 - Added posting package copy buttons for captions and hashtags.
 - Added safe mock-agent draft content package creation API and Agent page action.
+- Added Google Drive planned storage provider env placeholders, runtime status, and Settings setup guidance.
+- Added OpenAI model dropdown/custom model preferences while keeping real AI calls blocked until an API key and paid-tool approval flow exist.
+- Added provider setup panels for Google Drive, OpenAI, n8n, FFmpeg, ComfyUI, TTS, and the local/Oracle worker.
+- Added n8n embedded workflow builder surface in `/workflows`; it stays hidden until a trusted n8n instance URL is configured.
+- Expanded `/tools`, `/settings`, `/workflows`, and `/api/health` provider status surfaces.
 - Added role-aware approval UI states and permission tests for admin/operator/viewer behavior.
 - Fixed the authenticated sidebar layout so the bottom safety card stays separate from the navigation and the route list scrolls when vertical space is tight.
 - Synced branch with latest `main` AGENTS.md update.
@@ -221,6 +226,17 @@ curl https://folqen.vercel.app/api/posting-packages/not-real/download
 curl https://folqen.vercel.app/api/posting-packages/<assetId>/download
 curl https://folqen.vercel.app/api/files/upload
 curl https://folqen.vercel.app/api/agent/content-package
+eslint .
+tsc --noEmit
+tsx --test "src/**/*.test.ts"
+prisma generate
+next build
+vercel deploy --prod --yes
+curl https://folqen.vercel.app/api/health
+curl https://folqen.vercel.app/settings
+curl https://folqen.vercel.app/tools
+curl https://folqen.vercel.app/workflows
+curl https://folqen.vercel.app/api/settings
 ```
 
 ## Command Results
@@ -309,6 +325,7 @@ Latest deployment/data foundation verification:
 - Session save-point verification: repo was clean before save-point doc edits, and production health returned database `live`.
 - Posting package detail/download verification: direct-Node lint, typecheck, tests, Prisma generate, build, Vercel production deploy, production health, anonymous download protection, and authenticated package create/download smoke test all passed. Test count is now 23.
 - File registration and safe draft creation verification: direct-Node lint, typecheck, tests, Prisma generate, build, Vercel production deploy, health check, anonymous upload/draft protection, authenticated file registration, and authenticated draft creation all passed. Test count is now 25.
+- Provider setup surfaces verification: direct-Node lint, typecheck, tests, Prisma generate, build, Vercel production deploy, health check, authenticated `/settings`, `/tools`, `/workflows`, and authenticated settings preference save all passed. Test count is now 27.
 
 ## Known Broken Areas
 
@@ -316,12 +333,15 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
 ## Known Mock-Only Areas
 
-- All required authenticated route surfaces are now route-specific. Many are real/read-only from Supabase. Manual posting package generation/download, metadata-only file registration, and safe draft content creation exist, but binary object storage, real providers, publishing, and automation are still mock/placeholder.
+- All required authenticated route surfaces are now route-specific. Many are real/read-only from Supabase. Manual posting package generation/download, metadata-only file registration, safe draft content creation, and provider setup surfaces exist, but binary object storage, real providers, publishing, and automation are still mock/placeholder.
 - All integrations are `Not connected`.
 - Mini agent chat is a mock UI shell.
 - Command palette and notifications are mock interactions.
-- Supabase Storage binary object storage is not configured; file registration is metadata-only.
+- Google Drive binary object storage is not configured; file registration is metadata-only.
+- OpenAI model preference exists, but real OpenAI calls remain disabled until `OPENAI_API_KEY` and paid-tool approval are configured.
 - Oracle n8n webhook is not configured.
+- n8n embedding requires `ORACLE_N8N_INSTANCE_URL` and self-hosted iframe settings.
+- ComfyUI, FFmpeg, TTS, and local/Oracle worker endpoints are not configured.
 - The password change flow exists; the seeded password still needs to be changed by the user.
 - Temporary viewer test account exists and should be deleted or rotated after testing.
 - Do not run destructive Supabase resets now that the production database is seeded.
@@ -340,10 +360,10 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
 ## Safe To Continue From Another Account
 
-Yes. The repo is safe to continue from this checkpoint after this commit is pushed. The latest file registration and safe draft creation slice has been verified and deployed. No feature files are half-edited.
+Yes. The repo is safe to continue from this checkpoint after this commit is pushed. The latest provider setup surfaces have been verified and deployed. No feature files are half-edited.
 
 ## Next Recommended Command
 
 ```text
-Read README, root docs, and checkpoint docs, run lint/typecheck/test/build if needed, then continue Supabase Storage setup, posting package copy polish, service-backed mock APIs, role-aware UI/tests, or n8n setup if webhook secrets are available. All required authenticated pages are route-specific; metadata-only file registration, service foundations, manual posting package generation/download, and safe mock-agent draft creation are verified. Do not put test account passwords or real secrets into repo files.
+Read README, root docs, and checkpoint docs, run lint/typecheck/test/build if needed, then continue Google Drive storage, n8n embed/webhook setup, OpenAI paid-tool approval, media worker setup, posting package polish, service-backed mock APIs, or role-aware UI/tests. All required authenticated pages are route-specific; provider setup panels, metadata-only file registration, service foundations, manual posting package generation/download, and safe mock-agent draft creation are verified. Do not put test account passwords or real secrets into repo files.
 ```

@@ -1,4 +1,5 @@
 import { getDb } from "@/lib/db";
+import { defaultOpenAiModel, normalizeModelId } from "@/lib/ai-models";
 
 export type FolqenSettings = {
   brandName: string;
@@ -10,6 +11,9 @@ export type FolqenSettings = {
   allowPaidTools: boolean;
   allowBrowserAutomation: boolean;
   defaultUploadPrivacy: "private" | "unlisted";
+  openAiModel: string;
+  customOpenAiModel: string;
+  storageProvider: "google_drive";
 };
 
 export const defaultFolqenSettings: FolqenSettings = {
@@ -22,6 +26,9 @@ export const defaultFolqenSettings: FolqenSettings = {
   allowPaidTools: false,
   allowBrowserAutomation: false,
   defaultUploadPrivacy: "private",
+  openAiModel: defaultOpenAiModel,
+  customOpenAiModel: "",
+  storageProvider: "google_drive",
 };
 
 function isSettingsRecord(value: unknown): value is Partial<FolqenSettings> {
@@ -29,14 +36,21 @@ function isSettingsRecord(value: unknown): value is Partial<FolqenSettings> {
 }
 
 export async function getFolqenSettings() {
-  const [safety, profile] = await Promise.all([
+  const [safety, profile, providerPreferences] = await Promise.all([
     getDb().setting.findUnique({ where: { key: "safety.defaults" } }),
     getDb().setting.findUnique({ where: { key: "brand.profile" } }),
+    getDb().setting.findUnique({ where: { key: "provider.preferences" } }),
   ]);
 
-  return {
+  const merged = {
     ...defaultFolqenSettings,
     ...(isSettingsRecord(profile?.value) ? profile.value : {}),
     ...(isSettingsRecord(safety?.value) ? safety.value : {}),
+    ...(isSettingsRecord(providerPreferences?.value) ? providerPreferences.value : {}),
+  };
+
+  return {
+    ...merged,
+    openAiModel: normalizeModelId(typeof merged.customOpenAiModel === "string" && merged.customOpenAiModel ? merged.customOpenAiModel : merged.openAiModel),
   };
 }

@@ -86,6 +86,9 @@ export function ToolsScreen({ data }: { data: ToolsData }) {
                 ["Local worker", data.integrationStatus.worker.localWorker],
                 ["ComfyUI", data.integrationStatus.tools.comfyui],
                 ["FFmpeg", data.integrationStatus.tools.ffmpeg],
+                ["TTS", data.integrationStatus.tools.tts],
+                ["Google Drive", data.integrationStatus.providers.storage.googleDrive.status],
+                ["OpenAI", data.integrationStatus.providers.ai.openai.status],
               ].map(([label, status]) => (
                 <div key={label} className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-3">
                   <span className="text-sm">{label}</span>
@@ -112,6 +115,13 @@ export function ToolsScreen({ data }: { data: ToolsData }) {
             </div>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">
               Folqen should prefer self-hosted n8n, local FFmpeg, local ComfyUI, and manual packages before paid cloud providers.
+            </p>
+          </div>
+
+          <div className="rounded-3xl border border-neon/20 bg-neon/[0.06] p-4">
+            <h2 className="font-display text-lg font-semibold">OpenAI model choice</h2>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+              Selected model: <span className="font-mono text-neon">{data.integrationStatus.providers.ai.openai.selectedModel}</span>. Real calls remain blocked until the OpenAI key and paid-tool approval gate are configured.
             </p>
           </div>
 

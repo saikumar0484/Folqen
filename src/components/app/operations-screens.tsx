@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { AlertTriangle, BarChart3, Bell, CheckCircle2, LockKeyhole, Search, Workflow, Zap } from "lucide-react";
 import { EmptyState } from "@/components/app/empty-state";
+import { N8nEmbedPanel } from "@/components/app/n8n-embed-panel";
 import { PageHeader } from "@/components/app/page-header";
 import { StatCard } from "@/components/app/stat-card";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -209,6 +210,7 @@ export function WorkflowsScreen({ data }: { data: WorkflowsData }) {
         </div>
 
         <aside className="space-y-4">
+          <N8nEmbedPanel config={data.providerConfig.workflow.n8n} />
           <SafetyCard title="n8n remains gated">The n8n webhook is only configured when secrets exist. Real workflows must not publish, spend, or automate browsers without explicit approval.</SafetyCard>
           <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-4">
             <div className="flex items-center gap-2"><Workflow className="h-4 w-4 text-neon" /><h2 className="font-display text-lg font-semibold">Workflow providers</h2></div>

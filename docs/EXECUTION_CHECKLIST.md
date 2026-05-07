@@ -73,7 +73,11 @@
 - [x] Metadata-only file registration.
 - [x] Service interfaces and provider adapters.
 - [x] Safe mock-agent draft content creation.
-- [ ] n8n placeholder endpoints.
+- [x] n8n placeholder endpoints.
+- [x] n8n embedded builder UI surface.
+- [x] Google Drive storage setup surface.
+- [x] OpenAI model dropdown preference.
+- [x] Media tool setup/status surface.
 - [x] Posting package system.
 - [x] Posting package detail/download controls.
 - [ ] Security hardening.

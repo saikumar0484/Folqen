@@ -4,7 +4,7 @@
 
 Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, and every required authenticated route now has a route-specific or database-backed surface on branch `build/phase-0-foundation`.
 
-Latest save point: May 7, 2026, after file registration and safe mock-agent draft creation were deployed.
+Latest save point: May 7, 2026, after provider setup surfaces for Drive, n8n, OpenAI, and media tools were deployed.
 
 ## Completed Work
 
@@ -19,6 +19,11 @@ Latest save point: May 7, 2026, after file registration and safe mock-agent draf
 - Added authenticated file registration API and Files page upload form with strict validation, private metadata records, audit logging, and optional small text preview.
 - Added posting package copy buttons for captions and hashtags.
 - Added safe mock-agent draft content package creation that creates content, task, approval, and audit rows without using live AI or publishing.
+- Added Google Drive cloud storage as the planned storage provider in settings/status surfaces without adding OAuth secrets.
+- Added OpenAI model preference dropdown and custom model field, saved to Supabase as non-secret provider preferences.
+- Added provider setup panels for Google Drive, OpenAI, n8n, local worker, ComfyUI, FFmpeg, and TTS.
+- Added n8n workflow builder embed panel that activates only when `ORACLE_N8N_INSTANCE_URL` is configured and embedding is allowed.
+- Expanded health/tool status to report provider readiness while keeping every unconfigured provider as `Not connected`.
 - Added role-aware approval UI and permission tests for admin/operator/viewer behavior.
 - Fixed the authenticated sidebar layout so the `Approval gates active` safety card no longer overlaps route links on shorter desktop screens.
 - Synced the newer `main` update into the foundation branch.
@@ -341,6 +346,23 @@ Latest May 7, 2026 upload registration and safe draft creation update:
 - Authenticated production file registration returned 200, created a private metadata record, and reported `binaryStored: false`.
 - Authenticated production draft package creation returned 200 and created a `DRAFT` content record.
 
+Latest May 7, 2026 provider setup surfaces update:
+
+- Added env placeholders for Google Drive, OpenAI, TTS, and media/provider setup.
+- Added provider config/status helper and tests.
+- Added Settings provider setup panel with Google Drive, OpenAI, n8n, and media tool readiness.
+- Added OpenAI model dropdown with current model choices plus custom model id support.
+- Added n8n embedded builder panel on `/workflows`; it remains Not connected until the n8n URL is configured and embedding is allowed.
+- Added Tools runtime status rows for Google Drive, OpenAI, and TTS.
+- Direct-Node `eslint .`: passed.
+- Direct-Node `tsc --noEmit`: passed.
+- Direct-Node `tsx --test "src/**/*.test.ts"`: passed, 27 tests.
+- Direct-Node `prisma generate` plus `next build`: passed.
+- `vercel deploy --prod --yes`: passed and aliased `https://folqen.vercel.app`.
+- `GET https://folqen.vercel.app/api/health`: returned database status `live`, Google Drive/OpenAI/n8n/TTS/media providers `not_connected`.
+- Authenticated `/settings`, `/tools`, and `/workflows` returned 200 and showed the provider setup UI.
+- Authenticated settings save for OpenAI model `gpt-5-mini` and storage provider `google_drive` returned 200.
+
 Browser/runtime checks:
 
 - Dev server started at `http://127.0.0.1:3000`.
@@ -355,9 +377,9 @@ Browser/runtime checks:
 - Default seeded admin password now has a password-change flow, but the user still needs to actually change it in `/settings`.
 - Test viewer account exists for temporary dashboard testing and should be removed or rotated later.
 - Supabase direct database hostname remained unreliable from this Windows environment; use the Supabase session pooler or `supabase db query --linked`.
-- File uploads, live integrations, write actions for pipeline/library, and publishing are not implemented yet.
-- Oracle n8n webhook testing still requires account-specific secrets and must be completed through safe environment variable setup.
-- Production URL exists, protected routes are live, all required authenticated pages now have route-specific surfaces, file upload registration exists, service interfaces/mock implementations exist, manual posting package generation/download exists, and safe mock-agent draft creation exists. It is not a complete MVP yet because binary object storage, n8n, platform integrations, and real AI/provider adapters are still pending.
+- Google Drive binary storage, OpenAI real calls, n8n embedding/webhooks, ComfyUI, FFmpeg worker execution, TTS, live platform integrations, write actions for pipeline/library, and publishing are not implemented yet.
+- n8n, Google Drive, OpenAI, and media tool setup require account-specific secrets and must be completed through safe environment variable setup.
+- Production URL exists, protected routes are live, all required authenticated pages now have route-specific surfaces, file upload registration exists, service interfaces/mock implementations exist, manual posting package generation/download exists, safe mock-agent draft creation exists, and provider setup surfaces exist. It is not a complete MVP yet because binary object storage, n8n, platform integrations, real AI calls, and media provider adapters are still pending.
 
 ## Safe To Stop
 

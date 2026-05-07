@@ -1,5 +1,34 @@
 # Changelog
 
+## May 7, 2026 - Provider setup surfaces
+
+### Added
+
+- Added Google Drive as the planned cloud storage provider with setup placeholders and runtime `Not connected` status.
+- Added OpenAI model selection preferences, including a default model dropdown and custom model ID option.
+- Added provider setup panels in Settings for Google Drive, OpenAI, n8n, and media tools.
+- Added n8n workflow builder embed surface in `/workflows`; it stays disabled until a trusted self-hosted n8n URL is configured.
+- Added runtime status rows for OpenAI, Google Drive, n8n, FFmpeg, ComfyUI, TTS, and the local/Oracle worker.
+- Added provider config tests for default blocked/not-connected behavior.
+
+### Safety
+
+- No Google Drive, OpenAI, n8n, FFmpeg, ComfyUI, TTS, or worker secret was committed.
+- Real OpenAI calls remain blocked until an API key is configured and a paid-tool approval flow is added.
+- n8n embedding and webhook execution remain `Not connected` until the instance URL, webhook URL, and shared secret are configured.
+- File registration remains metadata-only until Drive-backed binary storage is implemented.
+
+### Verification
+
+- Direct-Node `eslint .`: passed.
+- Direct-Node `tsc --noEmit`: passed.
+- Direct-Node `tsx --test "src/**/*.test.ts"`: passed, 27 tests.
+- Direct-Node `prisma generate` plus `next build`: passed.
+- `vercel deploy --prod --yes`: passed and aliased `https://folqen.vercel.app`.
+- `GET https://folqen.vercel.app/api/health`: returned database status `live` and provider statuses as `not_connected`.
+- Authenticated production `/settings`, `/tools`, and `/workflows` returned 200 and showed provider setup surfaces.
+- Authenticated production `POST /api/settings`: saved `openAiModel` and `storageProvider` preferences without storing secrets.
+
 ## May 7, 2026 - File registration and safe draft creation
 
 ### Added

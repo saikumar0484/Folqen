@@ -1,12 +1,15 @@
 import { PasswordChangeForm } from "@/components/app/password-change-form";
+import { ProviderSetupPanel } from "@/components/app/provider-setup-panel";
 import { SettingsForm } from "@/components/app/settings-form";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { getProviderConfig } from "@/lib/provider-config";
 import { getFolqenSettings } from "@/lib/settings";
 
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
   const settings = await getFolqenSettings();
+  const providerConfig = getProviderConfig(settings.openAiModel);
 
   return (
     <div className="space-y-5 pb-24">
@@ -43,6 +46,7 @@ export default async function SettingsPage() {
       </section>
 
       <SettingsForm settings={settings} />
+      <ProviderSetupPanel config={providerConfig} />
       <PasswordChangeForm />
     </div>
   );
