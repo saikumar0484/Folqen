@@ -2,9 +2,9 @@
 
 ## Immediate Next Phase
 
-Continue from route-specific read surfaces into safe actions and MVP workflows. All required authenticated routes now have dedicated pages, but uploads, posting packages, provider services, and real automation are still pending.
+Continue from route-specific read surfaces into safe actions and MVP workflows. All required authenticated routes now have dedicated pages, manual posting package creation/download is live, but uploads, provider-backed actions, and real automation are still pending.
 
-Current save point: May 7, 2026. The live app is deployed at `https://folqen.vercel.app`, health reports database `live`, and the latest completed slice is manual posting packages plus role-aware approval controls.
+Current save point: May 7, 2026. The live app is deployed at `https://folqen.vercel.app`, health reports database `live`, and the latest completed slice is manual posting package detail/download controls.
 
 ## Exact Next Tasks
 
@@ -16,9 +16,9 @@ Current save point: May 7, 2026. The live app is deployed at `https://folqen.ver
 6. Add stronger role-aware UI states for admin/operator/viewer and tests around forbidden actions.
 7. Add stronger role-aware UI states for admin/operator/viewer and tests around forbidden actions.
 8. Build the actual file upload/storage flow using the existing validation foundation, role checks, privacy defaults, storage path isolation, and audit logs.
-9. Expand posting package workflow with package detail view, copy/download controls, and platform-specific checklists.
+9. Add copy-to-clipboard controls for posting package captions, descriptions, hashtags, and checklist items.
 10. Expand role-aware UI states across settings, packages, files, and future action APIs.
-11. Wire the service interface foundation into API routes for manual posting packages, storage validation, and workflow tests while keeping real execution blocked.
+11. Wire the service interface foundation into API routes for storage validation and workflow tests while keeping real execution blocked.
 12. Configure Oracle n8n webhook env values only when the human provides the URL/secret, then test `POST /api/integrations/n8n/test`.
 13. Add mobile sidebar behavior, toasts, and refined command palette interactions.
 
@@ -53,4 +53,4 @@ Needed through safe secret flow only:
 
 ## Resume Command
 
-Continue from branch `build/phase-0-foundation`, read README, all root project docs, and checkpoint docs, run verification, then continue actual file upload/storage, posting package detail/download UI, service-backed mock APIs, role-aware UI/tests, or n8n setup if the human provides webhook secrets. All required authenticated pages are route-specific, upload validation/service foundations are verified, and manual posting package generation exists.
+Continue from branch `build/phase-0-foundation`, read README, all root project docs, and checkpoint docs, run verification, then continue actual file upload/storage, posting package copy controls, service-backed mock APIs, role-aware UI/tests, or n8n setup if the human provides webhook secrets. All required authenticated pages are route-specific, upload validation/service foundations are verified, and manual posting package generation/download exists.

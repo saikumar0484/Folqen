@@ -1,5 +1,7 @@
 import type { ContentItem, PlatformName } from "@prisma/client";
 
+export type ManualPostingPackage = ReturnType<typeof generateManualPostingPackage>;
+
 function platformLabel(platform: PlatformName) {
   return platform.charAt(0) + platform.slice(1).toLowerCase();
 }
@@ -41,5 +43,56 @@ export function generateManualPostingPackage(content: Pick<ContentItem, "id" | "
       copyrightStatus: content.copyrightStatus,
       publicPublishing: "blocked_by_default",
     },
+  };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value && typeof value === "object" && !Array.isArray(value));
+}
+
+export function isManualPostingPackage(value: unknown): value is ManualPostingPackage {
+  if (!isRecord(value)) return false;
+
+  const safety = value.safety;
+
+  return (
+    value.mode === "manual" &&
+    typeof value.packageId === "string" &&
+    typeof value.platform === "string" &&
+    typeof value.platformLabel === "string" &&
+    typeof value.title === "string" &&
+    typeof value.caption === "string" &&
+    typeof value.description === "string" &&
+    Array.isArray(value.hashtags) &&
+    value.hashtags.every((tag) => typeof tag === "string") &&
+    Array.isArray(value.checklist) &&
+    value.checklist.every((item) => typeof item === "string") &&
+    isRecord(safety) &&
+    safety.publicPublishing === "blocked_by_default"
+  );
+}
+
+function safeFilePart(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+}
+
+export function createPostingPackageDownload(packageData: ManualPostingPackage) {
+  const filename = `${safeFilePart(packageData.platformLabel)}-${safeFilePart(packageData.title)}.json`;
+
+  return {
+    filename,
+    body: JSON.stringify(
+      {
+        ...packageData,
+        folqenNotice: "Manual posting package only. This file does not publish or connect to any platform.",
+        generatedFor: "human_review_before_public_posting",
+      },
+      null,
+      2,
+    ),
   };
 }

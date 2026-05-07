@@ -1,5 +1,31 @@
 # Changelog
 
+## May 7, 2026 - Posting package detail and download
+
+### Added
+
+- Added authenticated `GET /api/posting-packages/[assetId]/download`.
+- Added manual package metadata validation and JSON download formatting helpers.
+- Added Library package detail cards with caption, hashtags, checklist preview, and download action.
+- Added tests that confirm downloaded packages remain manual-only and do not claim publishing.
+
+### Safety
+
+- Downloading a package creates only an audit log and returns JSON to the logged-in user.
+- No platform upload, public publishing, paid tool use, browser automation, or new credential was enabled.
+- Anonymous package downloads return 401.
+
+### Verification
+
+- Direct-Node `eslint .`: passed.
+- Direct-Node `tsc --noEmit`: passed.
+- Direct-Node `tsx --test "src/**/*.test.ts"`: passed, 23 tests.
+- Direct-Node `prisma generate` plus `next build`: passed.
+- `vercel deploy --prod --yes`: passed and aliased `https://folqen.vercel.app`.
+- `GET https://folqen.vercel.app/api/health`: returned database status `live`.
+- Unauthenticated `GET /api/posting-packages/not-real/download`: returned 401.
+- Authenticated production package create/download smoke test returned 200 and confirmed manual-only JSON.
+
 ## May 7, 2026 - Session save point
 
 ### Changed

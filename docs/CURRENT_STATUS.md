@@ -4,7 +4,7 @@
 
 Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, and every required authenticated route now has a route-specific or database-backed surface on branch `build/phase-0-foundation`.
 
-Latest save point: May 7, 2026, after manual posting packages and role-aware controls were deployed.
+Latest save point: May 7, 2026, after manual posting package detail/download controls were deployed.
 
 ## Completed Work
 
@@ -15,6 +15,7 @@ Latest save point: May 7, 2026, after manual posting packages and role-aware con
 - Added file upload validation foundation with tests; actual upload/storage writes remain disabled.
 - Added service interface foundation and mock implementations for agent, workflow, render, publishing, analytics, storage, and notifications.
 - Added manual posting package generation API and Library action; packages are saved as database assets and audited without publishing.
+- Added authenticated manual posting package JSON download API and Library package detail cards with caption, hashtags, and checklist preview.
 - Added role-aware approval UI and permission tests for admin/operator/viewer behavior.
 - Fixed the authenticated sidebar layout so the `Approval gates active` safety card no longer overlaps route links on shorter desktop screens.
 - Synced the newer `main` update into the foundation branch.
@@ -303,6 +304,22 @@ Latest May 7, 2026 session save point:
 - `GET https://folqen.vercel.app/api/health`: returned database status `live`.
 - No feature code or production configuration was changed for this save point.
 
+Latest May 7, 2026 posting package detail/download update:
+
+- Baseline direct-Node `eslint .`: passed.
+- Baseline direct-Node `tsc --noEmit`: passed.
+- Baseline direct-Node `tsx --test "src/**/*.test.ts"`: passed, 21 tests before this slice.
+- Added `GET /api/posting-packages/[assetId]/download`.
+- Added manual package metadata recognition and download body tests.
+- Direct-Node `eslint .`: passed.
+- Direct-Node `tsc --noEmit`: passed.
+- Direct-Node `tsx --test "src/**/*.test.ts"`: passed, 23 tests.
+- Direct-Node `prisma generate` plus `next build`: passed after prepending the temporary Node runtime to PATH for Turbopack process spawning.
+- `vercel deploy --prod --yes`: passed and aliased `https://folqen.vercel.app`.
+- `GET https://folqen.vercel.app/api/health`: returned database status `live`.
+- Unauthenticated `GET /api/posting-packages/not-real/download`: returned 401.
+- Authenticated production smoke test created a manual YouTube package for seeded content and downloaded it as JSON; the downloaded file reported `mode: manual` and stated it does not publish.
+
 Browser/runtime checks:
 
 - Dev server started at `http://127.0.0.1:3000`.
@@ -319,8 +336,8 @@ Browser/runtime checks:
 - Supabase direct database hostname remained unreliable from this Windows environment; use the Supabase session pooler or `supabase db query --linked`.
 - File uploads, live integrations, write actions for pipeline/library, and publishing are not implemented yet.
 - Oracle n8n webhook testing still requires account-specific secrets and must be completed through safe environment variable setup.
-- Production URL exists, protected routes are live, all required authenticated pages now have route-specific surfaces, upload validation rules exist, service interfaces/mock implementations exist, and manual posting package generation exists. It is not a complete MVP yet because actual upload storage, more action APIs, n8n, platform integrations, and real AI/provider adapters are still pending.
+- Production URL exists, protected routes are live, all required authenticated pages now have route-specific surfaces, upload validation rules exist, service interfaces/mock implementations exist, and manual posting package generation/download exists. It is not a complete MVP yet because actual upload storage, more action APIs, n8n, platform integrations, and real AI/provider adapters are still pending.
 
 ## Safe To Stop
 
-Yes. This is an intentional save point. The app is deployed, the repo is safe to continue, and no source files should be left half-edited after the save-point docs are committed and pushed.
+Yes after this checkpoint commit is pushed. The app is deployed, the repo is safe to continue, and no source files should be left half-edited.

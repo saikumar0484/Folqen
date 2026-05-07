@@ -2,11 +2,11 @@
 
 ## Current Phase
 
-Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, and all required authenticated routes now have route-specific surfaces.
+Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, all required authenticated routes now have route-specific surfaces, and manual posting package detail/download is deployed.
 
 ## Current Save Point
 
-May 7, 2026. The latest completed and deployed slice is manual posting package generation plus role-aware approval controls. This save point was created because the user asked to preserve the session for continuation.
+May 7, 2026. The latest completed and deployed slice is manual posting package detail/download controls.
 
 ## Branch
 
@@ -21,6 +21,7 @@ May 7, 2026. The latest completed and deployed slice is manual posting package g
 - Added file upload validation foundation and focused tests; actual file upload/storage writes are still disabled.
 - Added service interface foundation and mock implementations for agent, workflow, render, publishing, analytics, storage, and notifications.
 - Added manual posting package generation API and Library page action; package creation creates database assets and audit logs only.
+- Added authenticated manual posting package JSON download API and Library detail cards for package captions, hashtags, and checklists.
 - Added role-aware approval UI states and permission tests for admin/operator/viewer behavior.
 - Fixed the authenticated sidebar layout so the bottom safety card stays separate from the navigation and the route list scrolls when vertical space is tight.
 - Synced branch with latest `main` AGENTS.md update.
@@ -207,6 +208,14 @@ curl https://folqen.vercel.app/api/health
 curl -X POST https://folqen.vercel.app/api/posting-packages/manual
 git status
 curl https://folqen.vercel.app/api/health
+eslint .
+tsc --noEmit
+tsx --test "src/**/*.test.ts"
+prisma generate
+next build
+vercel deploy --prod --yes
+curl https://folqen.vercel.app/api/posting-packages/not-real/download
+curl https://folqen.vercel.app/api/posting-packages/<assetId>/download
 ```
 
 ## Command Results
@@ -293,6 +302,7 @@ Latest deployment/data foundation verification:
 - Service interface foundation verification: lint, typecheck, tests, and build passed. Test count is now 15.
 - Posting package and role-aware controls verification: lint, typecheck, tests, build, production deploy, health check, and unauthenticated API protection check passed. Test count is now 21.
 - Session save-point verification: repo was clean before save-point doc edits, and production health returned database `live`.
+- Posting package detail/download verification: direct-Node lint, typecheck, tests, Prisma generate, build, Vercel production deploy, production health, anonymous download protection, and authenticated package create/download smoke test all passed. Test count is now 23.
 
 ## Known Broken Areas
 
@@ -300,7 +310,7 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
 ## Known Mock-Only Areas
 
-- All required authenticated route surfaces are now route-specific. Many are real/read-only from Supabase. Manual posting package generation, file validation, and service interface foundations exist, but remaining actions, actual uploads/storage writes, real providers, publishing, and automation are still mock/placeholder.
+- All required authenticated route surfaces are now route-specific. Many are real/read-only from Supabase. Manual posting package generation/download, file validation, and service interface foundations exist, but remaining actions, actual uploads/storage writes, real providers, publishing, and automation are still mock/placeholder.
 - All integrations are `Not connected`.
 - Mini agent chat is a mock UI shell.
 - Command palette and notifications are mock interactions.
@@ -324,10 +334,10 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
 ## Safe To Continue From Another Account
 
-Yes. The repo is safe to continue from this checkpoint after this save-point commit is pushed. The latest posting package and role-aware controls slice has been committed, pushed, deployed, and checked for production health plus API protection. No feature files are half-edited.
+Yes. The repo is safe to continue from this checkpoint after this commit is pushed. The latest posting package detail/download slice has been verified and deployed. No feature files are half-edited.
 
 ## Next Recommended Command
 
 ```text
-Read README, root docs, and checkpoint docs, run lint/typecheck/test/build if needed, then continue actual file upload/storage, posting package detail/download UI, service-backed mock APIs, role-aware UI/tests, or n8n setup if webhook secrets are available. All required authenticated pages are route-specific; file validation, service foundations, and manual posting package generation are verified. Do not put test account passwords or real secrets into repo files.
+Read README, root docs, and checkpoint docs, run lint/typecheck/test/build if needed, then continue actual file upload/storage, posting package copy controls, service-backed mock APIs, role-aware UI/tests, or n8n setup if webhook secrets are available. All required authenticated pages are route-specific; file validation, service foundations, and manual posting package generation/download are verified. Do not put test account passwords or real secrets into repo files.
 ```

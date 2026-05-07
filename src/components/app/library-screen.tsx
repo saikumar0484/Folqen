@@ -108,6 +108,48 @@ export function LibraryScreen({ data }: { data: LibraryData }) {
               <div className="font-mono text-3xl text-neon">{data.postingPackages.count}</div>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">{data.postingPackages.note}</p>
             </div>
+            <div className="mt-3 space-y-3">
+              {data.packageAssets.length === 0 ? (
+                <div className="rounded-xl border border-dashed border-white/10 p-4 text-sm leading-6 text-muted-foreground">
+                  Create a manual package from a content record to preview captions, checklists, and a downloadable JSON handoff.
+                </div>
+              ) : null}
+              {data.packageAssets.map((pkg) => (
+                <article key={pkg.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <StatusBadge tone="safe">{pkg.platformLabel} manual</StatusBadge>
+                      <h3 className="mt-3 text-sm font-semibold leading-6">{pkg.title}</h3>
+                      <p className="mt-1 text-xs text-muted-foreground">{pkg.contentTitle} - {pkg.createdAt}</p>
+                    </div>
+                    <a
+                      href={pkg.downloadHref}
+                      className="inline-flex items-center gap-2 rounded-xl border border-neon/30 bg-neon/10 px-3 py-2 text-xs font-medium text-neon transition hover:bg-neon/15"
+                    >
+                      <Download className="h-3.5 w-3.5" />
+                      Download
+                    </a>
+                  </div>
+                  <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3">
+                    <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Caption</div>
+                    <p className="mt-2 text-sm leading-6">{pkg.caption}</p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {pkg.hashtags.slice(0, 8).map((tag) => (
+                        <span key={tag} className="rounded-full border border-white/10 px-2.5 py-1 font-mono text-[10px] text-muted-foreground">{tag}</span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="mt-3 grid gap-2">
+                    {pkg.checklist.slice(0, 3).map((item) => (
+                      <div key={item} className="flex items-start gap-2 text-xs leading-5 text-muted-foreground">
+                        <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-neon" />
+                        <span>{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
             <div className="mt-3 grid gap-2">
               {["Captions prepared manually", "Platform APIs not connected", "Publishing approval required"].map((item) => (
                 <div key={item} className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-sm">

@@ -13,8 +13,8 @@
 ### Manual posting packages are not public publishing
 
 - Risk: A user may mistake package generation for platform upload/public posting.
-- Prevention: Packages are saved as `posting_package` assets with `manual://` paths and audit logs; the UI and API copy state that no upload or public publishing happened.
-- Verification: Posting package tests confirm manual mode and Not connected API wording. Full test suite passed with 21 tests.
+- Prevention: Packages are saved as `posting_package` assets with `manual://` paths and audit logs; the UI, download file, and API copy state that no upload or public publishing happened.
+- Verification: Posting package tests confirm manual mode, Not connected API wording, and manual-only download JSON. Full test suite passed with 23 tests, and production anonymous download returned 401.
 - Rollback: Delete generated `posting_package` asset rows if needed; no platform account is affected.
 - Human approval trigger: Any platform upload, OAuth connection, public publishing, scheduled posting, or credential use.
 

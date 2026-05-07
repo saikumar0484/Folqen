@@ -72,5 +72,6 @@
 - [ ] File upload validation.
 - [ ] Service interfaces and provider adapters.
 - [ ] n8n placeholder endpoints.
-- [ ] Posting package system.
+- [x] Posting package system.
+- [x] Posting package detail/download controls.
 - [ ] Security hardening.

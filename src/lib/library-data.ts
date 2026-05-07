@@ -1,5 +1,6 @@
 import type { Prisma } from "@prisma/client";
 import { getDb } from "@/lib/db";
+import { isManualPostingPackage } from "@/lib/posting-packages";
 
 function formatDate(date: Date) {
   return date.toLocaleString("en-IN", {
@@ -58,7 +59,7 @@ export async function getLibraryData() {
     }),
   ]);
 
-  const packageCount = contentItems.filter((item) => hasManualPostingPackage(item.metadata)).length;
+  const packageCount = assets.filter((asset) => asset.type === "posting_package" && isManualPostingPackage(asset.metadata)).length;
   const assetCount = assets.length + uploadedFiles.length;
   const readyForReview = contentItems.filter((item) => item.status === "REVIEW" || item.status === "APPROVED").length;
 
@@ -91,6 +92,25 @@ export async function getLibraryData() {
       contentTitle: asset.content?.title ?? "Unlinked",
       createdAt: formatDate(asset.createdAt),
     })),
+    packageAssets: assets
+      .filter((asset) => asset.type === "posting_package" && isManualPostingPackage(asset.metadata))
+      .map((asset) => {
+        const metadata = isManualPostingPackage(asset.metadata) ? asset.metadata : null;
+
+        return {
+          id: asset.id,
+          name: asset.name,
+          contentTitle: asset.content?.title ?? "Unlinked",
+          createdAt: formatDate(asset.createdAt),
+          platformLabel: metadata?.platformLabel ?? "Manual",
+          title: metadata?.title ?? asset.name,
+          caption: metadata?.caption ?? "No caption found.",
+          description: metadata?.description ?? "No description found.",
+          hashtags: metadata?.hashtags ?? [],
+          checklist: metadata?.checklist ?? [],
+          downloadHref: `/api/posting-packages/${asset.id}/download`,
+        };
+      }),
     uploadedFiles: uploadedFiles.map((file) => ({
       id: file.id,
       name: file.name,
