@@ -198,6 +198,9 @@ npm run lint
 npm run typecheck
 npm run test
 npm run build
+vercel deploy --prod --yes
+curl https://folqen.vercel.app/api/health
+curl -X POST https://folqen.vercel.app/api/posting-packages/manual
 ```
 
 ## Command Results
@@ -282,7 +285,7 @@ Latest deployment/data foundation verification:
 - Calendar/monetization/brand/files route-specific verification: lint, typecheck, tests, build, production deploy, health check, and unauthenticated route-protection checks passed.
 - File validation foundation verification: lint, typecheck, tests, and build passed. Test count is now 11.
 - Service interface foundation verification: lint, typecheck, tests, and build passed. Test count is now 15.
-- Posting package and role-aware controls verification: lint, typecheck, tests, and build passed. Test count is now 21.
+- Posting package and role-aware controls verification: lint, typecheck, tests, build, production deploy, health check, and unauthenticated API protection check passed. Test count is now 21.
 
 ## Known Broken Areas
 
@@ -314,7 +317,7 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
 ## Safe To Continue From Another Account
 
-Yes. The repo is safe to continue from this checkpoint after the latest posting package and role-aware controls slice is committed, pushed, and deployed. No source files should be left half-edited.
+Yes. The repo is safe to continue from this checkpoint. The latest posting package and role-aware controls slice has been committed, pushed, deployed, and checked for production health plus API protection. No source files are half-edited.
 
 ## Next Recommended Command
 

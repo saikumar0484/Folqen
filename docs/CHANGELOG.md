@@ -23,6 +23,9 @@
 - `npm run typecheck`: passed.
 - `npm run test`: passed, 21 tests.
 - `npm run build`: passed.
+- `vercel deploy --prod --yes`: passed and aliased `https://folqen.vercel.app`.
+- `GET https://folqen.vercel.app/api/health`: returned database status `live`.
+- Unauthenticated `POST /api/posting-packages/manual`: returned 401 login required.
 
 ## May 7, 2026 - Service interface foundation
 
