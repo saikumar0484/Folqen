@@ -1,4 +1,5 @@
 import { PasswordChangeForm } from "@/components/app/password-change-form";
+import { ProviderApprovalActions } from "@/components/app/provider-approval-actions";
 import { ProviderSetupPanel } from "@/components/app/provider-setup-panel";
 import { SettingsForm } from "@/components/app/settings-form";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -47,6 +48,7 @@ export default async function SettingsPage() {
 
       <SettingsForm settings={settings} />
       <ProviderSetupPanel config={providerConfig} />
+      <ProviderApprovalActions />
       <PasswordChangeForm />
     </div>
   );

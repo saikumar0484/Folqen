@@ -2,11 +2,11 @@
 
 ## Current Phase
 
-Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, all required authenticated routes now have route-specific surfaces, manual posting package detail/download is deployed, file registration is deployed, safe mock-agent draft creation is deployed, and provider setup surfaces for Google Drive, OpenAI, n8n, and media tools are deployed.
+Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, all required authenticated routes now have route-specific surfaces, manual posting package detail/download is deployed, file registration is deployed, safe mock-agent draft creation is deployed, provider setup surfaces for Google Drive, OpenAI, n8n, and media tools are deployed, and admin-only provider setup approval requests are implemented.
 
 ## Current Save Point
 
-May 7, 2026. The latest completed and deployed slice is provider setup UI/status for Google Drive storage, OpenAI model selection, n8n workflow builder embedding, and media tool readiness.
+May 7, 2026. The latest completed slice is provider setup approval requests for Google Drive storage, OpenAI paid-agent calls, n8n workflow access, and media worker setup.
 
 ## Branch
 
@@ -30,6 +30,7 @@ May 7, 2026. The latest completed and deployed slice is provider setup UI/status
 - Added provider setup panels for Google Drive, OpenAI, n8n, FFmpeg, ComfyUI, TTS, and the local/Oracle worker.
 - Added n8n embedded workflow builder surface in `/workflows`; it stays hidden until a trusted n8n instance URL is configured.
 - Expanded `/tools`, `/settings`, `/workflows`, and `/api/health` provider status surfaces.
+- Added provider approval request definitions, admin-only API, Settings UI buttons, audit logging, and tests for Google Drive, OpenAI, n8n, and media worker setup approval requests.
 - Added role-aware approval UI states and permission tests for admin/operator/viewer behavior.
 - Fixed the authenticated sidebar layout so the bottom safety card stays separate from the navigation and the route list scrolls when vertical space is tight.
 - Synced branch with latest `main` AGENTS.md update.
@@ -237,6 +238,11 @@ curl https://folqen.vercel.app/settings
 curl https://folqen.vercel.app/tools
 curl https://folqen.vercel.app/workflows
 curl https://folqen.vercel.app/api/settings
+eslint .
+tsc --noEmit
+tsx --test "src/**/*.test.ts"
+prisma generate
+next build
 ```
 
 ## Command Results
@@ -326,6 +332,7 @@ Latest deployment/data foundation verification:
 - Posting package detail/download verification: direct-Node lint, typecheck, tests, Prisma generate, build, Vercel production deploy, production health, anonymous download protection, and authenticated package create/download smoke test all passed. Test count is now 23.
 - File registration and safe draft creation verification: direct-Node lint, typecheck, tests, Prisma generate, build, Vercel production deploy, health check, anonymous upload/draft protection, authenticated file registration, and authenticated draft creation all passed. Test count is now 25.
 - Provider setup surfaces verification: direct-Node lint, typecheck, tests, Prisma generate, build, Vercel production deploy, health check, authenticated `/settings`, `/tools`, `/workflows`, and authenticated settings preference save all passed. Test count is now 27.
+- Provider approval request verification: direct-Node lint, typecheck, tests, Prisma generate, and build passed. Test count is now 29.
 
 ## Known Broken Areas
 
@@ -333,7 +340,7 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
 ## Known Mock-Only Areas
 
-- All required authenticated route surfaces are now route-specific. Many are real/read-only from Supabase. Manual posting package generation/download, metadata-only file registration, safe draft content creation, and provider setup surfaces exist, but binary object storage, real providers, publishing, and automation are still mock/placeholder.
+- All required authenticated route surfaces are now route-specific. Many are real/read-only from Supabase. Manual posting package generation/download, metadata-only file registration, safe draft content creation, provider setup surfaces, and provider setup approval requests exist, but binary object storage, real providers, publishing, and automation are still mock/placeholder.
 - All integrations are `Not connected`.
 - Mini agent chat is a mock UI shell.
 - Command palette and notifications are mock interactions.
@@ -360,7 +367,7 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
 ## Safe To Continue From Another Account
 
-Yes. The repo is safe to continue from this checkpoint after this commit is pushed. The latest provider setup surfaces have been verified and deployed. No feature files are half-edited.
+Yes. The repo is safe to continue from this checkpoint after this commit is pushed. The latest provider approval request flow has been verified locally. No feature files are half-edited.
 
 ## Next Recommended Command
 

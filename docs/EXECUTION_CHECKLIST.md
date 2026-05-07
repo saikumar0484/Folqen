@@ -78,6 +78,7 @@
 - [x] Google Drive storage setup surface.
 - [x] OpenAI model dropdown preference.
 - [x] Media tool setup/status surface.
+- [x] Provider setup approval request flow.
 - [x] Posting package system.
 - [x] Posting package detail/download controls.
 - [ ] Security hardening.

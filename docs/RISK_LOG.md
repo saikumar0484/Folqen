@@ -2,6 +2,14 @@
 
 ## Current Risks
 
+### Provider approval requests are not provider connections
+
+- Risk: Users may assume approving a provider setup request connects Google Drive, OpenAI, n8n, or media tools automatically.
+- Prevention: The request API only creates `Approval` and `AuditLog` rows and explicitly records `secretsIncluded: false`; setup panels still show missing secrets and `Not connected`.
+- Verification: Tests confirm approval payloads include no secrets and keep public publishing, paid tools, and browser automation blocked.
+- Rollback: Delete the created pending approval rows if they were created accidentally; no external provider is affected.
+- Human approval trigger: Adding real secrets, calling OpenAI, writing Drive files, executing n8n workflows, rendering media, or connecting platform accounts.
+
 ### Provider setup surfaces are not live integrations
 
 - Risk: Users may think the new Google Drive, OpenAI, n8n, and media setup panels mean those services are already connected.

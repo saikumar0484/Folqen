@@ -4,7 +4,7 @@
 
 Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, and every required authenticated route now has a route-specific or database-backed surface on branch `build/phase-0-foundation`.
 
-Latest save point: May 7, 2026, after provider setup surfaces for Drive, n8n, OpenAI, and media tools were deployed.
+Latest save point: May 7, 2026, after provider approval requests were added for Drive, n8n, OpenAI, and media tools.
 
 ## Completed Work
 
@@ -24,6 +24,8 @@ Latest save point: May 7, 2026, after provider setup surfaces for Drive, n8n, Op
 - Added provider setup panels for Google Drive, OpenAI, n8n, local worker, ComfyUI, FFmpeg, and TTS.
 - Added n8n workflow builder embed panel that activates only when `ORACLE_N8N_INSTANCE_URL` is configured and embedding is allowed.
 - Expanded health/tool status to report provider readiness while keeping every unconfigured provider as `Not connected`.
+- Added admin-only provider setup approval requests for Google Drive storage, OpenAI paid-agent calls, n8n workflow access, and media worker setup.
+- Added audit logging and tests for provider approval requests while keeping secrets and real execution out of the repo.
 - Added role-aware approval UI and permission tests for admin/operator/viewer behavior.
 - Fixed the authenticated sidebar layout so the `Approval gates active` safety card no longer overlaps route links on shorter desktop screens.
 - Synced the newer `main` update into the foundation branch.
@@ -363,6 +365,17 @@ Latest May 7, 2026 provider setup surfaces update:
 - Authenticated `/settings`, `/tools`, and `/workflows` returned 200 and showed the provider setup UI.
 - Authenticated settings save for OpenAI model `gpt-5-mini` and storage provider `google_drive` returned 200.
 
+Latest May 7, 2026 provider approval request update:
+
+- Added `src/lib/provider-approval-requests.ts` and tests for safe approval payloads.
+- Added admin-only `POST /api/provider-approvals/request`.
+- Added Settings UI buttons to request approval for Google Drive, OpenAI, n8n, and media worker setup.
+- Approval requests create `Approval` and `AuditLog` records only; they do not store secrets or call external services.
+- Direct-Node `eslint .`: passed.
+- Direct-Node `tsc --noEmit`: passed.
+- Direct-Node `tsx --test "src/**/*.test.ts"`: passed, 29 tests.
+- Direct-Node `prisma generate` plus `next build`: passed.
+
 Browser/runtime checks:
 
 - Dev server started at `http://127.0.0.1:3000`.
@@ -377,7 +390,7 @@ Browser/runtime checks:
 - Default seeded admin password now has a password-change flow, but the user still needs to actually change it in `/settings`.
 - Test viewer account exists for temporary dashboard testing and should be removed or rotated later.
 - Supabase direct database hostname remained unreliable from this Windows environment; use the Supabase session pooler or `supabase db query --linked`.
-- Google Drive binary storage, OpenAI real calls, n8n embedding/webhooks, ComfyUI, FFmpeg worker execution, TTS, live platform integrations, write actions for pipeline/library, and publishing are not implemented yet.
+- Google Drive binary storage, OpenAI real calls, n8n embedding/webhooks, ComfyUI, FFmpeg worker execution, TTS, live platform integrations, write actions for pipeline/library, and publishing are not implemented yet. Provider setup approval requests now exist as a safe first step.
 - n8n, Google Drive, OpenAI, and media tool setup require account-specific secrets and must be completed through safe environment variable setup.
 - Production URL exists, protected routes are live, all required authenticated pages now have route-specific surfaces, file upload registration exists, service interfaces/mock implementations exist, manual posting package generation/download exists, safe mock-agent draft creation exists, and provider setup surfaces exist. It is not a complete MVP yet because binary object storage, n8n, platform integrations, real AI calls, and media provider adapters are still pending.
 

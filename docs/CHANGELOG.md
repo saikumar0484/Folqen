@@ -1,5 +1,28 @@
 # Changelog
 
+## May 7, 2026 - Provider approval requests
+
+### Added
+
+- Added approval request definitions for Google Drive storage, OpenAI paid-agent calls, n8n workflow access, and media worker setup.
+- Added authenticated admin-only `POST /api/provider-approvals/request`.
+- Added Settings page buttons that create provider setup approval records without storing secrets.
+- Added audit logging for provider setup approval requests.
+- Added tests confirming provider approval requests do not include secrets and keep risky actions blocked.
+
+### Safety
+
+- Approval requests create database rows only.
+- No Google Drive OAuth, OpenAI call, n8n workflow, media render, file upload, platform action, or public publishing is executed.
+- Duplicate pending approval requests are reused instead of creating repeated pending rows.
+
+### Verification
+
+- Direct-Node `eslint .`: passed.
+- Direct-Node `tsc --noEmit`: passed.
+- Direct-Node `tsx --test "src/**/*.test.ts"`: passed, 29 tests.
+- Direct-Node `prisma generate` plus `next build`: passed.
+
 ## May 7, 2026 - Provider setup surfaces
 
 ### Added

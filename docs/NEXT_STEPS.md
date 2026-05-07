@@ -4,7 +4,7 @@
 
 Continue from provider setup surfaces into credential-backed integrations. All required authenticated routes now have dedicated pages, manual posting package creation/download is live, file registration is live, safe mock-agent draft creation is live, and setup panels exist for Google Drive storage, OpenAI model selection, n8n, and media tools. Binary object storage, paid AI calls, embedded n8n execution, rendering, and real automation are still pending.
 
-Current save point: May 7, 2026. The live app is deployed at `https://folqen.vercel.app`, health reports database `live`, and the latest completed slice is provider setup UI/status for Google Drive, OpenAI model selection, n8n, and media tools.
+Current save point: May 7, 2026. The live app is deployed at `https://folqen.vercel.app`, health reports database `live`, and the latest completed slice is admin-only provider setup approval requests for Google Drive, OpenAI, n8n, and media tools.
 
 ## Exact Next Tasks
 
@@ -15,12 +15,13 @@ Current save point: May 7, 2026. The live app is deployed at `https://folqen.ver
 5. Remove or rotate the temporary viewer test account after dashboard testing is finished.
 6. Configure Google Drive OAuth values through secret env only, then replace metadata-only file registration with private Drive-backed binary storage.
 7. Configure `ORACLE_N8N_INSTANCE_URL`, iframe embedding, `N8N_WEBHOOK_URL`, and `N8N_WEBHOOK_SECRET`; then test `POST /api/integrations/n8n/test`.
-8. Add `OPENAI_API_KEY` through secret env and add an explicit paid-tool approval flow before enabling real OpenAI calls.
+8. Add `OPENAI_API_KEY` through secret env, request/approve the OpenAI provider approval in Folqen, then add a real-generation endpoint that still checks paid-tool guards before every call.
 9. Configure local or Oracle worker endpoints for FFmpeg, ComfyUI, and TTS, then add test-only connection checks.
 10. Add copy-to-clipboard controls for posting package descriptions and checklist items.
 11. Expand role-aware UI states across settings, packages, files, providers, and future action APIs.
 12. Wire the service interface foundation into workflow test APIs while keeping real execution blocked.
 13. Add mobile sidebar behavior, toasts, and refined command palette interactions.
+14. Add tests for the provider approval API with authenticated admin/viewer cases.
 
 ## Human Decisions Needed
 
