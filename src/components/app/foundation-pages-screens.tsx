@@ -183,7 +183,7 @@ export function FilesScreen({ data }: { data: FilesData }) {
         </div>
         <aside className="space-y-4">
           <FileUploadForm accept={data.accept} />
-          <GuardCard title="Storage guard" text="This MVP records validated private file metadata in Supabase. Binary object storage remains Not connected until Supabase Storage policies and secrets are configured." />
+          <GuardCard title="Storage guard" text="Folqen now has a server-side Google Drive storage path. It stores binary files only after Drive OAuth secrets and a private folder id are configured; otherwise it honestly records metadata only." />
           <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-4">
             <div className="flex items-center gap-2"><FileUp className="h-4 w-4 text-neon" /><h2 className="font-display text-lg font-semibold">Allowed future types</h2></div>
             <div className="mt-4 grid gap-2">{["Images, video, audio", "PDF, DOCX, TXT, MD", "CSV, XLSX, JSON, YAML", "SRT and VTT captions"].map((item) => <div key={item} className="rounded-xl border border-white/10 bg-white/[0.02] p-3 text-sm">{item}</div>)}</div>

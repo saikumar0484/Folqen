@@ -4,7 +4,7 @@
 
 Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, and every required authenticated route now has a route-specific or database-backed surface on branch `build/phase-0-foundation`.
 
-Latest save point: May 7, 2026, after provider approval API test coverage was added. Account cleanup is blocked on a human-provided admin password and approval to delete or rotate the temporary viewer account.
+Latest save point: May 7, 2026, after the Google Drive private storage adapter was added and the live Vercel database connection was repaired by rotating `DATABASE_URL` to the verified Supabase transaction pooler. Real Drive uploads still require Google OAuth env values and a private folder id.
 
 ## Completed Work
 
@@ -24,6 +24,8 @@ Latest save point: May 7, 2026, after provider approval API test coverage was ad
 - Added provider setup panels for Google Drive, OpenAI, n8n, local worker, ComfyUI, FFmpeg, and TTS.
 - Added n8n workflow builder embed panel that activates only when `ORACLE_N8N_INSTANCE_URL` is configured and embedding is allowed.
 - Expanded health/tool status to report provider readiness while keeping every unconfigured provider as `Not connected`.
+- Added server-only Google Drive storage adapter and upload-route integration that stores files privately when Drive env is configured.
+- Added safe database health diagnostics and repaired the live Vercel database connection with a Supabase transaction pooler URL.
 - Added admin-only provider setup approval requests for Google Drive storage, OpenAI paid-agent calls, n8n workflow access, and media worker setup.
 - Added audit logging and tests for provider approval requests while keeping secrets and real execution out of the repo.
 - Added injectable provider approval handler coverage for anonymous, viewer, admin, duplicate, invalid request, and no-secret cases.
@@ -100,6 +102,7 @@ The app installs, lints, typechecks, tests, validates Prisma schema, builds succ
 - Browser automation remains disabled by default.
 - Human approval remains required by default.
 - Supabase database is configured in Vercel production through an encrypted/sensitive env var.
+- Vercel production `DATABASE_URL` now uses the Supabase transaction pooler endpoint for the linked project; the secret value is not stored in git.
 - No n8n, platform, or paid-tool credentials were added.
 - Production `AUTH_SECRET` is configured in Vercel; its value was never printed or committed.
 - All integrations remain `Not connected` or `Mock`.
@@ -399,6 +402,25 @@ Latest May 7, 2026 provider approval API test coverage:
 - `GET https://folqen.vercel.app/api/health`: returned database status `live`.
 - Anonymous `POST /api/provider-approvals/request`: returned 401 login required.
 
+Latest May 7, 2026 Google Drive private storage adapter:
+
+- Added `src/lib/storage/google-drive.ts` and Drive adapter tests.
+- Implemented OAuth refresh-token access-token exchange and Drive resumable upload session flow.
+- Updated `POST /api/files/upload` to store validated file bytes in Google Drive when Drive env is fully configured.
+- Kept `database_metadata_only` fallback when Drive env is missing.
+- Updated Files page storage guard copy from Supabase Storage wording to Google Drive wording.
+- Direct-Node `eslint .`: passed.
+- Direct-Node `tsc --noEmit`: passed.
+- Direct-Node `tsx --test "src/**/*.test.ts"`: passed, 39 tests.
+- Direct-Node `prisma generate` plus `next build`: passed.
+- No live Drive upload was attempted because Google Drive credentials are not configured.
+- Added safe database connection diagnostics in `src/lib/db.ts` and test coverage in `src/lib/db.test.ts`.
+- Verified the Supabase transaction pooler locally with Prisma `SELECT 1`.
+- Rotated Vercel production `DATABASE_URL` through `vercel env rm` and `vercel env add --sensitive`; the value was not printed or committed.
+- Redeployed production to deployment `dpl_GGJ5SVVnLnqVXJRXWvx6H9q2m7bN`, aliased to `https://folqen.vercel.app`.
+- `GET https://folqen.vercel.app/api/health`: returned database status `live`, with Google Drive/OpenAI/n8n/media still `not_connected`.
+- Anonymous `POST https://folqen.vercel.app/api/files/upload`: returned 401 login required.
+
 Browser/runtime checks:
 
 - Dev server started at `http://127.0.0.1:3000`.
@@ -413,7 +435,8 @@ Browser/runtime checks:
 - Default seeded admin password now has a password-change flow, but the user still needs to actually change it in `/settings`.
 - Test viewer account exists for temporary dashboard testing and should be removed or rotated later. This is intentionally blocked until the human approves deletion/rotation.
 - Supabase direct database hostname remained unreliable from this Windows environment; use the Supabase session pooler or `supabase db query --linked`.
-- Google Drive binary storage, OpenAI real calls, n8n embedding/webhooks, ComfyUI, FFmpeg worker execution, TTS, live platform integrations, write actions for pipeline/library, and publishing are not implemented yet. Provider setup approval requests now exist as a safe first step.
+- Google Drive binary storage adapter exists but is not live because Google OAuth env values are missing. OpenAI real calls, n8n embedding/webhooks, ComfyUI, FFmpeg worker execution, TTS, live platform integrations, write actions for pipeline/library, and publishing are not live yet.
+- Future database health failures now expose only a safe diagnostic category/code, not raw secrets or full connection strings.
 - n8n, Google Drive, OpenAI, and media tool setup require account-specific secrets and must be completed through safe environment variable setup.
 - Production URL exists, protected routes are live, all required authenticated pages now have route-specific surfaces, file upload registration exists, service interfaces/mock implementations exist, manual posting package generation/download exists, safe mock-agent draft creation exists, and provider setup surfaces exist. It is not a complete MVP yet because binary object storage, n8n, platform integrations, real AI calls, and media provider adapters are still pending.
 

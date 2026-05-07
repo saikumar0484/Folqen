@@ -2,6 +2,22 @@
 
 ## Current Risks
 
+### Vercel database URL can go stale after Supabase credential changes
+
+- Risk: If the Supabase database password or pooler endpoint changes, production health can fail even when Supabase CLI queries still work.
+- Prevention: Vercel `DATABASE_URL` was rotated to the verified Supabase transaction pooler endpoint and stored only as a sensitive env var.
+- Verification: Local Prisma `SELECT 1` against the transaction pooler passed, production redeploy passed, and `GET https://folqen.vercel.app/api/health` returned database status `live`.
+- Rollback: Re-add the last known-good Vercel `DATABASE_URL` through `vercel env add --sensitive` and redeploy production.
+- Human approval trigger: Any future database password reset, project recreation, Vercel env rotation, or production database migration.
+
+### Google Drive adapter is implemented but not live
+
+- Risk: Users may assume binary files are now stored in Drive even when OAuth env values are missing.
+- Prevention: Upload route keeps `database_metadata_only` fallback unless all Drive env values are configured; health/status still shows Google Drive `not_connected`.
+- Verification: Drive adapter tests passed for missing env, resumable upload flow, and no-secret failure messages. No live Drive upload was attempted.
+- Rollback: Remove Google Drive env values to force metadata-only mode; no public links are created by the adapter.
+- Human approval trigger: Adding Google OAuth secrets, refresh token, private folder id, or testing a live binary upload.
+
 ### Account safety cleanup requires human input
 
 - Risk: Rotating the seeded admin password requires a new secret, and deleting/rotating the temporary viewer account is a destructive account action.

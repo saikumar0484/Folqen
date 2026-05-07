@@ -1,5 +1,44 @@
 # Changelog
 
+## May 7, 2026 - Google Drive private storage adapter
+
+### Added
+
+- Added a server-only Google Drive storage adapter using Google's OAuth token refresh and Drive resumable upload flow.
+- Updated `POST /api/files/upload` so configured Drive env stores validated files in the private Drive folder and records `google-drive://` paths.
+- Kept the honest metadata-only fallback when Drive env values are missing.
+- Added Drive storage tests for missing env, token refresh/upload flow, and no-secret failure messages.
+- Added safe database health diagnostics that classify connection failures without exposing the database URL or password.
+- Updated README continuation notes for the Drive adapter fallback and Supabase pooler status.
+
+### Fixed
+
+- Rotated the encrypted Vercel production `DATABASE_URL` from the stale/failing value to the verified Supabase transaction pooler connection.
+- Confirmed the linked Supabase project remains `ACTIVE_HEALTHY` and that the local transaction pooler check succeeds before updating Vercel.
+
+### Safety
+
+- No Google Drive secret was committed or printed.
+- No database password or connection string was committed or printed.
+- No live Drive upload was attempted because Drive OAuth env values are still missing.
+- The upload route still records private metadata only when Drive is `Not connected`.
+- Public sharing remains disabled; the adapter does not create public links.
+
+### Verification
+
+- Direct-Node `eslint .`: passed.
+- Direct-Node `tsc --noEmit`: passed.
+- Direct-Node `tsx --test "src/**/*.test.ts"`: passed, 39 tests.
+- Direct-Node `prisma generate` plus `next build`: passed.
+- Local Prisma `SELECT 1` against Supabase transaction pooler: passed.
+- `vercel env rm DATABASE_URL production --yes`: passed.
+- `vercel env add DATABASE_URL production --sensitive`: passed.
+- `vercel deploy --prod --yes`: passed and aliased `https://folqen.vercel.app` to deployment `dpl_GGJ5SVVnLnqVXJRXWvx6H9q2m7bN`.
+- `GET https://folqen.vercel.app/api/health`: returned database status `live`; Google Drive/OpenAI/n8n/media remained `not_connected`.
+- Anonymous `POST https://folqen.vercel.app/api/files/upload`: returned 401.
+- Official implementation references: Google Drive upload guide and Google OAuth web-server refresh-token guide.
+- Official database reference: Supabase recommends pooler/transaction mode for temporary serverless connections.
+
 ## May 7, 2026 - Provider approval API test coverage
 
 ### Added

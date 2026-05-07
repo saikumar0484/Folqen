@@ -50,6 +50,7 @@
 - [x] Verify production `/` and `/api/health`.
 - [x] Add non-secret production app URL env values.
 - [x] Configure free Postgres `DATABASE_URL`.
+- [x] Repair Vercel `DATABASE_URL` with verified Supabase transaction pooler.
 - [x] Connect fresh Supabase project.
 - [x] Verify Supabase linked query access.
 - [x] Apply Prisma schema to Supabase through Management API.
@@ -76,6 +77,7 @@
 - [x] n8n placeholder endpoints.
 - [x] n8n embedded builder UI surface.
 - [x] Google Drive storage setup surface.
+- [x] Google Drive private storage adapter.
 - [x] OpenAI model dropdown preference.
 - [x] Media tool setup/status surface.
 - [x] Provider setup approval request flow.

@@ -6,7 +6,7 @@ Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/
 
 ## Current Save Point
 
-May 7, 2026. The latest completed feature slice is provider approval API test coverage. Account cleanup is blocked on a human-provided admin password and explicit approval to delete or rotate the temporary viewer account.
+May 7, 2026. The latest completed feature slice is the Google Drive private storage adapter plus production database health recovery. Vercel production `DATABASE_URL` now uses the verified Supabase transaction pooler, health is back to `live`, and real Drive uploads are blocked until Google OAuth env values and a private folder id are configured.
 
 ## Branch
 
@@ -26,6 +26,8 @@ May 7, 2026. The latest completed feature slice is provider approval API test co
 - Added posting package copy buttons for captions and hashtags.
 - Added safe mock-agent draft content package creation API and Agent page action.
 - Added Google Drive planned storage provider env placeholders, runtime status, and Settings setup guidance.
+- Added server-only Google Drive private storage adapter using OAuth token refresh and Drive resumable uploads.
+- Added safe database connection diagnostics and rotated the encrypted Vercel production database URL to the verified Supabase transaction pooler.
 - Added OpenAI model dropdown/custom model preferences while keeping real AI calls blocked until an API key and paid-tool approval flow exist.
 - Added provider setup panels for Google Drive, OpenAI, n8n, FFmpeg, ComfyUI, TTS, and the local/Oracle worker.
 - Added n8n embedded workflow builder surface in `/workflows`; it stays hidden until a trusted n8n instance URL is configured.
@@ -72,6 +74,7 @@ May 7, 2026. The latest completed feature slice is provider approval API test co
 - Enabled RLS on all 22 public Folqen tables.
 - Seeded Supabase using Prisma through the Supabase session pooler.
 - Added sensitive Vercel production `DATABASE_URL` without printing or committing the value.
+- Repaired the production `DATABASE_URL` after it failed health checks by replacing it with the working Supabase transaction pooler URL; the value was added as a sensitive Vercel env var only.
 - Fixed Vercel Prisma generation by changing `npm run build` to `prisma generate && next build`.
 - Redeployed production and verified `/api/health`, `/api/auth/login`, and authenticated `/dashboard`.
 - Fixed the live landing page gradient text rendering issue that showed a solid green rectangle in Chrome.
@@ -348,6 +351,7 @@ Latest deployment/data foundation verification:
 - Provider approval request verification: direct-Node lint, typecheck, tests, Prisma generate, and build passed. Test count is now 29.
 - Cross-account save checkpoint: repo was clean before checkpoint docs, latest feature commit was `15ec121`, and no feature code, schema, env, Supabase data, or production credential was changed for the checkpoint.
 - Provider approval API test coverage: `npm install` passed; direct-Node lint, typecheck, tests, Prisma generate, and build passed. Test count is now 34. Vercel production deploy passed, live health returned database `live`, and anonymous provider approval request returned 401.
+- Google Drive private storage adapter and database health recovery: direct-Node lint, typecheck, tests, Prisma generate, and build passed. Test count is now 39. Local Prisma `SELECT 1` against the Supabase transaction pooler passed. Vercel production `DATABASE_URL` was rotated as a sensitive env var, production redeploy passed, live health returned database `live`, and anonymous upload returned 401. No live Drive upload was attempted because Google Drive OAuth env values are not configured.
 
 ## Known Broken Areas
 
@@ -359,7 +363,7 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 - All integrations are `Not connected`.
 - Mini agent chat is a mock UI shell.
 - Command palette and notifications are mock interactions.
-- Google Drive binary object storage is not configured; file registration is metadata-only.
+- Google Drive binary object storage adapter exists, but live Drive storage is not configured; file registration remains metadata-only until OAuth env values are configured.
 - OpenAI model preference exists, but real OpenAI calls remain disabled until `OPENAI_API_KEY` and paid-tool approval are configured.
 - Oracle n8n webhook is not configured.
 - n8n embedding requires `ORACLE_N8N_INSTANCE_URL` and self-hosted iframe settings.
@@ -377,15 +381,15 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 - Next.js now requires Node `>=20.9.0`; this is recorded in `package.json`.
 - Oracle n8n real testing needs secrets set outside git.
 - Vercel project link exists locally under `.vercel/` and is ignored by git.
-- Supabase production `DATABASE_URL` is set in Vercel as a sensitive env var.
-- Direct Supabase DB host remained unreliable from this Windows environment; use the session pooler or `supabase db query --linked`.
+- Supabase production `DATABASE_URL` is set in Vercel as a sensitive env var using the verified transaction pooler.
+- Direct Supabase DB host remained unreliable from this Windows environment; use the Supabase pooler or `supabase db query --linked`.
 
 ## Safe To Continue From Another Account
 
-Yes. The repo is safe to continue from this checkpoint after this checkpoint commit is pushed. The latest provider approval request flow has been verified locally and deployed, and this checkpoint only updates handoff documentation. No feature files are half-edited.
+Yes. The repo is safe to continue from this checkpoint after this checkpoint commit is pushed. The latest Google Drive adapter flow has been verified locally, production database health is `live`, and no feature files are half-edited.
 
 ## Next Recommended Command
 
 ```text
-Read README, AGENTS.md, root planning docs, and checkpoint docs from GitHub branch `build/phase-0-foundation`; run lint/typecheck/test/build if needed; then continue account cleanup after the human provides/approves the needed account changes, or continue Google Drive storage, n8n embed/webhook setup, OpenAI paid-tool approval, media worker setup, posting package polish, service-backed mock APIs, or role-aware UI/tests. All required authenticated pages are route-specific; provider setup panels, provider approval requests, metadata-only file registration, service foundations, manual posting package generation/download, and safe mock-agent draft creation are verified. Do not put test account passwords or real secrets into repo files.
+Read README, AGENTS.md, root planning docs, and checkpoint docs from GitHub branch `build/phase-0-foundation`; run lint/typecheck/test/build if needed; then continue account cleanup after the human provides/approves the needed account changes, live-test Google Drive after env setup, or continue n8n embed/webhook setup, OpenAI paid-tool approval, media worker setup, posting package polish, service-backed mock APIs, or role-aware UI/tests. All required authenticated pages are route-specific; provider setup panels, provider approval requests, Google Drive adapter, metadata-only fallback, service foundations, manual posting package generation/download, and safe mock-agent draft creation are verified. Do not put test account passwords or real secrets into repo files.
 ```
