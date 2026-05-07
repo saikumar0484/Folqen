@@ -1,5 +1,19 @@
 # Changelog
 
+## May 7, 2026 - Cross-account save checkpoint
+
+### Changed
+
+- Created an explicit continuation checkpoint after provider setup approval requests were pushed and deployed.
+- Confirmed the next Codex account should resume from `build/phase-0-foundation`.
+- Re-stated that real Google Drive, OpenAI, n8n, media worker, platform, and publishing work still require secrets and approval gates.
+
+### Verification
+
+- `git status --short --branch`: clean before checkpoint docs.
+- Latest feature commit before this checkpoint: `15ec121 Add provider setup approval requests`.
+- No feature code, database schema, Vercel env, Supabase data, or production credential was changed in this checkpoint.
+
 ## May 7, 2026 - Provider approval requests
 
 ### Added

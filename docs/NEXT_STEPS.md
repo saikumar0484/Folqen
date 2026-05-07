@@ -4,11 +4,11 @@
 
 Continue from provider setup surfaces into credential-backed integrations. All required authenticated routes now have dedicated pages, manual posting package creation/download is live, file registration is live, safe mock-agent draft creation is live, and setup panels exist for Google Drive storage, OpenAI model selection, n8n, and media tools. Binary object storage, paid AI calls, embedded n8n execution, rendering, and real automation are still pending.
 
-Current save point: May 7, 2026. The live app is deployed at `https://folqen.vercel.app`, health reports database `live`, and the latest completed slice is admin-only provider setup approval requests for Google Drive, OpenAI, n8n, and media tools.
+Current save point: May 7, 2026. The live app is deployed at `https://folqen.vercel.app`, health reports database `live`, and the latest completed feature slice is admin-only provider setup approval requests for Google Drive, OpenAI, n8n, and media tools. An explicit cross-account handoff checkpoint was created after that slice.
 
 ## Exact Next Tasks
 
-1. Resume from branch `build/phase-0-foundation` and confirm `git status` is clean.
+1. Resume from GitHub branch `build/phase-0-foundation` and confirm `git status` is clean.
 2. Pull/install dependencies if needed, then run `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build`.
 3. Check `https://folqen.vercel.app/api/health` and confirm database status remains `live`.
 4. Use `/settings` to change the seeded admin password from `ChangeMe123!`.

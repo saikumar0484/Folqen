@@ -4,7 +4,7 @@
 
 Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, and every required authenticated route now has a route-specific or database-backed surface on branch `build/phase-0-foundation`.
 
-Latest save point: May 7, 2026, after provider approval requests were added for Drive, n8n, OpenAI, and media tools.
+Latest save point: May 7, 2026, after an explicit cross-account continuation checkpoint was created. The latest feature slice remains provider approval requests for Drive, n8n, OpenAI, and media tools.
 
 ## Completed Work
 
@@ -375,6 +375,14 @@ Latest May 7, 2026 provider approval request update:
 - Direct-Node `tsc --noEmit`: passed.
 - Direct-Node `tsx --test "src/**/*.test.ts"`: passed, 29 tests.
 - Direct-Node `prisma generate` plus `next build`: passed.
+
+Latest May 7, 2026 cross-account save checkpoint:
+
+- `git status --short --branch`: clean on `build/phase-0-foundation` before checkpoint docs.
+- Latest pushed feature commit before this checkpoint: `15ec121 Add provider setup approval requests`.
+- Live app remains `https://folqen.vercel.app`.
+- No feature code, schema, Vercel env, Supabase data, or production secrets were changed for this checkpoint.
+- Resume from GitHub branch `build/phase-0-foundation`; do not rely on chat memory.
 
 Browser/runtime checks:
 

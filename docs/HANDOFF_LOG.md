@@ -6,7 +6,7 @@ Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/
 
 ## Current Save Point
 
-May 7, 2026. The latest completed slice is provider setup approval requests for Google Drive storage, OpenAI paid-agent calls, n8n workflow access, and media worker setup.
+May 7, 2026. Explicit cross-account save checkpoint created after provider setup approval requests. The latest completed feature slice is provider setup approval requests for Google Drive storage, OpenAI paid-agent calls, n8n workflow access, and media worker setup.
 
 ## Branch
 
@@ -96,6 +96,7 @@ May 7, 2026. The latest completed slice is provider setup approval requests for 
 ## Commands Run
 
 ```bash
+git status --short --branch
 git fetch origin main build/phase-0-foundation
 git checkout -B build/phase-0-foundation origin/build/phase-0-foundation
 git merge origin/main --no-edit
@@ -243,6 +244,7 @@ tsc --noEmit
 tsx --test "src/**/*.test.ts"
 prisma generate
 next build
+git status --short --branch
 ```
 
 ## Command Results
@@ -333,6 +335,7 @@ Latest deployment/data foundation verification:
 - File registration and safe draft creation verification: direct-Node lint, typecheck, tests, Prisma generate, build, Vercel production deploy, health check, anonymous upload/draft protection, authenticated file registration, and authenticated draft creation all passed. Test count is now 25.
 - Provider setup surfaces verification: direct-Node lint, typecheck, tests, Prisma generate, build, Vercel production deploy, health check, authenticated `/settings`, `/tools`, `/workflows`, and authenticated settings preference save all passed. Test count is now 27.
 - Provider approval request verification: direct-Node lint, typecheck, tests, Prisma generate, and build passed. Test count is now 29.
+- Cross-account save checkpoint: repo was clean before checkpoint docs, latest feature commit was `15ec121`, and no feature code, schema, env, Supabase data, or production credential was changed for the checkpoint.
 
 ## Known Broken Areas
 
@@ -367,10 +370,10 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
 ## Safe To Continue From Another Account
 
-Yes. The repo is safe to continue from this checkpoint after this commit is pushed. The latest provider approval request flow has been verified locally. No feature files are half-edited.
+Yes. The repo is safe to continue from this checkpoint after this checkpoint commit is pushed. The latest provider approval request flow has been verified locally and deployed, and this checkpoint only updates handoff documentation. No feature files are half-edited.
 
 ## Next Recommended Command
 
 ```text
-Read README, root docs, and checkpoint docs, run lint/typecheck/test/build if needed, then continue Google Drive storage, n8n embed/webhook setup, OpenAI paid-tool approval, media worker setup, posting package polish, service-backed mock APIs, or role-aware UI/tests. All required authenticated pages are route-specific; provider setup panels, metadata-only file registration, service foundations, manual posting package generation/download, and safe mock-agent draft creation are verified. Do not put test account passwords or real secrets into repo files.
+Read README, AGENTS.md, root planning docs, and checkpoint docs from GitHub branch `build/phase-0-foundation`; run lint/typecheck/test/build if needed; then continue Google Drive storage, n8n embed/webhook setup, OpenAI paid-tool approval, media worker setup, posting package polish, service-backed mock APIs, or role-aware UI/tests. All required authenticated pages are route-specific; provider setup panels, provider approval requests, metadata-only file registration, service foundations, manual posting package generation/download, and safe mock-agent draft creation are verified. Do not put test account passwords or real secrets into repo files.
 ```

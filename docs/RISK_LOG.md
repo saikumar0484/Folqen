@@ -2,6 +2,14 @@
 
 ## Current Risks
 
+### Cross-account continuation may miss latest pushed state
+
+- Risk: A future Codex account may rely on chat history or a stale local folder instead of the pushed GitHub branch.
+- Prevention: This checkpoint records the latest feature commit, branch, live URL, verification state, and next steps in repository docs.
+- Verification: `git status --short --branch` was clean before checkpoint docs; checkpoint changes are documentation-only.
+- Rollback: Re-read GitHub branch `build/phase-0-foundation` and ignore unsynced local folders if they disagree.
+- Human approval trigger: None; this is documentation only.
+
 ### Provider approval requests are not provider connections
 
 - Risk: Users may assume approving a provider setup request connects Google Drive, OpenAI, n8n, or media tools automatically.
