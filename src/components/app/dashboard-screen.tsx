@@ -1,10 +1,9 @@
-import { BarChart3, Bot, CheckCircle2, Clock3, FileText, Gauge, Megaphone, Rocket, Sparkles, Workflow, Wrench } from "lucide-react";
+import { BarChart3, Bot, CheckCircle2, Clock3, FileText, Gauge, Megaphone, Sparkles, Workflow, Wrench } from "lucide-react";
 import { ConfirmDialog } from "@/components/app/confirm-dialog";
 import { RiskBadge } from "@/components/app/risk-badge";
 import { StatCard } from "@/components/app/stat-card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import type { getDashboardData } from "@/lib/dashboard-data";
-import { statusLabel, type LaunchReadinessStatus } from "@/lib/launch-readiness";
 
 type DashboardData = Awaited<ReturnType<typeof getDashboardData>>;
 
@@ -22,12 +21,6 @@ function formatPlatformName(name: string) {
   return name.charAt(0) + name.slice(1).toLowerCase();
 }
 
-function launchTone(status: LaunchReadinessStatus) {
-  if (status === "ready") return "safe" as const;
-  if (status === "later") return "neutral" as const;
-  return "warning" as const;
-}
-
 export function DashboardScreen({ data }: { data: DashboardData }) {
   return (
     <div className="space-y-5 pb-24">
@@ -35,42 +28,6 @@ export function DashboardScreen({ data }: { data: DashboardData }) {
         {data.stats.map((stat) => (
           <StatCard key={stat.label} {...stat} />
         ))}
-      </section>
-
-      <section className="rounded-3xl border border-neon/20 bg-neon/[0.06] p-5">
-        <div className="grid gap-5 xl:grid-cols-[0.8fr_1.2fr] xl:items-start">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-neon/20 bg-neon/[0.08] px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-neon">
-              <Rocket className="h-3.5 w-3.5" />
-              {data.launchReadiness.launchMode}
-            </div>
-            <h2 className="mt-3 font-display text-2xl font-semibold">Day-3 channel launch readiness</h2>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">{data.launchReadiness.summary}</p>
-            <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-4">
-              <div className="flex items-end justify-between gap-3">
-                <div>
-                  <div className="font-mono text-4xl text-neon">{data.launchReadiness.percent}%</div>
-                  <div className="mt-1 text-xs text-muted-foreground">
-                    {data.launchReadiness.readyCount} of {data.launchReadiness.totalCount} launch areas ready
-                  </div>
-                </div>
-                <StatusBadge tone="warning">Secrets required</StatusBadge>
-              </div>
-              <ProgressBar value={`${data.launchReadiness.percent}%`} />
-            </div>
-          </div>
-          <div className="grid gap-2 md:grid-cols-2">
-            {data.launchReadiness.items.map((item) => (
-              <article key={item.label} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h3 className="text-sm font-medium">{item.label}</h3>
-                  <StatusBadge tone={launchTone(item.status)}>{statusLabel(item.status)}</StatusBadge>
-                </div>
-                <p className="mt-2 text-xs leading-5 text-muted-foreground">{item.note}</p>
-              </article>
-            ))}
-          </div>
-        </div>
       </section>
 
       <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
