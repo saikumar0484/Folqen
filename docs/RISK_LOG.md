@@ -2,6 +2,14 @@
 
 ## Current Risks
 
+### Session continuation depends on checkpoint docs
+
+- Risk: A later Codex account may rely on chat memory instead of the repo state.
+- Prevention: Current status, next steps, changelog, risk log, and handoff log were updated with the May 7 save point.
+- Verification: Production health returned database `live`; repo was clean before save-point doc edits.
+- Rollback: Re-read the latest pushed checkpoint docs and GitHub branch if chat memory is unclear.
+- Human approval trigger: None; this is documentation only.
+
 ### Manual posting packages are not public publishing
 
 - Risk: A user may mistake package generation for platform upload/public posting.

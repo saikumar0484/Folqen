@@ -4,6 +4,8 @@
 
 Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, and every required authenticated route now has a route-specific or database-backed surface on branch `build/phase-0-foundation`.
 
+Latest save point: May 7, 2026, after manual posting packages and role-aware controls were deployed.
+
 ## Completed Work
 
 - Added database-backed `/pipeline` and `/library` pages using existing Supabase records without changing the schema.
@@ -295,6 +297,12 @@ Latest May 7, 2026 posting package and role-aware controls update:
 - `GET https://folqen.vercel.app/api/health`: returned database status `live`.
 - Unauthenticated `POST /api/posting-packages/manual`: returned 401 login required.
 
+Latest May 7, 2026 session save point:
+
+- `git status`: clean before save-point docs.
+- `GET https://folqen.vercel.app/api/health`: returned database status `live`.
+- No feature code or production configuration was changed for this save point.
+
 Browser/runtime checks:
 
 - Dev server started at `http://127.0.0.1:3000`.
@@ -315,4 +323,4 @@ Browser/runtime checks:
 
 ## Safe To Stop
 
-Yes. The latest work is a verified and deployed posting package and role-aware controls slice.
+Yes. This is an intentional save point. The app is deployed, the repo is safe to continue, and no source files should be left half-edited after the save-point docs are committed and pushed.

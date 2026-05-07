@@ -4,6 +4,8 @@
 
 Continue from route-specific read surfaces into safe actions and MVP workflows. All required authenticated routes now have dedicated pages, but uploads, posting packages, provider services, and real automation are still pending.
 
+Current save point: May 7, 2026. The live app is deployed at `https://folqen.vercel.app`, health reports database `live`, and the latest completed slice is manual posting packages plus role-aware approval controls.
+
 ## Exact Next Tasks
 
 1. Resume from branch `build/phase-0-foundation` and confirm `git status` is clean.

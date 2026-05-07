@@ -1,5 +1,18 @@
 # Changelog
 
+## May 7, 2026 - Session save point
+
+### Changed
+
+- Created an explicit end-of-session checkpoint for continuing this chat/session safely.
+- Confirmed the latest deployed state includes manual posting packages, role-aware approval controls, route-specific authenticated pages, upload validation foundations, and mock service interfaces.
+
+### Verification
+
+- `git status`: clean before save-point docs.
+- `GET https://folqen.vercel.app/api/health`: returned database status `live`.
+- No feature code or production configuration was changed in this save-point entry.
+
 ## May 7, 2026 - Manual posting packages and role-aware controls
 
 ### Added
