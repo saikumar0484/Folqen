@@ -2,6 +2,14 @@
 
 ## Current Risks
 
+### Service interfaces are mock-only
+
+- Risk: Future code may assume service interfaces perform real AI, workflow, render, analytics, storage, or publishing actions.
+- Prevention: Mock services return `mock` or `not_connected` and tests confirm public publishing, workflow execution, and storage writes remain blocked.
+- Verification: `npm run test` now includes service interface safety tests and passed with 15 total tests.
+- Rollback: Revert `src/lib/services/*` if the abstraction causes build or runtime issues; no provider or database behavior was changed.
+- Human approval trigger: Any real provider adapter, external API call, workflow execution, storage write, paid tool call, or public publishing action.
+
 ### Upload validation exists but storage writes are not implemented
 
 - Risk: Future upload endpoints could bypass validation or store files unsafely.

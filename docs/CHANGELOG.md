@@ -1,5 +1,25 @@
 # Changelog
 
+## May 7, 2026 - Service interface foundation
+
+### Added
+
+- Added service interface types for agent, workflow, render, publishing, analytics, storage, and notifications.
+- Added mock service implementations that keep external providers, storage writes, workflow execution, public publishing, and live analytics blocked by default.
+- Added tests for blocked public publishing, manual posting package mode, storage validation without writes, and blocked workflow execution.
+
+### Safety
+
+- No real provider, n8n, render, storage, analytics, platform, or publishing integration was enabled.
+- Service methods return `mock` or `not_connected` states until real configuration and approval gates are added.
+
+### Verification
+
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm run test`: passed, 15 tests.
+- `npm run build`: passed.
+
 ## May 7, 2026 - File upload validation foundation
 
 ### Added

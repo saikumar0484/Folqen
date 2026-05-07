@@ -16,7 +16,7 @@ Continue from route-specific read surfaces into safe actions and MVP workflows. 
 8. Build the actual file upload/storage flow using the existing validation foundation, role checks, privacy defaults, storage path isolation, and audit logs.
 9. Add posting package generation for platforms that remain `Not connected`.
 10. Add role-aware UI states for admin/operator/viewer and tests around forbidden actions.
-11. Add service interfaces and mock implementations for agent, publishing, analytics, workflow, render, storage, and notifications.
+11. Wire the service interface foundation into API routes for manual posting packages, storage validation, and workflow tests while keeping real execution blocked.
 12. Configure Oracle n8n webhook env values only when the human provides the URL/secret, then test `POST /api/integrations/n8n/test`.
 13. Add mobile sidebar behavior, toasts, and refined command palette interactions.
 
@@ -51,4 +51,4 @@ Needed through safe secret flow only:
 
 ## Resume Command
 
-Continue from branch `build/phase-0-foundation`, read README, all root project docs, and checkpoint docs, run verification, then continue actual file upload/storage, posting packages, service interfaces, role-aware UI/tests, or n8n setup if the human provides webhook secrets. All required authenticated pages are route-specific, and upload validation foundations are verified locally.
+Continue from branch `build/phase-0-foundation`, read README, all root project docs, and checkpoint docs, run verification, then continue actual file upload/storage, posting package APIs, service-backed mock APIs, role-aware UI/tests, or n8n setup if the human provides webhook secrets. All required authenticated pages are route-specific, and upload validation/service foundations are verified locally.
