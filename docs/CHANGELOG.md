@@ -23,6 +23,9 @@
 - `npm run typecheck`: passed.
 - `npm run test`: passed, 6 guard tests.
 - `npm run build`: passed.
+- `vercel deploy --prod --yes`: passed and aliased `https://folqen.vercel.app`.
+- `GET https://folqen.vercel.app/api/health`: returned database status `live`.
+- Unauthenticated `GET /notifications` and `GET /upgrades`: returned 307 login redirects.
 
 ## May 7, 2026 - Database-backed platforms and tools pages
 

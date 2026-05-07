@@ -164,6 +164,10 @@ npm run lint
 npm run typecheck
 npm run test
 npm run build
+vercel deploy --prod --yes
+curl https://folqen.vercel.app/api/health
+curl https://folqen.vercel.app/notifications
+curl https://folqen.vercel.app/upgrades
 ```
 
 ## Command Results
@@ -244,7 +248,7 @@ Latest deployment/data foundation verification:
 - Sidebar overlap hotfix verification: lint, typecheck, tests, build, production deploy, and health check passed.
 - Pipeline/library live-data verification: lint, typecheck, tests, build, production deploy, health check, and unauthenticated route-protection checks passed.
 - Platforms/tools live-data verification: lint, typecheck, tests, build, production deploy, health check, and unauthenticated route-protection checks passed.
-- Operations pages live-data verification: lint, typecheck, tests, and build passed.
+- Operations pages live-data verification: lint, typecheck, tests, build, production deploy, health check, and unauthenticated route-protection checks passed.
 
 ## Known Broken Areas
 
@@ -276,7 +280,7 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
 ## Safe To Continue From Another Account
 
-Yes. The repo is safe to continue from this checkpoint after the latest operations pages live-data slice is committed, pushed, and optionally deployed. No source files should be left half-edited.
+Yes. The repo is safe to continue from this checkpoint. The latest operations pages live-data slice has been committed, pushed, deployed, and checked for production health plus route protection. No source files are half-edited.
 
 ## Next Recommended Command
 
