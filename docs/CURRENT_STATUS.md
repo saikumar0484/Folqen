@@ -239,6 +239,9 @@ Latest May 7, 2026 platforms/tools live-data update:
 - `npm run typecheck`: passed.
 - `npm run test`: passed, 6 guard tests.
 - `npm run build`: passed.
+- `vercel deploy --prod --yes`: passed and aliased `https://folqen.vercel.app`.
+- `GET https://folqen.vercel.app/api/health`: returned database status `live`.
+- Unauthenticated `GET /platforms` and `GET /tools`: returned 307 login redirects.
 
 Browser/runtime checks:
 
@@ -260,4 +263,4 @@ Browser/runtime checks:
 
 ## Safe To Stop
 
-Yes. The latest work is a verified database-backed platforms/tools slice. Commit, push, and deploy this slice before stopping if that has not already happened in the current session.
+Yes. The latest work is a verified and deployed database-backed platforms/tools slice.
