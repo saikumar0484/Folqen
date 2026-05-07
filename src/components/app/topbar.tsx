@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { Menu, Search, ShieldCheck, Sparkles } from "lucide-react";
+import { Search, ShieldCheck, Sparkles } from "lucide-react";
 import { CommandPalette } from "@/components/app/command-palette";
 import { LogoutButton } from "@/components/app/logout-button";
+import { MobileSidebarDrawer } from "@/components/app/mobile-sidebar-drawer";
 import { NotificationCenter } from "@/components/app/notification-center";
 import type { CurrentUser } from "@/lib/auth/current-user";
 
@@ -15,9 +16,7 @@ export function Topbar({ user }: { user: CurrentUser }) {
           </span>
           <span className="font-display text-lg font-semibold">Folqen</span>
         </Link>
-        <button className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] text-muted-foreground lg:hidden">
-          <Menu className="h-4 w-4" />
-        </button>
+        <MobileSidebarDrawer />
         <div className="hidden min-w-0 flex-1 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 md:flex">
           <Search className="h-4 w-4 text-muted-foreground" />
           <span className="truncate text-sm text-muted-foreground">Search drafts, approvals, tools, files, workflows...</span>

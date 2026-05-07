@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { Bot, Send, UserRound } from "lucide-react";
+import { useToast } from "@/components/app/toast-provider";
 
 type ChatMessage = {
   id: string;
@@ -11,6 +12,7 @@ type ChatMessage = {
 };
 
 export function AgentChatPanel({ initialMessages }: { initialMessages: ChatMessage[] }) {
+  const { toast } = useToast();
   const [messages, setMessages] = useState(initialMessages);
   const [content, setContent] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -32,10 +34,16 @@ export function AgentChatPanel({ initialMessages }: { initialMessages: ChatMessa
 
       if (!response.ok || !body.content) {
         setError(body.error ?? "Could not create draft package.");
+        toast({ title: "Draft package blocked", description: body.error ?? "Could not create draft package.", tone: "error" });
         return;
       }
 
       setActionMessage(`${body.content.title}: ${body.content.message}`);
+      toast({
+        title: "Mock draft package created",
+        description: "Human review is required before any public use.",
+        tone: "success",
+      });
       setContent("");
     });
   }
@@ -94,10 +102,12 @@ export function AgentChatPanel({ initialMessages }: { initialMessages: ChatMessa
 
               if (!response.ok || !body.messages) {
                 setError(body.error ?? "Message failed.");
+                toast({ title: "Message failed", description: body.error ?? "Message failed.", tone: "error" });
                 return;
               }
 
               setMessages((current) => [...current, ...body.messages!]);
+              toast({ title: "Agent reply saved", description: "This is still a mock-agent response.", tone: "success" });
               setContent("");
             });
           }}

@@ -6,6 +6,15 @@ function statusTone(status: string) {
   return status === "configured" ? ("safe" as const) : ("warning" as const);
 }
 
+function StatusLine({ label, status }: { label: string; status: string }) {
+  return (
+    <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-black/20 p-3">
+      <span className="text-sm text-muted-foreground">{label}</span>
+      <StatusBadge tone={statusTone(status)}>{status.replaceAll("_", " ")}</StatusBadge>
+    </div>
+  );
+}
+
 function SecretRow({ label, configured }: { label: string; configured: boolean }) {
   return (
     <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-3">
@@ -24,6 +33,9 @@ export function ProviderSetupPanel({ config }: { config: ProviderConfig }) {
           <h2 className="font-display text-xl font-semibold">Drive cloud storage</h2>
         </div>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">{config.storage.googleDrive.note}</p>
+        <div className="mt-4">
+          <StatusLine label="Current status" status={config.storage.googleDrive.status} />
+        </div>
         <div className="mt-4 grid gap-2">
           <SecretRow label="Google OAuth client" configured={config.storage.googleDrive.clientConfigured} />
           <SecretRow label="Refresh token" configured={config.storage.googleDrive.tokenConfigured} />
@@ -64,6 +76,9 @@ export function ProviderSetupPanel({ config }: { config: ProviderConfig }) {
           <h2 className="font-display text-xl font-semibold">n8n inside Folqen</h2>
         </div>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">{config.workflow.n8n.note}</p>
+        <div className="mt-4">
+          <StatusLine label="Current status" status={config.workflow.n8n.status} />
+        </div>
         <div className="mt-4 grid gap-2">
           <SecretRow label="n8n instance URL" configured={Boolean(config.workflow.n8n.instanceUrl)} />
           <SecretRow label="n8n webhook secret" configured={config.workflow.n8n.webhookConfigured} />
@@ -79,6 +94,10 @@ export function ProviderSetupPanel({ config }: { config: ProviderConfig }) {
           <h2 className="font-display text-xl font-semibold">Rendering and media tools</h2>
         </div>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">{config.media.note}</p>
+        <div className="mt-4 grid gap-2 sm:grid-cols-2">
+          <StatusLine label="Worker" status={config.media.localWorker} />
+          <StatusLine label="TTS" status={config.media.tts} />
+        </div>
         <div className="mt-4 grid gap-2">
           <SecretRow label="Local/Oracle worker" configured={config.media.localWorker === "configured"} />
           <SecretRow label="ComfyUI endpoint" configured={config.media.comfyui === "configured"} />

@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { useToast } from "@/components/app/toast-provider";
 import type { ProviderApprovalRequestType } from "@/lib/provider-approval-requests";
 
 type ProviderApprovalAction = {
@@ -18,6 +19,7 @@ const actions: ProviderApprovalAction[] = [
 
 export function ProviderApprovalActions() {
   const router = useRouter();
+  const { toast } = useToast();
   const [message, setMessage] = useState<string | null>(null);
   const [pendingType, setPendingType] = useState<ProviderApprovalRequestType | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -36,11 +38,17 @@ export function ProviderApprovalActions() {
 
       if (!response.ok) {
         setMessage(body.error ?? "Approval request failed.");
+        toast({ title: "Approval request blocked", description: body.error ?? "Approval request failed.", tone: "error" });
         setPendingType(null);
         return;
       }
 
       setMessage(body.duplicate ? "A pending approval already exists." : "Approval request created.");
+      toast({
+        title: body.duplicate ? "Approval already pending" : "Approval request created",
+        description: "No secrets were stored and no provider was connected.",
+        tone: "success",
+      });
       setPendingType(null);
       router.refresh();
     });

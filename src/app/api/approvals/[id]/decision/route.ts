@@ -5,6 +5,7 @@ import { createAuditLog } from "@/lib/audit";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { canReviewApprovals } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
+import { getMutationSafetyError } from "@/lib/security/request-guards";
 
 const decisionSchema = z.object({
   decision: z.enum(["approve", "reject"]),
@@ -19,6 +20,12 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
   if (!canReviewApprovals(user)) {
     return NextResponse.json({ error: "Only admins and operators can review approvals." }, { status: 403 });
+  }
+
+  const safetyError = getMutationSafetyError(request, { key: `approval-decision:${user.id}`, limit: 20, windowMs: 60_000 });
+
+  if (safetyError) {
+    return NextResponse.json({ error: safetyError.error }, { status: safetyError.status });
   }
 
   const { id } = await params;

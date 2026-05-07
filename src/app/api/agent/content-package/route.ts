@@ -5,6 +5,7 @@ import { createAuditLog } from "@/lib/audit";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { canCreateDraftContent } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
+import { getMutationSafetyError } from "@/lib/security/request-guards";
 
 const requestSchema = z.object({
   topic: z.string().min(4).max(140),
@@ -45,6 +46,12 @@ export async function POST(request: Request) {
 
   if (!canCreateDraftContent(user)) {
     return NextResponse.json({ error: "Only admins and operators can create draft content packages." }, { status: 403 });
+  }
+
+  const safetyError = getMutationSafetyError(request, { key: `content-package:${user.id}`, limit: 12, windowMs: 60_000 });
+
+  if (safetyError) {
+    return NextResponse.json({ error: safetyError.error }, { status: safetyError.status });
   }
 
   const parsed = requestSchema.safeParse(await request.json().catch(() => null));

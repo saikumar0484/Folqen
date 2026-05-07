@@ -4,7 +4,7 @@
 
 Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, and every required authenticated route now has a route-specific or database-backed surface on branch `build/phase-0-foundation`.
 
-Latest save point: May 7, 2026, cross-account checkpoint after commit `1a78e1b Add Google Drive storage adapter`. The Google Drive private storage adapter is implemented, live Vercel database health is `live`, and real Drive uploads still require Google OAuth env values plus a private folder id.
+Latest save point: May 7, 2026, after visible UI hardening, mutation safety guards, and the Vercel function region speed fix. The app now runs server functions in Seoul (`icn1`) near the Supabase database, live Vercel database health is `live`, and real Drive/uploads/OpenAI/n8n/media still require credentials.
 
 ## Completed Work
 
@@ -26,6 +26,8 @@ Latest save point: May 7, 2026, cross-account checkpoint after commit `1a78e1b A
 - Expanded health/tool status to report provider readiness while keeping every unconfigured provider as `Not connected`.
 - Added server-only Google Drive storage adapter and upload-route integration that stores files privately when Drive env is configured.
 - Added safe database health diagnostics and repaired the live Vercel database connection with a Supabase transaction pooler URL.
+- Added mobile sidebar drawer, global toasts, command palette navigation, richer posting package copy controls, and mutation same-origin/rate-limit guards.
+- Added Vercel function region config so DB-backed routes run in `icn1` instead of default `iad1`.
 - Added admin-only provider setup approval requests for Google Drive storage, OpenAI paid-agent calls, n8n workflow access, and media worker setup.
 - Added audit logging and tests for provider approval requests while keeping secrets and real execution out of the repo.
 - Added injectable provider approval handler coverage for anonymous, viewer, admin, duplicate, invalid request, and no-secret cases.
@@ -427,6 +429,25 @@ Latest May 7, 2026 cross-account checkpoint:
 - Latest pushed feature commit: `1a78e1b Add Google Drive storage adapter`.
 - `GET https://folqen.vercel.app/api/health`: returned database status `live`.
 - No feature code, schema, secrets, provider credentials, Supabase data, or production settings were changed for this checkpoint.
+
+Latest May 7, 2026 visible hardening, mutation safety, and speed fix:
+
+- Added `vercel.json` with `regions: ["icn1"]` for Vercel Functions.
+- Added mobile sidebar drawer for authenticated pages.
+- Added global toast notifications and wired them into main success/error client actions.
+- Improved command palette actions so it can search and navigate route surfaces.
+- Added copy buttons for posting package descriptions and checklists.
+- Added same-origin and rate-limit helpers to sensitive mutation APIs.
+- Locked `POST /api/integrations/n8n/test` behind admin auth while n8n remains `Not connected`.
+- Direct-Node `eslint .`: passed.
+- Direct-Node `tsc --noEmit`: passed.
+- Direct-Node `tsx --test "src/**/*.test.ts"`: passed, 43 tests.
+- Direct-Node `prisma generate` plus `next build`: passed.
+- `vercel deploy --prod --yes`: passed and production is deployment `dpl_Hiv9rAEboJVTmRG2bJ4CWRf9Mp6G`.
+- `vercel inspect`: confirmed app functions run in `icn1`.
+- `GET https://folqen.vercel.app/api/health`: returned database status `live`.
+- Timing check from this machine: `/api/health` improved from about `1.47s` before the region fix to about `0.56s`; authenticated `/dashboard` measured about `0.09s`.
+- Admin password was not rotated because no new password was provided; `/settings` password-change flow remains the safe path.
 
 Browser/runtime checks:
 

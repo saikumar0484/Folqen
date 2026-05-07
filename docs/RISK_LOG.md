@@ -2,6 +2,30 @@
 
 ## Current Risks
 
+### Function region is now tied to Supabase Seoul
+
+- Risk: If the database is moved to another Supabase region later, DB-backed pages may become slow again.
+- Prevention: Vercel Functions now run in Seoul (`icn1`) to stay close to the current Supabase project.
+- Verification: `vercel inspect` confirmed functions in `icn1`; health timing improved from about `1.47s` to about `0.56s`, and authenticated dashboard timing measured about `0.09s`.
+- Rollback: Change `vercel.json` `regions` to the region closest to the new database and redeploy.
+- Human approval trigger: Moving/recreating Supabase, changing Vercel regions, or changing production database architecture.
+
+### New mutation guards may block unusual clients
+
+- Risk: Same-origin checks and per-user rate limits could block cross-site requests or rapid repeated clicks that previously reached mutation handlers.
+- Prevention: Guards were added after authentication/role checks for most routes so anonymous behavior still returns `401`; limits are intentionally generous for normal UI use.
+- Verification: Request guard tests passed, full test suite passed with 43 tests, and production deployment must verify anonymous mutation protection after deploy.
+- Rollback: Remove `getMutationSafetyError` calls from affected routes or relax limits if a legitimate workflow is blocked.
+- Human approval trigger: Any request to permit cross-site mutation calls, automation clients, browser automation, or external workflow execution.
+
+### Admin password still needs human action
+
+- Risk: The default seeded admin password remains a production security risk until the human changes it.
+- Prevention: Password-change UI/API exists, now with toast feedback and rate limiting; Codex did not invent or print a new password.
+- Verification: Password-change route builds and remains admin-only; no account change was performed in this slice.
+- Rollback: If a future password rotation causes lockout, use a safe Supabase/server-side recovery flow with human approval.
+- Human approval trigger: New admin password or any direct account credential change.
+
 ### Cross-account continuation after storage checkpoint
 
 - Risk: A future Codex account may miss that the Google Drive adapter is code-complete but not live-configured.

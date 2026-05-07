@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { MiniAgentChat } from "@/components/app/mini-agent-chat";
 import { Sidebar } from "@/components/app/sidebar";
+import { ToastProvider } from "@/components/app/toast-provider";
 import { Topbar } from "@/components/app/topbar";
 import type { CurrentUser } from "@/lib/auth/current-user";
 
@@ -14,14 +15,16 @@ export function AppShell({ children, user }: { children: ReactNode; user: Curren
           background: "radial-gradient(ellipse at center, color-mix(in oklab, var(--neon) 18%, transparent), transparent 70%)",
         }}
       />
-      <div className="flex min-h-screen">
-        <Sidebar />
-        <div className="flex min-w-0 flex-1 flex-col">
-          <Topbar user={user} />
-          <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5 sm:px-6 lg:px-8">{children}</main>
+      <ToastProvider>
+        <div className="flex min-h-screen">
+          <Sidebar />
+          <div className="flex min-w-0 flex-1 flex-col">
+            <Topbar user={user} />
+            <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5 sm:px-6 lg:px-8">{children}</main>
+          </div>
         </div>
-      </div>
-      <MiniAgentChat />
+        <MiniAgentChat />
+      </ToastProvider>
     </div>
   );
 }

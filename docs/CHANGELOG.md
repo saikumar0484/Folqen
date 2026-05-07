@@ -1,5 +1,35 @@
 # Changelog
 
+## May 7, 2026 - Visible hardening, mutation safety, and speed fix
+
+### Added
+
+- Added `vercel.json` with Vercel Functions pinned to Seoul (`icn1`) so server/database calls run close to the Supabase Seoul project instead of the default Washington, DC region.
+- Added mobile sidebar drawer behavior for authenticated routes.
+- Added global toast notifications and wired them into settings, password change, approvals, provider approvals, file registration, posting packages, copy actions, and agent actions.
+- Improved the command palette so it searches and navigates to real Folqen routes while keeping action statuses visible.
+- Added copy controls for posting package descriptions and checklists.
+- Added same-origin and rate-limit helpers for sensitive mutation routes.
+- Added tests for same-origin and rate-limit behavior.
+
+### Safety
+
+- No provider secrets, OAuth credentials, OpenAI key, n8n secret, media worker secret, or platform credentials were added.
+- n8n connection testing now requires an authenticated admin instead of being an unauthenticated endpoint.
+- Admin password rotation remains available through `/settings`, but no password was changed because no new password was provided in this session.
+- Public publishing, paid tools, browser automation, platform OAuth, real AI calls, real n8n workflows, and media rendering remain blocked.
+
+### Verification
+
+- Direct-Node `eslint .`: passed.
+- Direct-Node `tsc --noEmit`: passed.
+- Direct-Node `tsx --test "src/**/*.test.ts"`: passed, 43 tests.
+- Direct-Node `prisma generate` plus `next build`: passed.
+- `vercel deploy --prod --yes`: passed and aliased `https://folqen.vercel.app` to deployment `dpl_Hiv9rAEboJVTmRG2bJ4CWRf9Mp6G`.
+- `vercel inspect`: confirmed app functions are deployed in `icn1`.
+- `GET https://folqen.vercel.app/api/health`: returned database status `live`.
+- Timing check from this machine after deploy: `/api/health` total time improved from about `1.47s` before the region fix to about `0.56s`; authenticated `/dashboard` measured about `0.09s`.
+
 ## May 7, 2026 - Cross-account checkpoint after Drive adapter
 
 ### Changed

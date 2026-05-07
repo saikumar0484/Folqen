@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/lib/auth/current-user";
 import { canCreatePostingPackage } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
 import { generateManualPostingPackage } from "@/lib/posting-packages";
+import { getMutationSafetyError } from "@/lib/security/request-guards";
 
 const requestSchema = z.object({
   contentId: z.string().min(1),
@@ -21,6 +22,12 @@ export async function POST(request: Request) {
 
   if (!canCreatePostingPackage(user)) {
     return NextResponse.json({ error: "Only admins and operators can create posting packages." }, { status: 403 });
+  }
+
+  const safetyError = getMutationSafetyError(request, { key: `posting-package:${user.id}`, limit: 20, windowMs: 60_000 });
+
+  if (safetyError) {
+    return NextResponse.json({ error: safetyError.error }, { status: safetyError.status });
   }
 
   const parsed = requestSchema.safeParse(await request.json().catch(() => null));

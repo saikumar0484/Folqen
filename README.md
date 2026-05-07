@@ -90,7 +90,7 @@ Do not add real secrets to the repository. Do not claim any integration is live 
 
 The foundation branch includes a neon green dark cyber/glass UI direction, app shell, provider honesty states, environment validation, safety guards, Prisma schema foundation, Supabase production database, and checkpoint docs. The landing page follows the uploaded `display-perfect-mirror-main.zip` template style with a sticky glass header, long product sections, clean empty states, FAQ, CTA, and footer.
 
-The project now also includes deployment-readiness docs, database seed scripts, safe health/integration status APIs, custom authentication, password-change flow, database-backed settings, approval decisions, audit logs, persistent mock agent chat, all required authenticated route surfaces, manual posting package generation, upload validation foundations, service interface mocks, and dashboard/workspace pages reading live Supabase records.
+The project now also includes deployment-readiness docs, database seed scripts, safe health/integration status APIs, custom authentication, password-change flow, database-backed settings, approval decisions, audit logs, persistent mock agent chat, all required authenticated route surfaces, manual posting package generation, upload validation foundations, service interface mocks, mobile navigation, toast notifications, command palette navigation, mutation same-origin/rate-limit guards, Vercel `icn1` function placement for faster Supabase access, and dashboard/workspace pages reading live Supabase records.
 
 Authentication routes and protected dashboard routes are implemented. Supabase is connected in production, the Prisma schema has been applied, seed data exists, and login works. A temporary low-privilege viewer test account exists for dashboard testing; keep its password out of repo docs and rotate/delete it after testing.
 
@@ -122,7 +122,7 @@ Do not revert to the earlier purple/cyan style.
 4. Run `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build` before continuing.
 5. Start by confirming the live app still passes health and login checks.
 6. Use `/settings` to change the seeded admin password, then rotate/delete the temporary viewer test account after testing.
-7. Continue Google Drive OAuth/storage setup, n8n embed/webhook setup, OpenAI paid-tool approval flow, rendering worker setup, or role-aware action hardening if the needed secrets are available.
+7. Continue Google Drive OAuth/storage setup, n8n embed/webhook setup, OpenAI paid-tool approval flow, rendering worker setup, or broader security hardening if the needed secrets are available.
 8. For deployment continuation, read `docs/DEPLOYMENT_PLAN.md` and `docs/REAL_DATA_TESTING.md` before adding Vercel, database, or n8n secrets.
 
 ## Default Admin User
@@ -141,5 +141,6 @@ Last safe checkpoint: May 7, 2026 on branch `build/phase-0-foundation`.
 - Production URL: https://folqen.vercel.app
 - Latest pushed checkpoint commit before this stop: see latest `build/phase-0-foundation` commit.
 - Database status: live through Supabase using the Vercel production transaction pooler env.
+- Performance note: Vercel Functions are pinned to Seoul (`icn1`) because the current Supabase project is in Seoul.
 - Safe to stop: yes, after the final handoff commit is pushed.
-- Next recommended build task: actual file upload/storage flow, richer posting package workflow, role-aware action states, or Oracle n8n setup if webhook secrets are provided.
+- Next recommended build task: admin password rotation, actual Google Drive live upload setup, Oracle n8n setup if webhook secrets are provided, or deeper security hardening.

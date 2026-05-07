@@ -34,8 +34,8 @@
 - [x] Add placeholders for all required routes.
 - [x] Start replacing placeholders with route-specific detailed pages.
 - [x] Add dedicated dashboard screen.
-- [ ] Add mobile sidebar drawer behavior.
-- [ ] Add toasts.
+- [x] Add mobile sidebar drawer behavior.
+- [x] Add toasts.
 - [x] Add richer dashboard widgets.
 
 ## Later Phases
@@ -48,6 +48,7 @@
 - [x] Link Vercel project.
 - [x] Deploy production app to Vercel.
 - [x] Verify production `/` and `/api/health`.
+- [x] Move Vercel Functions close to Supabase database for faster DB-backed pages.
 - [x] Add non-secret production app URL env values.
 - [x] Configure free Postgres `DATABASE_URL`.
 - [x] Repair Vercel `DATABASE_URL` with verified Supabase transaction pooler.
@@ -84,4 +85,5 @@
 - [x] Provider approval API authenticated tests.
 - [x] Posting package system.
 - [x] Posting package detail/download controls.
-- [ ] Security hardening.
+- [x] Start security hardening with mutation same-origin checks and rate limits.
+- [ ] Complete broader security hardening.

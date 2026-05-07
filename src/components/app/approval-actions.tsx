@@ -2,9 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { useToast } from "@/components/app/toast-provider";
 
 export function ApprovalActions({ approvalId, disabled, canReview, roleMessage }: { approvalId: string; disabled: boolean; canReview: boolean; roleMessage?: string | null }) {
   const router = useRouter();
+  const { toast } = useToast();
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -20,9 +22,15 @@ export function ApprovalActions({ approvalId, disabled, canReview, roleMessage }
 
       if (!response.ok) {
         setError(body.error ?? "Approval update failed.");
+        toast({ title: "Approval update failed", description: body.error ?? "Approval update failed.", tone: "error" });
         return;
       }
 
+      toast({
+        title: decision === "approve" ? "Approval recorded" : "Rejection recorded",
+        description: "This decision does not publish content or execute paid tools.",
+        tone: "success",
+      });
       router.refresh();
     });
   }

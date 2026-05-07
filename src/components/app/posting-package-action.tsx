@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import type { PlatformName } from "@prisma/client";
+import { useToast } from "@/components/app/toast-provider";
 
 type PostingPackageActionProps = {
   contentId: string;
@@ -11,6 +12,7 @@ type PostingPackageActionProps = {
 
 export function PostingPackageAction({ contentId, platform }: PostingPackageActionProps) {
   const router = useRouter();
+  const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
   const [message, setMessage] = useState<string | null>(null);
 
@@ -27,10 +29,16 @@ export function PostingPackageAction({ contentId, platform }: PostingPackageActi
 
       if (!response.ok) {
         setMessage(body.error ?? "Could not create package.");
+        toast({ title: "Package blocked", description: body.error ?? "Could not create package.", tone: "error" });
         return;
       }
 
       setMessage(`Manual ${body.postingPackage?.platformLabel ?? platform} package created.`);
+      toast({
+        title: "Manual package created",
+        description: "No platform upload or public publishing happened.",
+        tone: "success",
+      });
       router.refresh();
     });
   }

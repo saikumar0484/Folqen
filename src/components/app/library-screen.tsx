@@ -137,6 +137,11 @@ export function LibraryScreen({ data }: { data: LibraryData }) {
                       <CopyButton value={pkg.caption} />
                     </div>
                     <p className="mt-2 text-sm leading-6">{pkg.caption}</p>
+                    <div className="mt-3 flex items-center justify-between gap-3 border-t border-white/10 pt-3">
+                      <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Description</div>
+                      <CopyButton value={pkg.description} label="Copy description" />
+                    </div>
+                    <p className="mt-2 text-sm leading-6 text-muted-foreground">{pkg.description}</p>
                     <div className="mt-3 flex flex-wrap gap-2">
                       {pkg.hashtags.slice(0, 8).map((tag) => (
                         <span key={tag} className="rounded-full border border-white/10 px-2.5 py-1 font-mono text-[10px] text-muted-foreground">{tag}</span>
@@ -145,6 +150,11 @@ export function LibraryScreen({ data }: { data: LibraryData }) {
                     </div>
                   </div>
                   <div className="mt-3 grid gap-2">
+                    {pkg.checklist.length > 0 ? (
+                      <div className="mb-1 flex justify-end">
+                        <CopyButton value={pkg.checklist.join("\n")} label="Copy checklist" />
+                      </div>
+                    ) : null}
                     {pkg.checklist.slice(0, 3).map((item) => (
                       <div key={item} className="flex items-start gap-2 text-xs leading-5 text-muted-foreground">
                         <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-neon" />

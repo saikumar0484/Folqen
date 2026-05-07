@@ -6,7 +6,7 @@ Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/
 
 ## Current Save Point
 
-May 7, 2026. Cross-account checkpoint after commit `1a78e1b Add Google Drive storage adapter`. The latest completed feature slice is the Google Drive private storage adapter plus production database health recovery. Vercel production `DATABASE_URL` now uses the verified Supabase transaction pooler, health is `live`, and real Drive uploads are blocked until Google OAuth env values and a private folder id are configured.
+May 7, 2026. Latest completed slice is visible UI hardening, mutation safety, and Vercel performance recovery. Vercel Functions now run in Seoul (`icn1`) near the Supabase database, health is `live`, and real Drive uploads are blocked until Google OAuth env values and a private folder id are configured.
 
 ## Branch
 
@@ -75,6 +75,7 @@ May 7, 2026. Cross-account checkpoint after commit `1a78e1b Add Google Drive sto
 - Seeded Supabase using Prisma through the Supabase session pooler.
 - Added sensitive Vercel production `DATABASE_URL` without printing or committing the value.
 - Repaired the production `DATABASE_URL` after it failed health checks by replacing it with the working Supabase transaction pooler URL; the value was added as a sensitive Vercel env var only.
+- Added `vercel.json` so Vercel Functions run in `icn1`, reducing DB-backed route latency.
 - Fixed Vercel Prisma generation by changing `npm run build` to `prisma generate && next build`.
 - Redeployed production and verified `/api/health`, `/api/auth/login`, and authenticated `/dashboard`.
 - Fixed the live landing page gradient text rendering issue that showed a solid green rectangle in Chrome.
@@ -353,6 +354,7 @@ Latest deployment/data foundation verification:
 - Provider approval API test coverage: `npm install` passed; direct-Node lint, typecheck, tests, Prisma generate, and build passed. Test count is now 34. Vercel production deploy passed, live health returned database `live`, and anonymous provider approval request returned 401.
 - Google Drive private storage adapter and database health recovery: direct-Node lint, typecheck, tests, Prisma generate, and build passed. Test count is now 39. Local Prisma `SELECT 1` against the Supabase transaction pooler passed. Vercel production `DATABASE_URL` was rotated as a sensitive env var, production redeploy passed, live health returned database `live`, and anonymous upload returned 401. No live Drive upload was attempted because Google Drive OAuth env values are not configured.
 - Cross-account checkpoint after Drive adapter: repo was clean before checkpoint docs, latest feature commit was `1a78e1b`, production health returned database `live`, and no code/schema/secret/provider/data change was made for the checkpoint.
+- Visible hardening, mutation safety, and speed fix: direct-Node lint, typecheck, tests, Prisma generate, and build passed. Test count is now 43. Production deploy `dpl_Hiv9rAEboJVTmRG2bJ4CWRf9Mp6G` passed. `vercel inspect` confirmed app functions in `icn1`. Health returned database `live`; `/api/health` timing improved from about `1.47s` to about `0.56s`, and authenticated `/dashboard` measured about `0.09s`.
 
 ## Known Broken Areas
 
@@ -383,11 +385,12 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 - Oracle n8n real testing needs secrets set outside git.
 - Vercel project link exists locally under `.vercel/` and is ignored by git.
 - Supabase production `DATABASE_URL` is set in Vercel as a sensitive env var using the verified transaction pooler.
+- Vercel Functions are pinned to `icn1` in `vercel.json`; revisit this if the Supabase project region changes.
 - Direct Supabase DB host remained unreliable from this Windows environment; use the Supabase pooler or `supabase db query --linked`.
 
 ## Safe To Continue From Another Account
 
-Yes. The repo is safe to continue from this checkpoint after this checkpoint commit is pushed. The latest Google Drive adapter flow has been verified locally, production database health is `live`, and no feature files are half-edited.
+Yes. The repo is safe to continue from this checkpoint after this checkpoint commit is pushed. The latest UI/security/performance slice has been verified locally and deployed, production database health is `live`, and no feature files are half-edited.
 
 ## Next Recommended Command
 

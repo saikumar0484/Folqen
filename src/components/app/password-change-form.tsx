@@ -2,8 +2,10 @@
 
 import { useState, useTransition } from "react";
 import { KeyRound } from "lucide-react";
+import { useToast } from "@/components/app/toast-provider";
 
 export function PasswordChangeForm() {
+  const { toast } = useToast();
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -31,11 +33,17 @@ export function PasswordChangeForm() {
 
           if (!response.ok) {
             setError(body.error ?? "Password update failed.");
+            toast({ title: "Password not changed", description: body.error ?? "Password update failed.", tone: "error" });
             return;
           }
 
           form.reset();
           setMessage("Password changed. Use the new password next time you login.");
+          toast({
+            title: "Password changed",
+            description: "Use the new password next time you log in.",
+            tone: "success",
+          });
         });
       }}
     >

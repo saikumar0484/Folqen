@@ -3,6 +3,7 @@ import { createAuditLog } from "@/lib/audit";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { getDb } from "@/lib/db";
 import { canCaptureTextPreview, validateUploadCandidate } from "@/lib/files/validation";
+import { getMutationSafetyError } from "@/lib/security/request-guards";
 import { isGoogleDriveStorageConfigured, uploadPrivateFileToGoogleDrive } from "@/lib/storage/google-drive";
 
 function parseTags(value: FormDataEntryValue | null) {
@@ -24,6 +25,12 @@ export async function POST(request: Request) {
 
   if (!user) {
     return NextResponse.json({ error: "Login required." }, { status: 401 });
+  }
+
+  const safetyError = getMutationSafetyError(request, { key: `file-upload:${user.id}`, limit: 15, windowMs: 60_000 });
+
+  if (safetyError) {
+    return NextResponse.json({ error: safetyError.error }, { status: safetyError.status });
   }
 
   const formData = await request.formData().catch(() => null);

@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { useToast } from "@/components/app/toast-provider";
 import { openAiModelOptions } from "@/lib/ai-models";
 import type { FolqenSettings } from "@/lib/settings";
 
@@ -15,6 +16,7 @@ const autonomyOptions = [
 
 export function SettingsForm({ settings }: { settings: FolqenSettings }) {
   const router = useRouter();
+  const { toast } = useToast();
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -47,10 +49,16 @@ export function SettingsForm({ settings }: { settings: FolqenSettings }) {
 
           if (!response.ok) {
             setError(body.error ?? "Settings save failed.");
+            toast({ title: "Settings not saved", description: body.error ?? "Settings save failed.", tone: "error" });
             return;
           }
 
           setMessage("Settings saved. Risky automation switches remain blocked.");
+          toast({
+            title: "Settings saved",
+            description: "Risky automation flags remain locked off.",
+            tone: "success",
+          });
           router.refresh();
         });
       }}

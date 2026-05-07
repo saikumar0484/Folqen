@@ -2,13 +2,16 @@
 
 import { useState } from "react";
 import { Copy } from "lucide-react";
+import { useToast } from "@/components/app/toast-provider";
 
 export function CopyButton({ value, label = "Copy" }: { value: string; label?: string }) {
   const [copied, setCopied] = useState(false);
+  const { toast } = useToast();
 
   async function copy() {
     await navigator.clipboard.writeText(value);
     setCopied(true);
+    toast({ title: "Copied", description: "Text is ready for manual posting or review.", tone: "success" });
     window.setTimeout(() => setCopied(false), 1600);
   }
 

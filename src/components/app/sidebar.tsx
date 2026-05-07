@@ -51,7 +51,7 @@ const iconMap: Record<AppRouteId, ComponentType<{ className?: string }>> = {
 const primaryRoutes = appRoutes.slice(0, 10);
 const systemRoutes = appRoutes.slice(10);
 
-function NavList({ routes }: { routes: typeof appRoutes }) {
+function NavList({ routes, onNavigate }: { routes: typeof appRoutes; onNavigate?: () => void }) {
   const pathname = usePathname();
 
   return (
@@ -64,6 +64,7 @@ function NavList({ routes }: { routes: typeof appRoutes }) {
           <Link
             key={route.href}
             href={route.href}
+            onClick={onNavigate}
             className={cn(
               "flex h-10 items-center gap-3 rounded-xl px-3 text-sm transition",
               active
@@ -80,10 +81,10 @@ function NavList({ routes }: { routes: typeof appRoutes }) {
   );
 }
 
-export function Sidebar() {
+export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   return (
-    <aside className="sticky top-0 hidden h-screen w-72 shrink-0 flex-col border-r border-white/10 bg-background/70 p-4 backdrop-blur-xl lg:flex">
-      <Link href="/" className="flex shrink-0 items-center gap-3 rounded-2xl px-2 py-2">
+    <>
+      <Link href="/" onClick={onNavigate} className="flex shrink-0 items-center gap-3 rounded-2xl px-2 py-2">
         <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-neon text-primary-foreground shadow-glow">
           <Sparkles className="h-5 w-5" />
         </span>
@@ -96,12 +97,12 @@ export function Sidebar() {
       <div className="mt-6 min-h-0 flex-1 overflow-y-auto pr-1">
         <div>
           <div className="mb-2 px-3 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Workspace</div>
-          <NavList routes={primaryRoutes} />
+          <NavList routes={primaryRoutes} onNavigate={onNavigate} />
         </div>
 
         <div className="mt-6 pb-2">
           <div className="mb-2 px-3 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Control</div>
-          <NavList routes={systemRoutes} />
+          <NavList routes={systemRoutes} onNavigate={onNavigate} />
         </div>
       </div>
 
@@ -114,6 +115,14 @@ export function Sidebar() {
           Publishing, paid tools, browser automation, and upgrades remain blocked until approved.
         </p>
       </div>
+    </>
+  );
+}
+
+export function Sidebar() {
+  return (
+    <aside className="sticky top-0 hidden h-screen w-72 shrink-0 flex-col border-r border-white/10 bg-background/70 p-4 backdrop-blur-xl lg:flex">
+      <SidebarContent />
     </aside>
   );
 }

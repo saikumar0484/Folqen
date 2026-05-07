@@ -3,9 +3,11 @@
 import { useRouter } from "next/navigation";
 import { useRef, useState, useTransition } from "react";
 import { UploadCloud } from "lucide-react";
+import { useToast } from "@/components/app/toast-provider";
 
 export function FileUploadForm({ accept }: { accept: string }) {
   const router = useRouter();
+  const { toast } = useToast();
   const inputRef = useRef<HTMLInputElement>(null);
   const [tags, setTags] = useState("research,draft");
   const [message, setMessage] = useState<string | null>(null);
@@ -19,6 +21,7 @@ export function FileUploadForm({ accept }: { accept: string }) {
 
     if (!file) {
       setError("Choose a file first.");
+      toast({ title: "Choose a file first", description: "Folqen needs one private file to validate.", tone: "error" });
       return;
     }
 
@@ -35,10 +38,21 @@ export function FileUploadForm({ accept }: { accept: string }) {
 
       if (!response.ok || !result.file) {
         setError([result.error, ...(result.reasons ?? [])].filter(Boolean).join(" "));
+        toast({
+          title: "Upload blocked",
+          description: [result.error, ...(result.reasons ?? [])].filter(Boolean).join(" "),
+          tone: "error",
+        });
         return;
       }
 
-      setMessage(`${result.file.name} registered privately. Binary storage is still Not connected.`);
+      const storageMessage = result.file.binaryStored ? "Binary file stored privately in Google Drive." : "Binary storage is still Not connected.";
+      setMessage(`${result.file.name} registered privately. ${storageMessage}`);
+      toast({
+        title: "File registered",
+        description: storageMessage,
+        tone: "success",
+      });
       if (inputRef.current) inputRef.current.value = "";
       router.refresh();
     });

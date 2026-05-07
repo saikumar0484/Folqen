@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/lib/auth/current-user";
 import { canManageSystem } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
 import { isKnownOpenAiModel, normalizeModelId } from "@/lib/ai-models";
+import { getMutationSafetyError } from "@/lib/security/request-guards";
 import { defaultFolqenSettings } from "@/lib/settings";
 
 const settingsSchema = z.object({
@@ -27,6 +28,12 @@ export async function POST(request: Request) {
 
   if (!canManageSystem(user)) {
     return NextResponse.json({ error: "Only admins can update system settings." }, { status: 403 });
+  }
+
+  const safetyError = getMutationSafetyError(request, { key: `settings:${user.id}`, limit: 12, windowMs: 60_000 });
+
+  if (safetyError) {
+    return NextResponse.json({ error: safetyError.error }, { status: safetyError.status });
   }
 
   const parsed = settingsSchema.safeParse(await request.json().catch(() => null));

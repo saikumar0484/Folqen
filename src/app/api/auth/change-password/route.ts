@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/lib/auth/current-user";
 import { canManageSystem } from "@/lib/auth/permissions";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
 import { getDb } from "@/lib/db";
+import { getMutationSafetyError } from "@/lib/security/request-guards";
 
 const passwordSchema = z.object({
   currentPassword: z.string().min(8),
@@ -20,6 +21,12 @@ export async function POST(request: Request) {
 
   if (!canManageSystem(user)) {
     return NextResponse.json({ error: "Only admins can change the admin password." }, { status: 403 });
+  }
+
+  const safetyError = getMutationSafetyError(request, { key: `change-password:${user.id}`, limit: 5, windowMs: 60_000 });
+
+  if (safetyError) {
+    return NextResponse.json({ error: safetyError.error }, { status: safetyError.status });
   }
 
   const parsed = passwordSchema.safeParse(await request.json().catch(() => null));
