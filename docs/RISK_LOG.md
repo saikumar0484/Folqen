@@ -2,6 +2,22 @@
 
 ## Current Risks
 
+### Media generation pipelines can be mistaken for live rendering
+
+- Risk: The Content Studio media panel, workflow registry, asset registry, render queue, and retry logs can look like real ComfyUI/FFmpeg rendering even though the layer is dry-run only.
+- Prevention: Provider statuses explicitly show `Mock`, `Not connected`, `Configured`, or `Blocked`; every media response says no GPU, ComfyUI, FFmpeg, worker, storage write, or public publishing occurred.
+- Verification: Media tests cover all media types, all seven workflows, provider blocking, queue metadata, asset versioning, render retry recovery, dashboard observability, and mutation access checks.
+- Rollback: Revert `src/lib/media`, `/api/media`, the Content Studio media panel, the `folqen.media` queue addition, and media docs if the pipeline design needs to be revised.
+- Human approval trigger: Any live ComfyUI request, GPU execution, FFmpeg process spawn, worker job, paid media provider call, binary storage write, automatic publishing, or production render queue activation.
+
+### Media persistence uses existing Asset and Render metadata
+
+- Risk: Avoiding a migration keeps this slice safe, but media versioning, render lineage, and optimization history are stored as JSON metadata rather than normalized tables.
+- Prevention: Metadata includes source, run id, workflow kind, version, tags, validation, dry-run status, and provider status so future media tables can backfill from existing rows.
+- Verification: Typecheck and focused media tests passed with existing models only.
+- Rollback: Delete mock media `Asset`/`Render` rows if test data becomes noisy; no schema rollback is required.
+- Human approval trigger: Adding dedicated media tables, storage buckets, RLS policies, migrations, public asset URLs, or destructive asset cleanup.
+
 ### Memory and reflection outputs can be mistaken for live embeddings or autonomous learning
 
 - Risk: Organizational memory retrieval and reflection can look like a live vector/AI learning system even though live embedding providers are blocked.

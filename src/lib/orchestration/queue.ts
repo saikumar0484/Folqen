@@ -9,6 +9,7 @@ export const ORCHESTRATION_QUEUES = {
   workflows: "folqen.workflows",
   incidents: "folqen.incidents",
   memory: "folqen.memory",
+  media: "folqen.media",
   monitoring: "folqen.monitoring",
 } as const;
 

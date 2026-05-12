@@ -2,9 +2,9 @@
 
 ## Phase
 
-Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, every required authenticated route now has a route-specific or database-backed surface, the autonomous organization target architecture is documented, the operational command center frontend is implemented, the mock-safe multi-agent orchestration infrastructure is implemented, the first Research + Content operational intelligence layer is implemented, and the Organizational Memory & Reflection Intelligence layer is implemented on branch `build/phase-0-foundation`.
+Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, every required authenticated route now has a route-specific or database-backed surface, the autonomous organization target architecture is documented, the operational command center frontend is implemented, the mock-safe multi-agent orchestration infrastructure is implemented, the first Research + Content operational intelligence layer is implemented, the Organizational Memory & Reflection Intelligence layer is implemented, and the Media Generation & Asset Pipeline layer is implemented on branch `build/phase-0-foundation`.
 
-Latest save point: May 12, 2026, after building the Organizational Memory & Reflection Intelligence layer. This was a backend/schema/UI mock-safe implementation phase; no credentials, production database migration application, production settings, paid tools, provider connections, live embeddings, public publishing, media rendering, or n8n execution were enabled.
+Latest save point: May 12, 2026, after building the Media Generation & Asset Pipeline layer. This was a backend/UI mock-safe implementation phase; no credentials, production database migration application, production settings, paid tools, provider connections, live embeddings, GPU execution, live ComfyUI execution, FFmpeg rendering, public publishing, or n8n execution were enabled.
 
 ## Completed Work
 
@@ -12,6 +12,8 @@ Latest save point: May 12, 2026, after building the Organizational Memory & Refl
 - Added the first Research + Content intelligence layer with 11 specialist agents, 8 LangGraph dry-run workflows, mock-safe provider abstraction, protected `/api/intelligence/*` routes, persistence through existing models, and live controls on `/research-intelligence` and `/content-studio`.
 - Added the Organizational Memory & Reflection Intelligence layer with pgvector-ready Prisma/Supabase schema files, typed memory services, mock semantic retrieval, LangGraph dry-run reflection flows, experiment tracking, prompt versioning, protected `/api/memory/*` routes, and a live mock-safe `/organizational-memory` panel.
 - Added `docs/MEMORY_REFLECTION_ARCHITECTURE.md`.
+- Added the Media Generation & Asset Pipeline layer with ComfyUI/FFmpeg-ready dry-run workflows, media queue, asset registry/versioning through existing `Asset` metadata, render plans through existing `Render` metadata, retry/recovery plans, protected `/api/media/*` routes, and Content Studio controls.
+- Added `docs/MEDIA_PIPELINE_ARCHITECTURE.md`.
 - Added the real Folqen orchestration layer shape with typed agent registry, hierarchy/departments, task orchestration service, event bus, Redis/BullMQ adapters, LangGraph dry-run flow, CrewAI-compatible coordination plan, incident recovery, monitoring hooks, memory hooks, protected APIs, and a worker entrypoint.
 - Added Redis to Docker Compose and orchestration environment defaults while keeping execution mock-safe by default.
 - Added `docs/ORCHESTRATION_ARCHITECTURE.md`.
@@ -122,6 +124,7 @@ The app installs, lints, typechecks, tests, validates Prisma schema, builds succ
 - Research and Content intelligence workflows use manual inputs and the mock provider only by default.
 - Organizational memory uses mock semantic retrieval and does not call live embedding providers.
 - The memory migration SQL is committed for review but was not applied to the live Supabase database in this slice.
+- Media generation and rendering are dry-run only; no GPU, ComfyUI, FFmpeg process, worker job, binary storage write, or public publishing is enabled.
 - Production `AUTH_SECRET` is configured in Vercel; its value was never printed or committed.
 - All integrations remain `Not connected` or `Mock`.
 - Database is the only live backend integration.
@@ -561,6 +564,21 @@ Latest May 12, 2026 Organizational Memory & Reflection Intelligence update:
 - Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`.
 - `npm audit --audit-level=moderate`: still reports the known nested PostCSS moderate advisory under Next; no unsafe forced fix was applied.
 
+Latest May 12, 2026 Media Generation & Asset Pipeline update:
+
+- Added `src/lib/media/*` with media type/workflow registry, ComfyUI/FFmpeg/local-worker provider guards, LangGraph dry-run media flow, asset generation service, render queue planning, retry planning, dashboard read model, access helpers, and tests.
+- Added the `folqen.media` queue name to the existing orchestration BullMQ adapter.
+- Added protected `/api/media/overview`, `/api/media/assets`, `/api/media/generate`, `/api/media/render`, and `/api/media/retry`.
+- Added a Media Production Department panel to `/content-studio` with workflow previews, provider status, asset registry, render queue, logs, failed render recovery, and dry-run controls.
+- Added `docs/MEDIA_PIPELINE_ARCHITECTURE.md`.
+- No schema migration was added; media registry/version/render history use existing `Asset` and `Render` metadata.
+- No live ComfyUI request, GPU execution, FFmpeg process, media worker job, binary storage write, paid provider call, or public publishing was enabled.
+- Direct local `eslint .`: passed.
+- Direct local `tsc --noEmit`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 80 tests.
+- Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`.
+- `npm audit --audit-level=moderate`: still reports the known nested PostCSS moderate advisory under Next; no unsafe forced fix was applied.
+
 ## Known Issues
 
 - Supabase MCP documentation search failed in this session because the connected OAuth token was revoked, so Supabase-specific security notes in the architecture document rely on existing project practice and official-doc fallback knowledge rather than MCP snippets.
@@ -570,6 +588,7 @@ Latest May 12, 2026 Organizational Memory & Reflection Intelligence update:
 - Research Intelligence and Content Studio now have live mock-safe controls, but the main command-center renderer still includes baseline mock telemetry around those controls.
 - Organizational Memory now has live mock-safe controls and committed migration SQL, but the live Supabase database has not applied the memory tables yet.
 - Live embeddings remain disabled; OpenAI/Gemini embedding providers are status-aware placeholders only.
+- Media Production now has live mock-safe Content Studio controls, but ComfyUI, FFmpeg, local worker execution, binary storage writes, and real video/image generation remain disabled.
 - OpenRouter and Gemini are placeholder intelligence providers only; real calls remain blocked until credentials and paid-tool approval exist.
 - Redis/BullMQ are optional and not active by default. Local live queue testing needs `REDIS_URL`, `ORCHESTRATION_EXECUTION_MODE=live`, and `ORCHESTRATION_WORKER_ENABLED=true`.
 
@@ -584,4 +603,4 @@ Latest May 12, 2026 Organizational Memory & Reflection Intelligence update:
 
 ## Safe To Stop
 
-Yes after this checkpoint commit is pushed. The intelligence layer is implemented, verification passed, the repo is safe to continue, and no source files are left half-edited.
+Yes after this checkpoint commit is pushed. The Media Generation & Asset Pipeline layer is implemented, verification passed, the repo is safe to continue, and no source files are left half-edited.

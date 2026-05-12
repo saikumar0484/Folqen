@@ -6,6 +6,8 @@ For the full principal-engineer target design of Folqen as an autonomous AI crea
 
 For the institutional memory, reflection, experiment, prompt-versioning, and pgvector-ready semantic retrieval layer, read `docs/MEMORY_REFLECTION_ARCHITECTURE.md`.
 
+For the creative production department, ComfyUI/FFmpeg-ready dry-run media workflows, render queue, asset registry, retry policy, and frontend media pipeline, read `docs/MEDIA_PIPELINE_ARCHITECTURE.md`.
+
 ## Layers
 
 ```text

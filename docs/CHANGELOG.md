@@ -1,5 +1,30 @@
 # Changelog
 
+## May 12, 2026 - Media Generation and Asset Pipeline layer
+
+### Added
+
+- Added the Media Generation & Asset Pipeline backend with thumbnail, shorts visual, script-to-scene, asset adaptation, rendering, subtitle, and optimization dry-run workflows.
+- Added ComfyUI, FFmpeg, local worker, and mock media provider status guards; live execution remains blocked.
+- Added `folqen.media` to the existing BullMQ orchestration queue registry.
+- Added protected `/api/media/overview`, `/api/media/assets`, `/api/media/generate`, `/api/media/render`, and `/api/media/retry`.
+- Added Content Studio media controls for workflow previews, provider readiness, asset registry, render queue, render logs, and failed render retry planning.
+- Added `docs/MEDIA_PIPELINE_ARCHITECTURE.md`.
+
+### Safety
+
+- No schema migration was added; media registry/version/render history use existing `Asset` and `Render` metadata.
+- No live ComfyUI request, GPU job, FFmpeg process, local worker job, binary storage write, paid provider call, or public publishing was enabled.
+- Media outputs are dry-run plans and approval-gated metadata only.
+
+### Verification
+
+- Direct local `eslint .`: passed.
+- Direct local `tsc --noEmit`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 80 tests.
+- Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`.
+- `npm audit --audit-level=moderate`: still reports the known nested PostCSS moderate advisory under Next; `npm audit fix --force` would install a breaking Next path and was not run.
+
 ## May 12, 2026 - Organizational Memory and Reflection Intelligence layer
 
 ### Added

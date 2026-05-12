@@ -55,6 +55,16 @@ These command-center routes are API-ready mock frontend surfaces. They do not en
 | `POST /api/memory/experiments` | Track A/B, workflow, prompt, hook, and metadata comparisons | Admin/operator, no automatic rollout |
 | `POST /api/memory/prompts/version` | Store prompt versions and capture prompt memory | Admin/operator, needs approval before promotion |
 
+## Media API Routes
+
+| Route | Purpose | Current State |
+| --- | --- | --- |
+| `GET /api/media/overview` | Media workflows, provider readiness, recent assets, render queue, and failed renders | Mock-safe backend |
+| `GET /api/media/assets` | Media asset registry and render queue read model | Existing-model read model |
+| `POST /api/media/generate` | Plan thumbnail, image, shorts visual, subtitle, adaptation, or optimization workflows | Admin/operator, dry-run only |
+| `POST /api/media/render` | Queue a rendering workflow as a dry-run FFmpeg/media-worker plan | Admin/operator, no FFmpeg execution |
+| `POST /api/media/retry` | Plan failed render retry and recovery logs | Admin/operator, no live rendering |
+
 ## MVP Routes
 
 | Route | Purpose | Current State |
