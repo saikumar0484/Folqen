@@ -10,6 +10,8 @@ For the creative production department, ComfyUI/FFmpeg-ready dry-run media workf
 
 For the platform operations department, n8n-ready dry-run publishing workflows, scheduling queues, platform adaptation, distribution tracking, analytics ingestion, retry recovery, and monetization monitoring hooks, read `docs/PLATFORM_OPERATIONS_ARCHITECTURE.md`.
 
+For the governance, approval, policy, sandbox, cost-control, provider-access, and compliance monitoring layer, read `docs/GOVERNANCE_SAFETY_ARCHITECTURE.md`.
+
 ## Layers
 
 ```text

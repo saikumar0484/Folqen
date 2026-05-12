@@ -1,5 +1,30 @@
 # Changelog
 
+## May 12, 2026 - Governance Approval and Safety Control layer
+
+### Added
+
+- Added `src/lib/governance/*` with execution policy engine, governance action registry, role/permission matrix, approval workflow service, sandbox execution simulation, cost governance, provider governance, dashboard read model, access helpers, and tests.
+- Added `folqen.governance` and `folqen.sandbox` to the existing BullMQ orchestration queue registry.
+- Added protected `/api/governance/overview`, `/api/governance/policy/evaluate`, `/api/governance/approvals/request`, `/api/governance/approvals/action`, and `/api/governance/sandbox`.
+- Added approve/reject/escalate/retry/revoke governance action support without enabling live execution.
+- Added a Governance Department panel to `/approvals` with policy simulator, approval request flow, sandbox testing, approval queue, provider governance, cost controls, compliance monitor, and role matrix.
+- Added `docs/GOVERNANCE_SAFETY_ARCHITECTURE.md`.
+
+### Safety
+
+- No schema migration was added; governance uses existing `Approval`, `AuditLog`, `EventLog`, and queue metadata.
+- No automatic provider activation, public publishing, paid tool execution, n8n workflow execution, account access, live queue worker execution, or media rendering was enabled.
+- Approval records are not treated as sufficient for live execution; future adapters must still call policy checks immediately before execution.
+
+### Verification
+
+- Direct local `eslint .`: passed.
+- Direct local `tsc --noEmit`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 97 tests.
+- Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`.
+- `npm audit --audit-level=moderate`: still reports the known nested PostCSS moderate advisory under Next; `npm audit fix --force` would install a breaking Next path and was not run.
+
 ## May 12, 2026 - Platform Operations and Publishing Infrastructure layer
 
 ### Added

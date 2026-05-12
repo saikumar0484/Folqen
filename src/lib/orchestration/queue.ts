@@ -13,6 +13,8 @@ export const ORCHESTRATION_QUEUES = {
   publishing: "folqen.publishing",
   scheduling: "folqen.scheduling",
   publishingRetry: "folqen.publishing.retry",
+  governance: "folqen.governance",
+  sandbox: "folqen.sandbox",
   monitoring: "folqen.monitoring",
 } as const;
 

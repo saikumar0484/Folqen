@@ -2,6 +2,22 @@
 
 ## Current Risks
 
+### Governance approvals mistaken for live execution permission
+
+- Risk: A future service or user may treat an approval record as enough to execute publishing, provider calls, workflow automation, account access, or media rendering.
+- Prevention: `docs/GOVERNANCE_SAFETY_ARCHITECTURE.md` states approval existence is not sufficient; future adapters must also check environment flags, role permissions, policy engine, content safety, cost limits, provider capability, and audit controls immediately before execution.
+- Verification: Governance tests assert public publishing, paid tools, provider execution, and provider activation remain blocked by default, while sandbox execution stays dry-run.
+- Rollback: Revert `src/lib/governance`, `/api/governance`, Approval Center governance panel, queue additions, and governance docs if the control model needs redesign.
+- Human approval trigger: Any attempt to let approvals activate providers, publish, run live workflows, access accounts, spend money, render media, or bypass policy checks.
+
+### Governance policy model is read-model heavy
+
+- Risk: Role matrix, provider governance, cost quotas, and compliance controls are typed read models rather than normalized compliance tables.
+- Prevention: This avoids risky schema migration while creating a stable service contract; future normalized tables require reviewed migration and RLS.
+- Verification: No schema migration was added; typecheck and governance tests passed with existing models.
+- Rollback: Remove governance read-model additions without database rollback.
+- Human approval trigger: Adding governance tables, RLS policies, provider access grants, or production compliance workflows.
+
 ### Platform operations mistaken for real publishing
 
 - Risk: The Platform Operations Department can look like a real publishing console, so a user may think posts were scheduled, uploaded, or published.

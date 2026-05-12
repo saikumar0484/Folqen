@@ -1,9 +1,11 @@
 import { ApprovalStatus } from "@prisma/client";
 import { ApprovalActions } from "@/components/app/approval-actions";
+import { GovernanceControlPanel } from "@/components/command-center/governance-control-panel";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { canReviewApprovals, describeRoleLimit } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
+import { getGovernanceDashboard } from "@/lib/governance/service";
 
 export const dynamic = "force-dynamic";
 
@@ -17,14 +19,17 @@ export default async function ApprovalsPage() {
   const user = await getCurrentUser();
   const canReview = user ? canReviewApprovals(user) : false;
   const roleMessage = user ? describeRoleLimit(user, "approval") : "Login required.";
-  const approvals = await getDb().approval.findMany({
-    orderBy: [{ status: "asc" }, { createdAt: "desc" }],
-    include: {
-      content: { select: { title: true, status: true } },
-      decidedBy: { select: { email: true } },
-    },
-    take: 50,
-  });
+  const [approvals, governanceDashboard] = await Promise.all([
+    getDb().approval.findMany({
+      orderBy: [{ status: "asc" }, { createdAt: "desc" }],
+      include: {
+        content: { select: { title: true, status: true } },
+        decidedBy: { select: { email: true } },
+      },
+      take: 50,
+    }),
+    getGovernanceDashboard(),
+  ]);
   const pending = approvals.filter((approval) => approval.status === "PENDING").length;
 
   return (
@@ -66,6 +71,8 @@ export default async function ApprovalsPage() {
           </article>
         ))}
       </div>
+
+      <GovernanceControlPanel dashboard={governanceDashboard} />
     </div>
   );
 }

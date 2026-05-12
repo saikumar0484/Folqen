@@ -2,13 +2,13 @@
 
 ## Current Phase
 
-Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, all required authenticated routes now have route-specific surfaces, manual posting package detail/download is deployed, file registration is deployed, safe mock-agent draft creation is deployed, provider setup surfaces for Google Drive, OpenAI, n8n, and media tools are deployed, admin-only provider setup approval requests are implemented, the target autonomous organization architecture is documented, the operational command center frontend is implemented, the mock-safe multi-agent orchestration infrastructure is implemented, the first Research + Content intelligence layer is implemented, the Organizational Memory & Reflection Intelligence layer is implemented, the Media Generation & Asset Pipeline layer is implemented, and the Platform Operations & Publishing Infrastructure layer is implemented.
+Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, all required authenticated routes now have route-specific surfaces, manual posting package detail/download is deployed, file registration is deployed, safe mock-agent draft creation is deployed, provider setup surfaces for Google Drive, OpenAI, n8n, and media tools are deployed, admin-only provider setup approval requests are implemented, the target autonomous organization architecture is documented, the operational command center frontend is implemented, the mock-safe multi-agent orchestration infrastructure is implemented, the first Research + Content intelligence layer is implemented, the Organizational Memory & Reflection Intelligence layer is implemented, the Media Generation & Asset Pipeline layer is implemented, the Platform Operations & Publishing Infrastructure layer is implemented, and the Governance Approval & Safety Control layer is implemented.
 
 ## Current Save Point
 
-May 12, 2026. Latest completed slice is the Platform Operations & Publishing Infrastructure update. Folqen now has n8n-ready dry-run platform operations workflows, publishing/scheduling/retry queues, platform adaptation, distribution tracking, analytics ingestion planning, monetization/policy hooks, protected `/api/platform-ops/*` routes, and live mock-safe controls on `/platforms`. No credentials, live migration application, production env, paid tools, provider activation, live embeddings, GPU execution, live ComfyUI execution, FFmpeg rendering, platform account access, analytics API read, scraping, public publishing, n8n execution, or binary storage write was enabled.
+May 12, 2026. Latest completed slice is the Governance Approval & Safety Control update. Folqen now has a mock-safe governance policy engine, governance/sandbox queues, approval request/action flows, sandbox simulation, cost/provider governance, protected `/api/governance/*` routes, and live mock-safe controls on `/approvals`. No credentials, live migration application, production env, paid tools, provider activation, live embeddings, GPU execution, live ComfyUI execution, FFmpeg rendering, platform account access, analytics API read, scraping, public publishing, n8n execution, or binary storage write was enabled.
 
-Latest feature commit for this slice: `d12ef50`.
+Latest feature commit for this slice: pending until this governance checkpoint commit is created.
 
 ## Branch
 
@@ -21,6 +21,11 @@ Latest feature commit for this slice: `d12ef50`.
 - Added `docs/MEMORY_REFLECTION_ARCHITECTURE.md`.
 - Added `docs/MEDIA_PIPELINE_ARCHITECTURE.md`.
 - Added `docs/PLATFORM_OPERATIONS_ARCHITECTURE.md`.
+- Added `docs/GOVERNANCE_SAFETY_ARCHITECTURE.md`.
+- Added `src/lib/governance/*` for execution policy engine, action registry, role/permission matrix, approval workflow service, sandbox simulation, cost governance, provider governance, dashboard read model, access checks, and tests.
+- Added `/api/governance/overview`, `/api/governance/policy/evaluate`, `/api/governance/approvals/request`, `/api/governance/approvals/action`, and `/api/governance/sandbox`.
+- Added `folqen.governance` and `folqen.sandbox` to the orchestration queue registry.
+- Added live mock-safe Governance Department controls to `/approvals`.
 - Added `src/lib/platform-ops/*` for platform registry, provider guards, LangGraph dry-run platform operations flow, scheduling/distribution/retry service, analytics ingestion planning, monetization monitoring, dashboard read model, access checks, and tests.
 - Added `/api/platform-ops/overview`, `/api/platform-ops/deployments`, `/api/platform-ops/adapt`, `/api/platform-ops/schedule`, `/api/platform-ops/distribute`, `/api/platform-ops/retry`, and `/api/platform-ops/analytics/collect`.
 - Added `folqen.publishing`, `folqen.scheduling`, and `folqen.publishing.retry` to the orchestration queue registry.
@@ -60,6 +65,7 @@ Latest feature commit for this slice: `d12ef50`.
 - Latest verification after the Organizational Memory & Reflection Intelligence layer: direct `eslint .` passed, direct `tsc --noEmit` passed, direct `tsx --test "src/**/*.test.ts"` passed with 72 tests, direct `prisma generate` plus `next build` passed on Next.js `16.2.6`, and `npm audit --audit-level=moderate` still reports the known nested Next/PostCSS moderate advisory. Supabase CLI was unavailable on PATH, so migration creation used a committed reviewed SQL fallback and no database migration was applied.
 - Latest verification after the Media Generation & Asset Pipeline layer: direct `eslint .` passed, direct `tsc --noEmit` passed, direct `tsx --test "src/**/*.test.ts"` passed with 80 tests, direct `prisma generate` plus `next build` passed on Next.js `16.2.6`, and `npm audit --audit-level=moderate` still reports the known nested Next/PostCSS moderate advisory.
 - Latest verification after the Platform Operations & Publishing Infrastructure layer: direct `eslint .` passed, direct `tsc --noEmit` passed, direct `tsx --test "src/**/*.test.ts"` passed with 88 tests, direct `prisma generate` plus `next build` passed on Next.js `16.2.6`, and `npm audit --audit-level=moderate` still reports the known nested Next/PostCSS moderate advisory.
+- Latest verification after the Governance Approval & Safety Control layer: direct `eslint .` passed, direct `tsc --noEmit` passed, direct `tsx --test "src/**/*.test.ts"` passed with 97 tests, direct `prisma generate` plus `next build` passed on Next.js `16.2.6`, and `npm audit --audit-level=moderate` still reports the known nested Next/PostCSS moderate advisory.
 - Added database-backed pipeline and library pages using existing Supabase records.
 - Added database-backed platforms and tools pages using existing Supabase records and runtime integration status.
 - Added database-backed notifications, analytics, errors, workflows, and upgrades pages using existing Supabase records.
@@ -420,6 +426,7 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 - Media APIs are mock-safe by default; ComfyUI, FFmpeg, local worker rendering, GPU execution, binary storage writes, and public publishing are blocked.
 - Platform Operations APIs are mock-safe by default; YouTube, Instagram, Threads, TikTok placeholder, LinkedIn, and X/Twitter account access, scheduling, public posting, analytics API reads, scraping, n8n execution, monetization monitoring, and platform automation are blocked.
 - TikTok is infrastructure-only and blocked as an India dependency. X/Twitter and TikTok are JSON metadata in platform operations only because the current Prisma `PlatformName` enum does not include them.
+- Governance APIs are mock-safe by default; policy decisions, approval actions, and sandbox simulations do not activate providers, publish, run n8n, access accounts, spend money, render media, or execute live workers.
 - CrewAI is represented by a TypeScript coordination plan; a live Python CrewAI runtime is not connected.
 - LangGraph currently runs dry-run planning and approval checkpoints only.
 - Mini agent chat is a mock UI shell.
@@ -448,10 +455,10 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
 ## Safe To Continue From Another Account
 
-Yes. The repo is safe to continue from this checkpoint after this checkpoint commit is pushed. The latest Platform Operations & Publishing Infrastructure slice has been verified locally, no production deployment or credential change was performed in this slice, and no feature files are half-edited.
+Yes after this checkpoint commit is pushed. The Governance Approval & Safety Control slice has full verification passing, no production deployment or credential change was performed in this slice, and no feature files are half-edited.
 
 ## Next Recommended Command
 
 ```text
-Read README, AGENTS.md, root planning docs, and checkpoint docs from GitHub branch `build/phase-0-foundation`; run lint/typecheck/test/build if needed; then continue account cleanup after the human provides/approves the needed account changes, live-test Google Drive after env setup, or continue n8n embed/webhook setup, OpenAI paid-tool approval, media worker setup, platform-ops read models, posting package polish, service-backed mock APIs, or role-aware UI/tests. All required authenticated pages are route-specific; provider setup panels, provider approval requests, Google Drive adapter, metadata-only fallback, service foundations, manual posting package generation/download, safe mock-agent draft creation, and mock-safe platform operations are verified. Do not put test account passwords or real secrets into repo files.
+Read README, AGENTS.md, root planning docs, and checkpoint docs from GitHub branch `build/phase-0-foundation`; run lint/typecheck/test/build if needed; then continue account cleanup after the human provides/approves the needed account changes, live-test Google Drive after env setup, or continue n8n embed/webhook setup, OpenAI paid-tool approval, media worker setup, governance read models, platform-ops read models, posting package polish, service-backed mock APIs, or role-aware UI/tests. All required authenticated pages are route-specific; provider setup panels, provider approval requests, Google Drive adapter, metadata-only fallback, service foundations, manual posting package generation/download, safe mock-agent draft creation, mock-safe platform operations, and mock-safe governance controls are verified. Do not put test account passwords or real secrets into repo files.
 ```

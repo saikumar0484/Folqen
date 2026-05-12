@@ -77,6 +77,16 @@ These command-center routes are API-ready mock frontend surfaces. They do not en
 | `POST /api/platform-ops/retry` | Plan failed publishing/upload retry recovery | Admin/operator, no platform API call |
 | `POST /api/platform-ops/analytics/collect` | Plan analytics ingestion and engagement metrics linkage | Admin/operator, no scraping or account read |
 
+## Governance API Routes
+
+| Route | Purpose | Current State |
+| --- | --- | --- |
+| `GET /api/governance/overview` | Governance dashboard, approval queue, policy summary, role matrix, cost controls, provider governance, audit, and sandbox status | Mock-safe backend |
+| `POST /api/governance/policy/evaluate` | Evaluate execution policy before risky actions | Admin/operator, dry-run policy decision |
+| `POST /api/governance/approvals/request` | Request human approval for risky action checkpoints | Admin/operator, creates approval/audit/event rows |
+| `POST /api/governance/approvals/action` | Approve, reject, escalate, retry, or revoke governance approvals | Admin/operator, no live execution |
+| `POST /api/governance/sandbox` | Queue isolated dry-run provider/workflow simulation | Admin/operator, mock-safe only |
+
 ## MVP Routes
 
 | Route | Purpose | Current State |
