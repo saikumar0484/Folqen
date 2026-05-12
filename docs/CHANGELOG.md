@@ -1,5 +1,30 @@
 # Changelog
 
+## May 12, 2026 - Platform Operations and Publishing Infrastructure layer
+
+### Added
+
+- Added `src/lib/platform-ops/*` with platform registry, publishing workflow registry, provider guards, LangGraph dry-run distribution flow, platform operations service, dashboard read model, access helpers, and tests.
+- Added YouTube, Instagram, Threads, TikTok placeholder, LinkedIn, and X/Twitter platform operation infrastructure while keeping TikTok blocked as an India dependency.
+- Added `folqen.publishing`, `folqen.scheduling`, and `folqen.publishing.retry` to the existing BullMQ orchestration queue registry.
+- Added protected `/api/platform-ops/overview`, `/api/platform-ops/deployments`, `/api/platform-ops/adapt`, `/api/platform-ops/schedule`, `/api/platform-ops/distribute`, `/api/platform-ops/retry`, and `/api/platform-ops/analytics/collect`.
+- Added a Platform Operations Department panel to `/platforms` with workflow runner, provider status, distribution tracking, deployment registry, failed retry planning, analytics ingestion planning, and monetization/policy watch.
+- Added `docs/PLATFORM_OPERATIONS_ARCHITECTURE.md`.
+
+### Safety
+
+- No schema migration was added; platform operations persist through existing `WorkflowRun`, `AgentTask`, `EventLog`, `AuditLog`, and `AnalyticsRecord` models.
+- No real platform account access, credential usage, n8n execution, browser automation, scraping, scheduling, analytics API read, public posting, paid API call, or monetization account action was enabled.
+- TikTok and X/Twitter are handled as typed platform-operations registry values and JSON metadata only because the current Prisma `PlatformName` enum does not include them.
+
+### Verification
+
+- Direct local `eslint .`: passed.
+- Direct local `tsc --noEmit`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 88 tests.
+- Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`.
+- `npm audit --audit-level=moderate`: still reports the known nested PostCSS moderate advisory under Next; `npm audit fix --force` would install a breaking Next path and was not run.
+
 ## May 12, 2026 - Media Generation and Asset Pipeline layer
 
 ### Added

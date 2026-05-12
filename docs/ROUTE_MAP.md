@@ -65,6 +65,18 @@ These command-center routes are API-ready mock frontend surfaces. They do not en
 | `POST /api/media/render` | Queue a rendering workflow as a dry-run FFmpeg/media-worker plan | Admin/operator, no FFmpeg execution |
 | `POST /api/media/retry` | Plan failed render retry and recovery logs | Admin/operator, no live rendering |
 
+## Platform Operations API Routes
+
+| Route | Purpose | Current State |
+| --- | --- | --- |
+| `GET /api/platform-ops/overview` | Platform operations dashboard, provider readiness, workflows, deployments, analytics, and monetization hooks | Mock-safe backend |
+| `GET /api/platform-ops/deployments` | Content deployment registry and failed publishing recovery read model | Existing-model read model plus in-memory dry runs |
+| `POST /api/platform-ops/adapt` | Adapt title, caption, hashtags, aspect ratio, metadata, and template per platform | Admin/operator, dry-run only |
+| `POST /api/platform-ops/schedule` | Plan scheduled publishing queue entries and approval checkpoint | Admin/operator, no public posting |
+| `POST /api/platform-ops/distribute` | Plan multi-platform distribution across YouTube, Instagram, Threads, TikTok placeholder, LinkedIn, and X/Twitter | Admin/operator, no account automation |
+| `POST /api/platform-ops/retry` | Plan failed publishing/upload retry recovery | Admin/operator, no platform API call |
+| `POST /api/platform-ops/analytics/collect` | Plan analytics ingestion and engagement metrics linkage | Admin/operator, no scraping or account read |
+
 ## MVP Routes
 
 | Route | Purpose | Current State |

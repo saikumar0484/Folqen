@@ -2,6 +2,30 @@
 
 ## Current Risks
 
+### Platform operations mistaken for real publishing
+
+- Risk: The Platform Operations Department can look like a real publishing console, so a user may think posts were scheduled, uploaded, or published.
+- Prevention: API responses, provider statuses, UI badges, logs, and docs label the layer as `Mock`, `Not connected`, `Needs approval`, or `Blocked`; all deployment plans state no account, credential, browser automation, scraping, or platform API call occurred.
+- Verification: Focused platform-ops typecheck and tests verified live publishing remains disabled and queue jobs are mock metadata by default.
+- Rollback: Revert the `src/lib/platform-ops`, `/api/platform-ops`, Platforms panel, queue additions, and platform operations docs if any UI copy appears to claim real posting.
+- Human approval trigger: OAuth setup, platform credentials, public publishing, scheduling against real accounts, analytics API reads, browser automation, scraping, monetization access, or any paid platform API usage.
+
+### Requested TikTok infrastructure conflicts with India-first rules
+
+- Risk: The user requested TikTok infrastructure, but Folqen's standing India rules say not to depend on TikTok.
+- Prevention: TikTok is represented as a requested placeholder platform only, with manual fallback, blocked policy status, and no database enum migration.
+- Verification: Tests assert TikTok distribution returns a blocked result and logs that it is not part of the India-first dependency plan.
+- Rollback: Remove TikTok from the Platform Operations registry if the product decision changes back to strictly India-primary platforms only.
+- Human approval trigger: Any attempt to make TikTok a real connected/live platform or strategic dependency.
+
+### Platform enum mismatch for X/Twitter and TikTok
+
+- Risk: Current Prisma `PlatformName` does not include `TIKTOK` or `X_TWITTER`, so writing those as enum values would break persistence.
+- Prevention: Platform Operations uses an independent typed registry and stores unsupported platform data inside JSON output/metadata only; no schema migration was added.
+- Verification: Typecheck and focused platform-ops tests passed with metadata-only platform operations.
+- Rollback: If future schema work is approved, add enum values through reviewed migration; otherwise keep unsupported platforms as JSON-only placeholders.
+- Human approval trigger: Any production database migration that changes platform enums or connected platform records.
+
 ### Media generation pipelines can be mistaken for live rendering
 
 - Risk: The Content Studio media panel, workflow registry, asset registry, render queue, and retry logs can look like real ComfyUI/FFmpeg rendering even though the layer is dry-run only.

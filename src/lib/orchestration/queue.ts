@@ -10,6 +10,9 @@ export const ORCHESTRATION_QUEUES = {
   incidents: "folqen.incidents",
   memory: "folqen.memory",
   media: "folqen.media",
+  publishing: "folqen.publishing",
+  scheduling: "folqen.scheduling",
+  publishingRetry: "folqen.publishing.retry",
   monitoring: "folqen.monitoring",
 } as const;
 

@@ -2,13 +2,15 @@ import { Globe2, LockKeyhole, PackageCheck, ShieldCheck } from "lucide-react";
 import { ConnectionWizard } from "@/components/app/connection-wizard";
 import { PageHeader } from "@/components/app/page-header";
 import { StatCard } from "@/components/app/stat-card";
+import { PlatformOperationsPanel } from "@/components/command-center/platform-operations-panel";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { routeById } from "@/lib/app-routes";
 import type { getPlatformsData } from "@/lib/platforms-data";
+import type { PlatformOpsDashboard } from "@/lib/platform-ops/types";
 
 type PlatformsData = Awaited<ReturnType<typeof getPlatformsData>>;
 
-export function PlatformsScreen({ data }: { data: PlatformsData }) {
+export function PlatformsScreen({ data, platformOps }: { data: PlatformsData; platformOps: PlatformOpsDashboard }) {
   return (
     <div className="space-y-5 pb-24">
       <PageHeader route={routeById.platforms} />
@@ -106,6 +108,8 @@ export function PlatformsScreen({ data }: { data: PlatformsData }) {
           </div>
         </aside>
       </section>
+
+      <PlatformOperationsPanel dashboard={platformOps} />
     </div>
   );
 }

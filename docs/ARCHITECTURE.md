@@ -8,6 +8,8 @@ For the institutional memory, reflection, experiment, prompt-versioning, and pgv
 
 For the creative production department, ComfyUI/FFmpeg-ready dry-run media workflows, render queue, asset registry, retry policy, and frontend media pipeline, read `docs/MEDIA_PIPELINE_ARCHITECTURE.md`.
 
+For the platform operations department, n8n-ready dry-run publishing workflows, scheduling queues, platform adaptation, distribution tracking, analytics ingestion, retry recovery, and monetization monitoring hooks, read `docs/PLATFORM_OPERATIONS_ARCHITECTURE.md`.
+
 ## Layers
 
 ```text
@@ -47,4 +49,4 @@ The UI does not call external tools directly. Pages call app services, services 
 
 ## Current Integration State
 
-All live integrations are intentionally `Not connected`. This includes YouTube, Instagram, Facebook, Snapchat, Threads, Substack, LinkedIn, Bluesky, Lemon8, Kick, n8n, ComfyUI, FFmpeg, TTS, browser automation, and analytics providers.
+All live integrations are intentionally `Not connected` or `Mock`. This includes YouTube, Instagram, Facebook, Snapchat, Threads, TikTok placeholder infrastructure, LinkedIn, X/Twitter, Substack, Bluesky, Lemon8, Kick, n8n, ComfyUI, FFmpeg, TTS, browser automation, and analytics providers.
