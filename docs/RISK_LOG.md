@@ -2,6 +2,22 @@
 
 ## Current Risks
 
+### Intelligence workflows can be mistaken for live research or paid AI
+
+- Risk: The Research and Content Department workflows produce convincing trend, competitor, hook, script, thumbnail, caption, and metadata outputs, so users may assume Folqen scraped the web, called OpenRouter/Gemini, or generated publish-ready content.
+- Prevention: The UI and API label execution as `Mock`; provider statuses are `Mock`, `Not connected`, or `Blocked`; outputs state that no public scraping, paid AI, rendering, or publishing occurred.
+- Verification: Intelligence tests cover all 11 agents, all 8 workflows, default provider blocking, queue metadata, memory hooks, approval checkpoints, and content package no-publishing/no-paid-execution behavior.
+- Rollback: Revert `src/lib/intelligence`, `/api/intelligence`, and the Research/Content page panel additions if the layer needs to be redesigned.
+- Human approval trigger: Any live public source ingestion, scraping, OpenRouter/Gemini execution, paid tool call, content rendering, platform posting, or public publishing.
+
+### Intelligence persistence uses existing tables and JSON payloads
+
+- Risk: Using existing `WorkflowRun`, `AgentTask`, `EventLog`, `AnalyticsRecord`, `ContentItem`, and `Asset` metadata avoids migration risk but can make future analytics less normalized.
+- Prevention: Outputs include typed payloads and workflow ids so future migrations can backfill normalized tables if needed.
+- Verification: No schema migration was added; lint, typecheck, tests, and build must pass after the slice.
+- Rollback: Delete intelligence-created run/content rows if needed; no schema rollback is required.
+- Human approval trigger: Adding dedicated intelligence tables, migrations, grants, RLS policies, or Supabase API exposure changes.
+
 ### Orchestration infrastructure can be mistaken for live autonomous execution
 
 - Risk: The new agent registry, LangGraph dry-run, CrewAI-compatible plan, event bus, Redis/BullMQ adapters, APIs, and worker entrypoint may look like fully live autonomous execution.

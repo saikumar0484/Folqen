@@ -1,5 +1,30 @@
 # Changelog
 
+## May 12, 2026 - Research and Content intelligence layer
+
+### Added
+
+- Added the first operational intelligence backend for the Research Department and Content Department.
+- Added 11 typed specialist agents, covering trend research, competitor analysis, viral opportunity, audience insight, platform intelligence, topic selection, hooks, scripts, thumbnails, captions, and metadata.
+- Added 8 LangGraph dry-run intelligence workflows with deterministic mock-safe outputs, queue integration, approval checkpoints, analytics/event persistence, and organizational memory hooks.
+- Added mock-safe AI provider abstraction for Mock, OpenRouter, and Gemini; OpenRouter/Gemini remain blocked/not connected by default.
+- Added protected `/api/intelligence/*` routes for departments, runs, research workflows, content workflows, and draft package creation.
+- Wired `/research-intelligence` and `/content-studio` to live mock-safe department summaries and run controls while preserving the command-center UI.
+
+### Safety
+
+- No schema migration was added.
+- No public scraping, RSS ingestion, social API call, paid AI call, media render, platform posting, or public publishing was enabled.
+- Content package generation creates review-gated drafts only when the database is available; otherwise it returns metadata-only mock-safe output.
+
+### Verification
+
+- Direct local `eslint .`: passed.
+- Direct local `tsc --noEmit`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 63 tests.
+- Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`.
+- `npm audit --audit-level=moderate`: still reports the known nested PostCSS moderate advisory under Next; `npm audit fix --force` would install a breaking Next path and was not run.
+
 ## May 12, 2026 - Multi-agent orchestration infrastructure
 
 ### Added

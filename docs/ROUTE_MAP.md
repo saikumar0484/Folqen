@@ -34,6 +34,16 @@ These command-center routes are API-ready mock frontend surfaces. They do not en
 | `POST /api/orchestration/incidents` | Report an incident and queue recovery planning | Mock-safe recovery |
 | `worker:orchestration` | BullMQ worker entrypoint | Disabled unless Redis live mode and worker flag are enabled |
 
+## Intelligence API Routes
+
+| Route | Purpose | Current State |
+| --- | --- | --- |
+| `GET /api/intelligence/departments` | Research/Content departments, agents, workflows, providers, and recent runs | Mock-safe backend |
+| `GET /api/intelligence/runs` | Recent persisted intelligence workflow runs | Existing-model read model |
+| `POST /api/intelligence/research/run` | Run trend, competitor, or viral opportunity research workflow | Mock-safe, approval-gated |
+| `POST /api/intelligence/content/run` | Run topic, hook, script, thumbnail, or metadata workflow | Mock-safe, approval-gated |
+| `POST /api/intelligence/content/package` | Create a review-gated draft content package from the intelligence layer | Mock-safe, no publishing |
+
 ## MVP Routes
 
 | Route | Purpose | Current State |

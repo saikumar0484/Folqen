@@ -2,11 +2,11 @@
 
 ## Current Phase
 
-Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, all required authenticated routes now have route-specific surfaces, manual posting package detail/download is deployed, file registration is deployed, safe mock-agent draft creation is deployed, provider setup surfaces for Google Drive, OpenAI, n8n, and media tools are deployed, admin-only provider setup approval requests are implemented, the target autonomous organization architecture is documented, the operational command center frontend is implemented, and the mock-safe multi-agent orchestration infrastructure is implemented.
+Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, all required authenticated routes now have route-specific surfaces, manual posting package detail/download is deployed, file registration is deployed, safe mock-agent draft creation is deployed, provider setup surfaces for Google Drive, OpenAI, n8n, and media tools are deployed, admin-only provider setup approval requests are implemented, the target autonomous organization architecture is documented, the operational command center frontend is implemented, the mock-safe multi-agent orchestration infrastructure is implemented, and the first Research + Content intelligence layer is implemented.
 
 ## Current Save Point
 
-May 12, 2026. Latest completed slice is the multi-agent orchestration infrastructure update. Folqen now has typed orchestration services, a real agent registry shape, required departments, LangGraph dry-run workflow planning, CrewAI-compatible coordination planning, Redis/BullMQ adapters, memory hooks, incident recovery, monitoring hooks, protected orchestration APIs, and a disabled-by-default worker entrypoint. No credentials, database schema, production env, paid tools, provider activation, public publishing, n8n execution, or media rendering was enabled.
+May 12, 2026. Latest completed slice is the Research + Content intelligence layer update. Folqen now has typed Research/Content agents, 8 LangGraph dry-run intelligence workflows, mock-safe OpenRouter/Gemini provider placeholders, protected `/api/intelligence/*` routes, existing-model persistence, and live mock-safe controls on `/research-intelligence` and `/content-studio`. No credentials, database schema, production env, paid tools, provider activation, public scraping, public publishing, n8n execution, or media rendering was enabled.
 
 ## Branch
 
@@ -16,6 +16,10 @@ May 12, 2026. Latest completed slice is the multi-agent orchestration infrastruc
 
 - Added `docs/AUTONOMOUS_ORGANIZATION_ARCHITECTURE.md`.
 - Added `docs/ORCHESTRATION_ARCHITECTURE.md`.
+- Added `src/lib/intelligence/*` for Research and Content agents, workflows, provider guards, persistence, services, handler access checks, and tests.
+- Added `/api/intelligence/departments`, `/api/intelligence/runs`, `/api/intelligence/research/run`, `/api/intelligence/content/run`, and `/api/intelligence/content/package`.
+- Added live mock-safe run panels to `/research-intelligence` and `/content-studio`.
+- Added `OPENROUTER_API_KEY` and `GEMINI_API_KEY` placeholders to env validation/example only; no real keys were added.
 - Added `@langchain/langgraph`, `bullmq`, and `ioredis`.
 - Added Redis to Docker Compose and orchestration environment defaults.
 - Added `src/lib/orchestration/*` for registry, service, event bus, Redis, queues, LangGraph flow, CrewAI-compatible coordination, memory hooks, monitoring, incidents, and tests.
@@ -35,7 +39,7 @@ May 12, 2026. Latest completed slice is the multi-agent orchestration infrastruc
 - Documented that the user requested Next.js 15 earlier but the current repo is now verified on Next.js `16.2.6`; future downgrade requires explicit human approval.
 - Attempted Supabase MCP docs search for RLS/security context, but the MCP OAuth token was revoked in this session.
 - Ran verification through direct local binaries because `npm` was not available on PATH: `eslint .`, `tsc --noEmit`, `tsx --test "src/**/*.test.ts"`, `prisma generate`, and `next build` all passed.
-- Latest verification after the orchestration infrastructure: direct `eslint .` passed, direct `tsc --noEmit` passed, direct `tsx --test "src/**/*.test.ts"` passed with 56 tests, direct `prisma generate` plus `next build` passed on Next.js `16.2.6`, and `npm audit --audit-level=moderate` still reports only the known nested Next/PostCSS moderate advisory.
+- Latest verification after the Research + Content intelligence layer: direct `eslint .` passed, direct `tsc --noEmit` passed, direct `tsx --test "src/**/*.test.ts"` passed with 63 tests, direct `prisma generate` plus `next build` passed on Next.js `16.2.6`, and `npm audit --audit-level=moderate` still reports only the known nested Next/PostCSS moderate advisory.
 - Added database-backed pipeline and library pages using existing Supabase records.
 - Added database-backed platforms and tools pages using existing Supabase records and runtime integration status.
 - Added database-backed notifications, analytics, errors, workflows, and upgrades pages using existing Supabase records.
@@ -391,6 +395,7 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 - All required authenticated route surfaces are now route-specific. Many are real/read-only from Supabase. Manual posting package generation/download, metadata-only file registration, safe draft content creation, provider setup surfaces, and provider setup approval requests exist, but binary object storage, real providers, publishing, and automation are still mock/placeholder.
 - All integrations are `Not connected`.
 - Orchestration APIs and workers are mock-safe by default; Redis/BullMQ live mode is not active unless explicitly configured.
+- Research/Content intelligence APIs are mock-safe by default; OpenRouter/Gemini are not connected or blocked and no live source ingestion exists.
 - CrewAI is represented by a TypeScript coordination plan; a live Python CrewAI runtime is not connected.
 - LangGraph currently runs dry-run planning and approval checkpoints only.
 - Mini agent chat is a mock UI shell.

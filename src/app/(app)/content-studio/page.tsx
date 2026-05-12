@@ -1,6 +1,25 @@
 import { CommandCenterPage } from "@/components/command-center/command-center-page";
+import { IntelligenceRunPanel } from "@/components/command-center/intelligence-run-panel";
 import { getCommandCenterView } from "@/lib/command-center/mock-service";
+import { getIntelligenceDashboard } from "@/lib/intelligence/service";
 
-export default function ContentStudioPage() {
-  return <CommandCenterPage view={getCommandCenterView("content-studio")} />;
+export const dynamic = "force-dynamic";
+
+export default async function ContentStudioPage() {
+  const intelligence = await getIntelligenceDashboard("content");
+  const department = intelligence.departments[0];
+
+  return (
+    <div className="space-y-5">
+      <CommandCenterPage view={getCommandCenterView("content-studio")} />
+      <IntelligenceRunPanel
+        departmentId="content"
+        title="Content Department workflow runner"
+        description="Run topic, hook, script, thumbnail, caption, and metadata workflows. Draft packages remain review-only."
+        workflows={department.workflows}
+        agents={department.agents}
+        recentRuns={intelligence.runs.filter((run) => department.workflows.some((workflow) => workflow.kind === run.workflowId))}
+      />
+    </div>
+  );
 }

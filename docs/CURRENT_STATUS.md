@@ -2,13 +2,14 @@
 
 ## Phase
 
-Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, every required authenticated route now has a route-specific or database-backed surface, the autonomous organization target architecture is documented, the operational command center frontend is implemented, and the mock-safe multi-agent orchestration infrastructure is implemented on branch `build/phase-0-foundation`.
+Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, every required authenticated route now has a route-specific or database-backed surface, the autonomous organization target architecture is documented, the operational command center frontend is implemented, the mock-safe multi-agent orchestration infrastructure is implemented, and the first Research + Content operational intelligence layer is implemented on branch `build/phase-0-foundation`.
 
-Latest save point: May 12, 2026, after building the multi-agent orchestration infrastructure. This was a backend/mock-safe implementation phase; no credentials, database schema, production settings, paid tools, provider connections, public publishing, media rendering, or n8n execution were enabled. Redis/BullMQ are configured for optional local/live queue testing but default to mock mode.
+Latest save point: May 12, 2026, after building the Research + Content intelligence layer. This was a backend/UI mock-safe implementation phase; no credentials, database schema, production settings, paid tools, provider connections, public scraping, public publishing, media rendering, or n8n execution were enabled.
 
 ## Completed Work
 
 - Added the full target architecture for Folqen as an autonomous AI creator organization operating system, including agent hierarchy, orchestration, services, database direction, provider strategy, communications, deployment, security, recovery, analytics, approvals, and phased roadmap.
+- Added the first Research + Content intelligence layer with 11 specialist agents, 8 LangGraph dry-run workflows, mock-safe provider abstraction, protected `/api/intelligence/*` routes, persistence through existing models, and live controls on `/research-intelligence` and `/content-studio`.
 - Added the real Folqen orchestration layer shape with typed agent registry, hierarchy/departments, task orchestration service, event bus, Redis/BullMQ adapters, LangGraph dry-run flow, CrewAI-compatible coordination plan, incident recovery, monitoring hooks, memory hooks, protected APIs, and a worker entrypoint.
 - Added Redis to Docker Compose and orchestration environment defaults while keeping execution mock-safe by default.
 - Added `docs/ORCHESTRATION_ARCHITECTURE.md`.
@@ -104,7 +105,7 @@ Latest save point: May 12, 2026, after building the multi-agent orchestration in
 
 ## App Status
 
-The app installs, lints, typechecks, tests, validates Prisma schema, builds successfully, deploys to Vercel, connects to Supabase, supports seeded database-backed login, has route-specific authenticated pages for dashboard, agents, departments, workflows, research intelligence, content studio, analytics, organizational memory, automations, incident center, infrastructure, settings, and the earlier MVP surfaces, and now exposes mock-safe orchestration APIs.
+The app installs, lints, typechecks, tests, validates Prisma schema, builds successfully, deploys to Vercel, connects to Supabase, supports seeded database-backed login, has route-specific authenticated pages for dashboard, agents, departments, workflows, research intelligence, content studio, analytics, organizational memory, automations, incident center, infrastructure, settings, and the earlier MVP surfaces, and now exposes mock-safe orchestration and intelligence APIs.
 
 ## Safety Status
 
@@ -116,6 +117,7 @@ The app installs, lints, typechecks, tests, validates Prisma schema, builds succ
 - Vercel production `DATABASE_URL` now uses the Supabase transaction pooler endpoint for the linked project; the secret value is not stored in git.
 - No n8n, platform, or paid-tool credentials were added.
 - Orchestration worker execution is disabled unless Redis live mode and the worker flag are explicitly enabled.
+- Research and Content intelligence workflows use manual inputs and the mock provider only by default.
 - Production `AUTH_SECRET` is configured in Vercel; its value was never printed or committed.
 - All integrations remain `Not connected` or `Mock`.
 - Database is the only live backend integration.
@@ -531,12 +533,25 @@ Latest May 12, 2026 orchestration infrastructure update:
 - Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`.
 - `npm audit --audit-level=moderate`: still reports the known nested PostCSS moderate advisory under Next; no unsafe forced fix was applied.
 
+Latest May 12, 2026 Research + Content intelligence update:
+
+- Added `src/lib/intelligence/*` for agents, workflows, provider guards, persistence, service APIs, and tests.
+- Added `/api/intelligence/departments`, `/api/intelligence/runs`, `/api/intelligence/research/run`, `/api/intelligence/content/run`, and `/api/intelligence/content/package`.
+- Added live mock-safe run panels to `/research-intelligence` and `/content-studio`.
+- Direct local `eslint .`: passed.
+- Direct local `tsc --noEmit`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 63 tests.
+- Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`.
+- `npm audit --audit-level=moderate`: still reports the known nested PostCSS moderate advisory under Next; no unsafe forced fix was applied.
+
 ## Known Issues
 
 - Supabase MCP documentation search failed in this session because the connected OAuth token was revoked, so Supabase-specific security notes in the architecture document rely on existing project practice and official-doc fallback knowledge rather than MCP snippets.
 - `npm` was not available on PATH in this shell session; package changes used a working npm CLI through `node "C:\Users\208X1\Documents\New project 3\.tools\package\bin\npm-cli.js"` and verification used direct `node_modules/.bin` executables.
 - Local authenticated browser smoke was blocked because the dev server did not have `AUTH_SECRET`/database env configured. React server-render smoke covered all 12 command-center views, and production build route output confirmed the new routes compile.
 - Orchestration APIs are backend-ready but the command-center UI still reads typed mock command-center data; connecting UI panels to the new APIs is the next safe slice.
+- Research Intelligence and Content Studio now have live mock-safe controls, but the main command-center renderer still includes baseline mock telemetry around those controls.
+- OpenRouter and Gemini are placeholder intelligence providers only; real calls remain blocked until credentials and paid-tool approval exist.
 - Redis/BullMQ are optional and not active by default. Local live queue testing needs `REDIS_URL`, `ORCHESTRATION_EXECUTION_MODE=live`, and `ORCHESTRATION_WORKER_ENABLED=true`.
 
 - `npm audit` still reports two moderate advisories through Next's bundled PostCSS dependency even after upgrading to Next `16.2.6`. npm recommends `npm audit fix --force`, but that would install a breaking Next path and is not safe. Track and resolve when Next ships a compatible patched dependency.
@@ -550,4 +565,4 @@ Latest May 12, 2026 orchestration infrastructure update:
 
 ## Safe To Stop
 
-Yes after this checkpoint commit is pushed. The orchestration infrastructure is implemented, verification passed, the repo is safe to continue, and no source files are left half-edited.
+Yes after this checkpoint commit is pushed. The intelligence layer is implemented, verification passed, the repo is safe to continue, and no source files are left half-edited.

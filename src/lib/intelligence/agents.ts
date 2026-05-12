@@ -1,0 +1,210 @@
+import type { IntelligenceAgentDefinition, IntelligenceDepartmentSummary, IntelligenceWorkflowDefinition } from "./types";
+
+export const intelligenceAgents: IntelligenceAgentDefinition[] = [
+  {
+    id: "trend-research-agent",
+    name: "Trend Research Agent",
+    departmentId: "research",
+    role: "Discovers India-relevant trend signals from manual seeds and saved references.",
+    responsibilities: ["discover trends", "cluster topics", "summarize research signals"],
+    tools: ["manual-signal-intake", "topic-clustering", "source-note-builder"],
+    status: "Mock",
+    autonomy: "Can draft research briefs only.",
+  },
+  {
+    id: "competitor-analysis-agent",
+    name: "Competitor Analysis Agent",
+    departmentId: "research",
+    role: "Tracks competitor creator patterns from manually supplied creator names and URLs.",
+    responsibilities: ["monitor creators", "analyze viral content", "compare positioning"],
+    tools: ["competitor-note-matrix", "format-pattern-scoring"],
+    status: "Mock",
+    autonomy: "Can produce advisory competitor briefs.",
+  },
+  {
+    id: "viral-opportunity-agent",
+    name: "Viral Opportunity Agent",
+    departmentId: "research",
+    role: "Ranks folklore opportunities by freshness, platform fit, and risk.",
+    responsibilities: ["identify opportunities", "rank topic upside", "flag risk"],
+    tools: ["opportunity-ranker", "risk-scorer"],
+    status: "Mock",
+    autonomy: "Can rank opportunities; cannot publish or spend.",
+  },
+  {
+    id: "audience-insight-agent",
+    name: "Audience Insight Agent",
+    departmentId: "research",
+    role: "Turns audience notes into viewer intent, retention, and comment prompts.",
+    responsibilities: ["analyze audience behavior", "map viewer curiosity", "suggest audience questions"],
+    tools: ["audience-note-parser", "retention-hypothesis-builder"],
+    status: "Mock",
+    autonomy: "Can draft audience assumptions only.",
+  },
+  {
+    id: "platform-intelligence-agent",
+    name: "Platform Intelligence Agent",
+    departmentId: "research",
+    role: "Adapts topic strategy for YouTube, Instagram, Facebook, Snapchat, and Threads.",
+    responsibilities: ["research platform patterns", "score platform fit", "recommend format adaptations"],
+    tools: ["platform-fit-matrix", "metadata-pattern-guide"],
+    status: "Mock",
+    autonomy: "Can prepare platform recommendations; APIs remain not connected.",
+  },
+  {
+    id: "topic-selection-agent",
+    name: "Topic Selection Agent",
+    departmentId: "content",
+    role: "Selects the strongest approved topic candidates for draft packages.",
+    responsibilities: ["select best topics", "balance risk and brand fit", "prepare content angles"],
+    tools: ["topic-ranker", "brand-fit-checker"],
+    status: "Mock",
+    autonomy: "Can select draft topics only.",
+  },
+  {
+    id: "hook-generation-agent",
+    name: "Hook Generation Agent",
+    departmentId: "content",
+    role: "Generates retention-first hooks for mystery and folklore shorts.",
+    responsibilities: ["generate viral hooks", "optimize opening beats", "produce variants"],
+    tools: ["hook-lab", "curiosity-gap-checker"],
+    status: "Mock",
+    autonomy: "Can draft hook variants; review remains required.",
+  },
+  {
+    id: "script-generation-agent",
+    name: "Script Generation Agent",
+    departmentId: "content",
+    role: "Creates safe draft scripts that separate folklore from verified facts.",
+    responsibilities: ["create scripts", "structure story beats", "add safety notes"],
+    tools: ["script-drafter", "claim-caution-template"],
+    status: "Mock",
+    autonomy: "Can draft scripts only.",
+  },
+  {
+    id: "thumbnail-strategy-agent",
+    name: "Thumbnail Strategy Agent",
+    departmentId: "content",
+    role: "Plans thumbnail concepts without generating external media.",
+    responsibilities: ["generate thumbnail plans", "define visual hierarchy", "suggest title overlays"],
+    tools: ["thumbnail-brief-builder", "visual-risk-checker"],
+    status: "Mock",
+    autonomy: "Can draft thumbnail plans; image generation remains blocked.",
+  },
+  {
+    id: "caption-generation-agent",
+    name: "Caption Generation Agent",
+    departmentId: "content",
+    role: "Creates platform-aware captions and comment prompts.",
+    responsibilities: ["create captions", "adapt content per platform", "write engagement prompts"],
+    tools: ["caption-builder", "platform-tone-adapter"],
+    status: "Mock",
+    autonomy: "Can draft captions only.",
+  },
+  {
+    id: "metadata-optimization-agent",
+    name: "Metadata Optimization Agent",
+    departmentId: "content",
+    role: "Optimizes titles, descriptions, tags, and hashtags for manual posting packages.",
+    responsibilities: ["optimize metadata", "generate hashtags", "adapt metadata per platform"],
+    tools: ["metadata-builder", "hashtag-ranker"],
+    status: "Mock",
+    autonomy: "Can draft metadata; public use requires review.",
+  },
+];
+
+export const intelligenceWorkflows: IntelligenceWorkflowDefinition[] = [
+  {
+    kind: "trend_discovery",
+    name: "Trend Discovery Workflow",
+    departmentId: "research",
+    ownerAgentIds: ["trend-research-agent", "platform-intelligence-agent"],
+    description: "Turns manual topics and references into ranked trend signals.",
+    approvalReason: "Trend research is advisory and can run without external execution.",
+  },
+  {
+    kind: "competitor_analysis",
+    name: "Competitor Analysis Workflow",
+    departmentId: "research",
+    ownerAgentIds: ["competitor-analysis-agent", "platform-intelligence-agent"],
+    description: "Summarizes manually supplied competitor creators and content references.",
+    approvalReason: "Competitor monitoring uses manual inputs only in this slice.",
+  },
+  {
+    kind: "viral_opportunity",
+    name: "Viral Opportunity Workflow",
+    departmentId: "research",
+    ownerAgentIds: ["viral-opportunity-agent", "audience-insight-agent"],
+    description: "Ranks topic opportunities by brand fit, audience curiosity, and platform fit.",
+    approvalReason: "Opportunity ranking can influence strategy and remains advisory.",
+  },
+  {
+    kind: "topic_selection",
+    name: "Topic Selection Workflow",
+    departmentId: "content",
+    ownerAgentIds: ["topic-selection-agent", "hook-generation-agent"],
+    description: "Selects top content angles from research and seed topics.",
+    approvalReason: "Selected topics become draft content only.",
+  },
+  {
+    kind: "hook_optimization",
+    name: "Hook Optimization Workflow",
+    departmentId: "content",
+    ownerAgentIds: ["hook-generation-agent", "audience-insight-agent"],
+    description: "Creates and ranks opening hooks for short-form mystery content.",
+    approvalReason: "Hooks require review before public use.",
+  },
+  {
+    kind: "script_generation",
+    name: "Script Generation Workflow",
+    departmentId: "content",
+    ownerAgentIds: ["script-generation-agent", "topic-selection-agent"],
+    description: "Generates a safe draft script package from selected topic seeds.",
+    approvalReason: "Draft scripts require human review, safety review, and copyright clearance.",
+  },
+  {
+    kind: "thumbnail_planning",
+    name: "Thumbnail Planning Workflow",
+    departmentId: "content",
+    ownerAgentIds: ["thumbnail-strategy-agent", "metadata-optimization-agent"],
+    description: "Creates thumbnail direction and visual text plans without generating images.",
+    approvalReason: "Thumbnail plans are advisory until reviewed.",
+  },
+  {
+    kind: "metadata_optimization",
+    name: "Metadata Optimization Workflow",
+    departmentId: "content",
+    ownerAgentIds: ["metadata-optimization-agent", "caption-generation-agent"],
+    description: "Creates platform-ready titles, descriptions, captions, tags, and hashtags.",
+    approvalReason: "Metadata can affect public distribution and requires review before posting.",
+  },
+];
+
+export function getIntelligenceAgents(departmentId?: "research" | "content") {
+  return departmentId ? intelligenceAgents.filter((agent) => agent.departmentId === departmentId) : intelligenceAgents;
+}
+
+export function getIntelligenceWorkflow(kind: string) {
+  return intelligenceWorkflows.find((workflow) => workflow.kind === kind);
+}
+
+export function getIntelligenceDepartments(): IntelligenceDepartmentSummary[] {
+  return [
+    {
+      id: "research",
+      name: "Research Department",
+      mission: "Discover trends, analyze competitors, rank opportunities, and translate audience/platform signals into strategy.",
+      agents: getIntelligenceAgents("research"),
+      workflows: intelligenceWorkflows.filter((workflow) => workflow.departmentId === "research"),
+      status: "Mock",
+    },
+    {
+      id: "content",
+      name: "Content Department",
+      mission: "Select topics, create hooks/scripts/captions/metadata, and prepare review-ready content packages.",
+      agents: getIntelligenceAgents("content"),
+      workflows: intelligenceWorkflows.filter((workflow) => workflow.departmentId === "content"),
+      status: "Mock",
+    },
+  ];
+}
