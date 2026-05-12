@@ -2,6 +2,22 @@
 
 ## Current Risks
 
+### Autonomous company scope can become unsafe automation
+
+- Risk: The expanded Folqen vision includes autonomous research, generation, scheduling, posting, optimization, retries, and self-improvement. If implemented without hard gates, the system could publish publicly, spend money, connect accounts, or modify itself too aggressively.
+- Prevention: Added `docs/AUTONOMOUS_ORGANIZATION_ARCHITECTURE.md` with explicit approval-gated autonomy, provider status honesty, event logging, publishing guards, paid-tool guards, self-improvement execution blocks, and manual posting package fallback.
+- Verification: Documentation-only architecture phase passed lint, typecheck, 50 tests, Prisma generate, and Next build through local binaries.
+- Rollback: Revert the new architecture document and `docs/ARCHITECTURE.md` pointer if the target vision is rejected, while leaving code and production state unchanged.
+- Human approval trigger: Any move from mock/manual architecture into live provider execution, public publishing, paid tools, real social OAuth, browser automation, production upgrades, or schema migrations.
+
+### Requested Next.js 15 conflicts with current Next.js 16 baseline
+
+- Risk: The human's new architecture request lists Next.js 15, but the repository currently uses Next.js `16.2.4` and has verified builds on that baseline. A downgrade could create dependency, ESLint, React, or deployment churn.
+- Prevention: The architecture document calls out the mismatch and instructs future work not to downgrade without explicit human approval.
+- Verification: Current Next.js `16.2.4` production build passed after the documentation update.
+- Rollback: If the human explicitly chooses Next.js 15, create a branch, downgrade dependencies deliberately, run full verification, and update checkpoint docs.
+- Human approval trigger: Any framework version downgrade or major dependency baseline change.
+
 ### In-app credential intake must not become unsafe account takeover
 
 - Risk: Users may paste raw social media passwords or assume saved credentials automatically connect/publish.

@@ -2,11 +2,11 @@
 
 ## Current Phase
 
-Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, all required authenticated routes now have route-specific surfaces, manual posting package detail/download is deployed, file registration is deployed, safe mock-agent draft creation is deployed, provider setup surfaces for Google Drive, OpenAI, n8n, and media tools are deployed, and admin-only provider setup approval requests are implemented.
+Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, all required authenticated routes now have route-specific surfaces, manual posting package detail/download is deployed, file registration is deployed, safe mock-agent draft creation is deployed, provider setup surfaces for Google Drive, OpenAI, n8n, and media tools are deployed, admin-only provider setup approval requests are implemented, and the target autonomous organization architecture is documented.
 
 ## Current Save Point
 
-May 7, 2026. Latest completed slice is visible UI hardening, mutation safety, and Vercel performance recovery. Vercel Functions now run in Seoul (`icn1`) near the Supabase database, health is `live`, and real Drive uploads are blocked until Google OAuth env values and a private folder id are configured.
+May 12, 2026. Latest completed slice is a documentation-only autonomous organization architecture update. `docs/AUTONOMOUS_ORGANIZATION_ARCHITECTURE.md` now defines the target Folqen system as an AI-native creator company OS with agent hierarchy, orchestration, event communication, database direction, providers, deployment, approvals, recovery, and roadmap. No code, credentials, database state, production env, paid tools, provider activation, or publishing settings were changed.
 
 ## Branch
 
@@ -14,6 +14,11 @@ May 7, 2026. Latest completed slice is visible UI hardening, mutation safety, an
 
 ## Completed Work
 
+- Added `docs/AUTONOMOUS_ORGANIZATION_ARCHITECTURE.md`.
+- Updated `docs/ARCHITECTURE.md` to reference the full target architecture.
+- Documented that the user requested Next.js 15 but the current repo is verified on Next.js `16.2.4`; future downgrade requires explicit human approval.
+- Attempted Supabase MCP docs search for RLS/security context, but the MCP OAuth token was revoked in this session.
+- Ran verification through direct local binaries because `npm` was not available on PATH: `eslint .`, `tsc --noEmit`, `tsx --test "src/**/*.test.ts"`, `prisma generate`, and `next build` all passed.
 - Added database-backed pipeline and library pages using existing Supabase records.
 - Added database-backed platforms and tools pages using existing Supabase records and runtime integration status.
 - Added database-backed notifications, analytics, errors, workflows, and upgrades pages using existing Supabase records.

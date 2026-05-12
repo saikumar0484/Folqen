@@ -1,5 +1,25 @@
 # Changelog
 
+## May 12, 2026 - Autonomous organization architecture
+
+### Added
+
+- Added `docs/AUTONOMOUS_ORGANIZATION_ARCHITECTURE.md` with the target Folqen design as an autonomous AI creator organization operating system.
+- Covered the agent hierarchy, workflow orchestration, communication architecture, database model direction, provider/service breakdown, frontend/backend architecture, deployment strategy, security guards, error recovery, analytics, approvals, and phased roadmap.
+
+### Changed
+
+- Updated `docs/ARCHITECTURE.md` to point future Codex runs to the full autonomous organization architecture document.
+- Documented the current stack mismatch decision: the user requested Next.js 15, while the repository currently runs Next.js `16.2.4`; do not downgrade without explicit human approval.
+
+### Verification
+
+- Direct local `eslint .`: passed.
+- Direct local `tsc --noEmit`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 50 tests.
+- Direct local `prisma generate` plus `next build`: passed.
+- The shell `npm` command was not available on PATH in this session, so verification used the checked-in `node_modules/.bin` executables.
+
 ## May 7, 2026 - Platform-tab connection wizard
 
 ### Added
