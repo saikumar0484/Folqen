@@ -8,7 +8,7 @@ Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/
 
 May 12, 2026. Latest completed slice is the Platform Operations & Publishing Infrastructure update. Folqen now has n8n-ready dry-run platform operations workflows, publishing/scheduling/retry queues, platform adaptation, distribution tracking, analytics ingestion planning, monetization/policy hooks, protected `/api/platform-ops/*` routes, and live mock-safe controls on `/platforms`. No credentials, live migration application, production env, paid tools, provider activation, live embeddings, GPU execution, live ComfyUI execution, FFmpeg rendering, platform account access, analytics API read, scraping, public publishing, n8n execution, or binary storage write was enabled.
 
-Latest feature commit for this slice: pending until this platform operations checkpoint commit is created.
+Latest feature commit for this slice: `d12ef50`.
 
 ## Branch
 
