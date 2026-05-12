@@ -2,11 +2,11 @@
 
 ## Immediate Next Phase
 
-Use `docs/AUTONOMOUS_ORGANIZATION_ARCHITECTURE.md` and the new command-center frontend as the target design for the next implementation slices. The safest next engineering phase is to connect selected command-center panels to existing live Supabase read models while keeping provider execution blocked.
+Use `docs/AUTONOMOUS_ORGANIZATION_ARCHITECTURE.md`, `docs/ORCHESTRATION_ARCHITECTURE.md`, and the command-center frontend as the target design for the next implementation slices. The safest next engineering phase is to connect selected command-center panels to the new orchestration APIs and existing Supabase read models while keeping provider execution blocked.
 
 Continue from provider setup surfaces into credential-backed integrations. All required authenticated routes now have dedicated pages, manual posting package creation/download is live, file registration is live, safe mock-agent draft creation is live, and setup panels exist for Google Drive storage, OpenAI model selection, n8n, and media tools. Binary object storage, paid AI calls, embedded n8n execution, rendering, and real automation are still pending.
 
-Current save point: May 12, 2026, after the operational command center frontend update. The latest live deployment remains `https://folqen.vercel.app`; no production deploy, database change, credential change, paid tool activation, provider activation, or publishing change was made in this frontend slice.
+Current save point: May 12, 2026, after the multi-agent orchestration infrastructure update. The latest live deployment remains `https://folqen.vercel.app`; no production deploy, database change, credential change, paid tool activation, provider activation, publishing change, n8n execution, or media rendering was enabled in this slice.
 
 The user now wants a 2-day launch sprint so Folqen can be used with the channel from day 3. Treat `docs/2_DAY_LAUNCH_PLAN.md` as the practical launch scope: protected planning, manual posting packages, approvals, audit, and provider setup testing if credentials are available. Do not promise full auto-publishing, real media rendering, or complete multi-platform automation inside 2 days. Folqen now has a `/settings` Connection Wizard for encrypted credential intake inside the app.
 
@@ -14,22 +14,23 @@ The `/platforms` tab now also has a social-platform Connection Wizard near the t
 
 ## Exact Next Tasks
 
-1. Resume from GitHub branch `build/phase-0-foundation` at or after commit `1a78e1b` and confirm `git status` is clean.
+1. Resume from GitHub branch `build/phase-0-foundation` at the latest pushed commit and confirm `git status` is clean.
 2. Pull/install dependencies if needed, then run `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build`.
 3. Re-read `docs/AUTONOMOUS_ORGANIZATION_ARCHITECTURE.md` before adding LangGraph, CrewAI, Redis/BullMQ, worker, memory, or provider changes.
 4. Keep the current verified Next.js `16.2.6` baseline unless the human explicitly asks to downgrade.
 5. Check `https://folqen.vercel.app/api/health` and confirm database status remains `live`; if slow again, confirm `vercel inspect` still shows app functions in `icn1`.
-6. Connect dashboard/workflow/analytics command-center panels to the existing Supabase read models where useful, without enabling provider execution.
-7. Add command-center loading and error segment states for the new route group.
-8. Get a new admin password from the human, then use `/settings` or a safe server-side flow to rotate the seeded admin password.
-9. Get explicit human approval to delete or rotate the temporary viewer test account, then verify login/audit behavior.
-10. Configure Google Drive OAuth values through secret env only, redeploy, then live-test one small private upload and verify `binaryStored: true`.
-11. Alternatively, use `/settings` Connection Wizard to enter Google Drive details inside Folqen, then live-test one small private upload and verify `binaryStored: true`.
-12. Use `/settings` Connection Wizard for n8n instance/webhook/secret, then test `POST /api/integrations/n8n/test`.
-13. Use `/settings` Connection Wizard for OpenAI API key, request/approve the OpenAI provider approval in Folqen, then add a real-generation endpoint that still checks paid-tool guards before every call.
-14. Configure local or Oracle worker endpoints for FFmpeg, ComfyUI, and TTS, then add test-only connection checks.
-15. Wire the service interface foundation into workflow test APIs while keeping real execution blocked.
-16. Continue broader security hardening, including stronger CSRF patterns, server-side action audits, and provider-secret isolation.
+6. Connect dashboard/workflow/agent/incident/infrastructure command-center panels to `/api/orchestration/*` where useful, without enabling provider execution.
+7. Run local Redis through Docker Compose and test live BullMQ queue movement only after explicitly setting `ORCHESTRATION_EXECUTION_MODE=live` in a local-safe environment.
+8. Add command-center loading and error segment states for the new route group.
+9. Get a new admin password from the human, then use `/settings` or a safe server-side flow to rotate the seeded admin password.
+10. Get explicit human approval to delete or rotate the temporary viewer test account, then verify login/audit behavior.
+11. Configure Google Drive OAuth values through secret env only, redeploy, then live-test one small private upload and verify `binaryStored: true`.
+12. Alternatively, use `/settings` Connection Wizard to enter Google Drive details inside Folqen, then live-test one small private upload and verify `binaryStored: true`.
+13. Use `/settings` Connection Wizard for n8n instance/webhook/secret, then test `POST /api/integrations/n8n/test`.
+14. Use `/settings` Connection Wizard for OpenAI API key, request/approve the OpenAI provider approval in Folqen, then add a real-generation endpoint that still checks paid-tool guards before every call.
+15. Configure local or Oracle worker endpoints for FFmpeg, ComfyUI, and TTS, then add test-only connection checks.
+16. Wire the service interface foundation into workflow test APIs while keeping real execution blocked.
+17. Continue broader security hardening, including stronger CSRF patterns, server-side action audits, and provider-secret isolation.
 
 ## Human Decisions Needed
 

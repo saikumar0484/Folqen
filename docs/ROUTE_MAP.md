@@ -21,6 +21,19 @@ All required MVP routes exist as Phase 2 placeholders under the app shell.
 
 These command-center routes are API-ready mock frontend surfaces. They do not enable live provider execution, public publishing, paid tools, worker jobs, or platform posting.
 
+## Orchestration API Routes
+
+| Route | Purpose | Current State |
+| --- | --- | --- |
+| `GET /api/orchestration/registry` | Agent registry, departments, and hierarchy layers | Mock-safe backend |
+| `GET /api/orchestration/events` | Recent orchestration events | In-memory plus database event log when available |
+| `GET /api/orchestration/monitoring` | Database, Redis, queue, agent, and safety status | Dynamic status |
+| `POST /api/orchestration/tasks` | Delegate a typed task to a department agent | Approval-gated mock-safe queue |
+| `POST /api/orchestration/workflows/run` | Run a LangGraph dry-run and CrewAI-compatible coordination plan | Approval-gated mock-safe workflow |
+| `GET /api/orchestration/incidents` | List recent incident events | Mock-safe backend |
+| `POST /api/orchestration/incidents` | Report an incident and queue recovery planning | Mock-safe recovery |
+| `worker:orchestration` | BullMQ worker entrypoint | Disabled unless Redis live mode and worker flag are enabled |
+
 ## MVP Routes
 
 | Route | Purpose | Current State |

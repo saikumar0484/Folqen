@@ -1,5 +1,30 @@
 # Changelog
 
+## May 12, 2026 - Multi-agent orchestration infrastructure
+
+### Added
+
+- Added the Folqen orchestration backend with typed agent registry, required departments, hierarchy layers, lifecycle state, permissions, KPIs, workloads, and communication channels.
+- Added LangGraph dry-run workflow planning, CrewAI-compatible hierarchy coordination, organizational memory hooks, incident recovery planning, monitoring hooks, in-memory/database event bus, Redis lazy connection, BullMQ queue adapters, and a worker entrypoint.
+- Added protected orchestration API routes for registry, events, monitoring, task delegation, workflow runs, and incidents.
+- Added Redis to Docker Compose and orchestration env defaults for mock-safe execution.
+- Added `docs/ORCHESTRATION_ARCHITECTURE.md` and updated route/checklist docs.
+
+### Safety
+
+- Orchestration defaults to `ORCHESTRATION_EXECUTION_MODE=mock`.
+- Redis/BullMQ are lazy-loaded and return mock job IDs unless live mode is explicitly configured.
+- The worker exits unless Redis live mode and `ORCHESTRATION_WORKER_ENABLED=true` are both enabled.
+- No real publishing, paid API call, browser automation, n8n execution, media rendering, or platform posting was enabled.
+
+### Verification
+
+- Direct local `eslint .`: passed.
+- Direct local `tsc --noEmit`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 56 tests.
+- Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`.
+- `npm audit --audit-level=moderate`: still reports the known nested PostCSS moderate advisory under Next; `npm audit fix --force` would install a breaking Next path and was not run.
+
 ## May 12, 2026 - Operational command center frontend
 
 ### Added

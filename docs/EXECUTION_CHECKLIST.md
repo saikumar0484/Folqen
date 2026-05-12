@@ -41,6 +41,8 @@
 - [x] Add collapsible command-center sidebar navigation.
 - [x] Add Zustand UI store for command palette/sidebar/page state.
 - [x] Add typed mock command-center service and frontend tests.
+- [x] Add mock-safe multi-agent orchestration infrastructure with LangGraph, CrewAI-compatible planning, Redis/BullMQ adapters, event bus, incident recovery, memory hooks, monitoring, and APIs.
+- [x] Add Docker Compose Redis service for local queue testing.
 
 ## Later Phases
 
@@ -63,6 +65,8 @@
 - [x] Seed approved free database.
 - [ ] Configure Oracle n8n webhook env values.
 - [ ] Test Oracle n8n webhook from Folqen.
+- [ ] Connect command-center UI panels to orchestration API endpoints.
+- [ ] Run Redis/BullMQ in live local mode after explicit environment setup.
 - [x] Authentication and roles foundation.
 - [x] Protected routes.
 - [x] Login/logout API foundation.

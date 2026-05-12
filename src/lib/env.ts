@@ -35,6 +35,10 @@ export const envSchema = z.object({
   GOOGLE_DRIVE_FOLDER_ID: z.string().optional(),
   OPENAI_API_KEY: z.string().optional(),
   OPENAI_MODEL: z.string().optional(),
+  REDIS_URL: z.string().optional(),
+  BULLMQ_PREFIX: z.string().default("folqen"),
+  ORCHESTRATION_EXECUTION_MODE: z.enum(["mock", "live"]).default("mock"),
+  ORCHESTRATION_WORKER_ENABLED: booleanFlag("false"),
   SELF_IMPROVEMENT_ENABLED: z
     .enum(["true", "false"])
     .default("true")

@@ -14,6 +14,9 @@ const baseEnv: FolqenEnv = {
   REQUIRE_UPGRADE_APPROVAL: true,
   ALLOW_PAID_RESEARCH_TOOLS: false,
   MAX_MONTHLY_RESEARCH_COST_INR: 0,
+  BULLMQ_PREFIX: "folqen",
+  ORCHESTRATION_EXECUTION_MODE: "mock",
+  ORCHESTRATION_WORKER_ENABLED: false,
 };
 
 const driveEnv: FolqenEnv = {

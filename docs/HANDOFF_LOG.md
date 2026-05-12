@@ -2,11 +2,11 @@
 
 ## Current Phase
 
-Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, all required authenticated routes now have route-specific surfaces, manual posting package detail/download is deployed, file registration is deployed, safe mock-agent draft creation is deployed, provider setup surfaces for Google Drive, OpenAI, n8n, and media tools are deployed, admin-only provider setup approval requests are implemented, the target autonomous organization architecture is documented, and the operational command center frontend is implemented.
+Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, all required authenticated routes now have route-specific surfaces, manual posting package detail/download is deployed, file registration is deployed, safe mock-agent draft creation is deployed, provider setup surfaces for Google Drive, OpenAI, n8n, and media tools are deployed, admin-only provider setup approval requests are implemented, the target autonomous organization architecture is documented, the operational command center frontend is implemented, and the mock-safe multi-agent orchestration infrastructure is implemented.
 
 ## Current Save Point
 
-May 12, 2026. Latest completed slice is the operational command center frontend update. Folqen now has typed mock command-center models, Zustand UI state, shadcn-style primitives, collapsible navigation, command palette updates, and protected pages for dashboard, agents, departments, workflows, research intelligence, content studio, analytics, organizational memory, automations, incident center, infrastructure, and settings. No credentials, database schema, production env, paid tools, provider activation, or publishing settings were changed.
+May 12, 2026. Latest completed slice is the multi-agent orchestration infrastructure update. Folqen now has typed orchestration services, a real agent registry shape, required departments, LangGraph dry-run workflow planning, CrewAI-compatible coordination planning, Redis/BullMQ adapters, memory hooks, incident recovery, monitoring hooks, protected orchestration APIs, and a disabled-by-default worker entrypoint. No credentials, database schema, production env, paid tools, provider activation, public publishing, n8n execution, or media rendering was enabled.
 
 ## Branch
 
@@ -15,6 +15,13 @@ May 12, 2026. Latest completed slice is the operational command center frontend 
 ## Completed Work
 
 - Added `docs/AUTONOMOUS_ORGANIZATION_ARCHITECTURE.md`.
+- Added `docs/ORCHESTRATION_ARCHITECTURE.md`.
+- Added `@langchain/langgraph`, `bullmq`, and `ioredis`.
+- Added Redis to Docker Compose and orchestration environment defaults.
+- Added `src/lib/orchestration/*` for registry, service, event bus, Redis, queues, LangGraph flow, CrewAI-compatible coordination, memory hooks, monitoring, incidents, and tests.
+- Added `src/app/api/orchestration/*` protected API routes.
+- Added `src/workers/orchestration-worker.ts`, disabled unless explicit live Redis worker flags are set.
+- Updated integration status to report orchestration, Redis, and queue readiness.
 - Added `zustand` and the command-center UI store.
 - Added reusable shadcn-style `Button`, `Card`, and `Badge` primitives.
 - Added `src/lib/command-center/types.ts`, `src/lib/command-center/mock-service.ts`, and command-center tests.
@@ -28,7 +35,7 @@ May 12, 2026. Latest completed slice is the operational command center frontend 
 - Documented that the user requested Next.js 15 earlier but the current repo is now verified on Next.js `16.2.6`; future downgrade requires explicit human approval.
 - Attempted Supabase MCP docs search for RLS/security context, but the MCP OAuth token was revoked in this session.
 - Ran verification through direct local binaries because `npm` was not available on PATH: `eslint .`, `tsc --noEmit`, `tsx --test "src/**/*.test.ts"`, `prisma generate`, and `next build` all passed.
-- Latest verification after the command-center frontend: direct `eslint .` passed, direct `tsc --noEmit` passed, direct `tsx --test "src/**/*.test.ts"` passed with 52 tests, direct `prisma generate` plus `next build` passed on Next.js `16.2.6`, and React server-render smoke rendered all 12 command-center views.
+- Latest verification after the orchestration infrastructure: direct `eslint .` passed, direct `tsc --noEmit` passed, direct `tsx --test "src/**/*.test.ts"` passed with 56 tests, direct `prisma generate` plus `next build` passed on Next.js `16.2.6`, and `npm audit --audit-level=moderate` still reports only the known nested Next/PostCSS moderate advisory.
 - Added database-backed pipeline and library pages using existing Supabase records.
 - Added database-backed platforms and tools pages using existing Supabase records and runtime integration status.
 - Added database-backed notifications, analytics, errors, workflows, and upgrades pages using existing Supabase records.
@@ -383,6 +390,9 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 
 - All required authenticated route surfaces are now route-specific. Many are real/read-only from Supabase. Manual posting package generation/download, metadata-only file registration, safe draft content creation, provider setup surfaces, and provider setup approval requests exist, but binary object storage, real providers, publishing, and automation are still mock/placeholder.
 - All integrations are `Not connected`.
+- Orchestration APIs and workers are mock-safe by default; Redis/BullMQ live mode is not active unless explicitly configured.
+- CrewAI is represented by a TypeScript coordination plan; a live Python CrewAI runtime is not connected.
+- LangGraph currently runs dry-run planning and approval checkpoints only.
 - Mini agent chat is a mock UI shell.
 - Command palette and notifications are mock interactions.
 - Google Drive binary object storage adapter exists, but live Drive storage is not configured; file registration remains metadata-only until OAuth env values are configured.

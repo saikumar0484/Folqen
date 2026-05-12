@@ -2,6 +2,22 @@
 
 ## Current Risks
 
+### Orchestration infrastructure can be mistaken for live autonomous execution
+
+- Risk: The new agent registry, LangGraph dry-run, CrewAI-compatible plan, event bus, Redis/BullMQ adapters, APIs, and worker entrypoint may look like fully live autonomous execution.
+- Prevention: Defaults keep `ORCHESTRATION_EXECUTION_MODE=mock` and `ORCHESTRATION_WORKER_ENABLED=false`; queues return mock job IDs unless Redis live mode is explicitly configured; worker code acknowledges jobs only and does not call external providers.
+- Verification: Lint, typecheck, 56 tests, Prisma generate, and Next build passed. Tests confirm task delegation, workflow planning, and queue health stay mock-safe without Redis.
+- Rollback: Revert the orchestration files, API routes, package additions, env additions, and Docker Redis service if the architecture direction is rejected.
+- Human approval trigger: Any change that enables live external providers, public publishing, paid API execution, browser automation, n8n workflow execution, media rendering, production worker execution, or platform posting.
+
+### Redis/BullMQ live mode needs careful operational setup
+
+- Risk: Enabling Redis live mode without clear worker controls could create duplicate processing or retry loops.
+- Prevention: Live mode requires explicit `REDIS_URL`, `ORCHESTRATION_EXECUTION_MODE=live`, and `ORCHESTRATION_WORKER_ENABLED=true`; default mode is mock; BullMQ attempts/backoff are bounded.
+- Verification: Build and tests passed in mock mode; local live queue movement is still a future test task.
+- Rollback: Clear `REDIS_URL` or set `ORCHESTRATION_EXECUTION_MODE=mock` and `ORCHESTRATION_WORKER_ENABLED=false`.
+- Human approval trigger: Production Redis, production worker deployment, provider execution, retry policy changes, or worker scaling.
+
 ### Command center frontend can be mistaken for live automation
 
 - Risk: The new command center presents agents, departments, workflows, analytics, incidents, queues, and infrastructure with rich mock telemetry. Users may assume autonomous execution, Redis/BullMQ, n8n, workers, API providers, or platform posting are live.
