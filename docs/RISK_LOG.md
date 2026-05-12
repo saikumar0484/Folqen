@@ -2,6 +2,22 @@
 
 ## Current Risks
 
+### Command center frontend can be mistaken for live automation
+
+- Risk: The new command center presents agents, departments, workflows, analytics, incidents, queues, and infrastructure with rich mock telemetry. Users may assume autonomous execution, Redis/BullMQ, n8n, workers, API providers, or platform posting are live.
+- Prevention: The UI uses visible `Mock`, `Not connected`, `Needs approval`, `Configured`, and `Live` states and keeps manual/package fallbacks explicit.
+- Verification: Command-center tests assert all requested pages expose mock-safe data and include not-connected provider states; lint, typecheck, 52 tests, build, and React render smoke passed.
+- Rollback: Revert the command-center route/component changes and return `/dashboard`, `/workflows`, and `/analytics` to the previous database-backed screens if the UI direction is rejected.
+- Human approval trigger: Any change that turns mock command-center controls into live provider execution, public publishing, paid usage, browser automation, worker execution, or platform posting.
+
+### Dependency patch reduced high audit risk but moderate PostCSS advisory remains
+
+- Risk: `npm audit` reported high Next.js advisories on `16.2.4`; patching to `16.2.6` removed the high severity report, but the nested PostCSS moderate advisory remains under Next and npm only offers `npm audit fix --force`.
+- Prevention: Applied a patch-level Next.js and `eslint-config-next` update to `16.2.6`; did not run the force fix because it would install a breaking Next path.
+- Verification: `eslint`, `tsc`, 52 tests, `prisma generate`, and `next build` passed on Next.js `16.2.6`; `npm audit --audit-level=moderate` now reports only the moderate nested PostCSS issue.
+- Rollback: Revert the dependency patch if it creates runtime issues, though that would reintroduce the high Next audit range.
+- Human approval trigger: Any major framework upgrade/downgrade or forced audit fix.
+
 ### Autonomous company scope can become unsafe automation
 
 - Risk: The expanded Folqen vision includes autonomous research, generation, scheduling, posting, optimization, retries, and self-improvement. If implemented without hard gates, the system could publish publicly, spend money, connect accounts, or modify itself too aggressively.
@@ -12,9 +28,9 @@
 
 ### Requested Next.js 15 conflicts with current Next.js 16 baseline
 
-- Risk: The human's new architecture request lists Next.js 15, but the repository currently uses Next.js `16.2.4` and has verified builds on that baseline. A downgrade could create dependency, ESLint, React, or deployment churn.
-- Prevention: The architecture document calls out the mismatch and instructs future work not to downgrade without explicit human approval.
-- Verification: Current Next.js `16.2.4` production build passed after the documentation update.
+- Risk: The human's architecture request listed Next.js 15, but the repository now uses Next.js `16.2.6` and has verified builds on that baseline. A downgrade could create dependency, ESLint, React, or deployment churn.
+- Prevention: The architecture/checkpoint docs call out the mismatch and instruct future work not to downgrade without explicit human approval.
+- Verification: Current Next.js `16.2.6` production build passed after the command-center update.
 - Rollback: If the human explicitly chooses Next.js 15, create a branch, downgrade dependencies deliberately, run full verification, and update checkpoint docs.
 - Human approval trigger: Any framework version downgrade or major dependency baseline change.
 

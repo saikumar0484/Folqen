@@ -1,5 +1,30 @@
 # Changelog
 
+## May 12, 2026 - Operational command center frontend
+
+### Added
+
+- Added the Folqen operational command center frontend module with typed mock view models, reusable command-center components, Framer Motion page transitions, shadcn-style `Button`, `Card`, and `Badge` primitives, and a Zustand store for command palette/sidebar/page UI state.
+- Added new protected command-center routes: `/agents`, `/departments`, `/research-intelligence`, `/content-studio`, `/organizational-memory`, `/automations`, `/incident-center`, and `/infrastructure`.
+- Rebuilt `/dashboard`, `/workflows`, and `/analytics` around the new AI organization command center renderer.
+- Added a command-center overview section to `/settings` while preserving the existing live settings, connection wizard, provider setup panels, and password-change flow.
+- Added command-center tests confirming all 12 requested operational pages expose mock-safe data and keep risky execution visibly blocked.
+
+### Changed
+
+- Updated the protected sidebar into a collapsible command-center navigation with groups for Command Center, Creator Ops, and Control.
+- Updated the topbar search trigger and command palette to search/open agents, workflows, incidents, memory, infrastructure, and existing Folqen workspaces.
+- Added `zustand` and patched Next.js / `eslint-config-next` from `16.2.4` to `16.2.6` to remove the high-severity Next audit advisory while staying on Next 16.
+
+### Verification
+
+- Direct local `eslint .`: passed.
+- Direct local `tsc --noEmit`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 52 tests.
+- Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`.
+- React server-render smoke rendered all 12 command-center views with expected titles.
+- `npm audit --audit-level=moderate`: still reports the known nested PostCSS moderate advisory under Next; npm only offers `npm audit fix --force`, which would install a breaking Next version path and was not run.
+
 ## May 12, 2026 - Autonomous organization architecture
 
 ### Added

@@ -2,14 +2,18 @@
 
 ## Phase
 
-Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, every required authenticated route now has a route-specific or database-backed surface, and the autonomous organization target architecture is documented on branch `build/phase-0-foundation`.
+Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, every required authenticated route now has a route-specific or database-backed surface, the autonomous organization target architecture is documented, and the operational command center frontend is implemented on branch `build/phase-0-foundation`.
 
-Latest save point: May 12, 2026, after adding `docs/AUTONOMOUS_ORGANIZATION_ARCHITECTURE.md` and updating the architecture pointer/checkpoint docs. This was a documentation-only architecture phase; no credentials, database state, production settings, paid tools, provider connections, or publishing settings were changed. Real Drive/uploads/OpenAI/n8n/media still require credentials and approval.
+Latest save point: May 12, 2026, after building the operational command center frontend. This was a frontend/mock-data implementation phase; no credentials, database schema, production settings, paid tools, provider connections, or publishing settings were changed. Real Drive/uploads/OpenAI/n8n/media still require credentials and approval.
 
 ## Completed Work
 
 - Added the full target architecture for Folqen as an autonomous AI creator organization operating system, including agent hierarchy, orchestration, services, database direction, provider strategy, communications, deployment, security, recovery, analytics, approvals, and phased roadmap.
-- Documented the Next.js version decision risk: the user requested Next.js 15, while the current repo is verified on Next.js `16.2.4`; do not downgrade without explicit human approval.
+- Added the operational command center frontend with typed mock services, Zustand UI state, shadcn-style primitives, reusable command-center renderer, collapsible navigation, command palette updates, and 12 requested command-center page surfaces.
+- Added protected routes for `/agents`, `/departments`, `/research-intelligence`, `/content-studio`, `/organizational-memory`, `/automations`, `/incident-center`, and `/infrastructure`.
+- Updated `/dashboard`, `/workflows`, `/analytics`, and `/settings` to use or include the new command-center experience.
+- Upgraded Next.js and `eslint-config-next` to `16.2.6` to remove the high-severity Next audit advisory while staying on Next 16.
+- Documented the Next.js version decision risk: the user requested Next.js 15 earlier, while the current repo is now verified on Next.js `16.2.6`; do not downgrade without explicit human approval.
 - Added database-backed `/pipeline` and `/library` pages using existing Supabase records without changing the schema.
 - Added database-backed `/platforms` and `/tools` pages using existing Supabase records and runtime status checks without enabling live integrations.
 - Added database-backed `/notifications`, `/analytics`, `/errors`, `/workflows`, and `/upgrades` pages using existing Supabase records without enabling live execution.
@@ -97,7 +101,7 @@ Latest save point: May 12, 2026, after adding `docs/AUTONOMOUS_ORGANIZATION_ARCH
 
 ## App Status
 
-The app installs, lints, typechecks, tests, validates Prisma schema, builds successfully, deploys to Vercel, connects to Supabase, supports seeded database-backed login, and now has route-specific authenticated pages for dashboard, agent, calendar, pipeline, library, approvals, platforms, tools, settings, analytics, monetization, brand, errors, audit, workflows, files, notifications, and upgrades.
+The app installs, lints, typechecks, tests, validates Prisma schema, builds successfully, deploys to Vercel, connects to Supabase, supports seeded database-backed login, and now has route-specific authenticated pages for dashboard, agents, departments, workflows, research intelligence, content studio, analytics, organizational memory, automations, incident center, infrastructure, settings, and the earlier MVP surfaces.
 
 ## Safety Status
 
@@ -515,9 +519,10 @@ Browser/runtime checks:
 ## Known Issues
 
 - Supabase MCP documentation search failed in this session because the connected OAuth token was revoked, so Supabase-specific security notes in the architecture document rely on existing project practice and official-doc fallback knowledge rather than MCP snippets.
-- `npm` was not available on PATH in this shell session; verification succeeded through direct `node_modules/.bin` executables.
+- `npm` was not available on PATH in this shell session; package changes used a working npm CLI through `node "C:\Users\208X1\Documents\New project 3\.tools\package\bin\npm-cli.js"` and verification used direct `node_modules/.bin` executables.
+- Local authenticated browser smoke was blocked because the dev server did not have `AUTH_SECRET`/database env configured. React server-render smoke covered all 12 command-center views, and production build route output confirmed the new routes compile.
 
-- `npm audit` still reports two moderate advisories through Next's bundled PostCSS dependency even after upgrading to Next `16.2.4`. npm recommends `npm audit fix --force`, but that would downgrade Next and is not safe. Track and resolve when Next ships a compatible patched dependency.
+- `npm audit` still reports two moderate advisories through Next's bundled PostCSS dependency even after upgrading to Next `16.2.6`. npm recommends `npm audit fix --force`, but that would install a breaking Next path and is not safe. Track and resolve when Next ships a compatible patched dependency.
 - Default seeded admin password now has a password-change flow, but the user still needs to actually change it in `/settings`.
 - Test viewer account exists for temporary dashboard testing and should be removed or rotated later. This is intentionally blocked until the human approves deletion/rotation.
 - Supabase direct database hostname remained unreliable from this Windows environment; use the Supabase session pooler or `supabase db query --linked`.
@@ -528,4 +533,4 @@ Browser/runtime checks:
 
 ## Safe To Stop
 
-Yes after this checkpoint commit is pushed. The architecture docs are updated, verification passed, the repo is safe to continue, and no source files are left half-edited.
+Yes after this checkpoint commit is pushed. The command center frontend is implemented, verification passed, the repo is safe to continue, and no source files are left half-edited.

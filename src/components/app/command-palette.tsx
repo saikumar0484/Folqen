@@ -1,12 +1,17 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Bot, CheckCircle2, FileText, Search, ShieldAlert, Wrench, X, Zap } from "lucide-react";
+import { Bot, Brain, CheckCircle2, FileText, Network, Search, ShieldAlert, Siren, Wrench, X, Zap } from "lucide-react";
 import { useToast } from "@/components/app/toast-provider";
 import { appRoutes } from "@/lib/app-routes";
+import { useCommandCenterStore } from "@/stores/command-center-store";
 
 const quickCommands = [
+  { label: "Open operational command center", href: "/dashboard", status: "Mock", icon: Network },
+  { label: "Inspect agent hierarchy", href: "/agents", status: "Mock", icon: Bot },
+  { label: "Open organizational memory", href: "/organizational-memory", status: "Mock", icon: Brain },
+  { label: "Review incident center", href: "/incident-center", status: "Mock", icon: Siren },
   { label: "Create content package", href: "/agent", status: "Mock", icon: Bot },
   { label: "Review latest draft", href: "/approvals", status: "Needs approval", icon: ShieldAlert },
   { label: "Show tool limits", href: "/tools", status: "Not connected", icon: Wrench },
@@ -18,14 +23,16 @@ const quickCommands = [
 export function CommandPalette() {
   const router = useRouter();
   const { toast } = useToast();
-  const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState("");
+  const open = useCommandCenterStore((state) => state.commandOpen);
+  const query = useCommandCenterStore((state) => state.query);
+  const setOpen = useCommandCenterStore((state) => state.setCommandOpen);
+  const setQuery = useCommandCenterStore((state) => state.setQuery);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
-        setOpen((value) => !value);
+        setOpen(!open);
       }
       if (event.key === "Escape") {
         setOpen(false);
@@ -34,7 +41,7 @@ export function CommandPalette() {
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
+  }, [open, setOpen]);
 
   const commands = useMemo(() => {
     const routeCommands = appRoutes.map((route) => ({

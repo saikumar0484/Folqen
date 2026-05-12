@@ -2,11 +2,11 @@
 
 ## Immediate Next Phase
 
-Use `docs/AUTONOMOUS_ORGANIZATION_ARCHITECTURE.md` as the target design for the next implementation slices. The safest next engineering phase is to map the existing service/provider foundation to the autonomous organization control plane without enabling risky live execution.
+Use `docs/AUTONOMOUS_ORGANIZATION_ARCHITECTURE.md` and the new command-center frontend as the target design for the next implementation slices. The safest next engineering phase is to connect selected command-center panels to existing live Supabase read models while keeping provider execution blocked.
 
 Continue from provider setup surfaces into credential-backed integrations. All required authenticated routes now have dedicated pages, manual posting package creation/download is live, file registration is live, safe mock-agent draft creation is live, and setup panels exist for Google Drive storage, OpenAI model selection, n8n, and media tools. Binary object storage, paid AI calls, embedded n8n execution, rendering, and real automation are still pending.
 
-Current save point: May 12, 2026, after the autonomous organization architecture documentation update. The latest live deployment remains `https://folqen.vercel.app`; no production deploy, database change, credential change, paid tool activation, provider activation, or publishing change was made in the May 12 documentation slice.
+Current save point: May 12, 2026, after the operational command center frontend update. The latest live deployment remains `https://folqen.vercel.app`; no production deploy, database change, credential change, paid tool activation, provider activation, or publishing change was made in this frontend slice.
 
 The user now wants a 2-day launch sprint so Folqen can be used with the channel from day 3. Treat `docs/2_DAY_LAUNCH_PLAN.md` as the practical launch scope: protected planning, manual posting packages, approvals, audit, and provider setup testing if credentials are available. Do not promise full auto-publishing, real media rendering, or complete multi-platform automation inside 2 days. Folqen now has a `/settings` Connection Wizard for encrypted credential intake inside the app.
 
@@ -17,17 +17,17 @@ The `/platforms` tab now also has a social-platform Connection Wizard near the t
 1. Resume from GitHub branch `build/phase-0-foundation` at or after commit `1a78e1b` and confirm `git status` is clean.
 2. Pull/install dependencies if needed, then run `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build`.
 3. Re-read `docs/AUTONOMOUS_ORGANIZATION_ARCHITECTURE.md` before adding LangGraph, CrewAI, Redis/BullMQ, worker, memory, or provider changes.
-4. Decide whether the requested Next.js 15 baseline should override the current verified Next.js `16.2.4` baseline. Do not downgrade without human approval.
+4. Keep the current verified Next.js `16.2.6` baseline unless the human explicitly asks to downgrade.
 5. Check `https://folqen.vercel.app/api/health` and confirm database status remains `live`; if slow again, confirm `vercel inspect` still shows app functions in `icn1`.
-6. Get a new admin password from the human, then use `/settings` or a safe server-side flow to rotate the seeded admin password.
-7. Get explicit human approval to delete or rotate the temporary viewer test account, then verify login/audit behavior.
-8. Configure Google Drive OAuth values through secret env only, redeploy, then live-test one small private upload and verify `binaryStored: true`.
-9. Alternatively, use `/settings` Connection Wizard to enter Google Drive details inside Folqen, then live-test one small private upload and verify `binaryStored: true`.
-10. Use `/settings` Connection Wizard for n8n instance/webhook/secret, then test `POST /api/integrations/n8n/test`.
-11. Use `/settings` Connection Wizard for OpenAI API key, request/approve the OpenAI provider approval in Folqen, then add a real-generation endpoint that still checks paid-tool guards before every call.
-12. Configure local or Oracle worker endpoints for FFmpeg, ComfyUI, and TTS, then add test-only connection checks.
-13. Use the dashboard Day-3 launch readiness section to drive the remaining 2-day launch tasks.
-14. Continue expanding role-aware UI states across settings, packages, files, providers, and future action APIs.
+6. Connect dashboard/workflow/analytics command-center panels to the existing Supabase read models where useful, without enabling provider execution.
+7. Add command-center loading and error segment states for the new route group.
+8. Get a new admin password from the human, then use `/settings` or a safe server-side flow to rotate the seeded admin password.
+9. Get explicit human approval to delete or rotate the temporary viewer test account, then verify login/audit behavior.
+10. Configure Google Drive OAuth values through secret env only, redeploy, then live-test one small private upload and verify `binaryStored: true`.
+11. Alternatively, use `/settings` Connection Wizard to enter Google Drive details inside Folqen, then live-test one small private upload and verify `binaryStored: true`.
+12. Use `/settings` Connection Wizard for n8n instance/webhook/secret, then test `POST /api/integrations/n8n/test`.
+13. Use `/settings` Connection Wizard for OpenAI API key, request/approve the OpenAI provider approval in Folqen, then add a real-generation endpoint that still checks paid-tool guards before every call.
+14. Configure local or Oracle worker endpoints for FFmpeg, ComfyUI, and TTS, then add test-only connection checks.
 15. Wire the service interface foundation into workflow test APIs while keeping real execution blocked.
 16. Continue broader security hardening, including stronger CSRF patterns, server-side action audits, and provider-secret isolation.
 
@@ -35,7 +35,7 @@ The `/platforms` tab now also has a social-platform Connection Wizard near the t
 
 Architecture decision needed before dependency churn:
 
-- Keep the current verified Next.js `16.2.4` baseline or explicitly downgrade to Next.js 15.
+- Keep the current verified Next.js `16.2.6` baseline or explicitly downgrade to Next.js 15.
 
 Required before real provider testing:
 

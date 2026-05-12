@@ -37,6 +37,10 @@
 - [x] Add mobile sidebar drawer behavior.
 - [x] Add toasts.
 - [x] Add richer dashboard widgets.
+- [x] Add operational command center frontend routes for agents, departments, workflows, research intelligence, content studio, analytics, organizational memory, automations, incident center, infrastructure, and settings.
+- [x] Add collapsible command-center sidebar navigation.
+- [x] Add Zustand UI store for command palette/sidebar/page state.
+- [x] Add typed mock command-center service and frontend tests.
 
 ## Later Phases
 

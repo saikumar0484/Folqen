@@ -3,7 +3,9 @@ import { ConnectionWizard } from "@/components/app/connection-wizard";
 import { ProviderApprovalActions } from "@/components/app/provider-approval-actions";
 import { ProviderSetupPanel } from "@/components/app/provider-setup-panel";
 import { SettingsForm } from "@/components/app/settings-form";
+import { CommandCenterPage } from "@/components/command-center/command-center-page";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { getCommandCenterView } from "@/lib/command-center/mock-service";
 import { getProviderConfig } from "@/lib/provider-config";
 import { getFolqenSettings } from "@/lib/settings";
 
@@ -15,6 +17,8 @@ export default async function SettingsPage() {
 
   return (
     <div className="space-y-5 pb-24">
+      <CommandCenterPage view={getCommandCenterView("settings")} embedded />
+
       <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>

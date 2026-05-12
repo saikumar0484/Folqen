@@ -1,5 +1,13 @@
 export type AppRouteId =
   | "dashboard"
+  | "agents"
+  | "departments"
+  | "research-intelligence"
+  | "content-studio"
+  | "organizational-memory"
+  | "automations"
+  | "incident-center"
+  | "infrastructure"
   | "agent"
   | "calendar"
   | "pipeline"
@@ -393,6 +401,166 @@ export const appRoutes: RouteConfig[] = [
       { title: "Cost protection", description: "Free and local alternatives are shown before paid recommendations.", status: "Configured" },
     ],
     actions: ["Show proposals", "Research tools", "Defer upgrade"],
+  },
+  {
+    id: "agents",
+    href: "/agents",
+    label: "Agents",
+    title: "Agent hierarchy",
+    kicker: "Organizational intelligence",
+    description: "Visualize Folqen's executive, research, creative, operations, safety, and memory agents with current work and performance.",
+    status: "Mock",
+    stats: [
+      { label: "Agents", value: "6", hint: "Mock operational hierarchy", tone: "premium" },
+      { label: "Safety", value: "Gated", hint: "Risky execution blocked", tone: "safe" },
+      { label: "Memory", value: "Mock", hint: "Vector provider pending", tone: "neutral" },
+    ],
+    panels: [
+      { title: "Executive layer", description: "Strategy delegates to specialist departments.", status: "Mock" },
+      { title: "Safety authority", description: "Compliance can block publishing and paid actions.", status: "Configured" },
+      { title: "Performance view", description: "Agent cards show mock performance indicators.", status: "Mock" },
+    ],
+    actions: ["Assign task", "Review memory", "Open hierarchy"],
+  },
+  {
+    id: "departments",
+    href: "/departments",
+    label: "Departments",
+    title: "Departments",
+    kicker: "AI company structure",
+    description: "Inspect Folqen's AI departments, missions, owners, active work, and health signals.",
+    status: "Mock",
+    stats: [
+      { label: "Departments", value: "6", hint: "Executive to infrastructure", tone: "premium" },
+      { label: "Health", value: "83%", hint: "Mock average", tone: "neutral" },
+      { label: "Execution", value: "Gated", hint: "No live automation", tone: "safe" },
+    ],
+    panels: [
+      { title: "Research", description: "Trend and competitor intelligence.", status: "Mock" },
+      { title: "Studio", description: "Scripts, hooks, captions, metadata.", status: "Mock" },
+      { title: "Reliability", description: "Incidents, retries, recovery.", status: "Configured" },
+    ],
+    actions: ["Open department", "Balance load", "View agents"],
+  },
+  {
+    id: "research-intelligence",
+    href: "/research-intelligence",
+    label: "Research Intel",
+    title: "Research intelligence",
+    kicker: "Trends and sources",
+    description: "Track folklore trends, competitor signals, source confidence, policy risk, and topic opportunities.",
+    status: "Mock",
+    stats: [
+      { label: "Signals", value: "3", hint: "Mock research feed", tone: "premium" },
+      { label: "Sensitive", value: "1", hint: "Needs human review", tone: "warning" },
+      { label: "Sources", value: "Draft", hint: "No browser automation", tone: "safe" },
+    ],
+    panels: [
+      { title: "Trend signals", description: "Surface topic momentum.", status: "Mock" },
+      { title: "Competitor watch", description: "Watch hooks and formats.", status: "Mock" },
+      { title: "Policy risk", description: "Escalate sensitive topics.", status: "Needs approval" },
+    ],
+    actions: ["Draft brief", "Escalate topic", "Compare competitors"],
+  },
+  {
+    id: "content-studio",
+    href: "/content-studio",
+    label: "Content Studio",
+    title: "Content studio",
+    kicker: "Creator production floor",
+    description: "Coordinate scripts, hooks, captions, metadata, thumbnail prompts, and review-ready posting packages.",
+    status: "Mock",
+    stats: [
+      { label: "Packages", value: "4", hint: "Mock drafts", tone: "premium" },
+      { label: "Review", value: "Required", hint: "Public publishing blocked", tone: "safe" },
+      { label: "Render", value: "Off", hint: "Worker missing", tone: "warning" },
+    ],
+    panels: [
+      { title: "Script desk", description: "Drafts are generated as mock work.", status: "Mock" },
+      { title: "Media prompts", description: "ComfyUI remains not connected.", status: "Not connected" },
+      { title: "Posting package", description: "Manual fallback remains available.", status: "Configured" },
+    ],
+    actions: ["Generate draft", "Review package", "Create metadata"],
+  },
+  {
+    id: "organizational-memory",
+    href: "/organizational-memory",
+    label: "Memory",
+    title: "Organizational memory",
+    kicker: "Institutional knowledge",
+    description: "Track brand memory, decisions, prompt versions, incident learnings, and content performance notes.",
+    status: "Mock",
+    stats: [
+      { label: "Memories", value: "12", hint: "Mock entries", tone: "premium" },
+      { label: "Vector DB", value: "Off", hint: "Provider pending", tone: "warning" },
+      { label: "Audit", value: "On", hint: "Decisions logged", tone: "safe" },
+    ],
+    panels: [
+      { title: "Brand memory", description: "Store voice and niche preferences.", status: "Mock" },
+      { title: "Prompt versions", description: "Version prompts before production changes.", status: "Mock" },
+      { title: "Incident learning", description: "Recovery notes become operational memory.", status: "Mock" },
+    ],
+    actions: ["Search memory", "Add decision", "Review prompts"],
+  },
+  {
+    id: "automations",
+    href: "/automations",
+    label: "Automations",
+    title: "Automation layer",
+    kicker: "Queues and workflows",
+    description: "Monitor n8n, Redis/BullMQ readiness, retry policies, and workflow execution states without enabling live automation.",
+    status: "Not connected",
+    stats: [
+      { label: "n8n", value: "Off", hint: "Secret required", tone: "warning" },
+      { label: "Redis", value: "Off", hint: "Not configured", tone: "warning" },
+      { label: "Fallback", value: "Manual", hint: "Posting packages", tone: "safe" },
+    ],
+    panels: [
+      { title: "Workflow provider", description: "n8n is planned behind an adapter.", status: "Not connected" },
+      { title: "Queue health", description: "BullMQ UI is mock-ready.", status: "Mock" },
+      { title: "Retry policy", description: "Retries must respect approvals and cost guards.", status: "Configured" },
+    ],
+    actions: ["Test connection", "View queue", "Create fallback"],
+  },
+  {
+    id: "incident-center",
+    href: "/incident-center",
+    label: "Incidents",
+    title: "Incident center",
+    kicker: "Failure recovery",
+    description: "Review failed workflows, retry states, escalations, logs, and recovery suggestions.",
+    status: "Mock",
+    stats: [
+      { label: "Incidents", value: "3", hint: "Mock failure queue", tone: "warning" },
+      { label: "Escalations", value: "1", hint: "Human needed", tone: "warning" },
+      { label: "Recovery", value: "Safe", hint: "No scope expansion", tone: "safe" },
+    ],
+    panels: [
+      { title: "Failed workflows", description: "Failed jobs remain visible and recoverable.", status: "Mock" },
+      { title: "Retry status", description: "Retries stay advisory until workers exist.", status: "Mock" },
+      { title: "Human gate", description: "Unsafe recovery stops for approval.", status: "Needs approval" },
+    ],
+    actions: ["Open recovery", "Escalate", "View logs"],
+  },
+  {
+    id: "infrastructure",
+    href: "/infrastructure",
+    label: "Infrastructure",
+    title: "Infrastructure",
+    kicker: "Operational health",
+    description: "Track Redis, queue metrics, API provider health, orchestration health, worker health, and database status.",
+    status: "Mock",
+    stats: [
+      { label: "Database", value: "Live", hint: "Supabase", tone: "safe" },
+      { label: "Workers", value: "0", hint: "Not connected", tone: "warning" },
+      { label: "Providers", value: "0 live", hint: "Setup-gated", tone: "warning" },
+    ],
+    panels: [
+      { title: "Redis", description: "Not configured yet.", status: "Not connected" },
+      { title: "Workers", description: "Media and analytics workers need endpoints.", status: "Not connected" },
+      { title: "Orchestration", description: "LangGraph/CrewAI plans are frontend-ready.", status: "Mock" },
+    ],
+    actions: ["Inspect providers", "View workers", "Open setup"],
   },
 ];
 

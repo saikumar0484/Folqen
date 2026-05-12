@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { Search, ShieldCheck, Sparkles } from "lucide-react";
+import { ShieldCheck, Sparkles } from "lucide-react";
 import { CommandPalette } from "@/components/app/command-palette";
 import { LogoutButton } from "@/components/app/logout-button";
 import { MobileSidebarDrawer } from "@/components/app/mobile-sidebar-drawer";
 import { NotificationCenter } from "@/components/app/notification-center";
 import type { CurrentUser } from "@/lib/auth/current-user";
+import { CommandSearchTrigger } from "@/components/app/command-search-trigger";
 
 export function Topbar({ user }: { user: CurrentUser }) {
   return (
@@ -17,11 +18,7 @@ export function Topbar({ user }: { user: CurrentUser }) {
           <span className="font-display text-lg font-semibold">Folqen</span>
         </Link>
         <MobileSidebarDrawer />
-        <div className="hidden min-w-0 flex-1 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 md:flex">
-          <Search className="h-4 w-4 text-muted-foreground" />
-          <span className="truncate text-sm text-muted-foreground">Search drafts, approvals, tools, files, workflows...</span>
-          <span className="ml-auto rounded-md border border-white/10 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">Ctrl K</span>
-        </div>
+        <CommandSearchTrigger className="hidden md:flex" />
         <div className="ml-auto flex items-center gap-2">
           <div className="hidden items-center gap-2 rounded-xl border border-neon/20 bg-neon/[0.06] px-3 py-2 text-xs text-neon sm:flex">
             <ShieldCheck className="h-4 w-4" />

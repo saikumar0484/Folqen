@@ -2,6 +2,27 @@
 
 All required MVP routes exist as Phase 2 placeholders under the app shell.
 
+## Operational Command Center Routes
+
+| Route | Purpose | Current State |
+| --- | --- | --- |
+| `/dashboard` | Autonomous media company command center | Mock frontend |
+| `/agents` | Agent hierarchy, tasks, memory, performance | Mock frontend |
+| `/departments` | AI organization department map | Mock frontend |
+| `/workflows` | Workflow cards, retries, timeline, logs | Mock frontend |
+| `/research-intelligence` | Trend, source, competitor, policy signals | Mock frontend |
+| `/content-studio` | Scripts, hooks, captions, metadata, packages | Mock frontend |
+| `/analytics` | CTR, retention, engagement, recommendations | Mock frontend |
+| `/organizational-memory` | Brand memory, decisions, prompt/version notes | Mock frontend |
+| `/automations` | n8n, Redis/BullMQ, retry and fallback status | Not connected |
+| `/incident-center` | Failed workflows, escalations, recovery | Mock frontend |
+| `/infrastructure` | Redis, queue, provider, worker, database health | Mock frontend |
+| `/settings` | Command settings plus live settings forms | Configured shell |
+
+These command-center routes are API-ready mock frontend surfaces. They do not enable live provider execution, public publishing, paid tools, worker jobs, or platform posting.
+
+## MVP Routes
+
 | Route | Purpose | Current State |
 | --- | --- | --- |
 | `/dashboard` | Command overview | Mock |

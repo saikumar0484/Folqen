@@ -1,10 +1,6 @@
-import { AnalyticsScreen } from "@/components/app/operations-screens";
-import { getAnalyticsData } from "@/lib/operations-data";
+import { CommandCenterPage } from "@/components/command-center/command-center-page";
+import { getCommandCenterView } from "@/lib/command-center/mock-service";
 
-export const dynamic = "force-dynamic";
-
-export default async function AnalyticsPage() {
-  const data = await getAnalyticsData();
-
-  return <AnalyticsScreen data={data} />;
+export default function AnalyticsPage() {
+  return <CommandCenterPage view={getCommandCenterView("analytics")} />;
 }

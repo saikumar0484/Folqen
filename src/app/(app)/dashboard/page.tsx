@@ -1,10 +1,6 @@
-import { DashboardScreen } from "@/components/app/dashboard-screen";
-import { getDashboardData } from "@/lib/dashboard-data";
+import { CommandCenterPage } from "@/components/command-center/command-center-page";
+import { getCommandCenterView } from "@/lib/command-center/mock-service";
 
-export const dynamic = "force-dynamic";
-
-export default async function DashboardPage() {
-  const data = await getDashboardData();
-
-  return <DashboardScreen data={data} />;
+export default function DashboardPage() {
+  return <CommandCenterPage view={getCommandCenterView("dashboard")} />;
 }
