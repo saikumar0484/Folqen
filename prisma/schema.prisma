@@ -390,6 +390,78 @@ model PromptVersion {
   @@unique([key, version])
 }
 
+model MemoryEntry {
+  id              String             @id @default(cuid())
+  category        String
+  scope           String             @default("organization")
+  subjectType     String?
+  subjectId       String?
+  departmentId    String?
+  agentId         String?
+  title           String
+  summary         String
+  content         String
+  tags            String[]
+  importance      Float              @default(0.5)
+  confidence      Float              @default(0.5)
+  sourceType      String
+  sourceId        String?
+  embedding       Unsupported("vector")?
+  embeddingModel  String?
+  embeddingStatus String             @default("mock")
+  metadata        Json?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  reflections     MemoryReflection[]
+  experiments     ExperimentRecord[]
+
+  @@index([category])
+  @@index([departmentId])
+  @@index([agentId])
+  @@index([sourceType, sourceId])
+}
+
+model MemoryReflection {
+  id              String       @id @default(cuid())
+  memoryId        String?
+  workflowRunId   String?
+  reflectionType  String
+  summary         String
+  qualityScore    Float        @default(0.5)
+  bottlenecks     Json?
+  recommendations Json?
+  strategyNotes   Json?
+  metadata        Json?
+  createdAt       DateTime     @default(now())
+  memory          MemoryEntry? @relation(fields: [memoryId], references: [id], onDelete: SetNull)
+
+  @@index([memoryId])
+  @@index([workflowRunId])
+  @@index([reflectionType])
+}
+
+model ExperimentRecord {
+  id             String       @id @default(cuid())
+  memoryId       String?
+  experimentType String
+  name           String
+  hypothesis     String
+  variants       Json
+  metrics        Json?
+  status         String       @default("draft")
+  winnerKey      String?
+  confidence     Float        @default(0.5)
+  recommendation String?
+  metadata       Json?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  memory         MemoryEntry? @relation(fields: [memoryId], references: [id], onDelete: SetNull)
+
+  @@index([memoryId])
+  @@index([experimentType])
+  @@index([status])
+}
+
 model EventLog {
   id        String   @id @default(cuid())
   type      String

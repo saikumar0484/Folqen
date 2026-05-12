@@ -13,7 +13,7 @@ All required MVP routes exist as Phase 2 placeholders under the app shell.
 | `/research-intelligence` | Trend, source, competitor, policy signals | Mock frontend |
 | `/content-studio` | Scripts, hooks, captions, metadata, packages | Mock frontend |
 | `/analytics` | CTR, retention, engagement, recommendations | Mock frontend |
-| `/organizational-memory` | Brand memory, decisions, prompt/version notes | Mock frontend |
+| `/organizational-memory` | Institutional memory, retrieval, reflection, experiments, prompt/version notes | Mock-safe backend/UI |
 | `/automations` | n8n, Redis/BullMQ, retry and fallback status | Not connected |
 | `/incident-center` | Failed workflows, escalations, recovery | Mock frontend |
 | `/infrastructure` | Redis, queue, provider, worker, database health | Mock frontend |
@@ -43,6 +43,17 @@ These command-center routes are API-ready mock frontend surfaces. They do not en
 | `POST /api/intelligence/research/run` | Run trend, competitor, or viral opportunity research workflow | Mock-safe, approval-gated |
 | `POST /api/intelligence/content/run` | Run topic, hook, script, thumbnail, or metadata workflow | Mock-safe, approval-gated |
 | `POST /api/intelligence/content/package` | Create a review-gated draft content package from the intelligence layer | Mock-safe, no publishing |
+
+## Memory API Routes
+
+| Route | Purpose | Current State |
+| --- | --- | --- |
+| `GET /api/memory/overview` | Organizational memory categories, provider status, recent memory, reflections, and recommendations | Mock-safe backend |
+| `GET /api/memory/search` | Mock semantic memory retrieval with category/tag filters | Mock-safe backend |
+| `POST /api/memory/ingest` | Capture strategic/workflow/prompt/analytics/organizational memory | Admin/operator, mock-safe, no live embeddings |
+| `POST /api/memory/reflect` | Run LangGraph dry-run reflection and strategy recommendations | Admin/operator, no workflow mutation |
+| `POST /api/memory/experiments` | Track A/B, workflow, prompt, hook, and metadata comparisons | Admin/operator, no automatic rollout |
+| `POST /api/memory/prompts/version` | Store prompt versions and capture prompt memory | Admin/operator, needs approval before promotion |
 
 ## MVP Routes
 

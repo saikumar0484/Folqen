@@ -17,6 +17,8 @@ const baseEnv: FolqenEnv = {
   BULLMQ_PREFIX: "folqen",
   ORCHESTRATION_EXECUTION_MODE: "mock",
   ORCHESTRATION_WORKER_ENABLED: false,
+  MEMORY_EMBEDDINGS_PROVIDER: "mock",
+  MEMORY_EMBEDDING_DIMENSIONS: 1536,
 };
 
 const driveEnv: FolqenEnv = {

@@ -2,6 +2,22 @@
 
 ## Current Risks
 
+### Memory and reflection outputs can be mistaken for live embeddings or autonomous learning
+
+- Risk: Organizational memory retrieval and reflection can look like a live vector/AI learning system even though live embedding providers are blocked.
+- Prevention: APIs and UI label execution as `Mock` or `Needs approval`; provider status states no live embeddings are called; strategy evolution is recommendation-only.
+- Verification: Memory tests cover categories, provider blocking, ingestion, retrieval, reflection, experiments, prompt versioning, dashboard status, and access checks. Full verification passed with 72 tests.
+- Rollback: Revert `src/lib/memory`, `/api/memory`, `/organizational-memory` panel additions, Prisma memory models, and the Supabase migration SQL if the memory layer needs redesign.
+- Human approval trigger: Any live embedding provider call, paid AI call, destructive memory action, automatic workflow mutation, automatic prompt promotion, or production migration application.
+
+### pgvector migration is committed but not applied
+
+- Risk: The app schema and generated Prisma client now know about memory tables, but the live Supabase database will not have those tables until the reviewed migration is applied.
+- Prevention: Service code catches unavailable memory tables and falls back to mock/in-memory metadata. The migration SQL is explicit and RLS-enabled, and production application is left as a future approval-gated step.
+- Verification: `prisma generate`, typecheck, tests, and production build passed without applying the migration.
+- Rollback: Remove the memory Prisma models and migration SQL before any live migration is applied.
+- Human approval trigger: Applying `supabase/migrations/20260512154500_add_memory_reflection_system.sql`, adding RLS policies/grants, or enabling Data API access for memory tables.
+
 ### Intelligence workflows can be mistaken for live research or paid AI
 
 - Risk: The Research and Content Department workflows produce convincing trend, competitor, hook, script, thumbnail, caption, and metadata outputs, so users may assume Folqen scraped the web, called OpenRouter/Gemini, or generated publish-ready content.

@@ -2,11 +2,13 @@
 
 ## Current Phase
 
-Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, all required authenticated routes now have route-specific surfaces, manual posting package detail/download is deployed, file registration is deployed, safe mock-agent draft creation is deployed, provider setup surfaces for Google Drive, OpenAI, n8n, and media tools are deployed, admin-only provider setup approval requests are implemented, the target autonomous organization architecture is documented, the operational command center frontend is implemented, the mock-safe multi-agent orchestration infrastructure is implemented, and the first Research + Content intelligence layer is implemented.
+Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, all required authenticated routes now have route-specific surfaces, manual posting package detail/download is deployed, file registration is deployed, safe mock-agent draft creation is deployed, provider setup surfaces for Google Drive, OpenAI, n8n, and media tools are deployed, admin-only provider setup approval requests are implemented, the target autonomous organization architecture is documented, the operational command center frontend is implemented, the mock-safe multi-agent orchestration infrastructure is implemented, the first Research + Content intelligence layer is implemented, and the Organizational Memory & Reflection Intelligence layer is implemented.
 
 ## Current Save Point
 
-May 12, 2026. Latest completed slice is the Research + Content intelligence layer update. Folqen now has typed Research/Content agents, 8 LangGraph dry-run intelligence workflows, mock-safe OpenRouter/Gemini provider placeholders, protected `/api/intelligence/*` routes, existing-model persistence, and live mock-safe controls on `/research-intelligence` and `/content-studio`. No credentials, database schema, production env, paid tools, provider activation, public scraping, public publishing, n8n execution, or media rendering was enabled.
+May 12, 2026. Latest completed slice is the Organizational Memory & Reflection Intelligence layer update. Folqen now has pgvector-ready memory schema files, typed memory services, mock semantic retrieval, LangGraph dry-run reflection workflows, experiment tracking, prompt versioning, protected `/api/memory/*` routes, and live mock-safe controls on `/organizational-memory`. No credentials, live migration application, production env, paid tools, provider activation, live embeddings, public publishing, n8n execution, or media rendering was enabled.
+
+Latest feature commit for this slice: `a70d87b`.
 
 ## Branch
 
@@ -16,6 +18,11 @@ May 12, 2026. Latest completed slice is the Research + Content intelligence laye
 
 - Added `docs/AUTONOMOUS_ORGANIZATION_ARCHITECTURE.md`.
 - Added `docs/ORCHESTRATION_ARCHITECTURE.md`.
+- Added `docs/MEMORY_REFLECTION_ARCHITECTURE.md`.
+- Added `src/lib/memory/*` for memory categories, provider guards, LangGraph reflection flow, retrieval, ingestion, experiments, prompt versioning, dashboard read model, access checks, and tests.
+- Added `/api/memory/overview`, `/api/memory/search`, `/api/memory/ingest`, `/api/memory/reflect`, `/api/memory/experiments`, and `/api/memory/prompts/version`.
+- Added pgvector-ready Prisma models and `supabase/migrations/20260512154500_add_memory_reflection_system.sql`; it was not applied to production.
+- Added live mock-safe memory controls to `/organizational-memory`.
 - Added `src/lib/intelligence/*` for Research and Content agents, workflows, provider guards, persistence, services, handler access checks, and tests.
 - Added `/api/intelligence/departments`, `/api/intelligence/runs`, `/api/intelligence/research/run`, `/api/intelligence/content/run`, and `/api/intelligence/content/package`.
 - Added live mock-safe run panels to `/research-intelligence` and `/content-studio`.
@@ -40,6 +47,7 @@ May 12, 2026. Latest completed slice is the Research + Content intelligence laye
 - Attempted Supabase MCP docs search for RLS/security context, but the MCP OAuth token was revoked in this session.
 - Ran verification through direct local binaries because `npm` was not available on PATH: `eslint .`, `tsc --noEmit`, `tsx --test "src/**/*.test.ts"`, `prisma generate`, and `next build` all passed.
 - Latest verification after the Research + Content intelligence layer: direct `eslint .` passed, direct `tsc --noEmit` passed, direct `tsx --test "src/**/*.test.ts"` passed with 63 tests, direct `prisma generate` plus `next build` passed on Next.js `16.2.6`, and `npm audit --audit-level=moderate` still reports only the known nested Next/PostCSS moderate advisory.
+- Latest verification after the Organizational Memory & Reflection Intelligence layer: direct `eslint .` passed, direct `tsc --noEmit` passed, direct `tsx --test "src/**/*.test.ts"` passed with 72 tests, direct `prisma generate` plus `next build` passed on Next.js `16.2.6`, and `npm audit --audit-level=moderate` still reports the known nested Next/PostCSS moderate advisory. Supabase CLI was unavailable on PATH, so migration creation used a committed reviewed SQL fallback and no database migration was applied.
 - Added database-backed pipeline and library pages using existing Supabase records.
 - Added database-backed platforms and tools pages using existing Supabase records and runtime integration status.
 - Added database-backed notifications, analytics, errors, workflows, and upgrades pages using existing Supabase records.
@@ -396,6 +404,7 @@ No known broken build, lint, typecheck, test, or Prisma schema validation areas.
 - All integrations are `Not connected`.
 - Orchestration APIs and workers are mock-safe by default; Redis/BullMQ live mode is not active unless explicitly configured.
 - Research/Content intelligence APIs are mock-safe by default; OpenRouter/Gemini are not connected or blocked and no live source ingestion exists.
+- Organizational memory APIs are mock-safe by default; live embeddings are blocked, memory tables are not yet applied to production Supabase, and strategy evolution is recommendations only.
 - CrewAI is represented by a TypeScript coordination plan; a live Python CrewAI runtime is not connected.
 - LangGraph currently runs dry-run planning and approval checkpoints only.
 - Mini agent chat is a mock UI shell.

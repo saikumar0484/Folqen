@@ -4,6 +4,8 @@ Folqen is designed as a modular creator operations platform, not a hardcoded one
 
 For the full principal-engineer target design of Folqen as an autonomous AI creator organization operating system, read `docs/AUTONOMOUS_ORGANIZATION_ARCHITECTURE.md`.
 
+For the institutional memory, reflection, experiment, prompt-versioning, and pgvector-ready semantic retrieval layer, read `docs/MEMORY_REFLECTION_ARCHITECTURE.md`.
+
 ## Layers
 
 ```text

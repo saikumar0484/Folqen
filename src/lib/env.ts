@@ -37,6 +37,8 @@ export const envSchema = z.object({
   OPENAI_MODEL: z.string().optional(),
   OPENROUTER_API_KEY: z.string().optional(),
   GEMINI_API_KEY: z.string().optional(),
+  MEMORY_EMBEDDINGS_PROVIDER: z.enum(["mock", "openai", "gemini"]).default("mock"),
+  MEMORY_EMBEDDING_DIMENSIONS: z.coerce.number().int().positive().default(1536),
   REDIS_URL: z.string().optional(),
   BULLMQ_PREFIX: z.string().default("folqen"),
   ORCHESTRATION_EXECUTION_MODE: z.enum(["mock", "live"]).default("mock"),

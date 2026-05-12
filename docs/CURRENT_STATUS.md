@@ -2,14 +2,16 @@
 
 ## Phase
 
-Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, every required authenticated route now has a route-specific or database-backed surface, the autonomous organization target architecture is documented, the operational command center frontend is implemented, the mock-safe multi-agent orchestration infrastructure is implemented, and the first Research + Content operational intelligence layer is implemented on branch `build/phase-0-foundation`.
+Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, every required authenticated route now has a route-specific or database-backed surface, the autonomous organization target architecture is documented, the operational command center frontend is implemented, the mock-safe multi-agent orchestration infrastructure is implemented, the first Research + Content operational intelligence layer is implemented, and the Organizational Memory & Reflection Intelligence layer is implemented on branch `build/phase-0-foundation`.
 
-Latest save point: May 12, 2026, after building the Research + Content intelligence layer. This was a backend/UI mock-safe implementation phase; no credentials, database schema, production settings, paid tools, provider connections, public scraping, public publishing, media rendering, or n8n execution were enabled.
+Latest save point: May 12, 2026, after building the Organizational Memory & Reflection Intelligence layer. This was a backend/schema/UI mock-safe implementation phase; no credentials, production database migration application, production settings, paid tools, provider connections, live embeddings, public publishing, media rendering, or n8n execution were enabled.
 
 ## Completed Work
 
 - Added the full target architecture for Folqen as an autonomous AI creator organization operating system, including agent hierarchy, orchestration, services, database direction, provider strategy, communications, deployment, security, recovery, analytics, approvals, and phased roadmap.
 - Added the first Research + Content intelligence layer with 11 specialist agents, 8 LangGraph dry-run workflows, mock-safe provider abstraction, protected `/api/intelligence/*` routes, persistence through existing models, and live controls on `/research-intelligence` and `/content-studio`.
+- Added the Organizational Memory & Reflection Intelligence layer with pgvector-ready Prisma/Supabase schema files, typed memory services, mock semantic retrieval, LangGraph dry-run reflection flows, experiment tracking, prompt versioning, protected `/api/memory/*` routes, and a live mock-safe `/organizational-memory` panel.
+- Added `docs/MEMORY_REFLECTION_ARCHITECTURE.md`.
 - Added the real Folqen orchestration layer shape with typed agent registry, hierarchy/departments, task orchestration service, event bus, Redis/BullMQ adapters, LangGraph dry-run flow, CrewAI-compatible coordination plan, incident recovery, monitoring hooks, memory hooks, protected APIs, and a worker entrypoint.
 - Added Redis to Docker Compose and orchestration environment defaults while keeping execution mock-safe by default.
 - Added `docs/ORCHESTRATION_ARCHITECTURE.md`.
@@ -118,6 +120,8 @@ The app installs, lints, typechecks, tests, validates Prisma schema, builds succ
 - No n8n, platform, or paid-tool credentials were added.
 - Orchestration worker execution is disabled unless Redis live mode and the worker flag are explicitly enabled.
 - Research and Content intelligence workflows use manual inputs and the mock provider only by default.
+- Organizational memory uses mock semantic retrieval and does not call live embedding providers.
+- The memory migration SQL is committed for review but was not applied to the live Supabase database in this slice.
 - Production `AUTH_SECRET` is configured in Vercel; its value was never printed or committed.
 - All integrations remain `Not connected` or `Mock`.
 - Database is the only live backend integration.
@@ -544,6 +548,19 @@ Latest May 12, 2026 Research + Content intelligence update:
 - Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`.
 - `npm audit --audit-level=moderate`: still reports the known nested PostCSS moderate advisory under Next; no unsafe forced fix was applied.
 
+Latest May 12, 2026 Organizational Memory & Reflection Intelligence update:
+
+- Added pgvector-ready Prisma models and reviewed Supabase migration SQL for `MemoryEntry`, `MemoryReflection`, and `ExperimentRecord`; migration application is still pending human approval.
+- Added `src/lib/memory/*` with memory category registry, provider status guards, deterministic mock semantic retrieval, LangGraph dry-run reflection flow, memory ingestion, search, reflection, experiment tracking, prompt versioning, dashboard read model, access helpers, and tests.
+- Added protected `/api/memory/overview`, `/api/memory/search`, `/api/memory/ingest`, `/api/memory/reflect`, `/api/memory/experiments`, and `/api/memory/prompts/version`.
+- Added `/organizational-memory` UI controls for memory visualization, mock retrieval, ingestion, dry-run reflection, experiment tracking, and recommendations.
+- Supabase CLI was not available on PATH, so migration creation used a reviewed SQL file fallback; no Supabase database command was run.
+- Direct local `eslint .`: passed.
+- Direct local `tsc --noEmit`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 72 tests.
+- Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`.
+- `npm audit --audit-level=moderate`: still reports the known nested PostCSS moderate advisory under Next; no unsafe forced fix was applied.
+
 ## Known Issues
 
 - Supabase MCP documentation search failed in this session because the connected OAuth token was revoked, so Supabase-specific security notes in the architecture document rely on existing project practice and official-doc fallback knowledge rather than MCP snippets.
@@ -551,6 +568,8 @@ Latest May 12, 2026 Research + Content intelligence update:
 - Local authenticated browser smoke was blocked because the dev server did not have `AUTH_SECRET`/database env configured. React server-render smoke covered all 12 command-center views, and production build route output confirmed the new routes compile.
 - Orchestration APIs are backend-ready but the command-center UI still reads typed mock command-center data; connecting UI panels to the new APIs is the next safe slice.
 - Research Intelligence and Content Studio now have live mock-safe controls, but the main command-center renderer still includes baseline mock telemetry around those controls.
+- Organizational Memory now has live mock-safe controls and committed migration SQL, but the live Supabase database has not applied the memory tables yet.
+- Live embeddings remain disabled; OpenAI/Gemini embedding providers are status-aware placeholders only.
 - OpenRouter and Gemini are placeholder intelligence providers only; real calls remain blocked until credentials and paid-tool approval exist.
 - Redis/BullMQ are optional and not active by default. Local live queue testing needs `REDIS_URL`, `ORCHESTRATION_EXECUTION_MODE=live`, and `ORCHESTRATION_WORKER_ENABLED=true`.
 

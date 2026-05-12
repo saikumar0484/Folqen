@@ -1,5 +1,29 @@
 # Changelog
 
+## May 12, 2026 - Organizational Memory and Reflection Intelligence layer
+
+### Added
+
+- Added pgvector-ready Prisma models and Supabase migration SQL for `MemoryEntry`, `MemoryReflection`, and `ExperimentRecord`.
+- Added `docs/MEMORY_REFLECTION_ARCHITECTURE.md` covering memory categories, services, reflection flow, experiment tracking, prompt versioning, provider safety, APIs, and UI integration.
+- Added `src/lib/memory/*` with typed memory services, provider status guards, deterministic mock semantic retrieval, LangGraph dry-run reflection flow, experiment tracking, prompt versioning, dashboard read model, and tests.
+- Added protected `/api/memory/overview`, `/api/memory/search`, `/api/memory/ingest`, `/api/memory/reflect`, `/api/memory/experiments`, and `/api/memory/prompts/version`.
+- Added a live mock-safe Organizational Memory panel to `/organizational-memory` for retrieval, ingestion, reflection, experiments, and recommendations.
+
+### Safety
+
+- No live Supabase migration was applied.
+- No live embeddings provider, paid AI provider, workflow mutation, prompt promotion, public publishing, n8n execution, or destructive memory action was enabled.
+- OpenAI/Gemini embedding providers are status-aware placeholders only; default memory retrieval remains `Mock`.
+
+### Verification
+
+- Direct local `eslint .`: passed.
+- Direct local `tsc --noEmit`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 72 tests.
+- Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`.
+- `npm audit --audit-level=moderate`: still reports the known nested PostCSS moderate advisory under Next; `npm audit fix --force` would install a breaking Next path and was not run.
+
 ## May 12, 2026 - Research and Content intelligence layer
 
 ### Added

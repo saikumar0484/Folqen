@@ -44,6 +44,7 @@
 - [x] Add mock-safe multi-agent orchestration infrastructure with LangGraph, CrewAI-compatible planning, Redis/BullMQ adapters, event bus, incident recovery, memory hooks, monitoring, and APIs.
 - [x] Add Docker Compose Redis service for local queue testing.
 - [x] Add Research and Content intelligence layer with 11 agents, 8 mock-safe LangGraph workflows, provider guards, APIs, persistence through existing models, and UI run controls.
+- [x] Add Organizational Memory and Reflection Intelligence layer with pgvector-ready schema, mock semantic retrieval, LangGraph dry-run reflections, experiments, prompt versioning, APIs, and UI controls.
 
 ## Later Phases
 
