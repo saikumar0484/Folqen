@@ -8,7 +8,7 @@ Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/
 
 May 12, 2026. Latest completed slice is the Governance Approval & Safety Control update. Folqen now has a mock-safe governance policy engine, governance/sandbox queues, approval request/action flows, sandbox simulation, cost/provider governance, protected `/api/governance/*` routes, and live mock-safe controls on `/approvals`. No credentials, live migration application, production env, paid tools, provider activation, live embeddings, GPU execution, live ComfyUI execution, FFmpeg rendering, platform account access, analytics API read, scraping, public publishing, n8n execution, or binary storage write was enabled.
 
-Latest feature commit for this slice: pending until this governance checkpoint commit is created.
+Latest feature commit for this slice: `4485e0d`.
 
 ## Branch
 
