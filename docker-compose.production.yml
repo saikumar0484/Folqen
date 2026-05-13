@@ -1,0 +1,88 @@
+services:
+  folqen-web:
+    build:
+      context: .
+      dockerfile: Dockerfile.production
+    container_name: folqen-web
+    restart: unless-stopped
+    env_file:
+      - ./.env.production
+    environment:
+      NODE_ENV: production
+      FOLQEN_RUNTIME_PROFILE: docker
+      REQUIRE_STARTUP_VALIDATION: "true"
+      STARTUP_DRY_RUN_MODE: "true"
+      ALLOW_PUBLIC_PUBLISH: "false"
+      ALLOW_PAID_TOOLS: "false"
+      ALLOW_BROWSER_AUTOMATION: "false"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/api/health >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+  folqen-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.production
+    container_name: folqen-worker
+    restart: "no"
+    profiles:
+      - workers
+    env_file:
+      - ./.env.production
+    environment:
+      NODE_ENV: production
+      FOLQEN_RUNTIME_PROFILE: docker
+      REQUIRE_STARTUP_VALIDATION: "true"
+      STARTUP_DRY_RUN_MODE: "true"
+      ORCHESTRATION_WORKER_ENABLED: "false"
+    command: ["npm", "run", "worker:orchestration"]
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: folqen-postgres-prod
+    restart: unless-stopped
+    env_file:
+      - ./.env.production
+    environment:
+      POSTGRES_DB: folqen
+      POSTGRES_USER: folqen
+    volumes:
+      - folqen-postgres-prod-data:/var/lib/postgresql/data
+      - ./deploy/backups:/backups
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U folqen -d folqen"]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+
+  redis:
+    image: redis:7-alpine
+    container_name: folqen-redis-prod
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--save", "60", "1"]
+    volumes:
+      - folqen-redis-prod-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+
+volumes:
+  folqen-postgres-prod-data:
+  folqen-redis-prod-data:

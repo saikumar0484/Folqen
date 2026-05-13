@@ -2,9 +2,9 @@
 
 ## Phase
 
-Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, every required authenticated route now has a route-specific or database-backed surface, the autonomous organization target architecture is documented, the operational command center frontend is implemented, the mock-safe multi-agent orchestration infrastructure is implemented, the first Research + Content operational intelligence layer is implemented, the Organizational Memory & Reflection Intelligence layer is implemented, the Media Generation & Asset Pipeline layer is implemented, the Platform Operations & Publishing Infrastructure layer is implemented, the Governance Approval & Safety Control layer is implemented, the AI Provider Gateway & Execution Runtime is implemented, the Controlled Live Execution Activation Layer is implemented, the Governed Operations Trace Center is implemented, and production governance/trace verification hardening is implemented on branch `build/phase-0-foundation`.
+Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, every required authenticated route now has a route-specific or database-backed surface, the autonomous organization target architecture is documented, the operational command center frontend is implemented, the mock-safe multi-agent orchestration infrastructure is implemented, the first Research + Content operational intelligence layer is implemented, the Organizational Memory & Reflection Intelligence layer is implemented, the Media Generation & Asset Pipeline layer is implemented, the Platform Operations & Publishing Infrastructure layer is implemented, the Governance Approval & Safety Control layer is implemented, the AI Provider Gateway & Execution Runtime is implemented, the Controlled Live Execution Activation Layer is implemented, the Governed Operations Trace Center is implemented, production governance/trace verification hardening is implemented, and the Production Environment & Deployment Governance System is implemented on branch `build/phase-0-foundation`.
 
-Latest save point: May 13, 2026, after adding Folqen's Production Governance & Trace Verification Hardening. This was a read-only operational reliability phase; no credentials, production database migration application, production settings, paid tools, production provider activation, live embeddings, unrestricted GPU execution, live ComfyUI request, FFmpeg process spawn, binary media write, unrestricted video generation, platform account access, live platform analytics API read, scraping, public publishing, autonomous retries, autonomous optimization execution, self-improvement mutation, workflow mutation, prompt mutation, queue mutation, or n8n execution were enabled.
+Latest save point: May 13, 2026, after adding Folqen's Production Environment & Deployment Governance System. This was a read-only production safety phase; no credentials, production database migration application, production settings, paid tools, production provider activation, live embeddings, unrestricted GPU execution, live ComfyUI request, FFmpeg process spawn, binary media write, unrestricted video generation, platform account access, live platform analytics API read, scraping, public publishing, autonomous retries, autonomous optimization execution, self-improvement mutation, workflow mutation, prompt mutation, queue mutation, or n8n execution were enabled.
 
 ## Completed Work
 
@@ -31,6 +31,13 @@ Latest save point: May 13, 2026, after adding Folqen's Production Governance & T
   - Protected `GET /api/operations/diagnostics` and `GET /api/governance/approvals/read-model`.
   - Search/filter/pagination controls and correlation views on `/audit`.
   - Safe text redaction for secret-like trace summaries.
+- Added the Production Environment & Deployment Governance System:
+  - `src/lib/deployment-governance/*` for environment validation, startup integrity checks, masked secret governance, deployment readiness, Docker/VPS readiness, rollback readiness, and observability diagnostics.
+  - Protected `GET /api/deployment/readiness` with authenticated read access.
+  - `/infrastructure` now includes a read-only production deployment governance panel with status labels, blockers, startup mode, secret checks, Docker profiles, VPS guidance, and rollback indicators.
+  - New safe startup env flags: `FOLQEN_RUNTIME_PROFILE`, `REQUIRE_STARTUP_VALIDATION`, `STARTUP_DRY_RUN_MODE`, `STARTUP_ROLLBACK_MODE`, `STARTUP_QUARANTINE_MODE`, and `STARTUP_KILL_SWITCH`.
+  - Added `Dockerfile.production`, `docker-compose.production.yml`, `.dockerignore`, `deploy/.env.production.example`, and `docs/PRODUCTION_DEPLOYMENT_GOVERNANCE.md`.
+  - No live provider activation, production deploy, queue worker activation, rendering, publishing, account automation, or secret change was performed.
 - Added the Platform Operations & Publishing Infrastructure layer with n8n-ready dry-run workflows, publishing/scheduling/retry queues, platform adaptation, deployment registry, analytics ingestion planning, monetization/policy hooks, protected `/api/platform-ops/*` routes, and `/platforms` controls.
 - Added `docs/PLATFORM_OPERATIONS_ARCHITECTURE.md`.
 - Added the Governance Approval & Safety Control layer with execution policy engine, governance/sandbox queues, approval workflow actions, role/permission matrix, cost/provider governance, sandbox simulation, protected `/api/governance/*` routes, and `/approvals` controls.
@@ -789,6 +796,7 @@ Latest May 13, 2026 Controlled Media Execution & Asset Rendering System:
 - Local authenticated browser smoke was blocked because the dev server did not have `AUTH_SECRET`/database env configured. React server-render smoke covered all 12 command-center views, and production build route output confirmed the new routes compile.
 - Orchestration APIs are backend-ready but the command-center UI still reads typed mock command-center data; connecting UI panels to the new APIs is the next safe slice.
 - Research Intelligence, Content Studio, and Analytics now have live mock-safe/governed controls, but the main command-center renderer still includes baseline mock telemetry around those controls.
+- Production deployment governance is implemented as read-only diagnostics and Docker/VPS configuration scaffolding. The production VPS/Coolify deployment has not been performed, no `.env.production` secrets exist in git, and rollback/backup restore still need a real rehearsal before public launch.
 - Organizational Memory now has live mock-safe controls and committed migration SQL, but the live Supabase database has not applied the memory tables yet.
 - Live embeddings remain disabled; OpenAI/Gemini embedding providers are status-aware placeholders only.
 - Media Production now has live mock-safe and controlled render Content Studio controls, but ComfyUI requests, FFmpeg process execution, local worker execution, binary storage writes, unrestricted GPU execution, and real video/image generation remain disabled.
@@ -810,4 +818,4 @@ Latest May 13, 2026 Controlled Media Execution & Asset Rendering System:
 
 ## Safe To Stop
 
-Yes after this checkpoint commit is pushed. The Controlled Media Execution & Asset Rendering System is implemented but blocked by default, verification passed, the repo is safe to continue, and no source files are left half-edited.
+Yes after this checkpoint commit is pushed. The Production Environment & Deployment Governance System is implemented, verification passed, the repo is safe to continue, and no source files are left half-edited.

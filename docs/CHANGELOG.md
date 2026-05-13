@@ -1,5 +1,32 @@
 # Changelog
 
+## May 13, 2026 - Production Environment & Deployment Governance System
+
+### Added
+
+- Added `src/lib/deployment-governance/*` with typed deployment readiness, environment validation, startup integrity, secret governance, Docker/VPS readiness, rollback readiness, and observability diagnostics.
+- Added protected `GET /api/deployment/readiness` for authenticated deployment governance diagnostics.
+- Added `/infrastructure` deployment governance panel with runtime profile, startup mode, masked secret checks, blocker summaries, Docker profiles, VPS/Coolify guidance, runtime diagnostics, and rollback indicators.
+- Added safe startup env defaults: `FOLQEN_RUNTIME_PROFILE`, `REQUIRE_STARTUP_VALIDATION`, `STARTUP_DRY_RUN_MODE`, `STARTUP_ROLLBACK_MODE`, `STARTUP_QUARANTINE_MODE`, and `STARTUP_KILL_SWITCH`.
+- Added production deployment scaffolding: `.dockerignore`, `Dockerfile.production`, `docker-compose.production.yml`, `deploy/.env.production.example`, and `deploy/backups/.gitkeep`.
+- Added `docs/PRODUCTION_DEPLOYMENT_GOVERNANCE.md` covering Docker, Coolify, Oracle VPS, Hetzner VPS, reverse proxy, backups, restore rehearsal, rollback, quarantine, and approval triggers.
+
+### Safety
+
+- No real secrets were added.
+- No production deploy was performed.
+- No provider, queue worker, publishing, rendering, platform, n8n, paid tool, autonomous retry, or workflow mutation path was enabled.
+- Deployment diagnostics mask configured secrets and the readiness endpoint is authenticated.
+
+### Verification
+
+- `eslint .`: passed.
+- `tsc --noEmit`: passed.
+- `tsx --test "src/**/*.test.ts"`: passed, 134 tests.
+- `prisma generate && next build`: passed on Next.js `16.2.6`; `/api/deployment/readiness` is included in the build output.
+- Local HTTP smoke: `/login` returned `200`, `/api/health` returned `200`, and anonymous `/api/deployment/readiness` returned `401`.
+- `npm audit --audit-level=moderate`: still reports the known nested Next/PostCSS moderate advisory; no unsafe forced fix was applied because npm suggests a breaking downgrade.
+
 ## May 13, 2026 - Production Governance & Trace Verification Hardening
 
 ### Added

@@ -507,3 +507,43 @@ Yes after this checkpoint commit is pushed. The Controlled Media Execution & Ass
 ```text
 Read README, AGENTS.md, root planning docs, and checkpoint docs from GitHub branch `build/phase-0-foundation`; run lint/typecheck/test/build if needed; then continue governed Research/Content/Analytics trace dashboards, controlled media render trace dashboards, approval UX/read-model work, local Stage 1 rehearsal planning, account cleanup after the human provides/approves the needed account changes, live-test Google Drive after env setup, or continue n8n embed/webhook setup, media worker setup, platform-ops read models, posting package polish, service-backed mock APIs, or role-aware UI/tests. Do not run a real Gemini call or real media render unless the human explicitly approves the credential/provider, approval ID, env flags, budget, exact workflow, and Stage 1/sandbox activation rehearsal. Do not put test account passwords or real secrets into repo files.
 ```
+
+## May 13, 2026 - Production Environment & Deployment Governance System
+
+### Summary
+
+Implemented a read-only production deployment governance layer for Folqen. This phase prepares Docker/VPS/Coolify readiness, environment validation, masked secret governance, startup integrity checks, runtime diagnostics, and rollback readiness without enabling live execution, rendering, publishing, queue workers, provider activation, or production deployment.
+
+### Files Added Or Changed
+
+- Added `src/lib/deployment-governance/types.ts`.
+- Added `src/lib/deployment-governance/service.ts`.
+- Added `src/lib/deployment-governance/service.test.ts`.
+- Added protected `src/app/api/deployment/readiness/route.ts`.
+- Added `src/components/command-center/deployment-governance-panel.tsx`.
+- Updated `src/app/(app)/infrastructure/page.tsx` to render deployment governance diagnostics.
+- Updated `src/lib/env.ts` and `.env.example` with startup/runtime profile controls.
+- Updated `src/lib/storage/google-drive.test.ts` for the expanded env shape.
+- Added `.dockerignore`, `Dockerfile.production`, `docker-compose.production.yml`, `deploy/.env.production.example`, `deploy/backups/.gitkeep`, and `docs/PRODUCTION_DEPLOYMENT_GOVERNANCE.md`.
+- Updated checkpoint docs and risk documentation.
+
+### Verification
+
+- `eslint .`: passed.
+- `tsc --noEmit`: passed.
+- `tsx --test "src/**/*.test.ts"`: passed, 134 tests.
+- `prisma generate && next build`: passed on Next.js `16.2.6`; `/api/deployment/readiness` appears in build output.
+- HTTP smoke: `http://localhost:3016/login` returned `200`, `http://localhost:3016/api/health` returned `200`, and anonymous `http://localhost:3016/api/deployment/readiness` returned `401`.
+- `npm audit --audit-level=moderate`: still reports the known nested Next/PostCSS moderate advisory. No forced fix was applied because npm proposes a breaking downgrade.
+
+### Safety State
+
+- No secrets were committed or printed.
+- No `.env.production` was created with real values.
+- No production deployment was performed.
+- No public publishing, paid tools, browser automation, live provider execution, live rendering, platform account access, n8n execution, autonomous retries, workflow mutation, queue worker activation, or provider activation was enabled.
+- Deployment readiness is diagnostic-only and authenticated.
+
+### Resume Guidance
+
+Next safe work: production readiness rehearsal against `https://folqen.vercel.app` after deploy, VPS/Coolify dry-run planning, authenticated `/api/deployment/readiness` verification, backup/restore rehearsal planning, approval UX polish, and credential setup guidance. Do not enable Docker worker profiles, live Redis mode, Gemini credentials, controlled rendering, public publishing, or platform account automation without explicit human approval.

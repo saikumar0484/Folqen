@@ -627,3 +627,37 @@
 - Human approval is required by default.
 - Auth, protected sessions, audit persistence, and database-backed settings/approvals exist.
 - Upload validation, rate limits, CSRF hardening, broader role tests, and platform OAuth security are still future work.
+
+## May 13, 2026 - Production Environment & Deployment Governance Risks
+
+### Production deployment can boot with unsafe or incomplete env
+
+- Risk: A VPS, Docker, Coolify, or Vercel runtime may boot with placeholder secrets, missing database/Redis URLs, mismatched runtime profile, or unsafe flags.
+- Prevention: Added `src/lib/deployment-governance/*`, startup env flags, masked secret checks, production-profile required secret validation, startup integrity checks, and protected `/api/deployment/readiness`.
+- Verification: `eslint .`, `tsc --noEmit`, `tsx --test "src/**/*.test.ts"`, `prisma generate && next build`, and HTTP smoke for `/api/deployment/readiness` returning `401` anonymously passed.
+- Rollback: Set `STARTUP_ROLLBACK_MODE=true`, keep live execution/media/publishing flags false, stop workers, redeploy previous image/commit, and verify `/api/health`.
+- Human approval trigger: Any real production deployment, `.env.production` creation with real secrets, Docker worker startup, live Redis queue mode, provider activation, or public traffic cutover.
+
+### Secret diagnostics could accidentally expose sensitive values
+
+- Risk: Deployment dashboards can become a secret leak if they render raw env values.
+- Prevention: Secret governance returns only `configured` and masked values; docs state secrets must live in platform/server secret managers; `.dockerignore` excludes env files.
+- Verification: Deployment governance tests assert the raw Gemini key is absent from serialized dashboard output.
+- Rollback: Remove diagnostics endpoint from production, rotate affected secrets, and audit trace output if any raw secret is ever exposed.
+- Human approval trigger: Any new diagnostic that includes env values, credential metadata, connection strings, OAuth tokens, or provider keys.
+
+### Docker/VPS production profile may be mistaken for production activation
+
+- Risk: Adding production Docker/Coolify scaffolding may make future users assume providers, queues, publishing, or rendering are live.
+- Prevention: Compose keeps workers behind a disabled profile, app env overrides keep dangerous flags false, docs label deployment as readiness only, and UI shows `Mock`, `Not connected`, `Needs approval`, `Configured`, `Blocked`, or `Live`.
+- Verification: Build output includes `/api/deployment/readiness`; tests confirm local defaults remain mock-safe and live queue startup blocks without Redis governance.
+- Rollback: Remove or disable `docker-compose.production.yml` worker profile and keep the app on local/Vercel deployment until a supervised VPS rehearsal is approved.
+- Human approval trigger: Enabling `--profile workers`, setting `ORCHESTRATION_EXECUTION_MODE=live`, adding provider credentials, enabling controlled rendering, or changing `ALLOW_PUBLIC_PUBLISH`.
+
+### Backup and rollback are documented but not rehearsed
+
+- Risk: Production deployment without a restore rehearsal can leave the project unable to recover cleanly from bad data or failed deploys.
+- Prevention: Added `docs/PRODUCTION_DEPLOYMENT_GOVERNANCE.md` with backup, restore, rollback, and quarantine procedures; UI exposes rollback readiness as `Needs approval` where rehearsal is still required.
+- Verification: Documentation and readiness panel compile in the production build; no destructive backup/restore command was run.
+- Rollback: Keep the existing Vercel deployment as the safe baseline until VPS/Coolify backup and rollback rehearsal passes.
+- Human approval trigger: Any database restore, backup retention change, off-host backup setup containing credentials, or production rollback affecting real users.

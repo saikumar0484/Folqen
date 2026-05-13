@@ -1,0 +1,11 @@
+.git
+.next
+.vercel
+node_modules
+coverage
+docs/prototypes
+*.log
+.env
+.env.*
+!.env.example
+!deploy/.env.production.example

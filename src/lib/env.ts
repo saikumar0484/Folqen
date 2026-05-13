@@ -16,6 +16,18 @@ export const envSchema = z.object({
   ALLOW_PAID_TOOLS: booleanFlag("false"),
   ALLOW_BROWSER_AUTOMATION: booleanFlag("false"),
   DEFAULT_UPLOAD_PRIVACY: z.enum(["private", "unlisted", "public"]).default("private"),
+  FOLQEN_RUNTIME_PROFILE: z.enum(["local", "docker", "vps", "coolify", "vercel"]).default("local"),
+  REQUIRE_STARTUP_VALIDATION: z
+    .enum(["true", "false"])
+    .default("true")
+    .transform((value) => value === "true"),
+  STARTUP_DRY_RUN_MODE: z
+    .enum(["true", "false"])
+    .default("true")
+    .transform((value) => value === "true"),
+  STARTUP_ROLLBACK_MODE: booleanFlag("false"),
+  STARTUP_QUARANTINE_MODE: booleanFlag("false"),
+  STARTUP_KILL_SWITCH: booleanFlag("false"),
   DATABASE_URL: z.string().optional(),
   AUTH_SECRET: z.string().optional(),
   NEXTAUTH_URL: z.string().optional(),

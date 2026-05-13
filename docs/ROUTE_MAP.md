@@ -16,7 +16,7 @@ All required MVP routes exist as Phase 2 placeholders under the app shell.
 | `/organizational-memory` | Institutional memory, retrieval, reflection, experiments, prompt/version notes | Mock-safe backend/UI |
 | `/automations` | n8n, Redis/BullMQ, retry and fallback status | Not connected |
 | `/incident-center` | Failed workflows, escalations, recovery | Mock frontend |
-| `/infrastructure` | Redis, queue, provider, worker, database health | Mock frontend |
+| `/infrastructure` | Redis, queue, provider, worker, database health, deployment governance, startup integrity, and rollback readiness | Read-only diagnostics plus mock frontend |
 | `/settings` | Command settings plus live settings forms | Configured shell |
 
 These command-center routes are API-ready mock frontend surfaces. They do not enable live provider execution, public publishing, paid tools, worker jobs, or platform posting.
@@ -64,6 +64,9 @@ These command-center routes are API-ready mock frontend surfaces. They do not en
 | `POST /api/media/generate` | Plan thumbnail, image, shorts visual, subtitle, adaptation, or optimization workflows | Admin/operator, dry-run only |
 | `POST /api/media/render` | Queue a rendering workflow as a dry-run FFmpeg/media-worker plan | Admin/operator, no FFmpeg execution |
 | `POST /api/media/retry` | Plan failed render retry and recovery logs | Admin/operator, no live rendering |
+| `GET /api/media/controlled-render` | Controlled rendering governance, quotas, provider status, and recent render packets | Authenticated, no live rendering |
+| `POST /api/media/controlled-render` | Prepare approval-gated controlled render packets | Admin/operator, no GPU/FFmpeg/ComfyUI execution |
+| `POST /api/media/controlled-render/shutdown` | Engage controlled rendering shutdown/rollback marker | Admin/operator, no live render cancellation required |
 
 ## Platform Operations API Routes
 
@@ -86,6 +89,12 @@ These command-center routes are API-ready mock frontend surfaces. They do not en
 | `POST /api/governance/approvals/request` | Request human approval for risky action checkpoints | Admin/operator, creates approval/audit/event rows |
 | `POST /api/governance/approvals/action` | Approve, reject, escalate, retry, or revoke governance approvals | Admin/operator, no live execution |
 | `POST /api/governance/sandbox` | Queue isolated dry-run provider/workflow simulation | Admin/operator, mock-safe only |
+
+## Deployment Governance API Routes
+
+| Route | Purpose | Current State |
+| --- | --- | --- |
+| `GET /api/deployment/readiness` | Environment validation, masked secret governance, startup integrity, Docker/VPS readiness, runtime diagnostics, and rollback readiness | Authenticated, read-only, no activation |
 
 ## MVP Routes
 
