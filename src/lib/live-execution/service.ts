@@ -15,6 +15,18 @@ import type { DepartmentId } from "@/lib/orchestration/types";
 import { getMutationSafetyError } from "@/lib/security/request-guards";
 import { executeLiveProvider } from "./adapters";
 import { defaultRuntimeQuota, FIRST_LIVE_TARGET, getConfiguredActivationStage, isLiveExecutionFlagEnabled, isRuntimeKillSwitchEnabled } from "./config";
+import {
+  buildContentOperationsPrompt,
+  buildContentOperationsSystemPrompt,
+  contentOperationalResponseSchema,
+  contentOutputWarnings,
+  contentPlatformTargets,
+  LIVE_CONTENT_OPERATIONAL_CAPABILITY,
+  liveContentWorkflowKinds,
+  parseContentOperationsJson,
+  scoreContentOutput,
+  type ContentMemoryContextItem,
+} from "./content-operations";
 import { buildResearchIdeationPrompt, buildResearchIdeationSystemPrompt, LIVE_RESEARCH_IDEATION_CAPABILITY, parseResearchIdeationJson, researchIdeationResponseJsonSchema } from "./research-ideation";
 import {
   buildResearchOperationsPrompt,
@@ -34,6 +46,8 @@ const departmentIdSchema = z.enum(["research", "content", "platform_operations",
 const workflowKindSchema = z.enum(["provider_execution", "structured_generation", "agent_tool_call", "embedding_request", "provider_health_check", "fallback_recovery"]);
 const taskTypeSchema = z.enum(["text_generation", "structured_output", "planning", "classification", "summarization", "embedding"]);
 const liveResearchWorkflowKindSchema = z.enum(liveResearchWorkflowKinds);
+const liveContentWorkflowKindSchema = z.enum(liveContentWorkflowKinds);
+const contentPlatformTargetSchema = z.enum(contentPlatformTargets);
 
 export const controlledLiveExecutionSchema = z.object({
   objective: z.string().min(8).max(1500),
@@ -50,10 +64,12 @@ export const controlledLiveExecutionSchema = z.object({
   estimatedInputTokens: z.coerce.number().int().min(1).max(defaultRuntimeQuota.maxInputTokensPerRequest).optional(),
   estimatedOutputTokens: z.coerce.number().int().min(1).max(defaultRuntimeQuota.maxOutputTokensPerRequest).optional(),
   researchWorkflowKind: liveResearchWorkflowKindSchema.default("content_ideation"),
+  contentWorkflowKind: liveContentWorkflowKindSchema.default("hook_generation"),
   seedTopics: z.array(z.string().min(1).max(180)).max(12).default([]),
   competitors: z.array(z.string().min(1).max(180)).max(12).default([]),
   audienceNotes: z.array(z.string().min(1).max(500)).max(12).default([]),
   sourceReferences: z.array(z.string().min(1).max(500)).max(12).default([]),
+  platformTargets: z.array(contentPlatformTargetSchema).max(5).default(["YOUTUBE_SHORTS", "INSTAGRAM_REELS", "THREADS"]),
 });
 
 export const activationRequestSchema = z.object({
@@ -74,6 +90,7 @@ const globalStore = globalThis as typeof globalThis & {
 };
 
 const ACTIVATION_SETTING_KEY = "live_execution.activation.gemini_research_ideation";
+const LIVE_EXECUTION_ALLOWED_DEPARTMENTS: DepartmentId[] = ["research", "content"];
 
 const usageZero: RuntimeUsageSnapshot = {
   requestsToday: 0,
@@ -105,7 +122,7 @@ const registryStore =
       quotas: defaultRuntimeQuota,
       usage: usageZero,
       lastUpdatedAt: new Date().toISOString(),
-      notes: ["Stage 0 mock-only by default. First target is Gemini for Research Department content ideation only."],
+      notes: ["Stage 0 mock-only by default. Stage 1 target is Gemini for approved Research and Content Department workflows only."],
     },
   ];
 
@@ -133,6 +150,29 @@ function updateRecord(providerId: string, update: Partial<ProviderActivationReco
 function credentialConfigured(providerId: string) {
   if (providerId === "gemini") return Boolean(process.env.GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY);
   return false;
+}
+
+function isApprovedLiveDepartment(departmentId: DepartmentId) {
+  return LIVE_EXECUTION_ALLOWED_DEPARTMENTS.includes(departmentId);
+}
+
+function isApprovedLiveTask(input: ControlledLiveExecutionRequest) {
+  if (input.departmentId === "research") {
+    return input.taskType === "planning";
+  }
+  if (input.departmentId === "content") {
+    return input.taskType === "structured_output";
+  }
+  return false;
+}
+
+function liveExecutionWorkflowId(result: ControlledLiveExecutionResult) {
+  if (result.departmentId === "content") return `live_execution.gemini_content.${result.contentWorkflowKind ?? "hook_generation"}`;
+  return `live_execution.gemini_research.${result.researchWorkflowKind ?? "content_ideation"}`;
+}
+
+function liveExecutionMetricName(result: ControlledLiveExecutionResult) {
+  return result.departmentId === "content" ? "live_gemini_content_intelligence_cost_inr" : "live_gemini_research_ideation_cost_inr";
 }
 
 function isProviderActivationRecord(value: unknown): value is ProviderActivationRecord {
@@ -192,17 +232,22 @@ async function persistActivationRecord(record: ProviderActivationRecord) {
 
 type ApprovalVerification = NonNullable<ControlledLiveExecutionResult["approvalVerification"]>;
 
-function activationPayloadMatchesTarget(payload: Prisma.JsonValue | null | undefined) {
+function activationPayloadMatchesTarget(payload: Prisma.JsonValue | null | undefined, departmentId: DepartmentId) {
   if (!payload || typeof payload !== "object" || Array.isArray(payload)) return true;
   const record = payload as Record<string, unknown>;
   const providerId = typeof record.providerId === "string" ? record.providerId : undefined;
+  const allowedDepartments = Array.isArray(record.allowedDepartments) ? record.allowedDepartments.filter((item): item is string => typeof item === "string") : undefined;
   const firstTarget = typeof record.firstTarget === "object" && record.firstTarget !== null && !Array.isArray(record.firstTarget) ? (record.firstTarget as Record<string, unknown>) : undefined;
   const targetProvider = typeof firstTarget?.providerId === "string" ? firstTarget.providerId : undefined;
   const targetDepartment = typeof firstTarget?.departmentId === "string" ? firstTarget.departmentId : undefined;
-  return (!providerId || providerId === FIRST_LIVE_TARGET.providerId) && (!targetProvider || targetProvider === FIRST_LIVE_TARGET.providerId) && (!targetDepartment || targetDepartment === FIRST_LIVE_TARGET.departmentId);
+  return (
+    (!providerId || providerId === FIRST_LIVE_TARGET.providerId) &&
+    (!targetProvider || targetProvider === FIRST_LIVE_TARGET.providerId) &&
+    (allowedDepartments?.length ? allowedDepartments.includes(departmentId) : !targetDepartment || targetDepartment === departmentId)
+  );
 }
 
-async function verifyActivationApproval(approvalId?: string): Promise<ApprovalVerification> {
+async function verifyActivationApproval(approvalId: string | undefined, departmentId: DepartmentId): Promise<ApprovalVerification> {
   if (!approvalId) {
     return { verified: false, status: "missing", reason: "Activation approval ID is required." };
   }
@@ -222,10 +267,10 @@ async function verifyActivationApproval(approvalId?: string): Promise<ApprovalVe
     if (approval.status !== "APPROVED") {
       return { verified: false, status: approval.status.toLowerCase() as ApprovalVerification["status"], approvalId, reason: `Approval is ${approval.status.toLowerCase()}, not approved.` };
     }
-    if (!activationPayloadMatchesTarget(approval.payload)) {
-      return { verified: false, status: "rejected", approvalId, reason: "Approval does not match the Gemini Research ideation activation target." };
+    if (!activationPayloadMatchesTarget(approval.payload, departmentId)) {
+      return { verified: false, status: "rejected", approvalId, reason: `Approval does not match the Gemini ${departmentId} live activation target.` };
     }
-    return { verified: true, status: "approved", approvalId, reason: "Approval record is verified for Gemini Research ideation." };
+    return { verified: true, status: "approved", approvalId, reason: `Approval record is verified for Gemini ${departmentId} live execution.` };
   } catch {
     return { verified: false, status: "unavailable", approvalId, reason: "Approval verification failed against the database." };
   }
@@ -233,7 +278,7 @@ async function verifyActivationApproval(approvalId?: string): Promise<ApprovalVe
 
 async function evaluateLiveReadinessForExecution(input: ControlledLiveExecutionRequest) {
   await loadActivationRecord(input.providerId);
-  const approvalVerification = await verifyActivationApproval(input.approvalId);
+  const approvalVerification = await verifyActivationApproval(input.approvalId, input.departmentId ?? FIRST_LIVE_TARGET.departmentId);
   const readiness = evaluateLiveReadiness({
     ...input,
     approvalStatus: approvalVerification.verified ? "approved" : input.approvalStatus ?? "pending",
@@ -271,7 +316,7 @@ async function persistLiveExecutionResult(input: ControlledLiveExecutionRequest,
       data: {
         id: result.runId,
         providerId: result.providerId,
-        workflowId: `live_execution.gemini_research.${result.researchWorkflowKind ?? "content_ideation"}`,
+        workflowId: liveExecutionWorkflowId(result),
         status: result.status === "completed_live" ? TaskStatus.COMPLETED : TaskStatus.FAILED,
         input: jsonSafe({ ...input, approvalStatus: undefined }),
         output: jsonSafe(result),
@@ -287,7 +332,7 @@ async function persistLiveExecutionResult(input: ControlledLiveExecutionRequest,
 
     await db.analyticsRecord.create({
       data: {
-        metric: "live_gemini_research_ideation_cost_inr",
+        metric: liveExecutionMetricName(result),
         value: result.providerResponse?.usage.estimatedCostInr ?? 0,
         period: new Date().toISOString().slice(0, 10),
         metadata: jsonSafe({
@@ -299,6 +344,8 @@ async function persistLiveExecutionResult(input: ControlledLiveExecutionRequest,
           liveCapability: result.liveCapability,
           researchWorkflowKind: result.researchWorkflowKind,
           researchScore: result.researchScore,
+          contentWorkflowKind: result.contentWorkflowKind,
+          contentScore: result.contentScore,
         }),
       },
     });
@@ -383,6 +430,56 @@ async function retrieveResearchMemory(input: ControlledLiveExecutionRequest): Pr
   return memoryItems.filter((item, index, all) => all.findIndex((candidate) => candidate.id === item.id) === index).slice(0, 8);
 }
 
+async function retrieveContentMemory(input: ControlledLiveExecutionRequest): Promise<ContentMemoryContextItem[]> {
+  const query = [input.objective, input.contentWorkflowKind, ...(input.seedTopics ?? []), ...(input.audienceNotes ?? []), ...(input.platformTargets ?? [])].filter(Boolean).join(" ");
+  const memoryItems: ContentMemoryContextItem[] = [];
+
+  try {
+    const search = await searchMemory({
+      query: query || "Content Department intelligence",
+      categories: ["prompt", "analytics", "strategic", "workflow", "organizational"],
+      departmentId: "content",
+      tags: ["content", "hook", "script", "caption", "metadata", "platform", "analytics"],
+      limit: 6,
+    });
+    memoryItems.push(
+      ...search.items.map((item) => ({
+        id: item.id,
+        title: item.title,
+        summary: item.summary,
+        relevance: Math.round((item.retrievalScore ?? 0) * 100),
+        category: item.category,
+      })),
+    );
+  } catch {
+    // Memory tables are optional until the migration is approved; workflow history remains a safe fallback.
+  }
+
+  if (hasDatabaseUrl()) {
+    try {
+      const rows = await getDb().workflowRun.findMany({
+        where: { workflowId: { startsWith: "live_execution.gemini_content" } },
+        orderBy: { createdAt: "desc" },
+        take: 6,
+        select: { id: true, workflowId: true, output: true, createdAt: true },
+      });
+      for (const row of rows) {
+        memoryItems.push({
+          id: row.id,
+          title: row.workflowId,
+          summary: `Previous live Content workflow from ${row.createdAt.toISOString()}.`,
+          relevance: 64,
+          category: "workflow",
+        });
+      }
+    } catch {
+      // Existing WorkflowRun history is best-effort observability only.
+    }
+  }
+
+  return memoryItems.filter((item, index, all) => all.findIndex((candidate) => candidate.id === item.id) === index).slice(0, 8);
+}
+
 export function evaluateLiveReadiness(rawInput: Partial<ControlledLiveExecutionRequest> = {}): LiveReadinessDecision {
   const input = controlledLiveExecutionSchema.partial({ objective: true }).parse(rawInput);
   const providerId = input.providerId ?? FIRST_LIVE_TARGET.providerId;
@@ -420,8 +517,8 @@ export function evaluateLiveReadiness(rawInput: Partial<ControlledLiveExecutionR
   const controls = [
     "approval_required",
     "single_provider_target",
-    "research_department_only",
-    "content_ideation_only",
+    "approved_department_only",
+    "approved_structured_workflow_only",
     "quota_guard",
     "budget_guard",
     "kill_switch_guard",
@@ -434,9 +531,9 @@ export function evaluateLiveReadiness(rawInput: Partial<ControlledLiveExecutionR
   if (!record.enabled) reasons.push("Provider activation record is not enabled.");
   if (record.stage < 1) reasons.push("Activation stage is still Stage 0 mock-only.");
   if (providerId !== FIRST_LIVE_TARGET.providerId) reasons.push("Only Gemini is supported as the first live activation target.");
-  if ((input.departmentId ?? FIRST_LIVE_TARGET.departmentId) !== FIRST_LIVE_TARGET.departmentId) reasons.push("First activation is limited to the Research Department.");
-  if ((input.workflowKind ?? FIRST_LIVE_TARGET.workflowKind) !== FIRST_LIVE_TARGET.workflowKind) reasons.push("First activation is limited to the structured content ideation workflow.");
-  if ((input.taskType ?? FIRST_LIVE_TARGET.taskType) !== FIRST_LIVE_TARGET.taskType) reasons.push("First activation is limited to planning/content ideation tasks.");
+  if (!isApprovedLiveDepartment((input.departmentId ?? FIRST_LIVE_TARGET.departmentId) as DepartmentId)) reasons.push("Live activation is limited to approved Research or Content Department workflows.");
+  if ((input.workflowKind ?? FIRST_LIVE_TARGET.workflowKind) !== FIRST_LIVE_TARGET.workflowKind) reasons.push("Live activation is limited to governed structured-generation workflows.");
+  if (!isApprovedLiveTask(input as ControlledLiveExecutionRequest)) reasons.push("Live activation is limited to approved Research planning or Content structured-output tasks.");
   if (!credentialConfigured(providerId)) reasons.push("Provider credential is not configured in server environment.");
   if ((input.approvalStatus ?? "pending") !== "approved" || !input.approvalId) reasons.push("Explicit approved activation approval ID is required.");
   if (!record.sandboxPassed) reasons.push("Sandbox execution must pass before live promotion.");
@@ -487,6 +584,8 @@ export async function requestProviderActivation(rawInput: unknown, actorId?: str
             providerId: input.providerId,
             requestedStage: input.requestedStage,
             firstTarget: FIRST_LIVE_TARGET,
+            allowedDepartments: LIVE_EXECUTION_ALLOWED_DEPARTMENTS,
+            allowedWorkflows: ["research_intelligence", "content_intelligence"],
             quotas: defaultRuntimeQuota,
             liveExecution: false,
             queueJobId: queue.jobId,
@@ -581,7 +680,8 @@ export async function promoteSandboxToLive(rawInput: unknown, actorId?: string) 
 export async function runControlledLiveExecution(rawInput: unknown, actorId?: string): Promise<ControlledLiveExecutionResult> {
   const input = controlledLiveExecutionSchema.parse(rawInput);
   const { readiness, approvalVerification } = await evaluateLiveReadinessForExecution(input);
-  const isIdeationWorkflow = input.researchWorkflowKind === "content_ideation";
+  const isContentWorkflow = input.departmentId === "content";
+  const isResearchIdeationWorkflow = input.departmentId === "research" && input.researchWorkflowKind === "content_ideation";
   const queue = await enqueueOrchestrationJob({
     queueName: ORCHESTRATION_QUEUES.aiRuntime,
     name: "live_execution.controlled_run",
@@ -603,8 +703,9 @@ export async function runControlledLiveExecution(rawInput: unknown, actorId?: st
       status: readiness.allowed ? "warning" : "failed",
       warnings: readiness.allowed ? ["Live execution was attempted under constrained activation gates."] : readiness.reasons,
     },
-    liveCapability: isIdeationWorkflow ? LIVE_RESEARCH_IDEATION_CAPABILITY : LIVE_RESEARCH_OPERATIONAL_CAPABILITY,
+    liveCapability: isContentWorkflow ? LIVE_CONTENT_OPERATIONAL_CAPABILITY : isResearchIdeationWorkflow ? LIVE_RESEARCH_IDEATION_CAPABILITY : LIVE_RESEARCH_OPERATIONAL_CAPABILITY,
     researchWorkflowKind: input.researchWorkflowKind,
+    contentWorkflowKind: input.contentWorkflowKind,
     approvalVerification,
     retryPolicy: {
       autonomousRetries: false,
@@ -621,7 +722,8 @@ export async function runControlledLiveExecution(rawInput: unknown, actorId?: st
   if (readiness.allowed) {
     const recordBefore = getTargetRecord(input.providerId);
     updateRecord(input.providerId, { usage: { ...recordBefore.usage, inFlight: recordBefore.usage.inFlight + 1 } });
-    const memoryContext = await retrieveResearchMemory(input);
+    const researchMemoryContext = input.departmentId === "research" ? await retrieveResearchMemory(input) : [];
+    const contentMemoryContext = isContentWorkflow ? await retrieveContentMemory(input) : [];
     const normalized = normalizeAiGatewayInput({
       workflowKind: input.workflowKind,
       objective: input.objective,
@@ -630,18 +732,28 @@ export async function runControlledLiveExecution(rawInput: unknown, actorId?: st
       preferredProviders: [input.providerId],
       fallbackProviders: [],
       model: input.model,
-      prompt: isIdeationWorkflow
-        ? buildResearchIdeationPrompt({ objective: input.objective, prompt: input.prompt })
-        : buildResearchOperationsPrompt({
-            workflowKind: input.researchWorkflowKind,
+      prompt: isContentWorkflow
+        ? buildContentOperationsPrompt({
+            workflowKind: input.contentWorkflowKind,
             objective: input.objective,
             seedTopics: input.seedTopics,
-            competitors: input.competitors,
             audienceNotes: input.audienceNotes,
             sourceReferences: input.sourceReferences,
-            memoryContext,
-          }),
-      systemPrompt: input.systemPrompt ?? (isIdeationWorkflow ? buildResearchIdeationSystemPrompt() : buildResearchOperationsSystemPrompt()),
+            platformTargets: input.platformTargets,
+            memoryContext: contentMemoryContext,
+          })
+        : isResearchIdeationWorkflow
+          ? buildResearchIdeationPrompt({ objective: input.objective, prompt: input.prompt })
+          : buildResearchOperationsPrompt({
+              workflowKind: input.researchWorkflowKind,
+              objective: input.objective,
+              seedTopics: input.seedTopics,
+              competitors: input.competitors,
+              audienceNotes: input.audienceNotes,
+              sourceReferences: input.sourceReferences,
+              memoryContext: researchMemoryContext,
+            }),
+      systemPrompt: input.systemPrompt ?? (isContentWorkflow ? buildContentOperationsSystemPrompt() : isResearchIdeationWorkflow ? buildResearchIdeationSystemPrompt() : buildResearchOperationsSystemPrompt()),
       maxOutputTokens: input.maxOutputTokens,
       estimatedInputTokens: input.estimatedInputTokens,
       estimatedOutputTokens: input.estimatedOutputTokens,
@@ -659,39 +771,53 @@ export async function runControlledLiveExecution(rawInput: unknown, actorId?: st
         input: normalized,
         timeoutMs: getAiProviderProfile(input.providerId)?.timeoutMs ?? 30_000,
         responseMimeType: "application/json",
-        responseSchema: isIdeationWorkflow ? researchIdeationResponseJsonSchema : researchOperationalResponseSchema,
+        responseSchema: isContentWorkflow ? contentOperationalResponseSchema : isResearchIdeationWorkflow ? researchIdeationResponseJsonSchema : researchOperationalResponseSchema,
       });
-      const structuredOutput = isIdeationWorkflow ? parseResearchIdeationJson(providerResponse.content) : parseResearchOperationsJson(providerResponse.content);
-      const operationalOutput = isIdeationWorkflow ? undefined : parseResearchOperationsJson(providerResponse.content);
-      const researchWarnings = operationalOutput ? researchOutputWarnings(operationalOutput) : [];
-      const researchScore = operationalOutput
+      const structuredOutput = isContentWorkflow ? parseContentOperationsJson(providerResponse.content) : isResearchIdeationWorkflow ? parseResearchIdeationJson(providerResponse.content) : parseResearchOperationsJson(providerResponse.content);
+      const researchOutput = !isContentWorkflow && !isResearchIdeationWorkflow ? parseResearchOperationsJson(providerResponse.content) : undefined;
+      const contentOutput = isContentWorkflow ? parseContentOperationsJson(providerResponse.content) : undefined;
+      const researchWarnings = researchOutput ? researchOutputWarnings(researchOutput) : [];
+      const contentWarnings = contentOutput ? contentOutputWarnings(contentOutput) : [];
+      const researchScore = researchOutput
         ? {
-            qualityScore: scoreResearchOutput(operationalOutput),
+            qualityScore: scoreResearchOutput(researchOutput),
             acceptance: researchWarnings.some((warning) => warning.includes("below the live acceptance threshold") || warning.includes("Safety score")) ? ("rejected" as const) : ("accepted" as const),
-            memoryItemsUsed: operationalOutput.observability.memoryItemsUsed,
-            duplicateSignals: operationalOutput.duplicateSignals.length,
+            memoryItemsUsed: researchOutput.observability.memoryItemsUsed,
+            duplicateSignals: researchOutput.duplicateSignals.length,
+          }
+        : undefined;
+      const contentScore = contentOutput
+        ? {
+            qualityScore: scoreContentOutput(contentOutput),
+            acceptance: contentWarnings.some((warning) => warning.includes("below the live acceptance threshold") || warning.includes("Safety score")) ? ("rejected" as const) : ("accepted" as const),
+            memoryItemsUsed: contentOutput.observability.memoryItemsUsed,
+            duplicateSignals: contentOutput.duplicateSignals.length,
           }
         : undefined;
       const validation = validateAiResponse(
         {
           expectedOutput: "json",
           responseSchema: {
-            required: isIdeationWorkflow
-              ? ["summary", "trendInsights", "topicSuggestions", "strategicRecommendations", "risks", "followUpResearch", "safety"]
-              : ["workflowKind", "summary", "insights", "recommendations", "duplicateSignals", "memoryContext", "scoring", "observability", "safety"],
+            required: isContentWorkflow
+              ? ["workflowKind", "contentBrief", "drafts", "recommendations", "duplicateSignals", "memoryContext", "scoring", "observability", "safety"]
+              : isResearchIdeationWorkflow
+                ? ["summary", "trendInsights", "topicSuggestions", "strategicRecommendations", "risks", "followUpResearch", "safety"]
+                : ["workflowKind", "summary", "insights", "recommendations", "duplicateSignals", "memoryContext", "scoring", "observability", "safety"],
           },
         },
         { content: providerResponse.content, structured: structuredOutput },
       );
-      const validationWarnings = [...validation.warnings, ...researchWarnings];
+      const validationWarnings = [...validation.warnings, ...researchWarnings, ...contentWarnings];
+      const outputRejected = researchScore?.acceptance === "rejected" || contentScore?.acceptance === "rejected";
       result = {
         ...result,
-        status: validation.status === "failed" || researchScore?.acceptance === "rejected" ? "failed" : "completed_live",
+        status: validation.status === "failed" || outputRejected ? "failed" : "completed_live",
         providerResponse: { ...providerResponse, structured: structuredOutput },
         structuredOutput,
         researchScore,
+        contentScore,
         validation: {
-          status: validation.status === "failed" || researchScore?.acceptance === "rejected" ? "failed" : validationWarnings.length ? "warning" : "passed",
+          status: validation.status === "failed" || outputRejected ? "failed" : validationWarnings.length ? "warning" : "passed",
           warnings: validationWarnings,
         },
       };
@@ -809,7 +935,7 @@ export async function getLiveExecutionDashboard(): Promise<LiveExecutionDashboar
   return {
     activationStages: [
       { stage: 0, label: "Mock only", status: record.stage === 0 ? "Mock" : "Configured", description: "Dry-run and mock provider responses only." },
-      { stage: 1, label: "Single-provider limited execution", status: record.stage >= 1 ? record.status : "Blocked", description: "Gemini only, Research Department only, low-volume content ideation only." },
+      { stage: 1, label: "Single-provider limited execution", status: record.stage >= 1 ? record.status : "Blocked", description: "Gemini only, approved Research and Content workflows only, ultra-low volume." },
       { stage: 2, label: "Controlled workflow execution", status: "Blocked", description: "Future workflow-level activation after Stage 1 proves stable." },
       { stage: 3, label: "Department-limited activation", status: "Blocked", description: "Future department-scoped rollout with richer quotas and monitoring." },
       { stage: 4, label: "Full governance-approved execution", status: "Blocked", description: "Future broad execution after explicit approval and production readiness." },

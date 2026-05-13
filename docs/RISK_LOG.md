@@ -2,6 +2,22 @@
 
 ## Current Risks
 
+### Governed live Content workflows can look publish-ready
+
+- Risk: Hook, script, caption, metadata, thumbnail strategy, and platform adaptation outputs can look ready to post even though they are draft intelligence.
+- Prevention: `POST /api/live-execution/content/workflows` forces Gemini + Content + structured output, requires the same activation/approval/budget/governance/kill-switch gates, uses one queue attempt, has no fallback providers, and requires `noPublishing`, `noMediaGeneration`, `noPlatformExecution`, and `noWorkflowMutation` safety flags.
+- Verification: Focused tests assert Content workflows remain blocked without real approval verification, keep autonomous retries disabled, and require structured safety fields. Full verification must include lint, typecheck, tests, Prisma generate, and build.
+- Rollback: Disable the Content workflow endpoint, engage emergency stop, set `ALLOW_LIVE_AI_EXECUTION=false`, quarantine Gemini, and revert `src/lib/live-execution/content-operations.ts`, `/api/live-execution/content/workflows`, and `LiveContentOperationsPanel`.
+- Human approval trigger: Any attempt to turn Content outputs into public publishing, real scheduling, media generation, rendering, platform API calls, workflow mutation, or posting-package deployment without a new approval-gated slice.
+
+### Memory-aware Content can overfit stale creative patterns
+
+- Risk: Content workflows retrieve prompt, analytics, strategy, workflow, organizational, and previous-run memory, but memory may be sparse, stale, mock-semantic, or biased toward earlier hook/script experiments.
+- Prevention: Outputs include duplicate signals, originality score, platform-fit score, evidence score, memory utilization, and human/source review flags. Low-quality or duplicate-heavy content is rejected instead of promoted.
+- Verification: Parser and scoring tests cover memory-aware Content output shape, score thresholds, and safety flags.
+- Rollback: Treat memory retrieval as optional context, clear activation state, or remove memory context from the Content prompt builder until better retrieval is available.
+- Human approval trigger: Enabling live embeddings, applying memory migrations in production, using memory output to automatically evolve prompts/scripts, or promoting Content drafts without review.
+
 ### Expanded live Research workflows can look like autonomous strategy execution
 
 - Risk: Trend analysis, competitor insight, topic intelligence, audience insight, strategic recommendation, reflection, memory retrieval, and scoring may look like Folqen is autonomously changing strategy or executing workflows.

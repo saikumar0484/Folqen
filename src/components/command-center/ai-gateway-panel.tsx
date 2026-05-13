@@ -113,7 +113,7 @@ export function AiGatewayPanel({ dashboard, liveExecution }: AiGatewayPanelProps
       body: JSON.stringify({
         providerId: "gemini",
         requestedStage: 1,
-        reason: "Request Stage 1 controlled Gemini activation for Research Department content ideation with strict budget and rollback gates.",
+        reason: "Request Stage 1 controlled Gemini activation for approved Research and Content Department workflows with strict budget and rollback gates.",
       }),
     });
     const payload = (await request.json().catch(() => ({ error: "Invalid activation response." }))) as LiveResponse;

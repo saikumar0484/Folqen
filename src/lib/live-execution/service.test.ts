@@ -3,6 +3,7 @@ import test from "node:test";
 
 import { resolveLiveExecutionAdminAccess, resolveLiveExecutionOperatorAccess, resolveLiveExecutionReadAccess } from "./api-handler";
 import { FIRST_LIVE_TARGET } from "./config";
+import { contentOperationalOutputSchema, contentOutputWarnings, parseContentOperationsJson, scoreContentOutput } from "./content-operations";
 import { parseResearchIdeationJson, researchIdeationOutputSchema } from "./research-ideation";
 import { parseResearchOperationsJson, researchOperationalOutputSchema, researchOutputWarnings, scoreResearchOutput } from "./research-operations";
 import { actOnProvider, engageEmergencyStop, evaluateLiveReadiness, getLiveExecutionDashboard, promoteSandboxToLive, requestProviderActivation, runControlledLiveExecution } from "./service";
@@ -56,11 +57,11 @@ test("default live readiness blocks execution before flags, approval, credential
   assert.equal(readiness.reasons.includes("Sandbox execution must pass before live promotion."), true);
 });
 
-test("first activation target blocks other providers and departments", () => {
+test("first activation target blocks other providers and non-approved departments", () => {
   const readiness = evaluateLiveReadiness({
     objective: "Try live execution outside the first target.",
     providerId: "openrouter",
-    departmentId: "content",
+    departmentId: "platform_operations",
     workflowKind: "agent_tool_call",
     taskType: "text_generation",
     approvalStatus: "approved",
@@ -69,7 +70,7 @@ test("first activation target blocks other providers and departments", () => {
 
   assert.equal(readiness.allowed, false);
   assert.equal(readiness.reasons.some((reason) => reason.includes("Only Gemini")), true);
-  assert.equal(readiness.reasons.some((reason) => reason.includes("Research Department")), true);
+  assert.equal(readiness.reasons.some((reason) => reason.includes("approved Research or Content Department")), true);
 });
 
 test("activation request creates approval metadata without enabling live execution", async () => {
@@ -194,6 +195,63 @@ test("expanded Research workflows still block without real approval verification
   assert.notEqual(result.status, "completed_live");
   assert.equal(result.liveCapability, "gemini_research_operational_intelligence");
   assert.equal(result.researchWorkflowKind, "competitor_insight");
+  assert.equal(result.providerResponse, undefined);
+  assert.equal(result.retryPolicy.maxAttempts, 1);
+});
+
+test("Content operations parser scores governed platform-aware drafts", () => {
+  const parsed = parseContentOperationsJson(
+    JSON.stringify({
+      workflowKind: "hook_generation",
+      contentBrief: {
+        title: "Haunted stepwell cold-open package",
+        angle: "Frame the legend as a source-aware mystery without claiming the haunting is verified fact.",
+        targetPlatforms: ["YOUTUBE_SHORTS", "INSTAGRAM_REELS"],
+        audience: "India-first folklore and mystery viewers.",
+        sourceVerificationNotes: "Verify local history sources before scripting or posting.",
+      },
+      drafts: [
+        {
+          type: "hook",
+          platform: "YOUTUBE_SHORTS",
+          text: "What if the scariest part of this stepwell legend is the detail everyone repeats but nobody can prove?",
+          rationale: "Creates curiosity while avoiding fake certainty.",
+          confidence: 84,
+          riskLevel: "low",
+        },
+      ],
+      recommendations: [{ action: "Pair the hook with a verified-history disclaimer", rationale: "Keeps the mystery tone while preserving safety.", priority: "high", confidence: 82 }],
+      duplicateSignals: ["Older hook memory used haunted fort framing."],
+      memoryContext: { used: true, items: [{ id: "mem_hook_1", title: "Question hook retained well", relevance: 80 }] },
+      scoring: { qualityScore: 84, originalityScore: 79, safetyScore: 90, platformFitScore: 86, evidenceScore: 72 },
+      observability: { generationTrace: ["Validated topic", "Retrieved hook memory", "Scored platform fit"], retrievalUsed: true, memoryItemsUsed: 1, estimatedReviewComplexity: "medium" },
+      safety: { noPublishing: true, needsHumanReview: true, sourceVerificationRequired: true, noMediaGeneration: true, noPlatformExecution: true, noWorkflowMutation: true },
+    }),
+  );
+
+  assert.equal(contentOperationalOutputSchema.safeParse(parsed).success, true);
+  assert.equal(scoreContentOutput(parsed) > 60, true);
+  assert.deepEqual(contentOutputWarnings(parsed), []);
+});
+
+test("governed Content workflows still block without real approval verification", async () => {
+  const result = await runControlledLiveExecution({
+    objective: "Generate hooks only if every Content live gate is real.",
+    providerId: "gemini",
+    departmentId: "content",
+    workflowKind: "structured_generation",
+    taskType: "structured_output",
+    contentWorkflowKind: "hook_generation",
+    approvalStatus: "approved",
+    approvalId: "approval_fake",
+    seedTopics: ["haunted stepwell folklore"],
+    platformTargets: ["YOUTUBE_SHORTS", "INSTAGRAM_REELS"],
+  });
+
+  assert.equal(result.mode, "blocked");
+  assert.notEqual(result.status, "completed_live");
+  assert.equal(result.liveCapability, "gemini_content_operational_intelligence");
+  assert.equal(result.contentWorkflowKind, "hook_generation");
   assert.equal(result.providerResponse, undefined);
   assert.equal(result.retryPolicy.maxAttempts, 1);
 });

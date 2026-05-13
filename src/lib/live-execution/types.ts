@@ -1,5 +1,6 @@
 import type { AiProviderId, AiProviderStatusLabel, AiTaskType, AiWorkflowKind } from "@/lib/ai-gateway/types";
 import type { DepartmentId } from "@/lib/orchestration/types";
+import type { ContentOperationalOutput, ContentPlatformTarget, LiveContentWorkflowKind } from "./content-operations";
 import type { LiveResearchWorkflowKind, ResearchOperationalOutput } from "./research-operations";
 
 export type LiveActivationStage = 0 | 1 | 2 | 3 | 4;
@@ -73,10 +74,12 @@ export type ControlledLiveExecutionRequest = {
   estimatedInputTokens?: number;
   estimatedOutputTokens?: number;
   researchWorkflowKind?: LiveResearchWorkflowKind;
+  contentWorkflowKind?: LiveContentWorkflowKind;
   seedTopics?: string[];
   competitors?: string[];
   audienceNotes?: string[];
   sourceReferences?: string[];
+  platformTargets?: ContentPlatformTarget[];
 };
 
 export type LiveProviderResponse = {
@@ -108,10 +111,17 @@ export type ControlledLiveExecutionResult = {
     status: "passed" | "warning" | "failed";
     warnings: string[];
   };
-  liveCapability?: "gemini_research_content_ideation" | "gemini_research_operational_intelligence";
+  liveCapability?: "gemini_research_content_ideation" | "gemini_research_operational_intelligence" | "gemini_content_operational_intelligence";
   researchWorkflowKind?: LiveResearchWorkflowKind;
-  structuredOutput?: Record<string, unknown> | ResearchOperationalOutput;
+  contentWorkflowKind?: LiveContentWorkflowKind;
+  structuredOutput?: Record<string, unknown> | ResearchOperationalOutput | ContentOperationalOutput;
   researchScore?: {
+    qualityScore: number;
+    acceptance: "accepted" | "rejected" | "blocked";
+    memoryItemsUsed: number;
+    duplicateSignals: number;
+  };
+  contentScore?: {
     qualityScore: number;
     acceptance: "accepted" | "rejected" | "blocked";
     memoryItemsUsed: number;

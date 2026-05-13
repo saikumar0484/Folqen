@@ -8,16 +8,16 @@ The current implementation is activation-ready, not live-enabled by default. It 
 
 ## First Activation Target
 
-Only this Stage 1 target is supported:
+Only these Stage 1 targets are supported:
 
 - Provider: Gemini
-- Department: Research
-- Workflow: `structured_generation` / approved Research intelligence workflows
-- Task: planning/research intelligence
+- Departments: Research and Content
+- Workflows: `structured_generation` / approved Research and Content intelligence workflows
+- Tasks: Research planning, Content structured output
 - Publishing: blocked
 - Volume: ultra-low quota
 
-OpenRouter, Claude, OpenAI-compatible APIs, local/Ollama, publishing workflows, media rendering, platform operations, content-generation execution, and other departments remain blocked for live execution.
+OpenRouter, Claude, OpenAI-compatible APIs, local/Ollama, publishing workflows, media rendering, platform operations, autonomous scheduling, ComfyUI/FFmpeg execution, and other departments remain blocked for live execution.
 
 ## Activation Stages
 
@@ -37,9 +37,9 @@ Live execution is allowed only when all are true:
 2. `LIVE_AI_ACTIVATION_STAGE >= 1`
 3. Runtime kill switch and emergency stop are off
 4. Provider is Gemini
-5. Department is Research
+5. Department is Research or Content
 6. Workflow is `structured_generation`
-7. Task type is planning
+7. Task type is approved for the department: Research planning or Content structured output
 8. Server-side Gemini key exists
 9. Explicit approved activation approval ID is provided
 10. Sandbox promotion passed
@@ -76,6 +76,7 @@ flowchart TD
 - `src/lib/live-execution/adapters.ts`: guarded Gemini REST adapter.
 - `src/lib/live-execution/research-ideation.ts`: Research ideation prompt contract, JSON schema, and Zod validation.
 - `src/lib/live-execution/research-operations.ts`: approved Research workflow registry, memory-aware prompt contract, structured output schema, scoring, duplicate/safety warnings.
+- `src/lib/live-execution/content-operations.ts`: approved Content workflow registry, platform-aware prompt contract, structured output schema, scoring, duplicate/safety warnings.
 - `src/lib/live-execution/service.ts`: activation request, promotion, live execution, emergency stop, provider actions, dashboard.
 - `src/lib/live-execution/api-handler.ts`: read/operator/admin access helpers.
 - `src/app/api/live-execution/*`: protected activation APIs.
@@ -91,6 +92,8 @@ flowchart TD
 - `POST /api/live-execution/research/ideation`
 - `GET /api/live-execution/research/workflows`
 - `POST /api/live-execution/research/workflows`
+- `GET /api/live-execution/content/workflows`
+- `POST /api/live-execution/content/workflows`
 - `POST /api/live-execution/emergency-stop`
 - `POST /api/live-execution/provider/action`
 
@@ -103,7 +106,7 @@ Admin-only:
 
 Admin/operator:
 
-- controlled Gemini Research ideation and approved Research workflow requests, which still block unless all live gates pass
+- controlled Gemini Research ideation, approved Research workflows, and approved Content workflows, which still block unless all live gates pass
 
 ## First Real Gemini Capability
 
@@ -142,11 +145,33 @@ Every workflow uses the same activation gates as content ideation. The expansion
 
 These workflows produce research intelligence only. They do not create scripts, media prompts, thumbnails, captions, schedules, platform posts, or automation actions. They also use one queue attempt only, no fallback providers, no autonomous retries, and no workflow mutation.
 
+## Governed Content Department Expansion
+
+The Content Department now has a controlled endpoint:
+
+- `GET /api/live-execution/content/workflows`
+- `POST /api/live-execution/content/workflows`
+
+It forces Gemini + Content Department + `structured_generation` + `structured_output` only. It adds approved structured Content workflows:
+
+- Live Hook Generation
+- Script Generation
+- Caption Generation
+- Metadata Optimization
+- Thumbnail Strategy
+- Platform Adaptation
+- Content Reflection
+- Content Quality Scoring
+
+Every workflow uses the same activation gates as Research: persisted activation state, verified approval, server credential, sandbox promotion, budget/quota checks, governance checks, provider health, and kill-switch checks. The expansion adds memory-aware retrieval from prompt/analytics/strategic/workflow/organizational memory when available, comparison against previous live Content workflow runs, quality/originality/safety/platform-fit/evidence scoring, duplicate detection, malformed-output rejection, unsafe-content warnings, generation traces, retrieval usage, token/cost capture, governance approval trace, and queue observability.
+
+These workflows produce draft content intelligence only. They can generate hooks, script drafts, captions, metadata suggestions, thumbnail strategy text, and platform adaptation guidance for YouTube Shorts, Instagram Reels, Threads, LinkedIn, and X/Twitter, but they do not post, schedule, render, call ComfyUI, call FFmpeg, create media files, access platform APIs, or mutate workflows. They also use one queue attempt only, no fallback providers, no autonomous retries, and no workflow mutation.
+
 ## Persistence
 
 No migration was added. This phase uses existing models only:
 
-- `Setting`: persisted activation registry under `live_execution.activation.gemini_research_ideation`
+- `Setting`: persisted Gemini activation registry under `live_execution.activation.gemini_research_ideation`
 - `Approval`: server-side verification of `live_execution.provider_activation` approvals
 - `WorkflowRun`: live/blocked run input, output, and logs
 - `AnalyticsRecord`: cost and token usage snapshots

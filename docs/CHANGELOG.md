@@ -1,5 +1,31 @@
 # Changelog
 
+## May 13, 2026 - Governed Live Content Intelligence System
+
+### Added
+
+- Added `src/lib/live-execution/content-operations.ts` with approved Content workflow registry, structured Gemini output schema, platform-aware prompt contract, duplicate/safety warning hooks, and content quality scoring.
+- Added `GET/POST /api/live-execution/content/workflows` for governed Content-only workflows: hook generation, script generation, caption generation, metadata optimization, thumbnail strategy, platform adaptation, content reflection, and content quality scoring.
+- Extended controlled live execution results with `contentWorkflowKind`, `gemini_content_operational_intelligence`, and content quality metadata.
+- Added memory-aware retrieval from prompt, analytics, strategic, workflow, and organizational memory plus previous live Content workflow runs before Gemini execution.
+- Added `LiveContentOperationsPanel` to `/content-studio` for live Content dashboard controls, platform targets, workflow inputs, execution trace preview, draft previews, and confidence/quality display.
+
+### Safety
+
+- The expansion forces Gemini + Content Department + `structured_generation` + `structured_output` only.
+- Every workflow remains blocked unless the existing live activation gates pass: approval, persisted activation, credential, budget, quota, governance, provider health, sandbox promotion, and kill switches.
+- No publishing, rendering, scheduling, ComfyUI, FFmpeg, media generation, platform APIs, autonomous retries, fallback providers, self-improvement mutation, or workflow mutation was enabled.
+- Low-quality, low-safety, duplicate-heavy, malformed, or unsafe outputs are rejected as failed live executions.
+
+### Verification
+
+- Direct local `eslint .`: passed.
+- Direct local `tsc --noEmit`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 118 tests.
+- Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`; `/api/live-execution/content/workflows` is included in the build output.
+- Local dev smoke for `/login`: passed with HTTP 200, and in-app browser verification loaded Folqen with no browser console errors.
+- `npm audit --audit-level=moderate` still reports the known nested Next/PostCSS moderate advisory; no unsafe forced fix was applied.
+
 ## May 13, 2026 - Governed Live Research Department Expansion
 
 ### Added
