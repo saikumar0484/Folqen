@@ -1,5 +1,33 @@
 # Changelog
 
+## May 13, 2026 - First Real Live Gemini Research Ideation Capability
+
+### Added
+
+- Added `src/lib/live-execution/research-ideation.ts` with the Gemini Research ideation prompt contract, response JSON schema, and Zod validation for trend insights, topic suggestions, recommendations, risks, follow-up research, and safety flags.
+- Added real Gemini structured-output execution support to the guarded live adapter using `generationConfig.responseMimeType="application/json"` and a response JSON schema.
+- Added protected `POST /api/live-execution/research/ideation`, forcing Gemini + Research Department + structured content ideation only.
+- Added persisted activation state through existing `Setting` records and approval verification against real approved `Approval` rows before any live call can run.
+- Added live execution persistence through existing `WorkflowRun`, `AnalyticsRecord`, `ErrorLog`, `AuditLog`, and `EventLog` records.
+- Updated the Tools AI Gateway panel with an approved activation ID field and live Research ideation output preview.
+
+### Safety
+
+- Providers are still off by default. Gemini live execution remains blocked unless env flags, server credential, persisted activation, approved activation ID, sandbox promotion, budget, quota, governance, provider health, and kill-switch checks all pass.
+- No publishing, rendering, media generation, platform execution, autonomous retry, fallback routing, self-improvement mutation, scraping, or paid-provider expansion was enabled.
+- Live Research ideation uses one queue attempt only and no fallback providers.
+- Client-provided approval status is no longer trusted for live execution; the server verifies the approval record.
+
+### Verification
+
+- Direct local `tsc --noEmit`: passed.
+- Direct local `tsx --test "src/lib/live-execution/**/*.test.ts"`: passed, 10 focused live execution tests.
+- Direct local `eslint .`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 114 tests.
+- Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`; `/api/live-execution/research/ideation` is included in the build output.
+- Local dev smoke for `/login`: passed with HTTP 200.
+- `npm audit --audit-level=moderate` still reports the known nested Next/PostCSS moderate advisory; no unsafe forced fix was applied.
+
 ## May 13, 2026 - Controlled Live Execution Activation Layer
 
 ### Added

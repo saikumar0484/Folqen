@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, RiskLevel, TaskStatus } from "@prisma/client";
 import { z } from "zod";
 
 import { evaluateAiBudget } from "@/lib/ai-gateway/budget";
@@ -14,6 +14,7 @@ import type { DepartmentId } from "@/lib/orchestration/types";
 import { getMutationSafetyError } from "@/lib/security/request-guards";
 import { executeLiveProvider } from "./adapters";
 import { defaultRuntimeQuota, FIRST_LIVE_TARGET, getConfiguredActivationStage, isLiveExecutionFlagEnabled, isRuntimeKillSwitchEnabled } from "./config";
+import { buildResearchIdeationPrompt, buildResearchIdeationSystemPrompt, LIVE_RESEARCH_IDEATION_CAPABILITY, parseResearchIdeationJson, researchIdeationResponseJsonSchema } from "./research-ideation";
 import type { ControlledLiveExecutionRequest, ControlledLiveExecutionResult, LiveExecutionDashboard, LiveReadinessDecision, ProviderActivationRecord, RuntimeUsageSnapshot } from "./types";
 
 const providerIdSchema = z.enum(["mock", "openrouter", "gemini", "claude", "openai_compatible", "ollama_local"]);
@@ -53,6 +54,8 @@ const globalStore = globalThis as typeof globalThis & {
   folqenLiveExecutionRegistry?: ProviderActivationRecord[];
   folqenLiveExecutionRuns?: ControlledLiveExecutionResult[];
 };
+
+const ACTIVATION_SETTING_KEY = "live_execution.activation.gemini_research_ideation";
 
 const usageZero: RuntimeUsageSnapshot = {
   requestsToday: 0,
@@ -112,6 +115,202 @@ function updateRecord(providerId: string, update: Partial<ProviderActivationReco
 function credentialConfigured(providerId: string) {
   if (providerId === "gemini") return Boolean(process.env.GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY);
   return false;
+}
+
+function isProviderActivationRecord(value: unknown): value is ProviderActivationRecord {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "providerId" in value &&
+    "stage" in value &&
+    "departmentId" in value &&
+    "workflowKind" in value &&
+    "quotas" in value &&
+    "usage" in value
+  );
+}
+
+async function loadActivationRecord(providerId = FIRST_LIVE_TARGET.providerId) {
+  if (!hasDatabaseUrl()) {
+    return getTargetRecord(providerId);
+  }
+
+  try {
+    const setting = await getDb().setting.findUnique({ where: { key: ACTIVATION_SETTING_KEY } });
+    if (isProviderActivationRecord(setting?.value)) {
+      updateRecord(providerId, setting.value);
+      return getTargetRecord(providerId);
+    }
+  } catch {
+    return getTargetRecord(providerId);
+  }
+
+  return getTargetRecord(providerId);
+}
+
+async function persistActivationRecord(record: ProviderActivationRecord) {
+  if (!hasDatabaseUrl()) {
+    return { persisted: false as const, reason: "DATABASE_URL is not configured." };
+  }
+
+  try {
+    await getDb().setting.upsert({
+      where: { key: ACTIVATION_SETTING_KEY },
+      create: {
+        key: ACTIVATION_SETTING_KEY,
+        value: jsonSafe(record),
+        version: 1,
+      },
+      update: {
+        value: jsonSafe(record),
+        version: { increment: 1 },
+      },
+    });
+    return { persisted: true as const };
+  } catch {
+    return { persisted: false as const, reason: "Activation state persistence failed." };
+  }
+}
+
+type ApprovalVerification = NonNullable<ControlledLiveExecutionResult["approvalVerification"]>;
+
+function activationPayloadMatchesTarget(payload: Prisma.JsonValue | null | undefined) {
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) return true;
+  const record = payload as Record<string, unknown>;
+  const providerId = typeof record.providerId === "string" ? record.providerId : undefined;
+  const firstTarget = typeof record.firstTarget === "object" && record.firstTarget !== null && !Array.isArray(record.firstTarget) ? (record.firstTarget as Record<string, unknown>) : undefined;
+  const targetProvider = typeof firstTarget?.providerId === "string" ? firstTarget.providerId : undefined;
+  const targetDepartment = typeof firstTarget?.departmentId === "string" ? firstTarget.departmentId : undefined;
+  return (!providerId || providerId === FIRST_LIVE_TARGET.providerId) && (!targetProvider || targetProvider === FIRST_LIVE_TARGET.providerId) && (!targetDepartment || targetDepartment === FIRST_LIVE_TARGET.departmentId);
+}
+
+async function verifyActivationApproval(approvalId?: string): Promise<ApprovalVerification> {
+  if (!approvalId) {
+    return { verified: false, status: "missing", reason: "Activation approval ID is required." };
+  }
+
+  if (!hasDatabaseUrl()) {
+    return { verified: false, status: "unavailable", approvalId, reason: "Database approval verification is required for live execution." };
+  }
+
+  try {
+    const approval = await getDb().approval.findUnique({ where: { id: approvalId } });
+    if (!approval) {
+      return { verified: false, status: "missing", approvalId, reason: "Approval record was not found." };
+    }
+    if (approval.type !== "live_execution.provider_activation") {
+      return { verified: false, status: "rejected", approvalId, reason: "Approval record is not a live provider activation approval." };
+    }
+    if (approval.status !== "APPROVED") {
+      return { verified: false, status: approval.status.toLowerCase() as ApprovalVerification["status"], approvalId, reason: `Approval is ${approval.status.toLowerCase()}, not approved.` };
+    }
+    if (!activationPayloadMatchesTarget(approval.payload)) {
+      return { verified: false, status: "rejected", approvalId, reason: "Approval does not match the Gemini Research ideation activation target." };
+    }
+    return { verified: true, status: "approved", approvalId, reason: "Approval record is verified for Gemini Research ideation." };
+  } catch {
+    return { verified: false, status: "unavailable", approvalId, reason: "Approval verification failed against the database." };
+  }
+}
+
+async function evaluateLiveReadinessForExecution(input: ControlledLiveExecutionRequest) {
+  await loadActivationRecord(input.providerId);
+  const approvalVerification = await verifyActivationApproval(input.approvalId);
+  const readiness = evaluateLiveReadiness({
+    ...input,
+    approvalStatus: approvalVerification.verified ? "approved" : input.approvalStatus ?? "pending",
+  });
+
+  const reasons = new Set(readiness.reasons);
+  if (!approvalVerification.verified) {
+    reasons.add(approvalVerification.reason);
+  }
+  if (!hasDatabaseUrl()) {
+    reasons.add("Database-backed activation state and approval verification are required for live execution.");
+  }
+
+  const mergedReadiness: LiveReadinessDecision = {
+    ...readiness,
+    allowed: readiness.allowed && approvalVerification.verified && hasDatabaseUrl(),
+    reasons: Array.from(reasons),
+    controls: Array.from(new Set([...readiness.controls, "database_approval_verification", "persisted_activation_registry", "no_autonomous_retries", "structured_json_validation"])),
+  };
+  if (!mergedReadiness.allowed) {
+    mergedReadiness.status = mergedReadiness.reasons.some((reason) => /approval/i.test(reason)) ? "needs_approval" : readiness.status === "allowed" ? "blocked" : readiness.status;
+  }
+
+  return { readiness: mergedReadiness, approvalVerification };
+}
+
+async function persistLiveExecutionResult(input: ControlledLiveExecutionRequest, result: ControlledLiveExecutionResult, actorId?: string) {
+  if (!hasDatabaseUrl()) {
+    return { persisted: false as const };
+  }
+
+  try {
+    const db = getDb();
+    await db.workflowRun.create({
+      data: {
+        id: result.runId,
+        providerId: result.providerId,
+        workflowId: "live_execution.gemini_research_content_ideation",
+        status: result.status === "completed_live" ? TaskStatus.COMPLETED : TaskStatus.FAILED,
+        input: jsonSafe({ ...input, approvalStatus: undefined }),
+        output: jsonSafe(result),
+        logs: [
+          `mode=${result.mode}`,
+          `status=${result.status}`,
+          `readiness=${result.readiness.status}`,
+          `queueJobId=${result.queueJobId}`,
+          "No publishing, rendering, platform execution, autonomous retry, or workflow mutation was allowed.",
+        ].join("\n"),
+      },
+    });
+
+    await db.analyticsRecord.create({
+      data: {
+        metric: "live_gemini_research_ideation_cost_inr",
+        value: result.providerResponse?.usage.estimatedCostInr ?? 0,
+        period: new Date().toISOString().slice(0, 10),
+        metadata: jsonSafe({
+          runId: result.runId,
+          status: result.status,
+          tokenUsage: result.providerResponse?.usage,
+          validation: result.validation,
+          approvalVerification: result.approvalVerification,
+          liveCapability: result.liveCapability,
+        }),
+      },
+    });
+
+    if (result.status !== "completed_live") {
+      await db.errorLog.create({
+        data: {
+          source: "live-execution",
+          message: result.validation.warnings[0] ?? "Controlled live execution blocked or failed.",
+          severity: result.status === "failed" ? RiskLevel.HIGH : RiskLevel.MEDIUM,
+          metadata: jsonSafe({
+            runId: result.runId,
+            providerId: result.providerId,
+            readiness: result.readiness,
+            approvalVerification: result.approvalVerification,
+            rollback: result.rollback,
+          }),
+        },
+      });
+    }
+
+    return { persisted: true as const };
+  } catch {
+    await createAuditLog({
+      actorId,
+      action: "live_execution.persistence_failed",
+      target: result.runId,
+      riskLevel: "MEDIUM",
+      metadata: jsonSafe({ providerId: result.providerId, status: result.status }),
+    });
+    return { persisted: false as const };
+  }
 }
 
 export function evaluateLiveReadiness(rawInput: Partial<ControlledLiveExecutionRequest> = {}): LiveReadinessDecision {
@@ -215,6 +414,7 @@ export async function requestProviderActivation(rawInput: unknown, actorId?: str
           riskLevel: "HIGH",
           requestedBy: actorId,
           payload: jsonSafe({
+            providerId: input.providerId,
             requestedStage: input.requestedStage,
             firstTarget: FIRST_LIVE_TARGET,
             quotas: defaultRuntimeQuota,
@@ -229,12 +429,13 @@ export async function requestProviderActivation(rawInput: unknown, actorId?: str
     }
   }
 
-  updateRecord(input.providerId, {
+  const record = updateRecord(input.providerId, {
     approvalId,
     approvalStatus: "pending",
     status: "Needs approval",
     notes: [`Activation approval requested for Stage ${input.requestedStage}. No live provider call is enabled.`],
   });
+  if (record) await persistActivationRecord(record);
 
   await emitOrchestrationEvent({
     type: "live_execution.activation.requested",
@@ -258,7 +459,7 @@ export async function requestProviderActivation(rawInput: unknown, actorId?: str
 
 export async function promoteSandboxToLive(rawInput: unknown, actorId?: string) {
   const input = controlledLiveExecutionSchema.parse(rawInput);
-  const readiness = evaluateLiveReadiness(input);
+  const { readiness, approvalVerification } = await evaluateLiveReadinessForExecution(input);
   const promotionBlockingReasons = readiness.reasons.filter(
     (reason) =>
       reason !== "Provider activation record is not enabled." &&
@@ -278,13 +479,15 @@ export async function promoteSandboxToLive(rawInput: unknown, actorId?: string) 
     status: promotionAllowed ? "Live" : readiness.status === "needs_approval" ? "Needs approval" : "Blocked",
     stage: promotionAllowed ? 1 : getTargetRecord(input.providerId).stage,
     approvalId: input.approvalId,
-    approvalStatus: input.approvalStatus,
+    approvalStatus: approvalVerification.verified ? "approved" : input.approvalStatus,
   });
+  if (record) await persistActivationRecord(record);
 
   const queue = await enqueueOrchestrationJob({
     queueName: ORCHESTRATION_QUEUES.aiRuntime,
     name: "live_execution.promote",
     data: { providerId: input.providerId, readiness: promotionReadiness, liveExecution: promotionAllowed, sandboxFirst: true },
+    options: { attempts: 1, removeOnComplete: 50, removeOnFail: 100 },
   });
 
   await createAuditLog({
@@ -292,7 +495,7 @@ export async function promoteSandboxToLive(rawInput: unknown, actorId?: string) 
     action: "live_execution.promotion_evaluated",
     target: input.providerId,
     riskLevel: promotionAllowed ? "HIGH" : "MEDIUM",
-    metadata: jsonSafe({ readiness: promotionReadiness, record, queueJobId: queue.jobId }),
+    metadata: jsonSafe({ readiness: promotionReadiness, approvalVerification, record, queueJobId: queue.jobId }),
   });
 
   return {
@@ -307,18 +510,19 @@ export async function promoteSandboxToLive(rawInput: unknown, actorId?: string) 
 
 export async function runControlledLiveExecution(rawInput: unknown, actorId?: string): Promise<ControlledLiveExecutionResult> {
   const input = controlledLiveExecutionSchema.parse(rawInput);
-  const readiness = evaluateLiveReadiness(input);
+  const { readiness, approvalVerification } = await evaluateLiveReadinessForExecution(input);
   const queue = await enqueueOrchestrationJob({
     queueName: ORCHESTRATION_QUEUES.aiRuntime,
     name: "live_execution.controlled_run",
-    data: { providerId: input.providerId, readiness, liveExecution: readiness.allowed },
+    data: { providerId: input.providerId, readiness, liveExecution: readiness.allowed, autonomousRetries: false },
+    options: { attempts: 1, removeOnComplete: 50, removeOnFail: 100 },
   });
   const runId = `live_${Date.now()}_${Math.random().toString(16).slice(2)}`;
 
   let result: ControlledLiveExecutionResult = {
     runId,
     mode: readiness.allowed ? "live" : "blocked",
-    status: readiness.allowed ? "failed" : input.approvalStatus === "approved" ? "blocked" : "waiting_for_approval",
+    status: readiness.allowed ? "failed" : approvalVerification.verified ? "blocked" : "waiting_for_approval",
     providerId: input.providerId,
     departmentId: input.departmentId,
     workflowKind: input.workflowKind,
@@ -328,6 +532,13 @@ export async function runControlledLiveExecution(rawInput: unknown, actorId?: st
       status: readiness.allowed ? "warning" : "failed",
       warnings: readiness.allowed ? ["Live execution was attempted under constrained activation gates."] : readiness.reasons,
     },
+    liveCapability: LIVE_RESEARCH_IDEATION_CAPABILITY,
+    approvalVerification,
+    retryPolicy: {
+      autonomousRetries: false,
+      maxAttempts: 1,
+      fallbackProviders: [],
+    },
     rollback: {
       available: true,
       steps: ["engage_kill_switch", "disable_provider", "quarantine_provider", "drain_ai_runtime_queue", "rollback_to_dry_run_mode"],
@@ -336,16 +547,18 @@ export async function runControlledLiveExecution(rawInput: unknown, actorId?: st
   };
 
   if (readiness.allowed) {
+    const recordBefore = getTargetRecord(input.providerId);
+    updateRecord(input.providerId, { usage: { ...recordBefore.usage, inFlight: recordBefore.usage.inFlight + 1 } });
     const normalized = normalizeAiGatewayInput({
       workflowKind: input.workflowKind,
       objective: input.objective,
       taskType: input.taskType,
       departmentId: input.departmentId,
       preferredProviders: [input.providerId],
-      fallbackProviders: ["mock"],
+      fallbackProviders: [],
       model: input.model,
-      prompt: input.prompt,
-      systemPrompt: input.systemPrompt,
+      prompt: buildResearchIdeationPrompt({ objective: input.objective, prompt: input.prompt }),
+      systemPrompt: input.systemPrompt ?? buildResearchIdeationSystemPrompt(),
       maxOutputTokens: input.maxOutputTokens,
       estimatedInputTokens: input.estimatedInputTokens,
       estimatedOutputTokens: input.estimatedOutputTokens,
@@ -357,12 +570,29 @@ export async function runControlledLiveExecution(rawInput: unknown, actorId?: st
       monthlyBudgetInr: defaultRuntimeQuota.maxMonthlyCostInr,
     });
     try {
-      const providerResponse = await executeLiveProvider({ providerId: input.providerId, model: input.model, input: normalized, timeoutMs: getAiProviderProfile(input.providerId)?.timeoutMs ?? 30_000 });
-      const validation = validateAiResponse({ expectedOutput: "text", responseSchema: {} }, { content: providerResponse.content, structured: { content: providerResponse.content } });
+      const providerResponse = await executeLiveProvider({
+        providerId: input.providerId,
+        model: input.model,
+        input: normalized,
+        timeoutMs: getAiProviderProfile(input.providerId)?.timeoutMs ?? 30_000,
+        responseMimeType: "application/json",
+        responseSchema: researchIdeationResponseJsonSchema,
+      });
+      const structuredOutput = parseResearchIdeationJson(providerResponse.content);
+      const validation = validateAiResponse(
+        {
+          expectedOutput: "json",
+          responseSchema: {
+            required: ["summary", "trendInsights", "topicSuggestions", "strategicRecommendations", "risks", "followUpResearch", "safety"],
+          },
+        },
+        { content: providerResponse.content, structured: structuredOutput },
+      );
       result = {
         ...result,
-        status: "completed_live",
-        providerResponse,
+        status: validation.status === "failed" ? "failed" : "completed_live",
+        providerResponse: { ...providerResponse, structured: structuredOutput },
+        structuredOutput,
         validation: { status: validation.status, warnings: validation.warnings },
       };
       const record = getTargetRecord(input.providerId);
@@ -378,6 +608,8 @@ export async function runControlledLiveExecution(rawInput: unknown, actorId?: st
         },
       });
     } catch (error) {
+      const record = getTargetRecord(input.providerId);
+      updateRecord(input.providerId, { usage: { ...record.usage, inFlight: Math.max(0, record.usage.inFlight - 1) } });
       result = {
         ...result,
         status: "failed",
@@ -404,8 +636,11 @@ export async function runControlledLiveExecution(rawInput: unknown, actorId?: st
     action: `live_execution.${result.status}`,
     target: result.runId,
     riskLevel: result.status === "completed_live" ? "HIGH" : "MEDIUM",
-    metadata: jsonSafe({ readiness, providerId: input.providerId, queueJobId: queue.jobId, liveExecution: result.status === "completed_live" }),
+    metadata: jsonSafe({ readiness, approvalVerification, providerId: input.providerId, queueJobId: queue.jobId, liveExecution: result.status === "completed_live", noAutonomousRetries: true }),
   });
+
+  await persistLiveExecutionResult(input, result, actorId);
+  await persistActivationRecord(getTargetRecord(input.providerId));
 
   return result;
 }
@@ -434,6 +669,7 @@ export async function engageEmergencyStop(rawInput: unknown, actorId?: string) {
     riskLevel: "CRITICAL",
     metadata: jsonSafe({ reason: input.reason, queueJobId: queue.jobId, record }),
   });
+  if (record) await persistActivationRecord(record);
 
   return { ok: true, mode: "rollback_to_dry_run" as const, record, queueJobId: queue.jobId, message: "Emergency stop engaged. Provider disabled, queue drain planned, and runtime rolled back to dry-run mode." };
 }
@@ -460,11 +696,13 @@ export async function actOnProvider(rawInput: unknown, actorId?: string) {
     riskLevel: input.action === "quarantine_provider" ? "HIGH" : "MEDIUM",
     metadata: jsonSafe({ reason: input.reason, queueJobId: queue.jobId, record }),
   });
+  if (record) await persistActivationRecord(record);
 
   return { ok: true, mode: "rollback_to_dry_run" as const, record, queueJobId: queue.jobId, message: `Provider action recorded: ${input.action}. Live execution remains disabled.` };
 }
 
 export async function getLiveExecutionDashboard(): Promise<LiveExecutionDashboard> {
+  await loadActivationRecord();
   const readiness = evaluateLiveReadiness();
   const record = getTargetRecord();
   const provider = getAiProviderProfiles().find((item) => item.id === FIRST_LIVE_TARGET.providerId);

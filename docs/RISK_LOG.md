@@ -2,6 +2,22 @@
 
 ## Current Risks
 
+### First real Gemini live Research ideation can spend quota if production gates are enabled incorrectly
+
+- Risk: Folqen now contains a real Gemini REST execution path for Research Department content ideation. If environment flags, credentials, approvals, or activation state are changed carelessly, the app could send prompts to Gemini and consume API quota.
+- Prevention: The live path is restricted to `POST /api/live-execution/research/ideation`, provider `gemini`, department `research`, workflow `structured_generation`, task `planning`, one queue attempt, no fallback providers, no autonomous retries, and server-side approval verification against a real approved `Approval` row. It also requires persisted activation state, server credential, `ALLOW_LIVE_AI_EXECUTION=true`, `LIVE_AI_ACTIVATION_STAGE >= 1`, sandbox promotion, quota/budget checks, governance checks, provider health, and kill switches off.
+- Verification: Focused live-execution tests assert structured Research ideation output validation, blocked default execution, no autonomous retries, and rejection of client-claimed approval when database verification is unavailable. Full lint, typecheck, 114 tests, Prisma generate, and Next build passed.
+- Rollback: Set `ALLOW_LIVE_AI_EXECUTION=false`, set `LIVE_AI_ACTIVATION_STAGE=0`, set `AI_RUNTIME_KILL_SWITCH=true`, remove Gemini secret env, use `/api/live-execution/emergency-stop`, disable/quarantine Gemini through `/api/live-execution/provider/action`, and revert `src/lib/live-execution/research-ideation.ts`, the Gemini structured-output adapter changes, `/api/live-execution/research/ideation`, and the Tools panel activation ID field if needed.
+- Human approval trigger: Any real Gemini key setup, any approved activation ID creation/use, any production env change enabling live execution, any Stage 1 promotion, any budget/quota increase, or any request to run a real provider call.
+
+### Live Gemini outputs remain draft intelligence, not publish-ready facts
+
+- Risk: Gemini may produce plausible but unverified trend insights, folklore claims, or topic suggestions. Treating output as fact or directly using it for public content could create factual, copyright, or safety issues.
+- Prevention: The structured schema requires `noPublishing=true`, `needsHumanReview=true`, and `sourceVerificationRequired=true`; output is Research ideation only and never triggers publishing, rendering, metadata deployment, platform execution, or content mutation.
+- Verification: Zod parser tests require the safety flags and the service persists live results as workflow intelligence with validation/audit metadata.
+- Rollback: Mark the run failed, engage emergency stop if needed, and require manual editorial/source review before any downstream Content Department use.
+- Human approval trigger: Any attempt to turn live Research ideation output into generated scripts, media, metadata, scheduling, posting packages, or public publishing without a new approval-gated slice.
+
 ### Controlled live execution can spend money or leak prompts if gates are weakened
 
 - Risk: The new activation layer contains a real Gemini adapter, so weakening readiness checks could send prompts to a live provider or spend quota unexpectedly.

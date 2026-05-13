@@ -120,3 +120,18 @@ The AI gateway remains the provider abstraction and validation layer, while live
 - limiting the first target to Gemini, Research Department, structured content ideation
 
 Departments still must not call provider adapters directly.
+
+## First Live Execution Slice
+
+The first live provider capability is intentionally outside the generic dry-run gateway endpoint:
+
+- Endpoint: `POST /api/live-execution/research/ideation`
+- Provider: Gemini only
+- Department: Research only
+- Workflow: content ideation / trend insight only
+- Output: structured JSON validated by Folqen
+- Retries: disabled, one queue attempt only
+- Fallback routing: disabled
+- Publishing/rendering/platform/self-improvement actions: blocked
+
+The generic `/api/ai-gateway/*` endpoints remain mock-safe. Gemini live calls are reachable only through the controlled activation layer after persisted activation, verified approval, server-side credential, budget, quota, kill-switch, and governance checks pass.

@@ -4,7 +4,7 @@
 
 Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, every required authenticated route now has a route-specific or database-backed surface, the autonomous organization target architecture is documented, the operational command center frontend is implemented, the mock-safe multi-agent orchestration infrastructure is implemented, the first Research + Content operational intelligence layer is implemented, the Organizational Memory & Reflection Intelligence layer is implemented, the Media Generation & Asset Pipeline layer is implemented, the Platform Operations & Publishing Infrastructure layer is implemented, the Governance Approval & Safety Control layer is implemented, the AI Provider Gateway & Execution Runtime is implemented, and the Controlled Live Execution Activation Layer is implemented on branch `build/phase-0-foundation`.
 
-Latest save point: May 13, 2026, after building the Controlled Live Execution Activation Layer. This was a provider safety/control implementation phase; no credentials, production database migration application, production settings, paid tools, provider activation in production, live embeddings, GPU execution, live ComfyUI execution, FFmpeg rendering, platform account access, analytics API read, scraping, public publishing, or n8n execution were enabled.
+Latest save point: May 13, 2026, after implementing Folqen's first real live AI execution capability: Gemini for Research Department content ideation / trend insight only. This was a controlled provider-runtime implementation phase; no credentials, production database migration application, production settings, paid tools, production provider activation, live embeddings, GPU execution, live ComfyUI execution, FFmpeg rendering, media generation, platform account access, analytics API read, scraping, public publishing, autonomous retries, self-improvement mutation, or n8n execution were enabled.
 
 ## Completed Work
 
@@ -22,6 +22,14 @@ Latest save point: May 13, 2026, after building the Controlled Live Execution Ac
 - Added `docs/AI_PROVIDER_GATEWAY_ARCHITECTURE.md`.
 - Added the Controlled Live Execution Activation Layer with staged activation records, first-target Gemini/Research/content-ideation limits, provider activation requests, sandbox-to-live promotion evaluation, strict quota/budget checks, runtime kill switch, emergency shutdown, provider disable/quarantine/rollback controls, protected `/api/live-execution/*` routes, and live activation controls on `/tools`.
 - Added `docs/CONTROLLED_LIVE_EXECUTION_ARCHITECTURE.md`.
+- Added the first real live AI execution capability for Gemini Research Department content ideation only:
+  - `src/lib/live-execution/research-ideation.ts` for the structured Research ideation schema and prompt contract.
+  - Real Gemini REST structured-output support behind the guarded adapter.
+  - `POST /api/live-execution/research/ideation`, forcing Gemini + Research + content ideation only.
+  - Server-side approval ID verification against existing `Approval` rows before any live call can run.
+  - Persisted activation state through the existing `Setting` model.
+  - Live/blocked run persistence through existing `WorkflowRun`, `AnalyticsRecord`, `ErrorLog`, `AuditLog`, and `EventLog` rows.
+  - UI support on `/tools` for approved activation IDs and structured live ideation previews.
 - Added the real Folqen orchestration layer shape with typed agent registry, hierarchy/departments, task orchestration service, event bus, Redis/BullMQ adapters, LangGraph dry-run flow, CrewAI-compatible coordination plan, incident recovery, monitoring hooks, memory hooks, protected APIs, and a worker entrypoint.
 - Added Redis to Docker Compose and orchestration environment defaults while keeping execution mock-safe by default.
 - Added `docs/ORCHESTRATION_ARCHITECTURE.md`.
@@ -136,7 +144,8 @@ The app installs, lints, typechecks, tests, validates Prisma schema, builds succ
 - Platform operations and publishing workflows are dry-run only; no platform account access, credential use, n8n execution, browser automation, scraping, analytics API read, scheduling against real accounts, monetization account access, or public publishing is enabled.
 - Governance policies, approvals, and sandbox simulations are dry-run control infrastructure only; they do not activate providers, publish, run live workflows, access accounts, spend money, or execute media rendering.
 - AI provider gateway execution is mock-safe only; OpenRouter, Gemini, Claude, OpenAI-compatible, and local/Ollama adapters are status-aware placeholders and no model request, credential use, paid API call, or live local model call is executed.
-- Controlled live execution activation is implemented but blocked by default. The only live-capable code path is Gemini for Research Department structured content ideation, and it is unreachable unless `ALLOW_LIVE_AI_EXECUTION=true`, `LIVE_AI_ACTIVATION_STAGE >= 1`, server credentials, approved activation ID, sandbox promotion, budget/quota checks, governance checks, and kill-switch checks all pass.
+- Controlled live execution activation is implemented but blocked by default. The only live-capable code path is Gemini for Research Department structured content ideation through `/api/live-execution/research/ideation`, and it is unreachable unless `ALLOW_LIVE_AI_EXECUTION=true`, `LIVE_AI_ACTIVATION_STAGE >= 1`, server credentials, a real approved `live_execution.provider_activation` approval ID, persisted activation state, sandbox promotion, budget/quota checks, governance checks, provider health checks, and kill-switch checks all pass.
+- Live execution has no autonomous retries, no fallback providers, no publishing, no rendering, no media generation, no platform execution, no scraping, no self-improvement mutation, and no workflow evolution.
 - Production `AUTH_SECRET` is configured in Vercel; its value was never printed or committed.
 - All integrations remain `Not connected` or `Mock`.
 - Database is the only live backend integration.
@@ -656,6 +665,20 @@ Latest May 13, 2026 Controlled Live Execution Activation Layer update:
 - `npm audit --audit-level=moderate` through the available npm CLI still reports the known nested Next/PostCSS moderate advisory; no unsafe forced fix was applied.
 - Local dev server smoke: `/login` returned 200 in the in-app browser and no browser console errors were reported. Authenticated `/tools` UI requires a configured local session/database to view interactively.
 
+Latest May 13, 2026 first real live Gemini Research ideation update:
+
+- Added a dedicated live endpoint for Gemini Research Department content ideation / trend insight only.
+- Added structured Gemini JSON output validation for draft trend insights, topic suggestions, recommendations, risks, follow-up research, and safety flags.
+- Added server-side approval verification against real approved `Approval` rows and persisted activation state through `Setting`.
+- Added live/blocked execution persistence through existing `WorkflowRun`, `AnalyticsRecord`, `ErrorLog`, `AuditLog`, and `EventLog` records.
+- Direct local `tsc --noEmit`: passed.
+- Direct local focused `tsx --test "src/lib/live-execution/**/*.test.ts"`: passed, 10 tests.
+- Direct local `eslint .`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 114 tests.
+- Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`; `/api/live-execution/research/ideation` is included in the build output.
+- Local dev smoke: `/login` returned 200.
+- `npm audit --audit-level=moderate` through the available npm CLI still reports the known nested Next/PostCSS moderate advisory; no unsafe forced fix was applied.
+
 ## Known Issues
 
 - Supabase MCP documentation search failed in this session because the connected OAuth token was revoked, so Supabase-specific security notes in the architecture document rely on existing project practice and official-doc fallback knowledge rather than MCP snippets.
@@ -684,4 +707,4 @@ Latest May 13, 2026 Controlled Live Execution Activation Layer update:
 
 ## Safe To Stop
 
-Yes after this checkpoint commit is pushed. The AI Provider Gateway & Execution Runtime is implemented in mock-safe mode, verification passed for the focused checks, the repo is safe to continue, and no source files are left half-edited.
+Yes after this checkpoint commit is pushed. The first live Gemini Research ideation capability is implemented but blocked by default, verification passed, the repo is safe to continue, and no source files are left half-edited.

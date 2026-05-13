@@ -10,6 +10,8 @@ type LiveAdapterInput = {
   model?: string;
   input: NormalizedAiGatewayInput;
   timeoutMs: number;
+  responseMimeType?: "application/json" | "text/plain";
+  responseSchema?: Record<string, unknown>;
 };
 
 function extractGeminiText(payload: unknown) {
@@ -63,6 +65,8 @@ export async function executeLiveProvider(input: LiveAdapterInput): Promise<Live
         generationConfig: {
           temperature: 0.4,
           maxOutputTokens: input.input.maxOutputTokens,
+          ...(input.responseMimeType ? { responseMimeType: input.responseMimeType } : {}),
+          ...(input.responseSchema ? { responseSchema: input.responseSchema } : {}),
         },
       }),
       signal: controller.signal,
@@ -80,6 +84,7 @@ export async function executeLiveProvider(input: LiveAdapterInput): Promise<Live
       providerId: "gemini",
       model,
       content,
+      structured: input.responseMimeType === "application/json" ? { rawJson: content } : undefined,
       rawStatus: response.status,
       latencyMs: Math.max(1, Date.now() - started),
       usage: {

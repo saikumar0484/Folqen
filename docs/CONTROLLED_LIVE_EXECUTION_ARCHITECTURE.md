@@ -12,7 +12,7 @@ Only this Stage 1 target is supported:
 
 - Provider: Gemini
 - Department: Research
-- Workflow: `structured_generation`
+- Workflow: `structured_generation` / content ideation and trend insight
 - Task: planning/content ideation
 - Publishing: blocked
 - Volume: ultra-low quota
@@ -49,20 +49,24 @@ Live execution is allowed only when all are true:
 14. Governance policy does not block the request
 15. Response validation runs after provider response
 16. Audit/event/queue metadata are captured
+17. The approval ID is verified against an actual approved `Approval` row
+18. Activation state is persisted through the existing `Setting` model
+19. Autonomous retries and fallback providers are disabled for the first live capability
 
 ## Runtime Flow
 
 ```mermaid
 flowchart TD
   A["Operator request"] --> B["Auth + role + mutation guard"]
-  B --> C["Live readiness evaluation"]
-  C --> D{"All gates pass?"}
-  D -- "No" --> E["Blocked result + audit/event"]
-  D -- "Yes" --> F["Gemini adapter with timeout"]
-  F --> G["Response validation"]
-  G --> H["Usage + cost capture"]
-  H --> I["Queue/event/audit trace"]
-  I --> J["Rollback controls remain available"]
+  B --> C["Persisted state + approval verification"]
+  C --> D["Live readiness evaluation"]
+  D --> E{"All gates pass?"}
+  E -- "No" --> F["Blocked result + audit/event/incident"]
+  E -- "Yes" --> G["Gemini REST generateContent with JSON schema"]
+  G --> H["Structured response validation"]
+  H --> I["Usage + cost capture"]
+  I --> J["Queue/event/audit/analytics trace"]
+  J --> K["Rollback controls remain available"]
 ```
 
 ## Core Files
@@ -70,6 +74,7 @@ flowchart TD
 - `src/lib/live-execution/types.ts`: activation, quota, readiness, execution, dashboard contracts.
 - `src/lib/live-execution/config.ts`: first live target, default quotas, env gates.
 - `src/lib/live-execution/adapters.ts`: guarded Gemini REST adapter.
+- `src/lib/live-execution/research-ideation.ts`: Research ideation prompt contract, JSON schema, and Zod validation.
 - `src/lib/live-execution/service.ts`: activation request, promotion, live execution, emergency stop, provider actions, dashboard.
 - `src/lib/live-execution/api-handler.ts`: read/operator/admin access helpers.
 - `src/app/api/live-execution/*`: protected activation APIs.
@@ -81,6 +86,7 @@ flowchart TD
 - `POST /api/live-execution/activation/request`
 - `POST /api/live-execution/promote`
 - `POST /api/live-execution/execute`
+- `POST /api/live-execution/research/ideation`
 - `POST /api/live-execution/emergency-stop`
 - `POST /api/live-execution/provider/action`
 
@@ -93,7 +99,33 @@ Admin-only:
 
 Admin/operator:
 
-- controlled live execution request, which still blocks unless all live gates pass
+- controlled Gemini Research ideation request, which still blocks unless all live gates pass
+
+## First Real Gemini Capability
+
+`POST /api/live-execution/research/ideation` is the only live-capable endpoint added for this phase. It forces:
+
+- `providerId=gemini`
+- `departmentId=research`
+- `workflowKind=structured_generation`
+- `taskType=planning`
+- structured JSON response validation
+- one BullMQ attempt only
+- no fallback providers
+- no publishing, rendering, platform execution, self-improvement mutation, or autonomous retry
+
+The Gemini adapter uses the REST `generateContent` endpoint with `generationConfig.responseMimeType="application/json"` and `generationConfig.responseSchema`. The resulting JSON is parsed and validated with Zod before Folqen accepts it as a live Research ideation result.
+
+## Persistence
+
+No migration was added. This phase uses existing models only:
+
+- `Setting`: persisted activation registry under `live_execution.activation.gemini_research_ideation`
+- `Approval`: server-side verification of `live_execution.provider_activation` approvals
+- `WorkflowRun`: live/blocked run input, output, and logs
+- `AnalyticsRecord`: cost and token usage snapshots
+- `ErrorLog`: blocked/failed live execution incidents
+- `AuditLog` and `EventLog`: governance and operational trace
 
 ## Rollback Controls
 

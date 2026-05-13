@@ -77,6 +77,7 @@ export type LiveProviderResponse = {
   providerId: AiProviderId;
   model: string;
   content: string;
+  structured?: Record<string, unknown>;
   rawStatus: number;
   latencyMs: number;
   usage: {
@@ -100,6 +101,19 @@ export type ControlledLiveExecutionResult = {
   validation: {
     status: "passed" | "warning" | "failed";
     warnings: string[];
+  };
+  liveCapability?: "gemini_research_content_ideation";
+  structuredOutput?: Record<string, unknown>;
+  approvalVerification?: {
+    verified: boolean;
+    status: "approved" | "pending" | "rejected" | "expired" | "missing" | "unavailable";
+    approvalId?: string;
+    reason: string;
+  };
+  retryPolicy: {
+    autonomousRetries: false;
+    maxAttempts: 1;
+    fallbackProviders: [];
   };
   rollback: {
     available: boolean;

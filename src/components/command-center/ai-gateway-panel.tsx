@@ -45,6 +45,7 @@ function statusClass(status: string) {
 export function AiGatewayPanel({ dashboard, liveExecution }: AiGatewayPanelProps) {
   const [objective, setObjective] = useState("Generate a source-aware mystery content strategy outline without using paid providers.");
   const [provider, setProvider] = useState("mock");
+  const [activationApprovalId, setActivationApprovalId] = useState("");
   const [pending, setPending] = useState<string | null>(null);
   const [response, setResponse] = useState<ExecuteResponse | null>(null);
   const [liveResponse, setLiveResponse] = useState<LiveResponse | null>(null);
@@ -127,7 +128,7 @@ export function AiGatewayPanel({ dashboard, liveExecution }: AiGatewayPanelProps
         departmentId: "research",
         workflowKind: "structured_generation",
         taskType: "planning",
-        approvalStatus: "pending",
+        approvalId: activationApprovalId || undefined,
         maxOutputTokens: 400,
       }),
     });
@@ -139,16 +140,12 @@ export function AiGatewayPanel({ dashboard, liveExecution }: AiGatewayPanelProps
   async function executeControlledLive() {
     setPending("controlled-live");
     setLiveResponse(null);
-    const request = await mutationFetch("/api/live-execution/execute", {
+    const request = await mutationFetch("/api/live-execution/research/ideation", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         objective,
-        providerId: "gemini",
-        departmentId: "research",
-        workflowKind: "structured_generation",
-        taskType: "planning",
-        approvalStatus: "pending",
+        approvalId: activationApprovalId || undefined,
         maxOutputTokens: 400,
       }),
     });
@@ -322,6 +319,15 @@ export function AiGatewayPanel({ dashboard, liveExecution }: AiGatewayPanelProps
 
           <div className="grid gap-4 xl:grid-cols-[1fr_0.8fr]">
             <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
+              <label className="mb-3 block space-y-2">
+                <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Approved activation ID</span>
+                <input
+                  value={activationApprovalId}
+                  onChange={(event) => setActivationApprovalId(event.target.value)}
+                  placeholder="Paste an approved live_execution.provider_activation approval ID"
+                  className="h-11 w-full rounded-2xl border border-white/10 bg-black/40 px-3 text-sm outline-none focus:border-neon/60"
+                />
+              </label>
               <div className="flex flex-wrap gap-2">
                 <Button type="button" variant="secondary" onClick={requestActivation} disabled={Boolean(pending)}>
                   {pending === "request-activation" ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
@@ -346,6 +352,17 @@ export function AiGatewayPanel({ dashboard, liveExecution }: AiGatewayPanelProps
                   <p className="mt-1 text-sm leading-6 opacity-85">
                     {liveResponse.error ?? liveResponse.message ?? liveResponse.result?.validation.warnings[0] ?? liveResponse.readiness?.reasons[0] ?? "Activation control updated."}
                   </p>
+                  {Array.isArray(liveResponse.result?.structuredOutput?.topicSuggestions) ? (
+                    <div className="mt-3 grid gap-2">
+                      {(liveResponse.result.structuredOutput.topicSuggestions as Array<{ topic?: string; hook?: string; confidence?: number }>).slice(0, 3).map((item, index) => (
+                        <div key={`${item.topic ?? "topic"}-${index}`} className="rounded-xl border border-white/10 bg-black/25 p-3 text-xs">
+                          <div className="font-medium text-sm">{item.topic ?? "Untitled topic"}</div>
+                          <div className="mt-1 opacity-85">{item.hook ?? "No hook returned."}</div>
+                          <div className="mt-1 font-mono text-neon">confidence {item.confidence ?? 0}</div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
               ) : null}
               <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-3 text-xs leading-5 text-muted-foreground">

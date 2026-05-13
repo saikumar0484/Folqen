@@ -3,6 +3,7 @@ import test from "node:test";
 
 import { resolveLiveExecutionAdminAccess, resolveLiveExecutionOperatorAccess, resolveLiveExecutionReadAccess } from "./api-handler";
 import { FIRST_LIVE_TARGET } from "./config";
+import { parseResearchIdeationJson, researchIdeationOutputSchema } from "./research-ideation";
 import { actOnProvider, engageEmergencyStop, evaluateLiveReadiness, getLiveExecutionDashboard, promoteSandboxToLive, requestProviderActivation, runControlledLiveExecution } from "./service";
 
 const admin = {
@@ -113,6 +114,69 @@ test("controlled live execution falls back to blocked result without provider ca
   assert.equal(result.mode, "blocked");
   assert.notEqual(result.status, "completed_live");
   assert.equal(result.rollback.available, true);
+  assert.equal(result.providerResponse, undefined);
+  assert.equal(result.retryPolicy.autonomousRetries, false);
+  assert.equal(result.retryPolicy.maxAttempts, 1);
+});
+
+test("Gemini Research ideation output parser requires safe structured draft-only fields", () => {
+  const parsed = parseResearchIdeationJson(
+    JSON.stringify({
+      summary: "Draft trend intelligence for India-first mystery content.",
+      trendInsights: [{ trend: "Cursed village folklore explainers", signalType: "cultural", relevanceScore: 82, rationale: "Works as source-aware mystery education without claiming live platform data." }],
+      topicSuggestions: [
+        {
+          topic: "The village where doors are never locked",
+          angle: "Compare folklore, civic trust, and mystery framing without presenting unverifiable claims as fact.",
+          hook: "What if the scariest village legend begins with no locked doors at all?",
+          platformFit: ["YOUTUBE", "INSTAGRAM"],
+          confidence: 78,
+          safetyNotes: "Verify sources and avoid identifying private individuals.",
+        },
+      ],
+      strategicRecommendations: ["Use source cards and separate legend from verified history."],
+      risks: ["May need careful fact labels."],
+      followUpResearch: ["Collect public source references before scripting."],
+      safety: { noPublishing: true, needsHumanReview: true, sourceVerificationRequired: true },
+    }),
+  );
+
+  assert.equal(researchIdeationOutputSchema.safeParse(parsed).success, true);
+  assert.equal(parsed.safety.noPublishing, true);
+});
+
+test("live execution rejects client-claimed approval when database verification is unavailable", async () => {
+  const previousDatabaseUrl = process.env.DATABASE_URL;
+  const previousAllowLive = process.env.ALLOW_LIVE_AI_EXECUTION;
+  const previousStage = process.env.LIVE_AI_ACTIVATION_STAGE;
+  const previousGeminiKey = process.env.GEMINI_API_KEY;
+  delete process.env.DATABASE_URL;
+  process.env.ALLOW_LIVE_AI_EXECUTION = "true";
+  process.env.LIVE_AI_ACTIVATION_STAGE = "1";
+  process.env.GEMINI_API_KEY = "fake-test-key";
+
+  const result = await runControlledLiveExecution({
+    objective: "Generate controlled Gemini research ideation only if approval verification is real.",
+    providerId: "gemini",
+    departmentId: "research",
+    workflowKind: "structured_generation",
+    taskType: "planning",
+    approvalStatus: "approved",
+    approvalId: "approval_fake",
+  });
+
+  if (previousDatabaseUrl === undefined) delete process.env.DATABASE_URL;
+  else process.env.DATABASE_URL = previousDatabaseUrl;
+  if (previousAllowLive === undefined) delete process.env.ALLOW_LIVE_AI_EXECUTION;
+  else process.env.ALLOW_LIVE_AI_EXECUTION = previousAllowLive;
+  if (previousStage === undefined) delete process.env.LIVE_AI_ACTIVATION_STAGE;
+  else process.env.LIVE_AI_ACTIVATION_STAGE = previousStage;
+  if (previousGeminiKey === undefined) delete process.env.GEMINI_API_KEY;
+  else process.env.GEMINI_API_KEY = previousGeminiKey;
+
+  assert.equal(result.status, "waiting_for_approval");
+  assert.equal(result.approvalVerification?.verified, false);
+  assert.equal(result.readiness.reasons.some((reason) => reason.includes("Database approval verification")), true);
   assert.equal(result.providerResponse, undefined);
 });
 
