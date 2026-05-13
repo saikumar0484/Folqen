@@ -117,7 +117,7 @@ export default function LoginPage() {
           </button>
 
           <p className="mt-4 text-xs leading-5 text-muted-foreground">
-            Login works after `DATABASE_URL`, `AUTH_SECRET`, and `npm run db:seed` are configured. The default seed password must be changed after Phase 3 hardening.
+            Production login requires `DATABASE_URL`, `AUTH_SECRET`, and `npm run db:seed`. Safe Vercel previews may use demo auth only when dry-run mode is forced and execution flags stay disabled.
           </p>
         </form>
       </section>

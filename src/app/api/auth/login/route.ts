@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { AUTH_COOKIE_NAME, createSessionToken, isAuthConfigured, SESSION_MAX_AGE_SECONDS } from "@/lib/auth/session";
 import { verifyPassword } from "@/lib/auth/password";
+import { getPreviewDemoUser, validatePreviewDemoCredentials } from "@/lib/auth/preview-demo";
 import { getDb, hasDatabaseUrl } from "@/lib/db";
 import { getMutationSafetyError } from "@/lib/security/request-guards";
 
@@ -27,19 +28,47 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!hasDatabaseUrl()) {
-    return NextResponse.json(
-      {
-        error: "Database is not connected. Set DATABASE_URL and seed the admin user before login.",
-      },
-      { status: 503 },
-    );
-  }
-
   const parsed = loginSchema.safeParse(await request.json().catch(() => null));
 
   if (!parsed.success) {
     return NextResponse.json({ error: "Enter a valid email and password." }, { status: 400 });
+  }
+
+  if (validatePreviewDemoCredentials(parsed.data.email, parsed.data.password)) {
+    const user = getPreviewDemoUser();
+    const token = createSessionToken({
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+    });
+    const response = NextResponse.json({
+      user,
+      mode: "preview-demo",
+      safety: {
+        previewSafeMode: true,
+        dryRunOnly: true,
+        liveExecution: false,
+      },
+    });
+
+    response.cookies.set(AUTH_COOKIE_NAME, token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: SESSION_MAX_AGE_SECONDS,
+      path: "/",
+    });
+
+    return response;
+  }
+
+  if (!hasDatabaseUrl()) {
+    return NextResponse.json(
+      {
+        error: "Database is not connected. Set DATABASE_URL and seed the admin user before login, or enable preview demo auth for safe preview deployments.",
+      },
+      { status: 503 },
+    );
   }
 
   const user = await getDb().user.findUnique({

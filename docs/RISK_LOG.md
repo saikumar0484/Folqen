@@ -2,6 +2,14 @@
 
 ## Current Risks
 
+### Preview demo auth can be mistaken for production authentication
+
+- Risk: A safe preview deployment without `DATABASE_URL` can use demo auth for dashboard visualization, which could be mistaken for production-grade user management.
+- Prevention: Demo auth is gated behind `PREVIEW_DEMO_AUTH=true`, preview runtime, `PREVIEW_SAFE_MODE=true`, `PREVIEW_FORCE_DRY_RUN=true`, and disabled publishing, paid tools, browser automation, live AI, rendering, live thumbnail rendering, and queue workers.
+- Verification: Tests assert preview demo auth blocks when forced dry-run is off, runtime is not preview, or dangerous execution flags are enabled.
+- Rollback: Set `PREVIEW_DEMO_AUTH=false`, redeploy preview, and configure a preview-only `DATABASE_URL` with seeded users for real authenticated testing.
+- Human approval trigger: Any request to use demo auth in production, remove the preview-only gates, expose privileged mutations beyond dry-run visualization, or enable live execution while demo auth is available.
+
 ### Browser Operations can be mistaken for unrestricted browser automation
 
 - Risk: A Browser Operations dashboard, Playwright controller label, action traces, and screenshot previews may make operators think Folqen can browse, click, type, upload files, scrape, or operate accounts.

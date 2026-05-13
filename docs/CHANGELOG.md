@@ -1,5 +1,27 @@
 # Changelog
 
+## May 13, 2026 - Preview Demo Auth for Safe Dashboard Access
+
+### Added
+
+- Added a preview-only demo auth path for Vercel safe preview deployments without `DATABASE_URL`.
+- Added `PREVIEW_DEMO_AUTH`, `PREVIEW_DEMO_EMAIL`, and `PREVIEW_DEMO_PASSWORD` preview env controls.
+- Preview demo auth only works when preview runtime, safe mode, and forced dry-run are active and all dangerous execution flags remain disabled.
+
+### Safety
+
+- No production auth bypass was added. The demo path is gated to safe preview mode and still issues a signed HTTP-only Folqen session.
+- Publishing, paid tools, browser automation, live AI, render execution, queue workers, and live thumbnail rendering must stay disabled for preview demo auth to work.
+- No production database or provider secret was added.
+
+### Verification
+
+- `eslint .`: passed.
+- `tsc --noEmit`: passed.
+- `tsx --test "src/**/*.test.ts"`: passed, 150 tests.
+- `prisma generate && next build`: passed on Next.js `16.2.6`.
+- Vercel preview redeploy and authenticated `/dashboard` preview smoke are the next deployment steps.
+
 ## May 13, 2026 - Browser Operations Department and Safe Preview Deployment
 
 ### Added

@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { getDb, hasDatabaseUrl } from "@/lib/db";
+import { getPreviewDemoUser, isPreviewDemoAuthEnabled, PREVIEW_DEMO_USER_ID } from "@/lib/auth/preview-demo";
 import { AUTH_COOKIE_NAME, verifySessionToken } from "@/lib/auth/session";
 
 export type CurrentUser = {
@@ -13,7 +14,15 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
   const cookieStore = await cookies();
   const session = verifySessionToken(cookieStore.get(AUTH_COOKIE_NAME)?.value);
 
-  if (!session || !hasDatabaseUrl()) {
+  if (!session) {
+    return null;
+  }
+
+  if (isPreviewDemoAuthEnabled() && session.userId === PREVIEW_DEMO_USER_ID && session.email === getPreviewDemoUser().email) {
+    return getPreviewDemoUser();
+  }
+
+  if (!hasDatabaseUrl()) {
     return null;
   }
 
