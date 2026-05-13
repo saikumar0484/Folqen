@@ -7,20 +7,20 @@ import type { CurrentUser } from "@/lib/auth/current-user";
 
 export function AppShell({ children, user }: { children: ReactNode; user: CurrentUser }) {
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <div className="grid-bg pointer-events-none fixed inset-0 -z-10" />
+    <div className="min-h-screen overflow-x-hidden bg-background text-foreground selection:bg-neon/40 selection:text-primary-foreground">
       <div
-        className="pointer-events-none fixed left-1/2 top-[-220px] -z-10 h-[520px] w-[900px] -translate-x-1/2 rounded-full opacity-70 blur-3xl"
+        className="pointer-events-none fixed left-1/2 top-[-260px] -z-10 h-[620px] w-[980px] -translate-x-1/2 rounded-full opacity-80 blur-3xl"
         style={{
-          background: "radial-gradient(ellipse at center, color-mix(in oklab, var(--neon) 18%, transparent), transparent 70%)",
+          background: "radial-gradient(ellipse at center, rgba(143,255,0,.18), rgba(27,214,162,.08) 38%, transparent 72%)",
         }}
       />
+      <div className="pointer-events-none fixed right-[-220px] top-1/4 -z-10 h-[520px] w-[520px] rounded-full bg-neon/[0.055] blur-3xl" />
       <ToastProvider>
         <div className="flex min-h-screen">
           <Sidebar />
           <div className="flex min-w-0 flex-1 flex-col">
             <Topbar user={user} />
-            <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5 sm:px-6 lg:px-8">{children}</main>
+            <main className="mx-auto w-full max-w-[1500px] flex-1 overflow-x-hidden px-3 py-4 sm:px-5 lg:px-7 xl:px-8">{children}</main>
           </div>
         </div>
         <MiniAgentChat />

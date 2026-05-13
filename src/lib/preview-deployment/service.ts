@@ -1,5 +1,5 @@
 import { getEnv } from "@/lib/env";
-import { isPreviewDemoAuthEnabled } from "@/lib/auth/preview-demo";
+import { isPreviewDemoAuthEnabled, isPreviewPublicModeEnabled } from "@/lib/auth/preview-demo";
 import type { DeploymentGovernanceStatus } from "@/lib/deployment-governance/types";
 import type { PreviewDeploymentDashboard, PreviewReadinessCheck } from "./types";
 
@@ -11,6 +11,7 @@ export function getPreviewDeploymentDashboard(source: NodeJS.ProcessEnv = proces
   const env = getEnv(source);
   const previewMode = env.PREVIEW_SAFE_MODE || env.FOLQEN_RUNTIME_PROFILE === "preview" || source.VERCEL_ENV === "preview";
   const previewDemoAuth = isPreviewDemoAuthEnabled(source);
+  const previewPublicMode = isPreviewPublicModeEnabled(source);
   const checks: PreviewReadinessCheck[] = [
     check(
       "preview_profile",
@@ -34,14 +35,28 @@ export function getPreviewDeploymentDashboard(source: NodeJS.ProcessEnv = proces
     check("rendering_disabled", "Rendering disabled", env.ALLOW_CONTROLLED_MEDIA_EXECUTION || env.ALLOW_LIVE_THUMBNAIL_RENDERING || env.LIVE_MEDIA_ACTIVATION_STAGE > 0 || env.LIVE_THUMBNAIL_RENDER_STAGE > 0 ? "Blocked" : "Configured", "Preview must not run live rendering or controlled worker jobs.", [`ALLOW_CONTROLLED_MEDIA_EXECUTION=${env.ALLOW_CONTROLLED_MEDIA_EXECUTION}`, `ALLOW_LIVE_THUMBNAIL_RENDERING=${env.ALLOW_LIVE_THUMBNAIL_RENDERING}`, `LIVE_MEDIA_ACTIVATION_STAGE=${env.LIVE_MEDIA_ACTIVATION_STAGE}`, `LIVE_THUMBNAIL_RENDER_STAGE=${env.LIVE_THUMBNAIL_RENDER_STAGE}`], "Keep all media/render execution flags false or zero."),
     check("browser_disabled", "Browser execution disabled", env.ALLOW_BROWSER_AUTOMATION || !env.BROWSER_OPERATIONS_SANDBOX_MODE || env.BROWSER_OPERATIONS_KILL_SWITCH ? "Blocked" : "Configured", env.ALLOW_BROWSER_AUTOMATION ? "Browser automation is enabled." : "Browser Operations is sandbox/dry-run only.", [`ALLOW_BROWSER_AUTOMATION=${env.ALLOW_BROWSER_AUTOMATION}`, `BROWSER_OPERATIONS_SANDBOX_MODE=${env.BROWSER_OPERATIONS_SANDBOX_MODE}`, `BROWSER_OPERATIONS_KILL_SWITCH=${env.BROWSER_OPERATIONS_KILL_SWITCH}`], "Set ALLOW_BROWSER_AUTOMATION=false and keep sandbox mode true."),
     check(
+      "preview_public_mode",
+      "Preview public UI access",
+      previewPublicMode || !env.PREVIEW_PUBLIC_MODE ? "Configured" : "Blocked",
+      previewPublicMode
+        ? "Preview public mode can render operational dashboards without a login while dangerous execution remains disabled."
+        : env.PREVIEW_PUBLIC_MODE
+          ? "Preview public mode was requested but the preview safety gates are not satisfied."
+          : "Preview public mode is off; login remains required.",
+      [`PREVIEW_PUBLIC_MODE=${env.PREVIEW_PUBLIC_MODE}`, `PREVIEW_SAFE_MODE=${env.PREVIEW_SAFE_MODE}`, `PREVIEW_FORCE_DRY_RUN=${env.PREVIEW_FORCE_DRY_RUN}`],
+      "For public UI previews, set PREVIEW_PUBLIC_MODE=true only with PREVIEW_SAFE_MODE=true, PREVIEW_FORCE_DRY_RUN=true, and all execution flags disabled.",
+    ),
+    check(
       "secrets_minimal",
       "No production secrets required",
-      env.AUTH_SECRET && (env.DATABASE_URL || previewDemoAuth) ? "Configured" : "Needs approval",
-      previewDemoAuth
+      previewPublicMode || (env.AUTH_SECRET && (env.DATABASE_URL || previewDemoAuth)) ? "Configured" : "Needs approval",
+      previewPublicMode
+        ? "Preview public mode can render dashboard UI without production auth or database secrets."
+        : previewDemoAuth
         ? "Preview can render protected UI through preview demo auth without production database secrets."
         : "Preview can render the UI with auth/database envs when configured, but no provider/platform secrets are required.",
-      [`AUTH_SECRET=${env.AUTH_SECRET ? "configured" : "missing"}`, `DATABASE_URL=${env.DATABASE_URL ? "configured" : "missing"}`, `PREVIEW_DEMO_AUTH=${env.PREVIEW_DEMO_AUTH}`],
-      "Use preview-only AUTH_SECRET/DATABASE_URL values, or enable preview demo auth with forced dry-run. Do not paste production provider or platform secrets.",
+      [`AUTH_SECRET=${env.AUTH_SECRET ? "configured" : "missing"}`, `DATABASE_URL=${env.DATABASE_URL ? "configured" : "missing"}`, `PREVIEW_DEMO_AUTH=${env.PREVIEW_DEMO_AUTH}`, `PREVIEW_PUBLIC_MODE=${env.PREVIEW_PUBLIC_MODE}`],
+      "Use preview-only AUTH_SECRET/DATABASE_URL values, enable preview demo auth, or enable preview public mode with forced dry-run. Do not paste production provider or platform secrets.",
     ),
   ];
   const blocked = checks.filter((item) => item.status === "Blocked").length;
@@ -71,7 +86,7 @@ export function getPreviewDeploymentDashboard(source: NodeJS.ProcessEnv = proces
       "workflow mutation",
     ],
     visibleRoutes: ["/dashboard", "/agents", "/workflows", "/research-intelligence", "/content-studio", "/analytics", "/approvals", "/audit", "/browser-operations", "/infrastructure"],
-    requiredEnv: ["AUTH_SECRET", "DATABASE_URL or PREVIEW_DEMO_AUTH=true", "NEXTAUTH_URL", "APP_BASE_URL", "FOLQEN_RUNTIME_PROFILE=preview", "PREVIEW_SAFE_MODE=true", "PREVIEW_FORCE_DRY_RUN=true"],
+    requiredEnv: ["AUTH_SECRET + DATABASE_URL, PREVIEW_DEMO_AUTH=true, or PREVIEW_PUBLIC_MODE=true", "NEXTAUTH_URL", "APP_BASE_URL", "FOLQEN_RUNTIME_PROFILE=preview", "PREVIEW_SAFE_MODE=true", "PREVIEW_FORCE_DRY_RUN=true"],
     deploymentCommands: ["vercel env add FOLQEN_RUNTIME_PROFILE preview", "vercel env add PREVIEW_SAFE_MODE preview", "vercel env add PREVIEW_FORCE_DRY_RUN preview", "vercel deploy"],
     notes: [
       "Preview mode is for visualization and internal testing only.",

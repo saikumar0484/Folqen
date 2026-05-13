@@ -2,6 +2,14 @@
 
 ## Current Risks
 
+### Preview public mode can be misconfigured and overexpose internal dashboards
+
+- Risk: If `PREVIEW_PUBLIC_MODE=true` is enabled outside strict preview-safe constraints, protected UI pages could become unintentionally accessible.
+- Prevention: Preview public mode now requires preview runtime, `PREVIEW_SAFE_MODE=true`, `PREVIEW_FORCE_DRY_RUN=true`, and disabled execution flags for publishing, providers, rendering, browser automation, and workers.
+- Verification: Added tests for preview public mode gating and preview diagnostics checks; preview smoke confirmed `/dashboard`, `/audit`, `/browser-operations`, and `/infrastructure` load only under safe preview settings.
+- Rollback: Set `PREVIEW_PUBLIC_MODE=false` and redeploy, or keep login path active with preview demo auth/database-backed auth.
+- Human approval trigger: Any request to enable preview public mode in production, remove dry-run safety gates, or allow any execution while preview public mode is enabled.
+
 ### Final cleanup can remove historical evidence if over-applied
 
 - Risk: Repository cleanup can accidentally remove root control docs, checkpoint docs, deployment guides, future-proofing guides, or archived audit evidence that future Codex sessions need for continuity.

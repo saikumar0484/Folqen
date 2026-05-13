@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { isPreviewDemoAuthEnabled, validatePreviewDemoCredentials } from "@/lib/auth/preview-demo";
+import { getPreviewPublicUser, isPreviewDemoAuthEnabled, isPreviewPublicModeEnabled, validatePreviewDemoCredentials } from "@/lib/auth/preview-demo";
 
 const safePreviewEnv = {
   PREVIEW_DEMO_AUTH: "true",
+  PREVIEW_PUBLIC_MODE: "true",
   PREVIEW_SAFE_MODE: "true",
   PREVIEW_FORCE_DRY_RUN: "true",
   FOLQEN_RUNTIME_PROFILE: "preview",
@@ -21,6 +22,19 @@ test("preview demo auth enables only in forced dry-run preview mode", () => {
   assert.equal(isPreviewDemoAuthEnabled(safePreviewEnv), true);
   assert.equal(isPreviewDemoAuthEnabled({ ...safePreviewEnv, PREVIEW_FORCE_DRY_RUN: "false" }), false);
   assert.equal(isPreviewDemoAuthEnabled({ ...safePreviewEnv, FOLQEN_RUNTIME_PROFILE: "local", VERCEL_ENV: undefined }), false);
+});
+
+test("preview public mode enables only as a viewer in safe dry-run preview mode", () => {
+  assert.equal(isPreviewPublicModeEnabled(safePreviewEnv), true);
+  assert.equal(isPreviewPublicModeEnabled({ ...safePreviewEnv, PREVIEW_PUBLIC_MODE: "false" }), false);
+  assert.equal(isPreviewPublicModeEnabled({ ...safePreviewEnv, PREVIEW_FORCE_DRY_RUN: "false" }), false);
+  assert.equal(isPreviewPublicModeEnabled({ ...safePreviewEnv, ALLOW_BROWSER_AUTOMATION: "true" }), false);
+  assert.deepEqual(getPreviewPublicUser(safePreviewEnv), {
+    id: "preview-public-viewer",
+    email: "preview@folqen.local",
+    name: "Folqen Public Preview",
+    role: "VIEWER",
+  });
 });
 
 test("preview demo auth blocks dangerous execution flags", () => {

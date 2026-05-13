@@ -4,6 +4,7 @@ import { useEffect, useMemo } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
+  Activity,
   AlertTriangle,
   ArrowUpRight,
   Brain,
@@ -17,6 +18,7 @@ import {
   MessageSquare,
   Network,
   RadioTower,
+  Radar,
   Globe2,
   RefreshCw,
   Search,
@@ -75,7 +77,7 @@ const statusTone = {
 } as const;
 
 const sectionAnimation = {
-  initial: { opacity: 0, y: 14 },
+  initial: false,
   animate: { opacity: 1, y: 0 },
   transition: { duration: 0.28 },
 };
@@ -90,6 +92,83 @@ function StatusBadge({ status }: { status: CommandCenterView["status"] }) {
       <StatusDot tone={statusTone[status]} />
       {status}
     </Badge>
+  );
+}
+
+function HeroPreview({ view }: { view: CommandCenterView }) {
+  const previewAgents = view.agents.slice(0, 4);
+  const previewSteps = view.workflows.slice(0, 3);
+
+  return (
+    <div className="scanline relative min-h-[300px] min-w-0 overflow-hidden rounded-2xl border border-white/10 bg-[rgba(8,13,10,.88)] p-4 shadow-[0_30px_90px_rgba(0,0,0,.38)]">
+      <div className="absolute inset-0 bg-[radial-gradient(65%_42%_at_80%_4%,rgba(182,255,59,.16),transparent_62%)]" />
+      <div className="relative flex items-center gap-2 border-b border-white/10 pb-3">
+        <span className="h-2.5 w-2.5 rounded-full bg-rose-300/70" />
+        <span className="h-2.5 w-2.5 rounded-full bg-amber-300/70" />
+        <span className="h-2.5 w-2.5 rounded-full bg-neon/80" />
+        <div className="ml-2 flex-1 rounded-full border border-white/10 bg-white/[0.035] px-3 py-1.5 font-mono text-[10px] text-muted-foreground">
+          folqen://{view.id}/operations
+        </div>
+        <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-neon">dry-run</span>
+      </div>
+      <div className="relative grid gap-4 pt-4 lg:grid-cols-[0.72fr_1fr]">
+        <div className="space-y-3">
+          <div className="rounded-2xl border border-neon/20 bg-neon/[0.07] p-3">
+            <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-neon">AI workforce</div>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              {previewAgents.map((agent) => (
+                <div key={agent.id} className="rounded-xl border border-white/10 bg-black/20 p-2">
+                  <div className="flex items-center gap-2">
+                    <StatusDot tone={statusTone[agent.status]} />
+                    <span className="truncate text-xs font-medium">{agent.name}</span>
+                  </div>
+                  <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/10">
+                    <div className="h-full rounded-full bg-neon" style={{ width: `${agent.performance}%` }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3">
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Runtime</span>
+              <span className="text-xs text-neon">Sandbox locked</span>
+            </div>
+            <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+              {["AI", "Render", "Publish"].map((label) => (
+                <div key={label} className="rounded-xl border border-white/10 bg-black/20 px-2 py-2">
+                  <div className="font-mono text-[10px] text-muted-foreground">{label}</div>
+                  <div className="mt-1 text-xs text-amber-100">Blocked</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="space-y-3">
+          {previewSteps.map((workflow, index) => (
+            <div key={workflow.id} className="rounded-2xl border border-white/10 bg-white/[0.035] p-3">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">0{index + 1} / {workflow.owner}</div>
+                  <div className="mt-1 text-sm font-medium">{workflow.name}</div>
+                </div>
+                <StatusBadge status={workflow.status} />
+              </div>
+              <div className="mt-3">
+                <ProgressRail value={workflow.progress} tone={workflow.status === "Not connected" ? "warning" : "safe"} />
+              </div>
+            </div>
+          ))}
+          <div className="rounded-2xl border border-neon/20 bg-[linear-gradient(135deg,rgba(182,255,59,.09),rgba(27,214,162,.035))] p-3">
+            <div className="flex items-center gap-2 text-sm font-medium text-neon">
+              <Radar className="h-4 w-4" />
+              Preview deployment posture verified
+            </div>
+            <p className="mt-2 text-xs leading-5 text-muted-foreground">Operational dashboards can be viewed while live providers, publishing, rendering, browser execution, workers, and retries stay disabled.</p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -121,32 +200,45 @@ function PageHero({ view }: { view: CommandCenterView }) {
   const Icon = pageIcons[view.id];
 
   return (
-    <motion.section {...sectionAnimation} className="relative overflow-hidden rounded-3xl border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.075),rgba(255,255,255,0.025))] p-5 shadow-2xl backdrop-blur-xl md:p-6">
+    <motion.section {...sectionAnimation} className="command-panel relative overflow-hidden rounded-3xl p-5 md:p-6 xl:p-7">
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-neon/70 to-transparent" />
-      <div className="absolute right-0 top-0 h-40 w-40 rounded-full bg-neon/10 blur-3xl" />
-      <div className="relative flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
-        <div className="max-w-3xl">
+      <div className="absolute right-[-12%] top-[-22%] h-80 w-80 rounded-full bg-neon/10 blur-3xl" />
+      <div className="relative z-[1] grid gap-6 xl:grid-cols-[0.78fr_1fr] xl:items-end">
+        <div className="max-w-3xl min-w-0">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-neon/25 bg-neon/10 text-neon shadow-glow">
+            <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-neon/25 bg-neon/10 text-neon shadow-glow">
               <Icon className="h-5 w-5" />
             </span>
             <Badge variant="premium">{view.eyebrow}</Badge>
             <StatusBadge status={view.status} />
           </div>
-          <h1 className="mt-5 font-display text-3xl font-semibold tracking-normal text-foreground md:text-5xl">{view.title}</h1>
+          <h1 className="mt-6 max-w-[12ch] font-display text-3xl font-semibold tracking-[-0.035em] text-foreground sm:max-w-3xl sm:text-4xl md:text-6xl xl:text-7xl">
+            {view.title}
+          </h1>
           <p className="mt-4 max-w-2xl text-sm leading-6 text-muted-foreground md:text-base">{view.description}</p>
+          <div className="mt-6 flex flex-wrap gap-2">
+            <Button type="button" className="max-sm:w-full">
+              <Sparkles className="h-4 w-4" />
+              {view.primaryAction}
+            </Button>
+            <Button asChild variant="secondary" className="max-sm:w-full">
+              <Link href={view.id === "settings" ? "/settings" : "/approvals"}>
+                {view.secondaryAction}
+                <ArrowUpRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+          <div className="mt-7 grid gap-2 sm:grid-cols-3">
+            {["Providers off", "Workers paused", "Approval gates active"].map((label) => (
+              <div key={label} className="rounded-2xl border border-white/10 bg-white/[0.035] px-3 py-3 text-xs text-muted-foreground">
+                <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-neon shadow-[0_0_10px_rgba(182,255,59,.9)]" />
+                {label}
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Button type="button">
-            <Sparkles className="h-4 w-4" />
-            {view.primaryAction}
-          </Button>
-          <Button asChild variant="secondary">
-            <Link href={view.id === "settings" ? "/settings" : "/approvals"}>
-              {view.secondaryAction}
-              <ArrowUpRight className="h-4 w-4" />
-            </Link>
-          </Button>
+        <div className="hidden min-w-0 sm:block">
+          <HeroPreview view={view} />
         </div>
       </div>
     </motion.section>
@@ -156,17 +248,32 @@ function PageHero({ view }: { view: CommandCenterView }) {
 function MetricsGrid({ view }: { view: CommandCenterView }) {
   return (
     <motion.section {...sectionAnimation} className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-      {view.metrics.map((metric) => (
-        <Card key={metric.label} className={cn("overflow-hidden", toneClasses[metric.tone])}>
+      {view.metrics.map((metric, index) => (
+        <Card key={metric.label} className={cn("overflow-hidden transition duration-300 hover:-translate-y-1 hover:border-neon/25", toneClasses[metric.tone])}>
           <CardContent className="p-4">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <div className="text-sm text-muted-foreground">{metric.label}</div>
-                <div className="mt-2 font-display text-3xl font-semibold">{metric.value}</div>
+                <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{metric.label}</div>
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.28, delay: index * 0.04 }}
+                  className="mt-3 font-display text-3xl font-semibold tracking-[-0.03em]"
+                >
+                  {metric.value}
+                </motion.div>
               </div>
               <Badge variant={metric.tone}>{metric.delta}</Badge>
             </div>
             <p className="mt-4 min-h-10 text-xs leading-5 text-muted-foreground">{metric.detail}</p>
+            <div className="mt-4 flex items-center gap-1.5">
+              {Array.from({ length: 18 }).map((_, barIndex) => (
+                <span
+                  key={barIndex}
+                  className={cn("h-1 flex-1 rounded-full", barIndex <= index * 4 + 5 ? "bg-neon/70" : "bg-white/[0.06]")}
+                />
+              ))}
+            </div>
           </CardContent>
         </Card>
       ))}
@@ -230,7 +337,7 @@ function AgentHierarchy({ agents }: { agents: AgentNode[] }) {
   const departments = Array.from(new Set(agents.map((agent) => agent.department).filter((department) => department !== "Executive")));
 
   return (
-    <Card>
+    <Card className="overflow-hidden">
       <CardHeader>
         <div className="flex items-center gap-2">
           <Network className="h-4 w-4 text-neon" />
@@ -239,18 +346,27 @@ function AgentHierarchy({ agents }: { agents: AgentNode[] }) {
         <CardDescription>Executive control delegates to specialist departments while safety can block risky execution.</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+        <div className="grid gap-4 lg:grid-cols-[0.82fr_1.18fr]">
           <div className="space-y-3">
             {executives.map((agent) => (
-              <div key={agent.id} className="rounded-2xl border border-neon/25 bg-neon/10 p-4">
-                <div className="font-display text-lg font-semibold">{agent.name}</div>
+              <div key={agent.id} className="relative overflow-hidden rounded-2xl border border-neon/25 bg-[radial-gradient(70%_70%_at_80%_0%,rgba(182,255,59,.18),rgba(182,255,59,.06))] p-5 shadow-[0_0_45px_rgba(182,255,59,.10)]">
+                <div className="absolute right-4 top-4 h-20 w-20 rounded-full border border-neon/20" />
+                <div className="absolute right-8 top-8 h-12 w-12 rounded-full border border-neon/30" />
+                <div className="font-display text-xl font-semibold tracking-[-0.02em]">{agent.name}</div>
                 <div className="mt-1 text-sm text-muted-foreground">{agent.task}</div>
+                <div className="mt-5 grid grid-cols-3 gap-2">
+                  {["Strategy", "Memory", "Safety"].map((label) => (
+                    <div key={label} className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-center font-mono text-[10px] uppercase tracking-widest text-neon">
+                      {label}
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             {departments.map((department) => (
-              <div key={department} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+              <div key={department} className="rounded-2xl border border-white/10 bg-white/[0.035] p-4 transition hover:border-neon/25 hover:bg-neon/[0.035]">
                 <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{department}</div>
                 <div className="mt-3 space-y-2">
                   {agents
@@ -381,6 +497,29 @@ function InfrastructureGrid({ infrastructure }: { infrastructure: Infrastructure
         </Card>
       ))}
     </section>
+  );
+}
+
+function RuntimeStatusStrip({ view }: { view: CommandCenterView }) {
+  const cells = [
+    { label: "AI provider runtime", value: "Mock / approval gated", tone: "warning" as StatusTone },
+    { label: "Browser operations", value: view.id === "browser-operations" ? "Sandbox trace only" : "Disabled by policy", tone: "info" as StatusTone },
+    { label: "Media rendering", value: "No unrestricted GPU", tone: "warning" as StatusTone },
+    { label: "Publishing", value: "Manual packages only", tone: "safe" as StatusTone },
+  ];
+
+  return (
+    <motion.section {...sectionAnimation} className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+      {cells.map((cell) => (
+        <div key={cell.label} className={cn("rounded-2xl border px-4 py-3", toneClasses[cell.tone])}>
+          <div className="flex items-center gap-2">
+            <Activity className="h-4 w-4" />
+            <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{cell.label}</span>
+          </div>
+          <div className="mt-2 text-sm font-medium text-foreground">{cell.value}</div>
+        </div>
+      ))}
+    </motion.section>
   );
 }
 
@@ -551,6 +690,7 @@ export function CommandCenterPage({ view, embedded = false }: CommandCenterPageP
     <div className={cn("space-y-5", embedded ? "" : "pb-24")}>
       <PageHero view={view} />
       <MetricsGrid view={view} />
+      <RuntimeStatusStrip view={view} />
       <PageBody view={view} />
     </div>
   );

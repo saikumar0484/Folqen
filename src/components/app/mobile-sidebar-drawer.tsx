@@ -39,7 +39,7 @@ export function MobileSidebarDrawer() {
       {open ? (
         <div className="fixed inset-0 z-[65] lg:hidden" role="dialog" aria-modal="true">
           <button type="button" aria-label="Close navigation" className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setOpen(false)} />
-          <aside className="relative flex h-full w-[min(86vw,20rem)] flex-col border-r border-white/10 bg-background/95 p-4 shadow-2xl">
+          <aside className="relative flex h-full w-[min(88vw,21rem)] flex-col border-r border-white/10 bg-[linear-gradient(180deg,rgba(7,11,9,.98),rgba(5,7,6,.94))] p-4 shadow-2xl">
             <button
               type="button"
               onClick={() => setOpen(false)}

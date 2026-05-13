@@ -11,6 +11,7 @@ const baseEnv: FolqenEnv = {
   DEFAULT_UPLOAD_PRIVACY: "private",
   FOLQEN_RUNTIME_PROFILE: "local",
   PREVIEW_SAFE_MODE: false,
+  PREVIEW_PUBLIC_MODE: false,
   PREVIEW_DEMO_AUTH: false,
   PREVIEW_FORCE_DRY_RUN: true,
   REQUIRE_STARTUP_VALIDATION: true,

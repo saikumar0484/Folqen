@@ -18,6 +18,7 @@ export const envSchema = z.object({
   DEFAULT_UPLOAD_PRIVACY: z.enum(["private", "unlisted", "public"]).default("private"),
   FOLQEN_RUNTIME_PROFILE: z.enum(["local", "preview", "docker", "vps", "coolify", "vercel"]).default("local"),
   PREVIEW_SAFE_MODE: booleanFlag("false"),
+  PREVIEW_PUBLIC_MODE: booleanFlag("false"),
   PREVIEW_DEMO_AUTH: booleanFlag("false"),
   PREVIEW_DEMO_EMAIL: z.string().optional(),
   PREVIEW_DEMO_PASSWORD: z.string().optional(),

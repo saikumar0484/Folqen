@@ -1,5 +1,35 @@
 # Changelog
 
+## May 13, 2026 - Preview Public Mode and Command-Center UI Refinement
+
+### Added
+
+- Added preview public mode runtime support via `PREVIEW_PUBLIC_MODE=true` with strict preview-safe gates (`PREVIEW_SAFE_MODE=true`, `PREVIEW_FORCE_DRY_RUN=true`, and execution flags disabled).
+- Added preview public viewer identity handling for safe dashboard access without login in preview mode.
+- Added preview diagnostics coverage for preview public mode readiness and minimal secret expectations.
+
+### Changed
+
+- Updated protected routing/middleware behavior to allow preview-safe public access while still labeling responses as dry-run/noindex.
+- Updated authenticated app layout to allow controlled preview access while keeping auth architecture in place.
+- Refined command-center UI and shell styling across dashboard surfaces with premium dark/cinematic visuals, improved hierarchy, and responsive polish.
+- Updated `.env` preview templates and safe preview deployment docs with `PREVIEW_PUBLIC_MODE`.
+
+### Safety
+
+- No production auth bypass was introduced; preview public mode is blocked unless preview runtime and forced dry-run safety conditions pass.
+- Dangerous actions remain disabled in preview public mode: live providers, rendering, publishing, browser automation, queue workers, and autonomous retries.
+- Protected mutation APIs remain role/mutation guarded.
+
+### Verification
+
+- `eslint .`: passed.
+- `tsc --noEmit`: passed.
+- `tsx --test "src/**/*.test.ts"`: passed, 153 tests.
+- `prisma generate`: passed.
+- `next build`: passed on Next.js `16.2.6`.
+- Preview runtime smoke: `/dashboard`, `/audit`, `/browser-operations`, `/infrastructure`, `/api/deployment/preview`, `/api/auth/me`, and `/api/browser-ops/overview` returned `200` in preview-safe public mode.
+
 ## May 13, 2026 - Final Production Cleanup Audit
 
 ### Changed

@@ -4,7 +4,7 @@ import { GovernanceControlPanel } from "@/components/command-center/governance-c
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { canReviewApprovals, describeRoleLimit } from "@/lib/auth/permissions";
-import { getDb } from "@/lib/db";
+import { getDb, hasDatabaseUrl } from "@/lib/db";
 import { getGovernanceDashboard } from "@/lib/governance/service";
 
 export const dynamic = "force-dynamic";
@@ -19,26 +19,30 @@ export default async function ApprovalsPage() {
   const user = await getCurrentUser();
   const canReview = user ? canReviewApprovals(user) : false;
   const roleMessage = user ? describeRoleLimit(user, "approval") : "Login required.";
-  const [approvals, governanceDashboard] = await Promise.all([
-    getDb().approval.findMany({
-      orderBy: [{ status: "asc" }, { createdAt: "desc" }],
-      include: {
-        content: { select: { title: true, status: true } },
-        decidedBy: { select: { email: true } },
-      },
-      take: 50,
-    }),
-    getGovernanceDashboard(),
-  ]);
+  const governanceDashboard = await getGovernanceDashboard();
+  const approvals = hasDatabaseUrl()
+    ? await getDb().approval.findMany({
+        orderBy: [{ status: "asc" }, { createdAt: "desc" }],
+        include: {
+          content: { select: { title: true, status: true } },
+          decidedBy: { select: { email: true } },
+        },
+        take: 50,
+      })
+    : governanceDashboard.approvalQueue.map((approval) => ({
+        ...approval,
+        content: null,
+        decidedBy: null,
+      }));
   const pending = approvals.filter((approval) => approval.status === "PENDING").length;
 
   return (
     <div className="space-y-5 pb-24">
-      <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
+      <div className="command-panel rounded-3xl p-5 md:p-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <div className="font-mono text-[11px] uppercase tracking-widest text-neon">Human decision gate</div>
-            <h1 className="mt-2 font-display text-3xl font-semibold md:text-4xl">Approval center</h1>
+            <h1 className="mt-2 font-display text-4xl font-semibold tracking-[-0.035em] md:text-6xl">Approval center</h1>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground md:text-base">
               Approve or reject important decisions. Approval records are real database rows and every decision writes an audit log.
             </p>
@@ -49,7 +53,7 @@ export default async function ApprovalsPage() {
 
       <div className="grid gap-4">
         {approvals.map((approval) => (
-          <article key={approval.id} className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
+          <article key={approval.id} className="command-panel rounded-3xl p-5">
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div>
                 <div className="font-mono text-[10px] uppercase tracking-widest text-neon">{approval.type}</div>

@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { getDb, hasDatabaseUrl } from "@/lib/db";
-import { getPreviewDemoUser, isPreviewDemoAuthEnabled, PREVIEW_DEMO_USER_ID } from "@/lib/auth/preview-demo";
+import { getPreviewDemoUser, getPreviewPublicUser, isPreviewDemoAuthEnabled, isPreviewPublicModeEnabled, PREVIEW_DEMO_USER_ID } from "@/lib/auth/preview-demo";
 import { AUTH_COOKIE_NAME, verifySessionToken } from "@/lib/auth/session";
 
 export type CurrentUser = {
@@ -11,6 +11,10 @@ export type CurrentUser = {
 };
 
 export async function getCurrentUser(): Promise<CurrentUser | null> {
+  if (isPreviewPublicModeEnabled()) {
+    return getPreviewPublicUser();
+  }
+
   const cookieStore = await cookies();
   const session = verifySessionToken(cookieStore.get(AUTH_COOKIE_NAME)?.value);
 

@@ -28,6 +28,7 @@ Use preview-only environment variables in Vercel Preview or a local `.env.previe
 ```env
 FOLQEN_RUNTIME_PROFILE=preview
 PREVIEW_SAFE_MODE=true
+PREVIEW_PUBLIC_MODE=true
 PREVIEW_FORCE_DRY_RUN=true
 ALLOW_PUBLIC_PUBLISH=false
 ALLOW_PAID_TOOLS=false
@@ -50,8 +51,9 @@ Do not add provider, platform, OAuth, render worker, or paid-tool secrets to pre
 1. Add preview environment variables in Vercel, not in source control.
 2. Use `deploy/.env.preview.example` as the template.
 3. Keep `AUTH_SECRET`, `DATABASE_URL`, `NEXTAUTH_URL`, `APP_BASE_URL`, and `CREDENTIAL_ENCRYPTION_KEY` preview-specific.
-4. Deploy a preview build from a non-production branch.
-5. Visit `/api/health`, then log in and inspect `/infrastructure`, `/audit`, and `/browser-operations`.
+4. For public UI preview screenshots, set `PREVIEW_PUBLIC_MODE=true`. This bypasses page login only in preview safe mode and returns a viewer identity; dangerous mutations stay role-blocked and execution flags must stay disabled.
+5. Deploy a preview build from a non-production branch.
+6. Visit `/api/health`, then inspect `/dashboard`, `/infrastructure`, `/audit`, and `/browser-operations`.
 
 Suggested commands:
 
@@ -90,7 +92,7 @@ When `PREVIEW_SAFE_MODE=true` or `VERCEL_ENV=preview`, protected page responses 
 - `X-Folqen-Execution-Mode: dry-run`
 - `X-Robots-Tag: noindex, nofollow`
 
-These headers do not grant access. Authentication and route protection remain active.
+When `PREVIEW_PUBLIC_MODE=true`, these headers also mark direct dashboard access as public-safe preview access. This does not enable provider execution, rendering, publishing, browser automation, queue workers, or mutation permissions.
 
 ## Verification Checklist
 
@@ -99,7 +101,7 @@ These headers do not grant access. Authentication and route protection remain ac
 - `tsx --test "src/**/*.test.ts"`
 - `prisma generate && next build`
 - `GET /api/health` returns `200`
-- anonymous protected preview APIs return `401`
+- anonymous protected preview APIs return `401` unless `PREVIEW_PUBLIC_MODE=true`; in public mode, read-only preview APIs may return safe viewer data while mutations remain `403` or blocked by mutation guards.
 - Browser Operations dashboard shows `Dry-run only`
 - Preview diagnostics show no blocked unsafe runtime flags
 
