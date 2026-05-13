@@ -1,5 +1,31 @@
 # Changelog
 
+## May 13, 2026 - Controlled Media Execution & Asset Rendering System
+
+### Added
+
+- Added governed media execution flags to `.env.example` and env validation: `ALLOW_CONTROLLED_MEDIA_EXECUTION`, `LIVE_MEDIA_ACTIVATION_STAGE`, render kill switches, render quotas, concurrency limits, timeout limits, and GPU-minute budget ceilings.
+- Added `src/lib/media/controlled-rendering.ts` with approved controlled workflows for thumbnail rendering, structured image generation, subtitle rendering, asset validation, render quality scoring, asset reflection, creative asset registry integration, and render recovery.
+- Added `POST /api/media/controlled-render` and `POST /api/media/controlled-render/shutdown` for approval-gated render packets, queue metadata, render governance, scoring, validation, observability, rollback, and emergency shutdown.
+- Extended the media dashboard with controlled render governance snapshots and recent controlled render packets.
+- Added `ControlledMediaExecutionPanel` to `/content-studio` with approval ID input, render budget status, safety locks, scoring cards, blocked-reason display, and emergency shutdown controls.
+
+### Safety
+
+- Controlled rendering remains blocked by default unless media execution flags, activation stage, provider configuration, quotas, provider health, governance, approval verification, and kill switches all pass.
+- No real ComfyUI request, FFmpeg command, GPU job, unrestricted video generation, binary write, public publishing, autonomous retry, fallback rendering, prompt mutation, workflow mutation, or platform execution was enabled.
+- All render outputs are controlled execution packets and metadata-only asset records until a future explicitly approved worker/provider slice.
+- Unsafe, malformed, low-quality, duplicate-risk, or failed-render recovery packets are marked for review or rejected.
+
+### Verification
+
+- Direct local `eslint .`: passed.
+- Direct local `tsc --noEmit`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 124 tests.
+- Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`; `/api/media/controlled-render` and `/api/media/controlled-render/shutdown` are included in the build output.
+- Local dev smoke for `/login`: passed in the in-app browser with no browser console errors.
+- `npm audit --audit-level=moderate` still reports the known nested Next/PostCSS moderate advisory; no unsafe forced fix was applied.
+
 ## May 13, 2026 - Governed Analytics Intelligence & Feedback Loop System
 
 ### Added

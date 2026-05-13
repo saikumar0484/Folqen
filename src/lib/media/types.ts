@@ -30,6 +30,62 @@ export type MediaProviderStatus = {
   liveExecutionEnabled: false;
 };
 
+export type ControlledMediaWorkflowKind =
+  | "live_thumbnail_rendering"
+  | "structured_image_generation"
+  | "subtitle_rendering"
+  | "asset_validation"
+  | "render_quality_scoring"
+  | "asset_reflection"
+  | "creative_asset_registry_integration"
+  | "render_recovery";
+
+export const controlledMediaWorkflowKinds = [
+  "live_thumbnail_rendering",
+  "structured_image_generation",
+  "subtitle_rendering",
+  "asset_validation",
+  "render_quality_scoring",
+  "asset_reflection",
+  "creative_asset_registry_integration",
+  "render_recovery",
+] as const satisfies readonly ControlledMediaWorkflowKind[];
+
+export const controlledMediaWorkflowLabels: Record<ControlledMediaWorkflowKind, string> = {
+  live_thumbnail_rendering: "Live Thumbnail Rendering",
+  structured_image_generation: "Structured Image Generation",
+  subtitle_rendering: "Subtitle Rendering",
+  asset_validation: "Asset Validation",
+  render_quality_scoring: "Render Quality Scoring",
+  asset_reflection: "Asset Reflection",
+  creative_asset_registry_integration: "Creative Asset Registry Integration",
+  render_recovery: "Render Recovery",
+};
+
+export type ControlledRenderQuota = {
+  maxDailyRuns: number;
+  maxConcurrency: number;
+  maxRenderSeconds: number;
+  maxEstimatedGpuMinutes: number;
+  maxQueueDepth: number;
+  maxAttempts: 1;
+};
+
+export type ControlledRenderUsage = {
+  runsToday: number;
+  activeRuns: number;
+  estimatedGpuMinutesToday: number;
+  failedRunsToday: number;
+};
+
+export type RenderGovernanceDecision = {
+  allowed: boolean;
+  status: "allowed" | "blocked" | "needs_approval" | "sandbox_fallback" | "kill_switch" | "budget_blocked" | "not_connected";
+  reasons: string[];
+  controls: string[];
+  quota: ControlledRenderQuota & ControlledRenderUsage;
+};
+
 export type MediaWorkflowDefinition = {
   kind: MediaWorkflowKind;
   name: string;
@@ -73,6 +129,25 @@ export type MediaAssetPlan = {
   };
 };
 
+export type AssetValidationReport = {
+  status: "passed" | "warning" | "failed";
+  malformedAsset: boolean;
+  failedRender: boolean;
+  lowQuality: boolean;
+  duplicateRisk: boolean;
+  unsafeAsset: boolean;
+  warnings: string[];
+};
+
+export type RenderQualityScore = {
+  qualityScore: number;
+  promptFitScore: number;
+  safetyScore: number;
+  formatScore: number;
+  uniquenessScore: number;
+  acceptance: "accepted" | "needs_review" | "rejected";
+};
+
 export type RenderPlan = {
   renderId: string;
   workflowKind: MediaWorkflowKind;
@@ -113,12 +188,55 @@ export type MediaPipelineResult = {
   createdAt: string;
 };
 
+export type ControlledRenderResult = {
+  runId: string;
+  workflowKind: ControlledMediaWorkflowKind;
+  status: "blocked" | "waiting_for_approval" | "completed_sandbox" | "failed";
+  mode: "blocked" | "sandbox";
+  providerId: MediaProviderId;
+  providerStatus: MediaProviderStatus;
+  governance: RenderGovernanceDecision;
+  approvalVerification: {
+    verified: boolean;
+    status: "approved" | "pending" | "rejected" | "expired" | "missing" | "unavailable";
+    approvalId?: string;
+    reason: string;
+  };
+  queueJobId: string;
+  asset: MediaAssetPlan;
+  renderPlan: RenderPlan;
+  validation: AssetValidationReport;
+  scoring: RenderQualityScore;
+  observability: {
+    trace: string[];
+    queueLatencyMs: number;
+    renderDurationEstimateSeconds: number;
+    estimatedGpuMinutes: number;
+    budgetUtilizationPercent: number;
+  };
+  rollback: {
+    available: true;
+    steps: string[];
+  };
+  safety: {
+    noPublishing: true;
+    noAutonomousRetries: true;
+    noUnrestrictedGpu: true;
+    noVideoGeneration: true;
+    noWorkflowMutation: true;
+  };
+  persisted: boolean;
+  createdAt: string;
+};
+
 export type MediaDashboard = {
   workflows: MediaWorkflowDefinition[];
   providers: MediaProviderStatus[];
   recentAssets: MediaAssetPlan[];
   renderQueue: RenderPlan[];
   failedRenders: RenderPlan[];
+  controlledRenders?: ControlledRenderResult[];
+  renderGovernance?: RenderGovernanceDecision;
   observability: {
     mode: "mock_safe";
     liveRendering: "blocked";

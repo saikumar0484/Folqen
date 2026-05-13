@@ -54,6 +54,36 @@ Even when `COMFYUI_BASE_URL`, `FFMPEG_PATH`, or local worker env values are conf
 6. Existing `Asset` and `Render` tables store metadata when the database is available.
 7. UI shows asset plans, versions, render logs, queue ids, and retry plans.
 
+## Controlled Media Execution Layer
+
+The controlled rendering expansion adds a governed operational layer on top of the dry-run media planner. It is designed to prepare approval-gated execution packets for future ComfyUI/FFmpeg/local-worker rendering without enabling unrestricted GPU execution.
+
+New controlled workflows:
+
+- Live Thumbnail Rendering
+- Structured Image Generation
+- Subtitle Rendering
+- Asset Validation
+- Render Quality Scoring
+- Asset Reflection
+- Creative Asset Registry Integration
+- Render Recovery
+
+Controlled rendering requires:
+
+- `ALLOW_CONTROLLED_MEDIA_EXECUTION=true`
+- `LIVE_MEDIA_ACTIVATION_STAGE >= 1`
+- a verified approved `governance.media_render` approval ID
+- provider configuration and health validation
+- render quota validation
+- GPU-minute budget validation
+- concurrency and timeout validation
+- queue depth validation
+- governance policy validation
+- kill switches and emergency stop not engaged
+
+Even when these checks are modeled, this slice still produces sandbox execution packets only. It does not call ComfyUI, spawn FFmpeg, run a GPU job, write binary assets, generate unrestricted video, publish, retry autonomously, or mutate workflows.
+
 ## Persistence
 
 No database migration is required in this slice.
@@ -72,6 +102,9 @@ The system uses existing models:
 - `POST /api/media/generate`
 - `POST /api/media/render`
 - `POST /api/media/retry`
+- `GET /api/media/controlled-render`
+- `POST /api/media/controlled-render`
+- `POST /api/media/controlled-render/shutdown`
 
 All mutations are admin/operator only, rate-limited, same-origin checked, and marked with the Folqen mutation header.
 
@@ -86,15 +119,21 @@ All mutations are admin/operator only, rate-limited, same-origin checked, and ma
 - generation status
 - render logs
 - failed render retry planning
+- controlled render governance
+- render budget and quota monitoring
+- asset validation and scoring
+- emergency render shutdown
 - status honesty labels
 
 ## Safety Boundaries
 
-- No real GPU execution.
-- No live ComfyUI request.
-- No FFmpeg process spawn.
+- No unrestricted GPU execution.
+- No live ComfyUI request in this slice.
+- No FFmpeg process spawn in this slice.
 - No media worker execution.
 - No binary file write.
 - No automatic publishing.
 - No paid provider call.
+- No autonomous retry.
+- No workflow mutation.
 - All results are `Mock`, `Not connected`, `Configured`, `Needs approval`, or `Blocked`.

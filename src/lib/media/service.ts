@@ -5,6 +5,7 @@ import { createAuditLog } from "@/lib/audit";
 import { getDb, hasDatabaseUrl } from "@/lib/db";
 import { emitOrchestrationEvent } from "@/lib/orchestration/event-bus";
 import { enqueueOrchestrationJob, ORCHESTRATION_QUEUES } from "@/lib/orchestration/queue";
+import { getControlledMediaRuns, getRenderGovernanceSnapshot } from "./controlled-rendering";
 import { runMediaGraph } from "./flows";
 import { mediaTypes, mediaWorkflows } from "./registry";
 import { getMediaProviderStatuses } from "./providers";
@@ -298,6 +299,8 @@ export async function getMediaDashboard(): Promise<MediaDashboard> {
     recentAssets,
     renderQueue,
     failedRenders: renderQueue.filter((render) => render.status === "failed_recoverable"),
+    controlledRenders: getControlledMediaRuns(),
+    renderGovernance: await getRenderGovernanceSnapshot(),
     observability: {
       mode: "mock_safe",
       liveRendering: "blocked",

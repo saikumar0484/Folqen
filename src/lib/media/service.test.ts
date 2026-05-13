@@ -3,9 +3,11 @@ import test from "node:test";
 
 import { FOLQEN_MUTATION_HEADER, FOLQEN_MUTATION_HEADER_VALUE } from "@/lib/security/mutation-headers";
 import { resolveMediaMutationAccess } from "./api-handler";
+import { engageMediaRenderShutdown, resetControlledMediaEmergencyForTests, runControlledMediaRender } from "./controlled-rendering";
 import { getMediaProviderStatuses } from "./providers";
 import { mediaTypes, mediaWorkflows } from "./registry";
 import { getMediaCapabilities, getMediaDashboard, retryRender, runMediaPipeline } from "./service";
+import { controlledMediaWorkflowKinds } from "./types";
 
 const operator = { id: "user_operator", email: "operator@example.com", name: "Operator", role: "OPERATOR" as const };
 const viewer = { id: "user_viewer", email: "viewer@example.com", name: "Viewer", role: "VIEWER" as const };
@@ -106,6 +108,63 @@ test("media capabilities remain mock-safe", () => {
   assert.equal(capabilities.safety.liveComfyUI, "blocked");
   assert.equal(capabilities.safety.liveFfmpeg, "blocked");
   assert.equal(capabilities.safety.gpuRequired, false);
+});
+
+test("controlled media workflows expose governed rendering coverage", () => {
+  assert.deepEqual(controlledMediaWorkflowKinds, [
+    "live_thumbnail_rendering",
+    "structured_image_generation",
+    "subtitle_rendering",
+    "asset_validation",
+    "render_quality_scoring",
+    "asset_reflection",
+    "creative_asset_registry_integration",
+    "render_recovery",
+  ]);
+});
+
+test("controlled media rendering blocks without approval, env activation, and provider configuration", async () => {
+  resetControlledMediaEmergencyForTests();
+  const result = await runControlledMediaRender({
+    workflowKind: "live_thumbnail_rendering",
+    objective: "Prepare a governed thumbnail render packet for a haunted fort folklore short.",
+    providerId: "comfyui",
+    prompt: "Cinematic fort silhouette, no gore, no celebrity likeness.",
+    tags: ["thumbnail"],
+  });
+
+  assert.equal(result.mode, "blocked");
+  assert.equal(result.status, "waiting_for_approval");
+  assert.equal(result.safety.noPublishing, true);
+  assert.equal(result.safety.noAutonomousRetries, true);
+  assert.equal(result.renderPlan.maxAttempts, 1);
+  assert.match(result.queueJobId, /^mock_job_/);
+  assert.equal(result.governance.reasons.some((reason) => reason.includes("ALLOW_CONTROLLED_MEDIA_EXECUTION")), true);
+  assert.equal(result.approvalVerification.verified, false);
+});
+
+test("controlled media validation rejects unsafe or weak asset packets", async () => {
+  resetControlledMediaEmergencyForTests();
+  const result = await runControlledMediaRender({
+    workflowKind: "structured_image_generation",
+    objective: "Make copyrighted celebrity likeness gore thumbnail.",
+    providerId: "mock",
+    prompt: "Use celebrity likeness with gore and blood.",
+    approvalId: "approval_fake",
+  });
+
+  assert.equal(result.validation.status, "failed");
+  assert.equal(result.validation.unsafeAsset, true);
+  assert.equal(result.scoring.acceptance, "rejected");
+  assert.equal(result.safety.noUnrestrictedGpu, true);
+});
+
+test("controlled media emergency shutdown rolls rendering back to safe mode", async () => {
+  const result = await engageMediaRenderShutdown("Test controlled render emergency shutdown.");
+
+  assert.equal(result.mode, "rollback_to_safe_mode");
+  assert.match(result.queueJobId, /^mock_job_/);
+  resetControlledMediaEmergencyForTests();
 });
 
 test("media mutation access covers anonymous, viewer, missing marker, and operator", () => {

@@ -1,4 +1,5 @@
 import { CommandCenterPage } from "@/components/command-center/command-center-page";
+import { ControlledMediaExecutionPanel } from "@/components/command-center/controlled-media-execution-panel";
 import { IntelligenceRunPanel } from "@/components/command-center/intelligence-run-panel";
 import { LiveContentOperationsPanel } from "@/components/command-center/live-content-operations-panel";
 import { MediaPipelinePanel } from "@/components/command-center/media-pipeline-panel";
@@ -27,6 +28,7 @@ export default async function ContentStudioPage() {
         agents={department.agents}
         recentRuns={intelligence.runs.filter((run) => department.workflows.some((workflow) => workflow.kind === run.workflowId))}
       />
+      <ControlledMediaExecutionPanel dashboard={media} />
       <MediaPipelinePanel dashboard={media} />
     </div>
   );

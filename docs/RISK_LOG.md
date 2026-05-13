@@ -2,6 +2,22 @@
 
 ## Current Risks
 
+### Controlled media execution can be mistaken for real rendering
+
+- Risk: Controlled render packets, asset scoring, and queue metadata may look like Folqen generated real thumbnails, images, subtitles, or rendered files.
+- Prevention: `POST /api/media/controlled-render` requires approval, media activation flags, quota checks, provider configuration, governance checks, provider health, kill-switch checks, and sandbox fallback. Responses and logs state that no GPU job, ComfyUI request, FFmpeg command, binary write, publishing call, autonomous retry, or workflow mutation occurred.
+- Verification: Focused media tests assert controlled workflows exist, default controlled rendering blocks without approval/env/provider setup, unsafe asset packets are rejected, and emergency shutdown rolls rendering back to safe mode. Full verification must include lint, typecheck, tests, Prisma generate, build, browser smoke, and audit.
+- Rollback: Engage `/api/media/controlled-render/shutdown`, set `ALLOW_CONTROLLED_MEDIA_EXECUTION=false`, set `MEDIA_RENDER_KILL_SWITCH=true`, drain the media queue, and revert `src/lib/media/controlled-rendering.ts`, `/api/media/controlled-render`, and `ControlledMediaExecutionPanel`.
+- Human approval trigger: Any attempt to execute real ComfyUI, spawn FFmpeg, run a GPU job, write binary rendered assets, enable local/Oracle media workers, increase quotas materially, or use generated assets in public publishing.
+
+### Render governance depends on future worker enforcement
+
+- Risk: Current render governance creates strict control metadata and queue plans, but no live worker exists to enforce those checks at execution time.
+- Prevention: The current slice does not execute live providers. Future workers must call the same governance, quota, approval, provider health, and kill-switch checks immediately before each render job and between any retry-like recovery steps.
+- Verification: No live worker flag or provider call is enabled; tests cover shutdown and one-attempt/no-autonomous-retry policy.
+- Rollback: Keep `ORCHESTRATION_EXECUTION_MODE=mock`, `ORCHESTRATION_WORKER_ENABLED=false`, and `ALLOW_CONTROLLED_MEDIA_EXECUTION=false` until worker enforcement is implemented and approved.
+- Human approval trigger: Enabling live BullMQ workers, local worker endpoints, ComfyUI endpoints for execution, FFmpeg process execution, GPU routing, or render retries beyond one manual packet.
+
 ### Governed live Analytics workflows can be mistaken for autonomous optimization
 
 - Risk: Performance reports, strategic optimization recommendations, and feedback-loop scores may look like Folqen is allowed to mutate prompts, workflows, schedules, or platform strategy automatically.

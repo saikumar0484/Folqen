@@ -4,7 +4,7 @@
 
 Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, every required authenticated route now has a route-specific or database-backed surface, the autonomous organization target architecture is documented, the operational command center frontend is implemented, the mock-safe multi-agent orchestration infrastructure is implemented, the first Research + Content operational intelligence layer is implemented, the Organizational Memory & Reflection Intelligence layer is implemented, the Media Generation & Asset Pipeline layer is implemented, the Platform Operations & Publishing Infrastructure layer is implemented, the Governance Approval & Safety Control layer is implemented, the AI Provider Gateway & Execution Runtime is implemented, and the Controlled Live Execution Activation Layer is implemented on branch `build/phase-0-foundation`.
 
-Latest save point: May 13, 2026, after expanding Folqen's live AI execution capability into a governed Gemini Analytics Department intelligence and feedback-loop layer. This was a controlled provider-runtime implementation phase; no credentials, production database migration application, production settings, paid tools, production provider activation, live embeddings, GPU execution, live ComfyUI execution, FFmpeg rendering, media generation, platform account access, live platform analytics API read, scraping, public publishing, autonomous retries, autonomous optimization execution, self-improvement mutation, workflow mutation, prompt mutation, or n8n execution were enabled.
+Latest save point: May 13, 2026, after adding Folqen's Controlled Media Execution & Asset Rendering System. This was a governed media-runtime implementation phase; no credentials, production database migration application, production settings, paid tools, production provider activation, live embeddings, unrestricted GPU execution, live ComfyUI request, FFmpeg process spawn, binary media write, unrestricted video generation, platform account access, live platform analytics API read, scraping, public publishing, autonomous retries, autonomous optimization execution, self-improvement mutation, workflow mutation, prompt mutation, or n8n execution were enabled.
 
 ## Completed Work
 
@@ -14,6 +14,11 @@ Latest save point: May 13, 2026, after expanding Folqen's live AI execution capa
 - Added `docs/MEMORY_REFLECTION_ARCHITECTURE.md`.
 - Added the Media Generation & Asset Pipeline layer with ComfyUI/FFmpeg-ready dry-run workflows, media queue, asset registry/versioning through existing `Asset` metadata, render plans through existing `Render` metadata, retry/recovery plans, protected `/api/media/*` routes, and Content Studio controls.
 - Added `docs/MEDIA_PIPELINE_ARCHITECTURE.md`.
+- Added the Controlled Media Execution & Asset Rendering System:
+  - `src/lib/media/controlled-rendering.ts` for governed thumbnail, image, subtitle, asset validation, render scoring, asset reflection, registry integration, and recovery workflows.
+  - `GET/POST /api/media/controlled-render` and `POST /api/media/controlled-render/shutdown` for approval-gated render packets, render governance, quotas, provider checks, queue metadata, asset validation/scoring, observability, rollback, and emergency shutdown.
+  - New media execution env defaults for activation stage, render kill switches, daily quota, concurrency, timeout, and GPU-minute budgets.
+  - `ControlledMediaExecutionPanel` on `/content-studio` with approval ID input, render budget status, controlled workflow runner, scoring previews, blocked reasons, recent render packets, and shutdown controls.
 - Added the Platform Operations & Publishing Infrastructure layer with n8n-ready dry-run workflows, publishing/scheduling/retry queues, platform adaptation, deployment registry, analytics ingestion planning, monetization/policy hooks, protected `/api/platform-ops/*` routes, and `/platforms` controls.
 - Added `docs/PLATFORM_OPERATIONS_ARCHITECTURE.md`.
 - Added the Governance Approval & Safety Control layer with execution policy engine, governance/sandbox queues, approval workflow actions, role/permission matrix, cost/provider governance, sandbox simulation, protected `/api/governance/*` routes, and `/approvals` controls.
@@ -733,6 +738,19 @@ Latest May 13, 2026 governed Analytics Intelligence & Feedback Loop System:
 - Local dev smoke: `/login` loaded in the in-app browser with no browser console errors.
 - `npm audit --audit-level=moderate` through the available npm CLI still reports the known nested Next/PostCSS moderate advisory; no unsafe forced fix was applied.
 
+Latest May 13, 2026 Controlled Media Execution & Asset Rendering System:
+
+- Added controlled media workflows for thumbnail rendering, structured image generation, subtitle rendering, asset validation, render quality scoring, asset reflection, creative asset registry integration, and render recovery.
+- Added render governance with approval verification, activation flags, provider configuration checks, queue depth checks, render quotas, GPU-minute budget controls, concurrency limits, timeout limits, kill switches, emergency shutdown, sandbox fallback, rollback steps, and one-attempt/no-autonomous-retry policy.
+- Added asset validation and render scoring for malformed, failed, low-quality, duplicate-risk, and unsafe asset packets.
+- Added `GET/POST /api/media/controlled-render`, `POST /api/media/controlled-render/shutdown`, and the `/content-studio` Controlled Media Execution panel.
+- Direct local `eslint .`: passed.
+- Direct local `tsc --noEmit`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 124 tests.
+- Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`; `/api/media/controlled-render` and `/api/media/controlled-render/shutdown` are included in the build output.
+- Local dev smoke: `/login` loaded in the in-app browser with no browser console errors.
+- `npm audit --audit-level=moderate` through the available npm CLI still reports the known nested Next/PostCSS moderate advisory; no unsafe forced fix was applied.
+
 ## Known Issues
 
 - Supabase MCP documentation search failed in this session because the connected OAuth token was revoked, so Supabase-specific security notes in the architecture document rely on existing project practice and official-doc fallback knowledge rather than MCP snippets.
@@ -742,7 +760,7 @@ Latest May 13, 2026 governed Analytics Intelligence & Feedback Loop System:
 - Research Intelligence, Content Studio, and Analytics now have live mock-safe/governed controls, but the main command-center renderer still includes baseline mock telemetry around those controls.
 - Organizational Memory now has live mock-safe controls and committed migration SQL, but the live Supabase database has not applied the memory tables yet.
 - Live embeddings remain disabled; OpenAI/Gemini embedding providers are status-aware placeholders only.
-- Media Production now has live mock-safe Content Studio controls, but ComfyUI, FFmpeg, local worker execution, binary storage writes, and real video/image generation remain disabled.
+- Media Production now has live mock-safe and controlled render Content Studio controls, but ComfyUI requests, FFmpeg process execution, local worker execution, binary storage writes, unrestricted GPU execution, and real video/image generation remain disabled.
 - Platform Operations now has live mock-safe Platforms controls, but YouTube/Instagram/Threads/TikTok/LinkedIn/X account access, real scheduling, public posting, analytics ingestion, scraping, n8n execution, monetization monitoring, and platform automation remain disabled.
 - TikTok is infrastructure-only and blocked as an India dependency; X/Twitter and TikTok are not in the current Prisma `PlatformName` enum and are stored in platform-ops JSON metadata only.
 - Governance now has live mock-safe Approval Center controls, but approval records do not activate providers or permit live execution by themselves. Future adapters must call the policy engine immediately before execution.
@@ -761,4 +779,4 @@ Latest May 13, 2026 governed Analytics Intelligence & Feedback Loop System:
 
 ## Safe To Stop
 
-Yes after this checkpoint commit is pushed. The governed live Gemini Analytics Department workflows are implemented but blocked by default, verification passed, the repo is safe to continue, and no source files are left half-edited.
+Yes after this checkpoint commit is pushed. The Controlled Media Execution & Asset Rendering System is implemented but blocked by default, verification passed, the repo is safe to continue, and no source files are left half-edited.
