@@ -8,6 +8,7 @@ import { validateAiResponse } from "@/lib/ai-gateway/validation";
 import { createAuditLog } from "@/lib/audit";
 import { getDb, hasDatabaseUrl } from "@/lib/db";
 import { evaluateGovernancePolicy } from "@/lib/governance/policy-engine";
+import { searchMemory } from "@/lib/memory/service";
 import { emitOrchestrationEvent } from "@/lib/orchestration/event-bus";
 import { enqueueOrchestrationJob, ORCHESTRATION_QUEUES } from "@/lib/orchestration/queue";
 import type { DepartmentId } from "@/lib/orchestration/types";
@@ -15,12 +16,24 @@ import { getMutationSafetyError } from "@/lib/security/request-guards";
 import { executeLiveProvider } from "./adapters";
 import { defaultRuntimeQuota, FIRST_LIVE_TARGET, getConfiguredActivationStage, isLiveExecutionFlagEnabled, isRuntimeKillSwitchEnabled } from "./config";
 import { buildResearchIdeationPrompt, buildResearchIdeationSystemPrompt, LIVE_RESEARCH_IDEATION_CAPABILITY, parseResearchIdeationJson, researchIdeationResponseJsonSchema } from "./research-ideation";
+import {
+  buildResearchOperationsPrompt,
+  buildResearchOperationsSystemPrompt,
+  LIVE_RESEARCH_OPERATIONAL_CAPABILITY,
+  liveResearchWorkflowKinds,
+  parseResearchOperationsJson,
+  researchOperationalResponseSchema,
+  researchOutputWarnings,
+  scoreResearchOutput,
+  type ResearchMemoryContextItem,
+} from "./research-operations";
 import type { ControlledLiveExecutionRequest, ControlledLiveExecutionResult, LiveExecutionDashboard, LiveReadinessDecision, ProviderActivationRecord, RuntimeUsageSnapshot } from "./types";
 
 const providerIdSchema = z.enum(["mock", "openrouter", "gemini", "claude", "openai_compatible", "ollama_local"]);
 const departmentIdSchema = z.enum(["research", "content", "platform_operations", "analytics", "optimization", "infrastructure", "error_recovery", "organizational_memory"]);
 const workflowKindSchema = z.enum(["provider_execution", "structured_generation", "agent_tool_call", "embedding_request", "provider_health_check", "fallback_recovery"]);
 const taskTypeSchema = z.enum(["text_generation", "structured_output", "planning", "classification", "summarization", "embedding"]);
+const liveResearchWorkflowKindSchema = z.enum(liveResearchWorkflowKinds);
 
 export const controlledLiveExecutionSchema = z.object({
   objective: z.string().min(8).max(1500),
@@ -36,6 +49,11 @@ export const controlledLiveExecutionSchema = z.object({
   maxOutputTokens: z.coerce.number().int().min(1).max(defaultRuntimeQuota.maxOutputTokensPerRequest).default(400),
   estimatedInputTokens: z.coerce.number().int().min(1).max(defaultRuntimeQuota.maxInputTokensPerRequest).optional(),
   estimatedOutputTokens: z.coerce.number().int().min(1).max(defaultRuntimeQuota.maxOutputTokensPerRequest).optional(),
+  researchWorkflowKind: liveResearchWorkflowKindSchema.default("content_ideation"),
+  seedTopics: z.array(z.string().min(1).max(180)).max(12).default([]),
+  competitors: z.array(z.string().min(1).max(180)).max(12).default([]),
+  audienceNotes: z.array(z.string().min(1).max(500)).max(12).default([]),
+  sourceReferences: z.array(z.string().min(1).max(500)).max(12).default([]),
 });
 
 export const activationRequestSchema = z.object({
@@ -253,7 +271,7 @@ async function persistLiveExecutionResult(input: ControlledLiveExecutionRequest,
       data: {
         id: result.runId,
         providerId: result.providerId,
-        workflowId: "live_execution.gemini_research_content_ideation",
+        workflowId: `live_execution.gemini_research.${result.researchWorkflowKind ?? "content_ideation"}`,
         status: result.status === "completed_live" ? TaskStatus.COMPLETED : TaskStatus.FAILED,
         input: jsonSafe({ ...input, approvalStatus: undefined }),
         output: jsonSafe(result),
@@ -279,6 +297,8 @@ async function persistLiveExecutionResult(input: ControlledLiveExecutionRequest,
           validation: result.validation,
           approvalVerification: result.approvalVerification,
           liveCapability: result.liveCapability,
+          researchWorkflowKind: result.researchWorkflowKind,
+          researchScore: result.researchScore,
         }),
       },
     });
@@ -311,6 +331,56 @@ async function persistLiveExecutionResult(input: ControlledLiveExecutionRequest,
     });
     return { persisted: false as const };
   }
+}
+
+async function retrieveResearchMemory(input: ControlledLiveExecutionRequest): Promise<ResearchMemoryContextItem[]> {
+  const query = [input.objective, input.researchWorkflowKind, ...(input.seedTopics ?? []), ...(input.competitors ?? []), ...(input.audienceNotes ?? [])].filter(Boolean).join(" ");
+  const memoryItems: ResearchMemoryContextItem[] = [];
+
+  try {
+    const search = await searchMemory({
+      query: query || "Research Department intelligence",
+      categories: ["strategic", "workflow", "analytics", "organizational"],
+      departmentId: "research",
+      tags: ["research", "strategy", "workflow", "analytics"],
+      limit: 6,
+    });
+    memoryItems.push(
+      ...search.items.map((item) => ({
+        id: item.id,
+        title: item.title,
+        summary: item.summary,
+        relevance: Math.round((item.retrievalScore ?? 0) * 100),
+        category: item.category,
+      })),
+    );
+  } catch {
+    // Memory tables are optional until the migration is approved; fall back to workflow history below.
+  }
+
+  if (hasDatabaseUrl()) {
+    try {
+      const rows = await getDb().workflowRun.findMany({
+        where: { workflowId: { startsWith: "live_execution.gemini_research" } },
+        orderBy: { createdAt: "desc" },
+        take: 6,
+        select: { id: true, workflowId: true, output: true, createdAt: true },
+      });
+      for (const row of rows) {
+        memoryItems.push({
+          id: row.id,
+          title: row.workflowId,
+          summary: `Previous live Research workflow from ${row.createdAt.toISOString()}.`,
+          relevance: 64,
+          category: "workflow",
+        });
+      }
+    } catch {
+      // Existing WorkflowRun history is best-effort observability only.
+    }
+  }
+
+  return memoryItems.filter((item, index, all) => all.findIndex((candidate) => candidate.id === item.id) === index).slice(0, 8);
 }
 
 export function evaluateLiveReadiness(rawInput: Partial<ControlledLiveExecutionRequest> = {}): LiveReadinessDecision {
@@ -511,6 +581,7 @@ export async function promoteSandboxToLive(rawInput: unknown, actorId?: string) 
 export async function runControlledLiveExecution(rawInput: unknown, actorId?: string): Promise<ControlledLiveExecutionResult> {
   const input = controlledLiveExecutionSchema.parse(rawInput);
   const { readiness, approvalVerification } = await evaluateLiveReadinessForExecution(input);
+  const isIdeationWorkflow = input.researchWorkflowKind === "content_ideation";
   const queue = await enqueueOrchestrationJob({
     queueName: ORCHESTRATION_QUEUES.aiRuntime,
     name: "live_execution.controlled_run",
@@ -532,7 +603,8 @@ export async function runControlledLiveExecution(rawInput: unknown, actorId?: st
       status: readiness.allowed ? "warning" : "failed",
       warnings: readiness.allowed ? ["Live execution was attempted under constrained activation gates."] : readiness.reasons,
     },
-    liveCapability: LIVE_RESEARCH_IDEATION_CAPABILITY,
+    liveCapability: isIdeationWorkflow ? LIVE_RESEARCH_IDEATION_CAPABILITY : LIVE_RESEARCH_OPERATIONAL_CAPABILITY,
+    researchWorkflowKind: input.researchWorkflowKind,
     approvalVerification,
     retryPolicy: {
       autonomousRetries: false,
@@ -549,6 +621,7 @@ export async function runControlledLiveExecution(rawInput: unknown, actorId?: st
   if (readiness.allowed) {
     const recordBefore = getTargetRecord(input.providerId);
     updateRecord(input.providerId, { usage: { ...recordBefore.usage, inFlight: recordBefore.usage.inFlight + 1 } });
+    const memoryContext = await retrieveResearchMemory(input);
     const normalized = normalizeAiGatewayInput({
       workflowKind: input.workflowKind,
       objective: input.objective,
@@ -557,8 +630,18 @@ export async function runControlledLiveExecution(rawInput: unknown, actorId?: st
       preferredProviders: [input.providerId],
       fallbackProviders: [],
       model: input.model,
-      prompt: buildResearchIdeationPrompt({ objective: input.objective, prompt: input.prompt }),
-      systemPrompt: input.systemPrompt ?? buildResearchIdeationSystemPrompt(),
+      prompt: isIdeationWorkflow
+        ? buildResearchIdeationPrompt({ objective: input.objective, prompt: input.prompt })
+        : buildResearchOperationsPrompt({
+            workflowKind: input.researchWorkflowKind,
+            objective: input.objective,
+            seedTopics: input.seedTopics,
+            competitors: input.competitors,
+            audienceNotes: input.audienceNotes,
+            sourceReferences: input.sourceReferences,
+            memoryContext,
+          }),
+      systemPrompt: input.systemPrompt ?? (isIdeationWorkflow ? buildResearchIdeationSystemPrompt() : buildResearchOperationsSystemPrompt()),
       maxOutputTokens: input.maxOutputTokens,
       estimatedInputTokens: input.estimatedInputTokens,
       estimatedOutputTokens: input.estimatedOutputTokens,
@@ -576,24 +659,41 @@ export async function runControlledLiveExecution(rawInput: unknown, actorId?: st
         input: normalized,
         timeoutMs: getAiProviderProfile(input.providerId)?.timeoutMs ?? 30_000,
         responseMimeType: "application/json",
-        responseSchema: researchIdeationResponseJsonSchema,
+        responseSchema: isIdeationWorkflow ? researchIdeationResponseJsonSchema : researchOperationalResponseSchema,
       });
-      const structuredOutput = parseResearchIdeationJson(providerResponse.content);
+      const structuredOutput = isIdeationWorkflow ? parseResearchIdeationJson(providerResponse.content) : parseResearchOperationsJson(providerResponse.content);
+      const operationalOutput = isIdeationWorkflow ? undefined : parseResearchOperationsJson(providerResponse.content);
+      const researchWarnings = operationalOutput ? researchOutputWarnings(operationalOutput) : [];
+      const researchScore = operationalOutput
+        ? {
+            qualityScore: scoreResearchOutput(operationalOutput),
+            acceptance: researchWarnings.some((warning) => warning.includes("below the live acceptance threshold") || warning.includes("Safety score")) ? ("rejected" as const) : ("accepted" as const),
+            memoryItemsUsed: operationalOutput.observability.memoryItemsUsed,
+            duplicateSignals: operationalOutput.duplicateSignals.length,
+          }
+        : undefined;
       const validation = validateAiResponse(
         {
           expectedOutput: "json",
           responseSchema: {
-            required: ["summary", "trendInsights", "topicSuggestions", "strategicRecommendations", "risks", "followUpResearch", "safety"],
+            required: isIdeationWorkflow
+              ? ["summary", "trendInsights", "topicSuggestions", "strategicRecommendations", "risks", "followUpResearch", "safety"]
+              : ["workflowKind", "summary", "insights", "recommendations", "duplicateSignals", "memoryContext", "scoring", "observability", "safety"],
           },
         },
         { content: providerResponse.content, structured: structuredOutput },
       );
+      const validationWarnings = [...validation.warnings, ...researchWarnings];
       result = {
         ...result,
-        status: validation.status === "failed" ? "failed" : "completed_live",
+        status: validation.status === "failed" || researchScore?.acceptance === "rejected" ? "failed" : "completed_live",
         providerResponse: { ...providerResponse, structured: structuredOutput },
         structuredOutput,
-        validation: { status: validation.status, warnings: validation.warnings },
+        researchScore,
+        validation: {
+          status: validation.status === "failed" || researchScore?.acceptance === "rejected" ? "failed" : validationWarnings.length ? "warning" : "passed",
+          warnings: validationWarnings,
+        },
       };
       const record = getTargetRecord(input.providerId);
       updateRecord(input.providerId, {

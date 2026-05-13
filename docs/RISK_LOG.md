@@ -2,6 +2,22 @@
 
 ## Current Risks
 
+### Expanded live Research workflows can look like autonomous strategy execution
+
+- Risk: Trend analysis, competitor insight, topic intelligence, audience insight, strategic recommendation, reflection, memory retrieval, and scoring may look like Folqen is autonomously changing strategy or executing workflows.
+- Prevention: `POST /api/live-execution/research/workflows` only produces structured Research intelligence. It forces Gemini + Research + planning, requires the same activation/approval/budget/governance/kill-switch gates, uses one queue attempt, has no fallback providers, and records `noWorkflowMutation=true`.
+- Verification: Focused tests assert expanded workflows remain blocked without real approval verification and keep autonomous retries disabled. Full verification must include lint, typecheck, tests, Prisma generate, and build.
+- Rollback: Disable the Research workflow endpoint, engage emergency stop, set `ALLOW_LIVE_AI_EXECUTION=false`, quarantine Gemini, and revert `src/lib/live-execution/research-operations.ts`, `/api/live-execution/research/workflows`, and `LiveResearchOperationsPanel`.
+- Human approval trigger: Any attempt to let Research recommendations mutate prompts, workflows, schedules, content packages, publishing queues, or provider settings automatically.
+
+### Memory-aware Research can repeat or over-trust stale memory
+
+- Risk: The workflow retrieves organizational/workflow/strategic/analytics memory and previous runs, but memory may be incomplete, stale, mock-semantic, or biased toward earlier experiments.
+- Prevention: Outputs include duplicate signals, novelty score, evidence score, memory utilization, and human/source review flags. Low-quality or duplicate-heavy output is rejected instead of promoted.
+- Verification: Parser and scoring tests cover memory-aware output shape, score thresholds, and safety flags.
+- Rollback: Treat memory retrieval as optional context, clear the activation state, or remove memory context from the prompt builder until better retrieval is available.
+- Human approval trigger: Enabling live embeddings, applying memory migrations in production, or using memory output to automatically evolve strategy.
+
 ### First real Gemini live Research ideation can spend quota if production gates are enabled incorrectly
 
 - Risk: Folqen now contains a real Gemini REST execution path for Research Department content ideation. If environment flags, credentials, approvals, or activation state are changed carelessly, the app could send prompts to Gemini and consume API quota.

@@ -1,5 +1,31 @@
 # Changelog
 
+## May 13, 2026 - Governed Live Research Department Expansion
+
+### Added
+
+- Added `src/lib/live-execution/research-operations.ts` with approved Research workflow registry, structured Gemini output schema, memory-aware prompt contract, duplicate/safety warning hooks, and research quality scoring.
+- Added `GET/POST /api/live-execution/research/workflows` for governed Research-only workflows: trend analysis, competitor insight, topic intelligence, audience insight, strategic recommendation, research reflection, memory-aware retrieval, and research scoring.
+- Extended controlled live execution results with `researchWorkflowKind`, `gemini_research_operational_intelligence`, and research quality metadata.
+- Added memory-aware retrieval from existing memory/search services and previous live Research workflow runs before Gemini execution.
+- Added `LiveResearchOperationsPanel` to `/research-intelligence` for live Research dashboard controls, memory-aware workflow inputs, execution trace preview, and confidence/quality display.
+
+### Safety
+
+- The expansion still forces Gemini + Research Department + `structured_generation` + planning only.
+- Every workflow remains blocked unless the existing live activation gates pass: approval, persisted activation, credential, budget, quota, governance, provider health, sandbox promotion, and kill switches.
+- No publishing, rendering, scheduling, platform APIs, media generation, autonomous retries, fallback providers, self-improvement mutation, or workflow mutation was enabled.
+- Low-quality, low-safety, or duplicate-heavy outputs are rejected as failed live executions.
+
+### Verification
+
+- Direct local `eslint .`: passed.
+- Direct local `tsc --noEmit`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 116 tests.
+- Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`; `/api/live-execution/research/workflows` is included in the build output.
+- Local dev smoke for `/login`: passed with HTTP 200, and in-app browser verification loaded Folqen with no browser console errors.
+- `npm audit --audit-level=moderate` still reports the known nested Next/PostCSS moderate advisory; no unsafe forced fix was applied.
+
 ## May 13, 2026 - First Real Live Gemini Research Ideation Capability
 
 ### Added

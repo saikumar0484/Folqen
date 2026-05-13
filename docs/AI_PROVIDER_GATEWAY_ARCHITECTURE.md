@@ -135,3 +135,5 @@ The first live provider capability is intentionally outside the generic dry-run 
 - Publishing/rendering/platform/self-improvement actions: blocked
 
 The generic `/api/ai-gateway/*` endpoints remain mock-safe. Gemini live calls are reachable only through the controlled activation layer after persisted activation, verified approval, server-side credential, budget, quota, kill-switch, and governance checks pass.
+
+The Research Department expansion adds `POST /api/live-execution/research/workflows` for approved trend analysis, competitor insight, topic intelligence, audience insight, strategic recommendation, research reflection, memory-aware retrieval, and research scoring. This still uses Gemini only, Research only, structured JSON only, one queue attempt, no fallbacks, no publishing, no media generation, no platform APIs, and no workflow mutation.

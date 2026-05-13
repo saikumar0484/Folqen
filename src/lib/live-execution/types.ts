@@ -1,5 +1,6 @@
 import type { AiProviderId, AiProviderStatusLabel, AiTaskType, AiWorkflowKind } from "@/lib/ai-gateway/types";
 import type { DepartmentId } from "@/lib/orchestration/types";
+import type { LiveResearchWorkflowKind, ResearchOperationalOutput } from "./research-operations";
 
 export type LiveActivationStage = 0 | 1 | 2 | 3 | 4;
 export type LiveActivationStatus = AiProviderStatusLabel | "Live" | "Disabled" | "Quarantined";
@@ -71,6 +72,11 @@ export type ControlledLiveExecutionRequest = {
   maxOutputTokens?: number;
   estimatedInputTokens?: number;
   estimatedOutputTokens?: number;
+  researchWorkflowKind?: LiveResearchWorkflowKind;
+  seedTopics?: string[];
+  competitors?: string[];
+  audienceNotes?: string[];
+  sourceReferences?: string[];
 };
 
 export type LiveProviderResponse = {
@@ -102,8 +108,15 @@ export type ControlledLiveExecutionResult = {
     status: "passed" | "warning" | "failed";
     warnings: string[];
   };
-  liveCapability?: "gemini_research_content_ideation";
-  structuredOutput?: Record<string, unknown>;
+  liveCapability?: "gemini_research_content_ideation" | "gemini_research_operational_intelligence";
+  researchWorkflowKind?: LiveResearchWorkflowKind;
+  structuredOutput?: Record<string, unknown> | ResearchOperationalOutput;
+  researchScore?: {
+    qualityScore: number;
+    acceptance: "accepted" | "rejected" | "blocked";
+    memoryItemsUsed: number;
+    duplicateSignals: number;
+  };
   approvalVerification?: {
     verified: boolean;
     status: "approved" | "pending" | "rejected" | "expired" | "missing" | "unavailable";

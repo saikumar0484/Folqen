@@ -12,12 +12,12 @@ Only this Stage 1 target is supported:
 
 - Provider: Gemini
 - Department: Research
-- Workflow: `structured_generation` / content ideation and trend insight
-- Task: planning/content ideation
+- Workflow: `structured_generation` / approved Research intelligence workflows
+- Task: planning/research intelligence
 - Publishing: blocked
 - Volume: ultra-low quota
 
-OpenRouter, Claude, OpenAI-compatible APIs, local/Ollama, publishing workflows, media rendering, and other departments remain blocked for live execution.
+OpenRouter, Claude, OpenAI-compatible APIs, local/Ollama, publishing workflows, media rendering, platform operations, content-generation execution, and other departments remain blocked for live execution.
 
 ## Activation Stages
 
@@ -75,10 +75,12 @@ flowchart TD
 - `src/lib/live-execution/config.ts`: first live target, default quotas, env gates.
 - `src/lib/live-execution/adapters.ts`: guarded Gemini REST adapter.
 - `src/lib/live-execution/research-ideation.ts`: Research ideation prompt contract, JSON schema, and Zod validation.
+- `src/lib/live-execution/research-operations.ts`: approved Research workflow registry, memory-aware prompt contract, structured output schema, scoring, duplicate/safety warnings.
 - `src/lib/live-execution/service.ts`: activation request, promotion, live execution, emergency stop, provider actions, dashboard.
 - `src/lib/live-execution/api-handler.ts`: read/operator/admin access helpers.
 - `src/app/api/live-execution/*`: protected activation APIs.
 - `src/components/command-center/ai-gateway-panel.tsx`: runtime activation dashboard and controls.
+- `src/components/command-center/live-research-operations-panel.tsx`: Research Intelligence route live operations panel.
 
 ## APIs
 
@@ -87,6 +89,8 @@ flowchart TD
 - `POST /api/live-execution/promote`
 - `POST /api/live-execution/execute`
 - `POST /api/live-execution/research/ideation`
+- `GET /api/live-execution/research/workflows`
+- `POST /api/live-execution/research/workflows`
 - `POST /api/live-execution/emergency-stop`
 - `POST /api/live-execution/provider/action`
 
@@ -99,7 +103,7 @@ Admin-only:
 
 Admin/operator:
 
-- controlled Gemini Research ideation request, which still blocks unless all live gates pass
+- controlled Gemini Research ideation and approved Research workflow requests, which still block unless all live gates pass
 
 ## First Real Gemini Capability
 
@@ -115,6 +119,28 @@ Admin/operator:
 - no publishing, rendering, platform execution, self-improvement mutation, or autonomous retry
 
 The Gemini adapter uses the REST `generateContent` endpoint with `generationConfig.responseMimeType="application/json"` and `generationConfig.responseSchema`. The resulting JSON is parsed and validated with Zod before Folqen accepts it as a live Research ideation result.
+
+## Governed Research Department Expansion
+
+The Research Department now has a second controlled endpoint:
+
+- `GET /api/live-execution/research/workflows`
+- `POST /api/live-execution/research/workflows`
+
+It still forces Gemini + Research Department + `structured_generation` + planning only. It adds approved structured Research workflows:
+
+- Live Trend Analysis
+- Competitor Insight
+- Topic Intelligence
+- Audience Insight
+- Strategic Recommendation
+- Research Reflection
+- Memory-Aware Retrieval
+- Research Scoring
+
+Every workflow uses the same activation gates as content ideation. The expansion adds memory-aware retrieval from organizational/workflow/strategic/analytics memory when available, comparison against previous live Research workflow runs, confidence/evidence/novelty/safety scoring, duplicate detection, low-quality rejection, reasoning traces, retrieval usage, token/cost capture, governance approval trace, and queue observability.
+
+These workflows produce research intelligence only. They do not create scripts, media prompts, thumbnails, captions, schedules, platform posts, or automation actions. They also use one queue attempt only, no fallback providers, no autonomous retries, and no workflow mutation.
 
 ## Persistence
 

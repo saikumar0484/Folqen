@@ -4,6 +4,7 @@ import test from "node:test";
 import { resolveLiveExecutionAdminAccess, resolveLiveExecutionOperatorAccess, resolveLiveExecutionReadAccess } from "./api-handler";
 import { FIRST_LIVE_TARGET } from "./config";
 import { parseResearchIdeationJson, researchIdeationOutputSchema } from "./research-ideation";
+import { parseResearchOperationsJson, researchOperationalOutputSchema, researchOutputWarnings, scoreResearchOutput } from "./research-operations";
 import { actOnProvider, engageEmergencyStop, evaluateLiveReadiness, getLiveExecutionDashboard, promoteSandboxToLive, requestProviderActivation, runControlledLiveExecution } from "./service";
 
 const admin = {
@@ -143,6 +144,58 @@ test("Gemini Research ideation output parser requires safe structured draft-only
 
   assert.equal(researchIdeationOutputSchema.safeParse(parsed).success, true);
   assert.equal(parsed.safety.noPublishing, true);
+});
+
+test("Research operations parser scores memory-aware governed outputs", () => {
+  const parsed = parseResearchOperationsJson(
+    JSON.stringify({
+      workflowKind: "trend_analysis",
+      summary: "Governed Research trend analysis for folklore content strategy.",
+      insights: [
+        {
+          title: "Local legend explainers remain useful when source-framed",
+          type: "trend",
+          confidence: 82,
+          evidence: "Manual seed topics and memory context indicate repeatable mystery interest.",
+          memoryComparison: "Avoids duplicating earlier haunted fort angle by shifting to civic folklore framing.",
+          noveltyScore: 76,
+          riskLevel: "medium",
+        },
+      ],
+      recommendations: [{ action: "Prioritize one source-verified local legend briefing", rationale: "It can become a safe draft topic after review.", priority: "high", confidence: 81 }],
+      duplicateSignals: ["Haunted fort framing appeared in previous research."],
+      memoryContext: { used: true, items: [{ id: "mem_1", title: "Prior haunted fort package", relevance: 78 }] },
+      scoring: { qualityScore: 82, confidenceScore: 80, noveltyScore: 76, safetyScore: 88, evidenceScore: 72 },
+      observability: { reasoningTrace: ["Validated scope", "Compared memory", "Scored novelty"], retrievalUsed: true, memoryItemsUsed: 1 },
+      safety: { noPublishing: true, needsHumanReview: true, sourceVerificationRequired: true, noWorkflowMutation: true },
+    }),
+  );
+
+  assert.equal(researchOperationalOutputSchema.safeParse(parsed).success, true);
+  assert.equal(scoreResearchOutput(parsed) > 55, true);
+  assert.deepEqual(researchOutputWarnings(parsed), []);
+});
+
+test("expanded Research workflows still block without real approval verification", async () => {
+  const result = await runControlledLiveExecution({
+    objective: "Run competitor insight only if every Research live gate is real.",
+    providerId: "gemini",
+    departmentId: "research",
+    workflowKind: "structured_generation",
+    taskType: "planning",
+    researchWorkflowKind: "competitor_insight",
+    approvalStatus: "approved",
+    approvalId: "approval_fake",
+    seedTopics: ["folklore documentary shorts"],
+    competitors: ["manual competitor note"],
+  });
+
+  assert.equal(result.mode, "blocked");
+  assert.notEqual(result.status, "completed_live");
+  assert.equal(result.liveCapability, "gemini_research_operational_intelligence");
+  assert.equal(result.researchWorkflowKind, "competitor_insight");
+  assert.equal(result.providerResponse, undefined);
+  assert.equal(result.retryPolicy.maxAttempts, 1);
 });
 
 test("live execution rejects client-claimed approval when database verification is unavailable", async () => {

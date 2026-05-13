@@ -27,6 +27,7 @@ export async function POST(request: Request) {
         departmentId: "research",
         workflowKind: "structured_generation",
         taskType: "planning",
+        researchWorkflowKind: "content_ideation",
         maxOutputTokens: typeof body.maxOutputTokens === "number" ? body.maxOutputTokens : 500,
       },
       access.user.id,

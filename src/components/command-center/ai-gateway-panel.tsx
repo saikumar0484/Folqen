@@ -42,6 +42,11 @@ function statusClass(status: string) {
   return "border-cyan-300/25 bg-cyan-300/10 text-cyan-100";
 }
 
+function getTopicSuggestions(output: ControlledLiveExecutionResult["structuredOutput"]) {
+  if (!output || typeof output !== "object" || !("topicSuggestions" in output) || !Array.isArray(output.topicSuggestions)) return [];
+  return output.topicSuggestions as Array<{ topic?: string; hook?: string; confidence?: number }>;
+}
+
 export function AiGatewayPanel({ dashboard, liveExecution }: AiGatewayPanelProps) {
   const [objective, setObjective] = useState("Generate a source-aware mystery content strategy outline without using paid providers.");
   const [provider, setProvider] = useState("mock");
@@ -352,9 +357,9 @@ export function AiGatewayPanel({ dashboard, liveExecution }: AiGatewayPanelProps
                   <p className="mt-1 text-sm leading-6 opacity-85">
                     {liveResponse.error ?? liveResponse.message ?? liveResponse.result?.validation.warnings[0] ?? liveResponse.readiness?.reasons[0] ?? "Activation control updated."}
                   </p>
-                  {Array.isArray(liveResponse.result?.structuredOutput?.topicSuggestions) ? (
+                  {getTopicSuggestions(liveResponse.result?.structuredOutput).length ? (
                     <div className="mt-3 grid gap-2">
-                      {(liveResponse.result.structuredOutput.topicSuggestions as Array<{ topic?: string; hook?: string; confidence?: number }>).slice(0, 3).map((item, index) => (
+                      {getTopicSuggestions(liveResponse.result?.structuredOutput).slice(0, 3).map((item, index) => (
                         <div key={`${item.topic ?? "topic"}-${index}`} className="rounded-xl border border-white/10 bg-black/25 p-3 text-xs">
                           <div className="font-medium text-sm">{item.topic ?? "Untitled topic"}</div>
                           <div className="mt-1 opacity-85">{item.hook ?? "No hook returned."}</div>
