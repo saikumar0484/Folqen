@@ -116,6 +116,15 @@ function baseEnvironmentChecks(source: NodeJS.ProcessEnv): DeploymentCheck[] {
     check("startup_safety_mode", "startup", "Startup safety mode", env.STARTUP_KILL_SWITCH ? "Blocked" : env.STARTUP_QUARANTINE_MODE || env.STARTUP_ROLLBACK_MODE || env.STARTUP_DRY_RUN_MODE ? "Configured" : production ? "Needs approval" : "Mock", "Startup safety controls are available without enabling dangerous runtime paths.", [`STARTUP_DRY_RUN_MODE=${env.STARTUP_DRY_RUN_MODE}`, `STARTUP_ROLLBACK_MODE=${env.STARTUP_ROLLBACK_MODE}`, `STARTUP_QUARANTINE_MODE=${env.STARTUP_QUARANTINE_MODE}`, `STARTUP_KILL_SWITCH=${env.STARTUP_KILL_SWITCH}`], "Use dry-run or rollback mode for first production boot, and engage kill switch only during incidents."),
     check("live_ai_guard", "runtime", "Live AI runtime guard", env.ALLOW_LIVE_AI_EXECUTION || env.LIVE_AI_ACTIVATION_STAGE > 0 ? "Needs approval" : "Mock", env.ALLOW_LIVE_AI_EXECUTION ? "Live AI execution flag is on and still requires approvals, budgets, quotas, and provider checks." : "Live AI execution remains disabled by default.", [`ALLOW_LIVE_AI_EXECUTION=${env.ALLOW_LIVE_AI_EXECUTION}`, `LIVE_AI_ACTIVATION_STAGE=${env.LIVE_AI_ACTIVATION_STAGE}`], "Keep live AI disabled unless executing a previously approved Gemini-only workflow."),
     check("media_execution_guard", "runtime", "Media execution guard", env.ALLOW_CONTROLLED_MEDIA_EXECUTION || env.LIVE_MEDIA_ACTIVATION_STAGE > 0 ? "Needs approval" : "Mock", env.ALLOW_CONTROLLED_MEDIA_EXECUTION ? "Controlled media execution flag is on and requires render governance." : "Controlled rendering remains disabled by default.", [`ALLOW_CONTROLLED_MEDIA_EXECUTION=${env.ALLOW_CONTROLLED_MEDIA_EXECUTION}`, `LIVE_MEDIA_ACTIVATION_STAGE=${env.LIVE_MEDIA_ACTIVATION_STAGE}`], "Keep media execution disabled until the controlled rendering phase is approved."),
+    check(
+      "live_thumbnail_guard",
+      "runtime",
+      "Live thumbnail render guard",
+      env.ALLOW_LIVE_THUMBNAIL_RENDERING || env.LIVE_THUMBNAIL_RENDER_STAGE > 0 ? "Needs approval" : "Mock",
+      env.ALLOW_LIVE_THUMBNAIL_RENDERING ? "Live thumbnail rendering is enabled and still requires approval IDs, worker secrets, quotas, validation, and rollback controls." : "Live thumbnail rendering remains disabled by default.",
+      [`ALLOW_LIVE_THUMBNAIL_RENDERING=${env.ALLOW_LIVE_THUMBNAIL_RENDERING}`, `LIVE_THUMBNAIL_RENDER_STAGE=${env.LIVE_THUMBNAIL_RENDER_STAGE}`, `THUMBNAIL_RENDER_PROVIDER=${env.THUMBNAIL_RENDER_PROVIDER}`],
+      "Enable only the controlled local_worker thumbnail path after a supervised approval-gated render rehearsal.",
+    ),
     check("queue_startup", "runtime", "Queue startup mode", env.ORCHESTRATION_EXECUTION_MODE === "live" ? (env.REDIS_URL ? "Needs approval" : "Blocked") : "Mock", env.ORCHESTRATION_EXECUTION_MODE === "live" ? "Live orchestration queue mode has been requested." : "Orchestration queues are in mock-safe mode.", [`ORCHESTRATION_EXECUTION_MODE=${env.ORCHESTRATION_EXECUTION_MODE}`, `ORCHESTRATION_WORKER_ENABLED=${env.ORCHESTRATION_WORKER_ENABLED}`], "Use mock queue mode until Redis persistence, worker processes, and recovery checks pass."),
   ];
 

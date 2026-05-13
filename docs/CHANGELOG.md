@@ -1,5 +1,33 @@
 # Changelog
 
+## May 13, 2026 - First Governed Live Thumbnail Rendering
+
+### Added
+
+- Added `src/lib/media/live-thumbnail-rendering.ts` for the first live-capable creative production path: Content Department thumbnail rendering only through the controlled `local_worker` provider.
+- Added protected `GET/POST /api/media/live-thumbnail-render` and `POST /api/media/live-thumbnail-render/control`.
+- Added mandatory gates for approved `media_render`/`thumbnail_render` approval ID verification, `ALLOW_CONTROLLED_MEDIA_EXECUTION`, `ALLOW_LIVE_THUMBNAIL_RENDERING`, activation stages, local worker endpoint/secret, render kill switches, quarantine, quotas, timeout, GPU-minute budget, validation, and scoring.
+- Added worker response schema validation, thumbnail asset validation, render scoring, queue metadata, observability traces, provider trace IDs, failed asset isolation, rollback-to-dry-run, queue drain, quarantine, and failed render recovery planning.
+- Added live thumbnail dashboard controls to `/content-studio`: provider/queue/budget/rollback diagnostics, thumbnail preview area, live run action, rollback control, quarantine control, recent run cards, and honest safety labels.
+- Added env placeholders for `ALLOW_LIVE_THUMBNAIL_RENDERING`, `LIVE_THUMBNAIL_RENDER_STAGE`, `THUMBNAIL_RENDER_PROVIDER`, and `THUMBNAIL_RENDER_SANDBOX_FALLBACK`.
+- Updated deployment governance, media provider status, media architecture docs, and route map for the governed live thumbnail capability.
+
+### Safety
+
+- No real worker endpoint or secret was configured.
+- No real render was executed.
+- No direct ComfyUI request, FFmpeg process, video generation, platform API, public publishing, autonomous retry, unrestricted GPU access, or workflow mutation was enabled.
+- Live thumbnail rendering remains unavailable unless every approval, env, provider, budget, validation, kill-switch, and quarantine gate passes.
+
+### Verification
+
+- `eslint .`: passed.
+- `tsc --noEmit`: passed.
+- `tsx --test "src/**/*.test.ts"`: passed, 138 tests.
+- `prisma generate && next build`: passed on Next.js `16.2.6`; `/api/media/live-thumbnail-render` and `/api/media/live-thumbnail-render/control` are included in the build output.
+- Local HTTP smoke: `/login` returned `200`, `/api/health` returned `200`, and anonymous live-thumbnail render/control endpoints returned `401`.
+- `npm audit --audit-level=moderate`: still reports the known nested Next/PostCSS moderate advisory; no unsafe forced fix was applied.
+
 ## May 13, 2026 - Production Environment & Deployment Governance System
 
 ### Added

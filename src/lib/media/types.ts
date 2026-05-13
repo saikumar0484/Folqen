@@ -1,4 +1,4 @@
-export type MediaStatusLabel = "Mock" | "Not connected" | "Needs approval" | "Configured" | "Blocked";
+export type MediaStatusLabel = "Mock" | "Not connected" | "Needs approval" | "Configured" | "Blocked" | "Live";
 
 export type MediaType =
   | "thumbnail"
@@ -27,7 +27,7 @@ export type MediaProviderStatus = {
   status: MediaStatusLabel;
   capabilities: string[];
   reason: string;
-  liveExecutionEnabled: false;
+  liveExecutionEnabled: boolean;
 };
 
 export type ControlledMediaWorkflowKind =
@@ -191,8 +191,8 @@ export type MediaPipelineResult = {
 export type ControlledRenderResult = {
   runId: string;
   workflowKind: ControlledMediaWorkflowKind;
-  status: "blocked" | "waiting_for_approval" | "completed_sandbox" | "failed";
-  mode: "blocked" | "sandbox";
+  status: "blocked" | "waiting_for_approval" | "completed_sandbox" | "completed_live" | "failed" | "quarantined";
+  mode: "blocked" | "sandbox" | "live";
   providerId: MediaProviderId;
   providerStatus: MediaProviderStatus;
   governance: RenderGovernanceDecision;
@@ -211,12 +211,26 @@ export type ControlledRenderResult = {
     trace: string[];
     queueLatencyMs: number;
     renderDurationEstimateSeconds: number;
+    renderDurationMs?: number;
     estimatedGpuMinutes: number;
     budgetUtilizationPercent: number;
+    providerTraceId?: string;
+    failureRatePercent?: number;
   };
   rollback: {
     available: true;
     steps: string[];
+  };
+  liveThumbnail?: {
+    provider: "local_worker";
+    previewUrl?: string;
+    width?: number;
+    height?: number;
+    sizeBytes?: number;
+    checksum?: string;
+    quarantined: boolean;
+    rollbackMode: "dry_run_available";
+    failedAssetIsolation?: string;
   };
   safety: {
     noPublishing: true;
@@ -229,6 +243,38 @@ export type ControlledRenderResult = {
   createdAt: string;
 };
 
+export type LiveThumbnailRenderDashboard = {
+  capability: "live_thumbnail_rendering";
+  providerId: "local_worker";
+  status: MediaStatusLabel;
+  constraints: string[];
+  governance: RenderGovernanceDecision;
+  recentRuns: ControlledRenderResult[];
+  queue: {
+    mode: "mock" | "live";
+    name: string;
+    waiting: number;
+    active: number;
+    failed: number;
+    completed: number;
+  };
+  rollback: {
+    disableAvailable: true;
+    quarantineAvailable: true;
+    dryRunFallback: boolean;
+    failedAssetIsolation: boolean;
+  };
+  diagnostics: {
+    providerConfigured: boolean;
+    activationEnabled: boolean;
+    killSwitchEngaged: boolean;
+    thumbnailOnly: true;
+    noPublishing: true;
+    noVideoGeneration: true;
+    noAutonomousRetries: true;
+  };
+};
+
 export type MediaDashboard = {
   workflows: MediaWorkflowDefinition[];
   providers: MediaProviderStatus[];
@@ -237,6 +283,7 @@ export type MediaDashboard = {
   failedRenders: RenderPlan[];
   controlledRenders?: ControlledRenderResult[];
   renderGovernance?: RenderGovernanceDecision;
+  liveThumbnail?: LiveThumbnailRenderDashboard;
   observability: {
     mode: "mock_safe";
     liveRendering: "blocked";

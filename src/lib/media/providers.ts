@@ -8,6 +8,14 @@ function configured(value: string | undefined) {
 export function getMediaProviderStatuses(source: NodeJS.ProcessEnv = process.env): MediaProviderStatus[] {
   const env = getEnv(source);
   const localWorkerConfigured = configured(env.LOCAL_WORKER_BASE_URL) && configured(env.LOCAL_WORKER_SHARED_SECRET);
+  const liveThumbnailConfigured =
+    localWorkerConfigured &&
+    env.ALLOW_CONTROLLED_MEDIA_EXECUTION &&
+    env.ALLOW_LIVE_THUMBNAIL_RENDERING &&
+    env.LIVE_MEDIA_ACTIVATION_STAGE >= 1 &&
+    env.LIVE_THUMBNAIL_RENDER_STAGE >= 1 &&
+    !env.MEDIA_RENDER_KILL_SWITCH &&
+    !env.MEDIA_RENDER_EMERGENCY_STOP;
   const comfyConfigured = configured(env.COMFYUI_BASE_URL);
   const ffmpegConfigured = configured(env.FFMPEG_PATH);
 
@@ -42,13 +50,15 @@ export function getMediaProviderStatuses(source: NodeJS.ProcessEnv = process.env
     },
     {
       id: "local_worker",
-      label: "Local/Oracle media worker",
-      status: localWorkerConfigured ? "Blocked" : "Not connected",
-      capabilities: ["queued_rendering", "heavy_media_jobs", "provider_bridge"],
-      reason: localWorkerConfigured
-        ? "Worker endpoint is configured, but live media execution is still blocked by safety policy."
-        : "No media worker endpoint and shared secret are configured.",
-      liveExecutionEnabled: false,
+      label: "Controlled thumbnail worker",
+      status: liveThumbnailConfigured ? "Configured" : localWorkerConfigured ? "Needs approval" : "Not connected",
+      capabilities: ["governed_thumbnail_rendering", "queued_rendering", "thumbnail_asset_registry", "provider_bridge"],
+      reason: liveThumbnailConfigured
+        ? "Worker endpoint is configured for governed thumbnail rendering only. Each render still requires approval, budget, validation, and rollback gates."
+        : localWorkerConfigured
+          ? "Worker endpoint is configured, but live thumbnail rendering remains approval-gated and disabled by runtime flags."
+          : "No controlled thumbnail worker endpoint and shared secret are configured.",
+      liveExecutionEnabled: liveThumbnailConfigured,
     },
   ];
 }

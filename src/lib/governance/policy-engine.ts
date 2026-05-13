@@ -42,8 +42,11 @@ export function evaluateGovernancePolicy(input: GovernancePolicyInput): Governan
   }
 
   if (riskyActions.has(input.actionType)) {
-    requiredApprovals.push("human_approval");
-    reasons.push("Dangerous actions require explicit human approval.");
+    const approvalSatisfiedForControlledMedia = input.actionType === "media_render" && input.approvalStatus === "approved";
+    if (!approvalSatisfiedForControlledMedia) {
+      requiredApprovals.push("human_approval");
+      reasons.push("Dangerous actions require explicit human approval.");
+    }
   }
 
   if (executiveOnly.has(input.actionType) && actorRole !== "EXECUTIVE") {
@@ -82,7 +85,9 @@ export function evaluateGovernancePolicy(input: GovernancePolicyInput): Governan
   }
 
   if (input.actionType === "media_render") {
-    reasons.push("Live rendering is blocked until media worker approval and sandbox verification exist.");
+    if (input.approvalStatus !== "approved") {
+      reasons.push("Live rendering is blocked until media worker approval and sandbox verification exist.");
+    }
     controls.push("render_quota_guard", "media_worker_guard");
   }
 

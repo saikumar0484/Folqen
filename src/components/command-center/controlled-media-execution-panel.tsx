@@ -23,9 +23,9 @@ type ControlledRenderResponse = {
 };
 
 function statusClass(status: string) {
-  if (status === "completed_sandbox" || status === "allowed" || status === "accepted" || status === "passed") return "border-neon/25 bg-neon/10 text-neon";
+  if (status === "completed_sandbox" || status === "completed_live" || status === "allowed" || status === "accepted" || status === "passed" || status === "Live" || status === "Configured") return "border-neon/25 bg-neon/10 text-neon";
   if (status === "waiting_for_approval" || status === "needs_approval" || status === "needs_review" || status === "warning") return "border-amber-300/25 bg-amber-300/10 text-amber-100";
-  if (status === "blocked" || status === "failed" || status === "rejected" || status === "kill_switch" || status === "budget_blocked") return "border-rose-300/25 bg-rose-300/10 text-rose-100";
+  if (status === "blocked" || status === "failed" || status === "quarantined" || status === "rejected" || status === "kill_switch" || status === "budget_blocked" || status === "Blocked") return "border-rose-300/25 bg-rose-300/10 text-rose-100";
   return "border-white/10 bg-white/[0.04] text-muted-foreground";
 }
 
@@ -45,11 +45,18 @@ export function ControlledMediaExecutionPanel({ dashboard }: ControlledMediaExec
   const [tags, setTags] = useState("thumbnail, mystery, folklore, controlled-render");
   const [pending, setPending] = useState(false);
   const [shutdownPending, setShutdownPending] = useState(false);
+  const [livePending, setLivePending] = useState(false);
+  const [controlPending, setControlPending] = useState(false);
   const [response, setResponse] = useState<ControlledRenderResponse | null>(null);
+  const [liveResponse, setLiveResponse] = useState<ControlledRenderResponse | null>(null);
 
   const selectedLabel = useMemo(() => controlledMediaWorkflowLabels[workflowKind], [workflowKind]);
   const governance = response?.result?.governance ?? dashboard.renderGovernance;
+  const liveThumbnail = dashboard.liveThumbnail;
+  const liveRuns = liveResponse?.result ? [liveResponse.result, ...(liveThumbnail?.recentRuns ?? [])].slice(0, 4) : liveThumbnail?.recentRuns ?? [];
   const controlledRuns = response?.result ? [response.result, ...(dashboard.controlledRenders ?? [])].slice(0, 4) : dashboard.controlledRenders ?? [];
+  const previewUrl = liveResponse?.result?.liveThumbnail?.previewUrl;
+  const canPreview = Boolean(previewUrl?.startsWith("http://") || previewUrl?.startsWith("https://") || previewUrl?.startsWith("/"));
 
   async function runControlledRender() {
     setPending(true);
@@ -86,6 +93,44 @@ export function ControlledMediaExecutionPanel({ dashboard }: ControlledMediaExec
     const payload = (await request.json().catch(() => ({ error: "Invalid shutdown response." }))) as ControlledRenderResponse;
     setResponse(payload);
     setShutdownPending(false);
+  }
+
+  async function runLiveThumbnailRender() {
+    setLivePending(true);
+    setLiveResponse(null);
+    const request = await mutationFetch("/api/media/live-thumbnail-render", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        approvalId,
+        objective,
+        prompt,
+        aspectRatio: "16:9",
+        outputFormat: "image/png",
+        estimatedRenderSeconds: 45,
+        estimatedGpuMinutes: 0.8,
+        tags: splitTags(tags),
+      }),
+    });
+    const payload = (await request.json().catch(() => ({ error: "Invalid live thumbnail render response." }))) as ControlledRenderResponse;
+    setLiveResponse(payload);
+    setLivePending(false);
+  }
+
+  async function controlLiveThumbnail(action: "rollback_to_dry_run" | "quarantine" | "recover_failed_render") {
+    setControlPending(true);
+    const request = await mutationFetch("/api/media/live-thumbnail-render/control", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action,
+        renderId: liveResponse?.result?.renderPlan.renderId,
+        reason: `Operator requested ${action.replaceAll("_", " ")} from Folqen Content Studio.`,
+      }),
+    });
+    const payload = (await request.json().catch(() => ({ error: "Invalid live thumbnail control response." }))) as ControlledRenderResponse;
+    setLiveResponse(payload);
+    setControlPending(false);
   }
 
   return (
@@ -197,6 +242,100 @@ export function ControlledMediaExecutionPanel({ dashboard }: ControlledMediaExec
         </div>
 
         <div className="xl:col-span-2">
+          <Card className="mb-4 border-neon/20 bg-neon/[0.04]">
+            <CardHeader>
+              <div className="flex flex-wrap gap-2">
+                <Badge className={statusClass(liveThumbnail?.status ?? "Not connected")}>{liveThumbnail?.status ?? "Not connected"}</Badge>
+                <Badge variant="premium">Thumbnail only</Badge>
+                <Badge variant="warning">Approval mandatory</Badge>
+                <Badge variant="safe">Rollback ready</Badge>
+              </div>
+              <CardTitle className="mt-3 text-base">First Governed Live Thumbnail Rendering</CardTitle>
+              <CardDescription>One controlled provider, Content Department only, approved thumbnail workflow only. No video generation, publishing, autonomous retry, unrestricted GPU access, or workflow mutation.</CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="rounded-2xl border border-white/10 bg-black/25 p-3">
+                    <div className="text-xs text-muted-foreground">Provider</div>
+                    <div className="mt-1 text-sm font-medium">Controlled thumbnail worker</div>
+                    <p className="mt-1 text-[11px] text-muted-foreground">{liveThumbnail?.diagnostics.providerConfigured ? "Configured" : "Not connected"}</p>
+                  </div>
+                  <div className="rounded-2xl border border-white/10 bg-black/25 p-3">
+                    <div className="text-xs text-muted-foreground">Queue</div>
+                    <div className="mt-1 text-sm font-medium">{liveThumbnail?.queue.mode ?? "mock"}</div>
+                    <p className="mt-1 text-[11px] text-muted-foreground">{liveThumbnail ? `${liveThumbnail.queue.waiting} waiting, ${liveThumbnail.queue.failed} failed` : "No queue snapshot"}</p>
+                  </div>
+                  <div className="rounded-2xl border border-white/10 bg-black/25 p-3">
+                    <div className="text-xs text-muted-foreground">Budget</div>
+                    <div className="mt-1 text-sm font-medium">{liveThumbnail ? `${liveThumbnail.governance.quota.runsToday}/${liveThumbnail.governance.quota.maxDailyRuns} daily` : "Unavailable"}</div>
+                    <p className="mt-1 text-[11px] text-muted-foreground">{liveThumbnail ? `${liveThumbnail.governance.quota.estimatedGpuMinutesToday}/${liveThumbnail.governance.quota.maxEstimatedGpuMinutes} GPU min` : "No quota"}</p>
+                  </div>
+                  <div className="rounded-2xl border border-white/10 bg-black/25 p-3">
+                    <div className="text-xs text-muted-foreground">Rollback</div>
+                    <div className="mt-1 text-sm font-medium">{liveThumbnail?.rollback.dryRunFallback ? "Dry-run fallback" : "Needs setup"}</div>
+                    <p className="mt-1 text-[11px] text-muted-foreground">Quarantine and queue drain controls available.</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  <Button type="button" onClick={runLiveThumbnailRender} disabled={livePending || controlPending || !approvalId.trim()}>
+                    {livePending ? <Loader2 className="h-4 w-4 animate-spin" /> : <PlayCircle className="h-4 w-4" />}
+                    Run live thumbnail
+                  </Button>
+                  <Button type="button" variant="secondary" onClick={() => controlLiveThumbnail("rollback_to_dry_run")} disabled={livePending || controlPending}>
+                    Rollback to dry-run
+                  </Button>
+                  <Button type="button" variant="danger" onClick={() => controlLiveThumbnail("quarantine")} disabled={livePending || controlPending}>
+                    Quarantine provider
+                  </Button>
+                </div>
+
+                {liveThumbnail?.governance.reasons.length ? (
+                  <div className={cn("rounded-2xl border p-3 text-xs leading-5", statusClass(liveThumbnail.governance.status))}>{liveThumbnail.governance.reasons[0]}</div>
+                ) : null}
+              </div>
+
+              <div className="space-y-3">
+                <div className="aspect-video overflow-hidden rounded-2xl border border-white/10 bg-black/40">
+                  {canPreview ? (
+                    <div className="h-full w-full bg-cover bg-center" style={{ backgroundImage: `url(${previewUrl})` }} aria-label="Live thumbnail preview" />
+                  ) : (
+                    <div className="flex h-full items-center justify-center p-6 text-center text-sm text-muted-foreground">Live thumbnail preview appears here after a governed worker returns an approved asset URL.</div>
+                  )}
+                </div>
+                {liveResponse ? (
+                  <div className={cn("rounded-2xl border p-4", statusClass(liveResponse.result?.status ?? "blocked"))}>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-medium">{liveResponse.error ? "Live thumbnail blocked" : "Live thumbnail result"}</span>
+                      {liveResponse.result ? <Badge className={statusClass(liveResponse.result.status)}>{liveResponse.result.status.replaceAll("_", " ")}</Badge> : null}
+                      {liveResponse.result?.scoring ? <Badge className={statusClass(liveResponse.result.scoring.acceptance)}>score {liveResponse.result.scoring.qualityScore}</Badge> : null}
+                    </div>
+                    <p className="mt-2 text-sm leading-6 opacity-85">{liveResponse.error ?? liveResponse.message ?? liveResponse.result?.governance.reasons[0] ?? "Live thumbnail trace captured."}</p>
+                    {liveResponse.result ? <p className="mt-2 font-mono text-[11px] text-muted-foreground">{liveResponse.result.renderPlan.renderId}</p> : null}
+                  </div>
+                ) : null}
+              </div>
+
+              <div className="xl:col-span-2">
+                <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                  {liveRuns.length ? (
+                    liveRuns.map((run) => (
+                      <div key={run.runId} className="rounded-2xl border border-white/10 bg-black/25 p-3">
+                        <Badge className={statusClass(run.status)}>{run.status.replaceAll("_", " ")}</Badge>
+                        <div className="mt-2 text-sm font-medium">{run.asset.title}</div>
+                        <p className="mt-1 text-xs leading-5 text-muted-foreground">{run.liveThumbnail?.previewUrl ?? run.liveThumbnail?.failedAssetIsolation ?? "No preview URL captured."}</p>
+                        <div className="mt-3 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{run.queueJobId}</div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="rounded-2xl border border-dashed border-white/10 p-4 text-sm text-muted-foreground md:col-span-2 xl:col-span-4">No live thumbnail renders captured yet.</div>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           <Card className="border-white/10 bg-white/[0.03]">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">

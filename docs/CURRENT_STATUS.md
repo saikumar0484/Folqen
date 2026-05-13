@@ -2,9 +2,9 @@
 
 ## Phase
 
-Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, every required authenticated route now has a route-specific or database-backed surface, the autonomous organization target architecture is documented, the operational command center frontend is implemented, the mock-safe multi-agent orchestration infrastructure is implemented, the first Research + Content operational intelligence layer is implemented, the Organizational Memory & Reflection Intelligence layer is implemented, the Media Generation & Asset Pipeline layer is implemented, the Platform Operations & Publishing Infrastructure layer is implemented, the Governance Approval & Safety Control layer is implemented, the AI Provider Gateway & Execution Runtime is implemented, the Controlled Live Execution Activation Layer is implemented, the Governed Operations Trace Center is implemented, production governance/trace verification hardening is implemented, and the Production Environment & Deployment Governance System is implemented on branch `build/phase-0-foundation`.
+Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, every required authenticated route now has a route-specific or database-backed surface, the autonomous organization target architecture is documented, the operational command center frontend is implemented, the mock-safe multi-agent orchestration infrastructure is implemented, the first Research + Content operational intelligence layer is implemented, the Organizational Memory & Reflection Intelligence layer is implemented, the Media Generation & Asset Pipeline layer is implemented, the Platform Operations & Publishing Infrastructure layer is implemented, the Governance Approval & Safety Control layer is implemented, the AI Provider Gateway & Execution Runtime is implemented, the Controlled Live Execution Activation Layer is implemented, the Governed Operations Trace Center is implemented, production governance/trace verification hardening is implemented, the Production Environment & Deployment Governance System is implemented, and the First Governed Live Thumbnail Rendering capability is implemented on branch `build/phase-0-foundation`.
 
-Latest save point: May 13, 2026, after adding Folqen's Production Environment & Deployment Governance System. This was a read-only production safety phase; no credentials, production database migration application, production settings, paid tools, production provider activation, live embeddings, unrestricted GPU execution, live ComfyUI request, FFmpeg process spawn, binary media write, unrestricted video generation, platform account access, live platform analytics API read, scraping, public publishing, autonomous retries, autonomous optimization execution, self-improvement mutation, workflow mutation, prompt mutation, queue mutation, or n8n execution were enabled.
+Latest save point: May 13, 2026, after adding Folqen's First Governed Live Thumbnail Rendering capability. This added a live-capable code path for one controlled local-worker thumbnail provider only, but no credentials, production env changes, live worker endpoint, production database migration application, production settings, paid tools, live ComfyUI request, FFmpeg process spawn, unrestricted GPU execution, video generation, platform account access, live platform analytics API read, scraping, public publishing, autonomous retries, autonomous optimization execution, self-improvement mutation, workflow mutation, prompt mutation, queue mutation, or n8n execution were enabled.
 
 ## Completed Work
 
@@ -19,6 +19,13 @@ Latest save point: May 13, 2026, after adding Folqen's Production Environment & 
   - `GET/POST /api/media/controlled-render` and `POST /api/media/controlled-render/shutdown` for approval-gated render packets, render governance, quotas, provider checks, queue metadata, asset validation/scoring, observability, rollback, and emergency shutdown.
   - New media execution env defaults for activation stage, render kill switches, daily quota, concurrency, timeout, and GPU-minute budgets.
   - `ControlledMediaExecutionPanel` on `/content-studio` with approval ID input, render budget status, controlled workflow runner, scoring previews, blocked reasons, recent render packets, and shutdown controls.
+- Added the First Governed Live Thumbnail Rendering capability:
+  - `src/lib/media/live-thumbnail-rendering.ts` for the live-capable, thumbnail-only Content Department renderer using the controlled `local_worker` provider.
+  - Protected `GET/POST /api/media/live-thumbnail-render` and `POST /api/media/live-thumbnail-render/control`.
+  - Added mandatory gates for approved `media_render`/`thumbnail_render` approval IDs, `ALLOW_CONTROLLED_MEDIA_EXECUTION`, `ALLOW_LIVE_THUMBNAIL_RENDERING`, activation stages, local worker endpoint/secret, kill switches, quarantine, quotas, timeout, GPU-minute budget, validation, and scoring.
+  - Added asset validation, render scoring, queue metadata, worker response validation, render observability, failed asset isolation, rollback-to-dry-run, queue drain, quarantine, and recovery planning without autonomous retry.
+  - Added a live thumbnail section to `/content-studio` with provider/queue/budget/rollback diagnostics, thumbnail preview area, live run action, rollback action, quarantine action, recent runs, and explicit safety labels.
+  - No direct ComfyUI execution, FFmpeg process, video generation, publishing, platform API, autonomous retry, unrestricted GPU access, or workflow mutation was enabled.
 - Added the Governed Operations Trace Center:
   - `src/lib/operations-trace/*` for a read-only operational read model over existing audit, event, workflow, error, approval, render, asset, and queue records.
   - Protected `GET /api/operations/traces` with auth-gated visibility and explicit safety labels.
@@ -789,6 +796,22 @@ Latest May 13, 2026 Controlled Media Execution & Asset Rendering System:
 - Local dev smoke: `/login` loaded in the in-app browser with no browser console errors.
 - `npm audit --audit-level=moderate` through the available npm CLI still reports the known nested Next/PostCSS moderate advisory; no unsafe forced fix was applied.
 
+Latest May 13, 2026 First Governed Live Thumbnail Rendering capability:
+
+- Added the first live-capable creative production path for governed thumbnail rendering only.
+- Added `src/lib/media/live-thumbnail-rendering.ts` with controlled local-worker provider execution, approval verification, activation flags, render budget/quota governance, timeout/concurrency checks, kill switch checks, quarantine controls, worker response validation, asset validation, render scoring, observability, failed asset isolation, rollback, and no-autonomous-retry recovery planning.
+- Added `GET/POST /api/media/live-thumbnail-render` and `POST /api/media/live-thumbnail-render/control`.
+- Added live thumbnail status, provider/queue/budget/rollback diagnostics, thumbnail preview panel, live run action, rollback-to-dry-run, quarantine controls, and recent run cards to `/content-studio`.
+- Added env placeholders for `ALLOW_LIVE_THUMBNAIL_RENDERING`, `LIVE_THUMBNAIL_RENDER_STAGE`, `THUMBNAIL_RENDER_PROVIDER`, and `THUMBNAIL_RENDER_SANDBOX_FALLBACK`.
+- Updated deployment governance to report live thumbnail render activation as a production readiness concern.
+- Direct local `eslint .`: passed.
+- Direct local `tsc --noEmit`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 138 tests.
+- Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`; `/api/media/live-thumbnail-render` and `/api/media/live-thumbnail-render/control` are included in the build output.
+- Local HTTP smoke: `/login` returned `200`, `/api/health` returned `200`, and anonymous `/api/media/live-thumbnail-render` plus `/api/media/live-thumbnail-render/control` returned `401`.
+- `npm audit --audit-level=moderate` still reports the known nested Next/PostCSS moderate advisory; no unsafe forced fix was applied.
+- No live worker endpoint or secret was configured, and no real render was executed.
+
 ## Known Issues
 
 - Supabase MCP documentation search failed in this session because the connected OAuth token was revoked, so Supabase-specific security notes in the architecture document rely on existing project practice and official-doc fallback knowledge rather than MCP snippets.
@@ -799,7 +822,7 @@ Latest May 13, 2026 Controlled Media Execution & Asset Rendering System:
 - Production deployment governance is implemented as read-only diagnostics and Docker/VPS configuration scaffolding. The production VPS/Coolify deployment has not been performed, no `.env.production` secrets exist in git, and rollback/backup restore still need a real rehearsal before public launch.
 - Organizational Memory now has live mock-safe controls and committed migration SQL, but the live Supabase database has not applied the memory tables yet.
 - Live embeddings remain disabled; OpenAI/Gemini embedding providers are status-aware placeholders only.
-- Media Production now has live mock-safe and controlled render Content Studio controls, but ComfyUI requests, FFmpeg process execution, local worker execution, binary storage writes, unrestricted GPU execution, and real video/image generation remain disabled.
+- Media Production now has live mock-safe and controlled render Content Studio controls plus one live-capable thumbnail path through `/api/media/live-thumbnail-render`. That path remains blocked unless explicit env flags, a controlled local worker endpoint/secret, a verified approved render approval ID, budget/quota checks, validation/scoring, and kill-switch/quarantine checks all pass. Direct ComfyUI requests, FFmpeg process execution, video generation, unrestricted GPU execution, autonomous media retries, platform APIs, workflow mutation, and public publishing remain blocked.
 - Platform Operations now has live mock-safe Platforms controls, but YouTube/Instagram/Threads/TikTok/LinkedIn/X account access, real scheduling, public posting, analytics ingestion, scraping, n8n execution, monetization monitoring, and platform automation remain disabled.
 - TikTok is infrastructure-only and blocked as an India dependency; X/Twitter and TikTok are not in the current Prisma `PlatformName` enum and are stored in platform-ops JSON metadata only.
 - Governance now has live mock-safe Approval Center controls, but approval records do not activate providers or permit live execution by themselves. Future adapters must call the policy engine immediately before execution.
@@ -818,4 +841,4 @@ Latest May 13, 2026 Controlled Media Execution & Asset Rendering System:
 
 ## Safe To Stop
 
-Yes after this checkpoint commit is pushed. The Production Environment & Deployment Governance System is implemented, verification passed, the repo is safe to continue, and no source files are left half-edited.
+Yes after this checkpoint commit is pushed. The First Governed Live Thumbnail Rendering capability is implemented behind strict gates, verification passed, the repo is safe to continue, and no source files are left half-edited.

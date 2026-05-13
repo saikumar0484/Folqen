@@ -2,6 +2,22 @@
 
 ## Current Risks
 
+### First governed live thumbnail rendering can consume local worker resources if enabled carelessly
+
+- Risk: Folqen now contains a live-capable thumbnail rendering path for the Content Department through one controlled `local_worker` provider. If live thumbnail flags, worker URL, shared secret, approval IDs, and quotas are configured carelessly, the app could call a real worker and consume GPU/CPU time.
+- Prevention: `POST /api/media/live-thumbnail-render` is blocked unless controlled media execution, live thumbnail rendering, media activation stage, thumbnail activation stage, server-side approval verification, local worker configuration, budget/quota checks, governance checks, provider health, validation/scoring, and kill-switch checks all pass. The route supports thumbnails only and rejects non-`16:9` requests.
+- Verification: Focused media tests cover default blocking, approved live worker completion, non-thumbnail rejection, rollback, quarantine, and no autonomous retry behavior. Full lint, typecheck, tests, Prisma generate, build, anonymous API smoke, and audit were run.
+- Rollback: Set `ALLOW_LIVE_THUMBNAIL_RENDERING=false`, set `LIVE_THUMBNAIL_RENDER_STAGE=0`, set `ALLOW_CONTROLLED_MEDIA_EXECUTION=false`, set `MEDIA_RENDER_KILL_SWITCH=true`, remove `LOCAL_WORKER_BASE_URL`/`LOCAL_WORKER_SHARED_SECRET`, use `/api/media/live-thumbnail-render/control` with `rollback_to_dry_run` or `quarantine`, and drain media queue metadata.
+- Human approval trigger: Any real local worker setup, worker shared secret creation, render approval ID use, quota increase, thumbnail activation stage promotion, real asset storage enablement, or request to run a live thumbnail render.
+
+### Live thumbnail asset previews can be mistaken for public-ready creative
+
+- Risk: A successful live thumbnail render may display an asset URL and score in Content Studio, which could be mistaken for approval to use the asset publicly.
+- Prevention: The live thumbnail capability stores a draft asset/render record only after validation and keeps publishing, scheduling, platform APIs, video generation, ComfyUI direct execution, FFmpeg execution, autonomous retries, and workflow mutation blocked. UI copy keeps the capability scoped to governed thumbnail production.
+- Verification: Tests assert live thumbnail results remain department/workflow constrained and rollback/quarantine controls do not retry. Public publishing guards remain unchanged.
+- Rollback: Quarantine the render provider, mark the asset as failed/quarantined, and require manual content safety/copyright/editorial approval before any downstream use.
+- Human approval trigger: Any request to use a rendered thumbnail in public publishing, attach it to a posting package for deployment, enable platform upload, or bypass content safety/copyright review.
+
 ### Production diagnostics could be misread as activation readiness
 
 - Risk: Deployment, auth, database, queue, provider, and governance diagnostics may look like Folqen is safe to execute live workflows when they are only operational readiness signals.
@@ -627,6 +643,32 @@
 - Human approval is required by default.
 - Auth, protected sessions, audit persistence, and database-backed settings/approvals exist.
 - Upload validation, rate limits, CSRF hardening, broader role tests, and platform OAuth security are still future work.
+
+## May 13, 2026 - First Governed Live Thumbnail Rendering Risks
+
+### Live thumbnail rendering can accidentally become broader media execution
+
+- Risk: A live thumbnail path could be expanded into unrestricted image/video/GPU execution, direct ComfyUI access, FFmpeg execution, or autonomous retries.
+- Prevention: The new live path is isolated in `src/lib/media/live-thumbnail-rendering.ts`, accepts only 16:9 thumbnail requests, forces the controlled `local_worker` provider, uses one attempt, validates output schema, and records safety flags for no publishing, no video generation, no autonomous retries, and no workflow mutation.
+- Verification: Focused media tests and the full test suite passed, including rejection of non-thumbnail output shape and successful live execution only with activation flags, approval, worker, budget, and validation.
+- Rollback: Use `POST /api/media/live-thumbnail-render/control` with `rollback_to_dry_run` or `quarantine`, set `ALLOW_LIVE_THUMBNAIL_RENDERING=false`, set `LIVE_THUMBNAIL_RENDER_STAGE=0`, and keep `MEDIA_RENDER_EMERGENCY_STOP=true` if needed.
+- Human approval trigger: Any direct ComfyUI execution, FFmpeg process execution, video generation, additional provider, autonomous retry, workflow mutation, or public publishing path.
+
+### Worker endpoint and shared secret can leak or be misused
+
+- Risk: `LOCAL_WORKER_BASE_URL` and `LOCAL_WORKER_SHARED_SECRET` could expose a render worker if committed, logged, or sent to the browser.
+- Prevention: Env examples contain placeholders only; the shared secret is read server-side, never returned by diagnostics, and only sent to the worker as an internal header.
+- Verification: No real worker secret was added, no real worker call was made, and endpoint access remains authenticated/admin-operator gated.
+- Rollback: Rotate the worker secret, unset `LOCAL_WORKER_BASE_URL`, unset `LOCAL_WORKER_SHARED_SECRET`, and quarantine live thumbnail rendering.
+- Human approval trigger: Any real worker secret, production worker URL, network firewall change, or render worker deployment.
+
+### Approval existence could be mistaken for execution permission
+
+- Risk: A user may assume an approved row alone is enough to render.
+- Prevention: Live rendering also requires activation flags, worker configuration, kill switches off, budget/quota checks, validation/scoring, provider not quarantined, and request mutation guards.
+- Verification: Tests confirm default live thumbnail rendering does not call the worker and completes only when approval and every runtime gate are supplied.
+- Rollback: Revoke the approval, call the control endpoint to roll back to dry-run, and keep env flags disabled.
+- Human approval trigger: Changing approval type scope, bypassing approval verification, or relaxing budget/quota/validation gates.
 
 ## May 13, 2026 - Production Environment & Deployment Governance Risks
 

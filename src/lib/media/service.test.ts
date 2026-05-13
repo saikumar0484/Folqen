@@ -4,6 +4,7 @@ import test from "node:test";
 import { FOLQEN_MUTATION_HEADER, FOLQEN_MUTATION_HEADER_VALUE } from "@/lib/security/mutation-headers";
 import { resolveMediaMutationAccess } from "./api-handler";
 import { engageMediaRenderShutdown, resetControlledMediaEmergencyForTests, runControlledMediaRender } from "./controlled-rendering";
+import { controlLiveThumbnailRendering, getLiveThumbnailDashboard, resetLiveThumbnailRuntimeForTests, runLiveThumbnailRender } from "./live-thumbnail-rendering";
 import { getMediaProviderStatuses } from "./providers";
 import { mediaTypes, mediaWorkflows } from "./registry";
 import { getMediaCapabilities, getMediaDashboard, retryRender, runMediaPipeline } from "./service";
@@ -42,7 +43,7 @@ test("media providers never enable live ComfyUI, FFmpeg, or worker execution by 
   assert.equal(providers.every((provider) => provider.liveExecutionEnabled === false), true);
   assert.equal(providers.find((provider) => provider.id === "comfyui")?.status, "Blocked");
   assert.equal(providers.find((provider) => provider.id === "ffmpeg")?.status, "Configured");
-  assert.equal(providers.find((provider) => provider.id === "local_worker")?.status, "Blocked");
+  assert.equal(providers.find((provider) => provider.id === "local_worker")?.status, "Needs approval");
 });
 
 test("every media workflow creates a dry-run result with queue metadata", async () => {
@@ -141,6 +142,130 @@ test("controlled media rendering blocks without approval, env activation, and pr
   assert.match(result.queueJobId, /^mock_job_/);
   assert.equal(result.governance.reasons.some((reason) => reason.includes("ALLOW_CONTROLLED_MEDIA_EXECUTION")), true);
   assert.equal(result.approvalVerification.verified, false);
+});
+
+test("live thumbnail rendering blocks by default and does not call the worker", async () => {
+  resetLiveThumbnailRuntimeForTests();
+  let called = false;
+  const result = await runLiveThumbnailRender(
+    {
+      objective: "Render a governed 16:9 thumbnail for a haunted fort mystery short.",
+      approvalId: "approval_missing",
+      prompt: "Cinematic mystery documentary thumbnail with bold title space, safe folklore tone, and high contrast.",
+      tags: ["thumbnail"],
+    },
+    undefined,
+    {
+      fetchImpl: (async () => {
+        called = true;
+        throw new Error("worker should not be called");
+      }) as typeof fetch,
+      approvalVerifier: async (approvalId) => ({ verified: false, status: "missing", approvalId, reason: "Approval missing in test." }),
+    },
+  );
+
+  assert.equal(called, false);
+  assert.equal(result.status, "waiting_for_approval");
+  assert.equal(result.mode, "blocked");
+  assert.equal(result.providerId, "local_worker");
+  assert.equal(result.safety.noPublishing, true);
+  assert.equal(result.safety.noAutonomousRetries, true);
+});
+
+test("live thumbnail rendering completes only with activation flags, approval, worker, budget, and validation", async () => {
+  resetLiveThumbnailRuntimeForTests();
+  const previous = {
+    ALLOW_CONTROLLED_MEDIA_EXECUTION: process.env.ALLOW_CONTROLLED_MEDIA_EXECUTION,
+    ALLOW_LIVE_THUMBNAIL_RENDERING: process.env.ALLOW_LIVE_THUMBNAIL_RENDERING,
+    LIVE_MEDIA_ACTIVATION_STAGE: process.env.LIVE_MEDIA_ACTIVATION_STAGE,
+    LIVE_THUMBNAIL_RENDER_STAGE: process.env.LIVE_THUMBNAIL_RENDER_STAGE,
+    LOCAL_WORKER_BASE_URL: process.env.LOCAL_WORKER_BASE_URL,
+    LOCAL_WORKER_SHARED_SECRET: process.env.LOCAL_WORKER_SHARED_SECRET,
+    MEDIA_RENDER_KILL_SWITCH: process.env.MEDIA_RENDER_KILL_SWITCH,
+    MEDIA_RENDER_EMERGENCY_STOP: process.env.MEDIA_RENDER_EMERGENCY_STOP,
+  };
+  Object.assign(process.env, {
+    ALLOW_CONTROLLED_MEDIA_EXECUTION: "true",
+    ALLOW_LIVE_THUMBNAIL_RENDERING: "true",
+    LIVE_MEDIA_ACTIVATION_STAGE: "1",
+    LIVE_THUMBNAIL_RENDER_STAGE: "1",
+    LOCAL_WORKER_BASE_URL: "https://worker.folqen.test",
+    LOCAL_WORKER_SHARED_SECRET: "test-worker-secret",
+    MEDIA_RENDER_KILL_SWITCH: "false",
+    MEDIA_RENDER_EMERGENCY_STOP: "false",
+  });
+
+  const calls: Array<{ url: string; init?: RequestInit }> = [];
+  const result = await runLiveThumbnailRender(
+    {
+      objective: "Render a governed 16:9 thumbnail for an India-focused haunted fort mystery short.",
+      approvalId: "approval_live_thumbnail",
+      prompt: "Cinematic mystery documentary thumbnail, haunted fort silhouette, bright title space, safe folklore tone, high contrast, no real-person likeness.",
+      tags: ["thumbnail", "folklore"],
+    },
+    undefined,
+    {
+      fetchImpl: (async (url, init) => {
+        calls.push({ url: String(url), init });
+        return new Response(
+          JSON.stringify({
+            ok: true,
+            assetUrl: "https://assets.folqen.test/thumbnails/haunted-fort.png",
+            mimeType: "image/png",
+            width: 1280,
+            height: 720,
+            sizeBytes: 512000,
+            checksum: "sha256:test",
+            renderDurationMs: 1200,
+            traceId: "worker_trace_1",
+            logs: ["rendered thumbnail through controlled worker"],
+          }),
+          { status: 200 },
+        );
+      }) as typeof fetch,
+      approvalVerifier: async (approvalId) => ({ verified: true, status: "approved", approvalId, reason: "Approved in test." }),
+    },
+  );
+
+  for (const [key, value] of Object.entries(previous)) {
+    if (value === undefined) delete process.env[key];
+    else process.env[key] = value;
+  }
+
+  assert.equal(calls.length, 1);
+  assert.equal(result.status, "completed_live");
+  assert.equal(result.mode, "live");
+  assert.equal(result.liveThumbnail?.previewUrl, "https://assets.folqen.test/thumbnails/haunted-fort.png");
+  assert.equal(result.liveThumbnail?.provider, "local_worker");
+  assert.equal(result.scoring.acceptance, "accepted");
+  assert.equal(result.observability.providerTraceId, "worker_trace_1");
+  assert.equal(result.safety.noVideoGeneration, true);
+  assert.equal(result.rollback.available, true);
+});
+
+test("live thumbnail rendering rejects non-thumbnail output shape", async () => {
+  await assert.rejects(
+    () =>
+      runLiveThumbnailRender({
+        objective: "Render a governed non-thumbnail visual.",
+        approvalId: "approval_bad_aspect",
+        prompt: "Vertical poster visual with title space.",
+        aspectRatio: "9:16",
+      }),
+    /Invalid literal value/,
+  );
+});
+
+test("live thumbnail rollback and quarantine controls never execute autonomous retries", async () => {
+  resetLiveThumbnailRuntimeForTests();
+  const result = await controlLiveThumbnailRendering({ action: "rollback_to_dry_run", reason: "Test rollback to dry-run after thumbnail incident." });
+  const dashboard = await getLiveThumbnailDashboard();
+
+  assert.equal(result.mode, "rollback_to_dry_run");
+  assert.match(result.queueJobId, /^mock_job_/);
+  assert.equal(dashboard.diagnostics.killSwitchEngaged, true);
+  assert.equal(dashboard.rollback.dryRunFallback, true);
+  resetLiveThumbnailRuntimeForTests();
 });
 
 test("controlled media validation rejects unsafe or weak asset packets", async () => {

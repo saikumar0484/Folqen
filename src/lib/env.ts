@@ -42,7 +42,14 @@ export const envSchema = z.object({
   FFMPEG_PATH: z.string().optional(),
   TTS_PROVIDER_URL: z.string().optional(),
   ALLOW_CONTROLLED_MEDIA_EXECUTION: booleanFlag("false"),
+  ALLOW_LIVE_THUMBNAIL_RENDERING: booleanFlag("false"),
   LIVE_MEDIA_ACTIVATION_STAGE: z.coerce.number().int().min(0).max(4).default(0),
+  LIVE_THUMBNAIL_RENDER_STAGE: z.coerce.number().int().min(0).max(4).default(0),
+  THUMBNAIL_RENDER_PROVIDER: z.enum(["local_worker"]).default("local_worker"),
+  THUMBNAIL_RENDER_SANDBOX_FALLBACK: z
+    .enum(["true", "false"])
+    .default("true")
+    .transform((value) => value === "true"),
   MEDIA_RENDER_KILL_SWITCH: booleanFlag("false"),
   MEDIA_RENDER_EMERGENCY_STOP: booleanFlag("false"),
   MEDIA_RENDER_MAX_DAILY_RUNS: z.coerce.number().int().min(0).max(100).default(3),

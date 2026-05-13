@@ -7,6 +7,7 @@ import { emitOrchestrationEvent } from "@/lib/orchestration/event-bus";
 import { enqueueOrchestrationJob, ORCHESTRATION_QUEUES } from "@/lib/orchestration/queue";
 import { getControlledMediaRuns, getRenderGovernanceSnapshot } from "./controlled-rendering";
 import { runMediaGraph } from "./flows";
+import { getLiveThumbnailDashboard } from "./live-thumbnail-rendering";
 import { mediaTypes, mediaWorkflows } from "./registry";
 import { getMediaProviderStatuses } from "./providers";
 import type { MediaAssetPlan, MediaDashboard, MediaGenerationInput, MediaPipelineResult, RenderPlan } from "./types";
@@ -301,6 +302,7 @@ export async function getMediaDashboard(): Promise<MediaDashboard> {
     failedRenders: renderQueue.filter((render) => render.status === "failed_recoverable"),
     controlledRenders: getControlledMediaRuns(),
     renderGovernance: await getRenderGovernanceSnapshot(),
+    liveThumbnail: await getLiveThumbnailDashboard(),
     observability: {
       mode: "mock_safe",
       liveRendering: "blocked",

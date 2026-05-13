@@ -67,6 +67,9 @@ These command-center routes are API-ready mock frontend surfaces. They do not en
 | `GET /api/media/controlled-render` | Controlled rendering governance, quotas, provider status, and recent render packets | Authenticated, no live rendering |
 | `POST /api/media/controlled-render` | Prepare approval-gated controlled render packets | Admin/operator, no GPU/FFmpeg/ComfyUI execution |
 | `POST /api/media/controlled-render/shutdown` | Engage controlled rendering shutdown/rollback marker | Admin/operator, no live render cancellation required |
+| `GET /api/media/live-thumbnail-render` | Governed live thumbnail readiness, queue, budget, rollback, and recent run dashboard | Authenticated, thumbnail-only |
+| `POST /api/media/live-thumbnail-render` | Execute the first governed live thumbnail render through the controlled local worker | Admin/operator, approval-gated, thumbnail-only, no publishing/video/autonomous retry |
+| `POST /api/media/live-thumbnail-render/control` | Disable, quarantine, drain queue, rollback to dry-run, or plan failed-render recovery | Admin/operator, no autonomous retry |
 
 ## Platform Operations API Routes
 

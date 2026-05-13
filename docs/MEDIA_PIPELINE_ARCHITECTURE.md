@@ -84,6 +84,43 @@ Controlled rendering requires:
 
 Even when these checks are modeled, this slice still produces sandbox execution packets only. It does not call ComfyUI, spawn FFmpeg, run a GPU job, write binary assets, generate unrestricted video, publish, retry autonomously, or mutate workflows.
 
+## First Governed Live Thumbnail Rendering
+
+The first live creative production capability is a single-purpose thumbnail renderer. It uses only the controlled `local_worker` provider and only the Content Department `live_thumbnail_rendering` workflow.
+
+Mandatory gates:
+
+- `ALLOW_CONTROLLED_MEDIA_EXECUTION=true`
+- `ALLOW_LIVE_THUMBNAIL_RENDERING=true`
+- `LIVE_MEDIA_ACTIVATION_STAGE >= 1`
+- `LIVE_THUMBNAIL_RENDER_STAGE >= 1`
+- `THUMBNAIL_RENDER_PROVIDER=local_worker`
+- `LOCAL_WORKER_BASE_URL` and `LOCAL_WORKER_SHARED_SECRET` configured outside git
+- verified approved `media_render` or `thumbnail_render` approval ID
+- render kill switches and emergency stop off
+- provider not quarantined
+- budget, GPU-minute, timeout, concurrency, and queue-depth checks pass
+- asset validation and render scoring accept the request
+
+Live endpoint:
+
+- `GET /api/media/live-thumbnail-render`
+- `POST /api/media/live-thumbnail-render`
+- `POST /api/media/live-thumbnail-render/control`
+
+The worker contract is intentionally narrow: Folqen posts a thumbnail-only render request to `/api/folqen/render/thumbnail` on the configured local worker with the shared secret header. The worker must return a validated JSON object with an asset URL, MIME type, dimensions, optional checksum, optional trace ID, and timing metadata.
+
+Live thumbnail rendering does not enable ComfyUI directly, FFmpeg directly, unrestricted GPU execution, video generation, autonomous retries, public publishing, platform APIs, workflow mutation, or prompt mutation.
+
+Rollback controls:
+
+- disable live thumbnail rendering at runtime
+- rollback to dry-run
+- queue drain marker
+- quarantine the worker provider
+- isolate failed asset metadata
+- plan failed render recovery without autonomous retry
+
 ## Persistence
 
 No database migration is required in this slice.
@@ -94,6 +131,7 @@ The system uses existing models:
 - `Render`: render plan, logs, dry-run status, and provider metadata.
 - `EventLog`: media pipeline events.
 - `AuditLog`: media pipeline and retry audit records.
+- `ErrorLog`: failed live thumbnail render isolation records.
 
 ## API Surface
 
@@ -105,6 +143,9 @@ The system uses existing models:
 - `GET /api/media/controlled-render`
 - `POST /api/media/controlled-render`
 - `POST /api/media/controlled-render/shutdown`
+- `GET /api/media/live-thumbnail-render`
+- `POST /api/media/live-thumbnail-render`
+- `POST /api/media/live-thumbnail-render/control`
 
 All mutations are admin/operator only, rate-limited, same-origin checked, and marked with the Folqen mutation header.
 
