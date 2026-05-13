@@ -18,9 +18,9 @@
 
 - `eslint .`: passed.
 - `tsc --noEmit`: passed.
-- `tsx --test "src/**/*.test.ts"`: passed, 150 tests.
+- `tsx --test "src/**/*.test.ts"`: passed, 151 tests.
 - `prisma generate && next build`: passed on Next.js `16.2.6`.
-- Vercel preview redeploy and authenticated `/dashboard` preview smoke are the next deployment steps.
+- Initial Vercel preview redeploy and authenticated `/dashboard` preview smoke passed; final preview redeploy is pending for the diagnostics-readiness adjustment.
 
 ## May 13, 2026 - Browser Operations Department and Safe Preview Deployment
 

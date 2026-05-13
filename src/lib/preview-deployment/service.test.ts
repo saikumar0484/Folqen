@@ -55,4 +55,31 @@ describe("preview deployment governance", () => {
     assert.equal(dashboard.status, "Blocked");
     assert.ok(dashboard.summary.blocked >= 6);
   });
+
+  it("allows preview demo auth instead of a preview database", () => {
+    const dashboard = getPreviewDeploymentDashboard({
+      FOLQEN_RUNTIME_PROFILE: "preview",
+      PREVIEW_SAFE_MODE: "true",
+      PREVIEW_DEMO_AUTH: "true",
+      PREVIEW_FORCE_DRY_RUN: "true",
+      ALLOW_PUBLIC_PUBLISH: "false",
+      ALLOW_PAID_TOOLS: "false",
+      ALLOW_BROWSER_AUTOMATION: "false",
+      ORCHESTRATION_EXECUTION_MODE: "mock",
+      ORCHESTRATION_WORKER_ENABLED: "false",
+      ALLOW_LIVE_AI_EXECUTION: "false",
+      LIVE_AI_ACTIVATION_STAGE: "0",
+      ALLOW_CONTROLLED_MEDIA_EXECUTION: "false",
+      ALLOW_LIVE_THUMBNAIL_RENDERING: "false",
+      LIVE_MEDIA_ACTIVATION_STAGE: "0",
+      LIVE_THUMBNAIL_RENDER_STAGE: "0",
+      BROWSER_OPERATIONS_SANDBOX_MODE: "true",
+      BROWSER_OPERATIONS_KILL_SWITCH: "false",
+      AUTH_SECRET: "preview-secret-that-is-long-enough",
+    } as unknown as NodeJS.ProcessEnv);
+
+    assert.equal(dashboard.status, "Configured");
+    assert.equal(dashboard.summary.warnings, 0);
+    assert.ok(dashboard.requiredEnv.includes("DATABASE_URL or PREVIEW_DEMO_AUTH=true"));
+  });
 });
