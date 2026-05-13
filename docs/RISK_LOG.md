@@ -2,6 +2,30 @@
 
 ## Current Risks
 
+### AI Provider Gateway live execution must stay blocked
+
+- Risk: Provider gateway infrastructure could be mistaken for permission to call OpenRouter, Gemini, Claude, OpenAI-compatible endpoints, or local/Ollama models.
+- Prevention: Providers default to `Mock`, `Not connected`, `Configured`, or `Blocked`; `liveExecutionEnabled` remains `false` for every adapter; APIs force `dryRun` and `sandbox`; the UI labels live provider execution as blocked.
+- Verification: AI gateway tests assert all providers have live execution disabled and that the runtime queues mock-safe jobs only. Full verification must include lint, typecheck, tests, build, and reviewing `/tools` status labels.
+- Rollback: Revert `src/lib/ai-gateway/*`, `/api/ai-gateway/*`, the `/tools` panel integration, and the `folqen.ai.*` queue names if runtime behavior becomes unsafe.
+- Human approval trigger: Any change that sends prompts to a provider, reads provider credentials for execution, enables a local model call, changes `liveExecutionEnabled` to `true`, raises concurrency above zero for non-mock providers, or permits fallback routing to bypass governance.
+
+### AI provider budget and retry controls are planning-only
+
+- Risk: Future retries or fallback chains could accidentally spend money or retry indefinitely if real providers are enabled without strict budget enforcement.
+- Prevention: Current retries are mock queue plans only, paid providers are blocked, department/monthly budgets are estimated before execution, retry policy is capped, and governance remains required.
+- Verification: Tests cover budget blocking above department budget and dry-run retry output. Future live work must add integration tests that simulate quota exhaustion, fallback failure, timeout, and approval denial.
+- Rollback: Disable `/api/ai-gateway/execute` and `/api/ai-gateway/retry` routes or force provider selection to `mock` if any uncontrolled execution path appears.
+- Human approval trigger: Any live retry, live fallback provider, paid quota increase, budget threshold change, or provider-specific rate/concurrency setting.
+
+### AI response validation is not a substitute for editorial review
+
+- Risk: Mock validation can catch malformed/unsafe markers, but it does not prove factual accuracy, copyright safety, or platform policy compliance.
+- Prevention: Validation returns warnings/failures only; content remains draft-only and public use still requires human review, safety review, copyright clearance, and publishing guards.
+- Verification: Tests cover unsafe and malformed output detection. Future live model output must add source-grounding checks, editorial review state, and platform-specific policy checks.
+- Rollback: Treat validation failures as blocking, and require manual review for all provider-generated artifacts.
+- Human approval trigger: Any change that uses AI gateway output directly in public content, metadata, publishing, rendering, or account automation.
+
 ### Governance approvals mistaken for live execution permission
 
 - Risk: A future service or user may treat an approval record as enough to execute publishing, provider calls, workflow automation, account access, or media rendering.

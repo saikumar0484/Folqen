@@ -2,13 +2,13 @@
 
 ## Current Phase
 
-Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, all required authenticated routes now have route-specific surfaces, manual posting package detail/download is deployed, file registration is deployed, safe mock-agent draft creation is deployed, provider setup surfaces for Google Drive, OpenAI, n8n, and media tools are deployed, admin-only provider setup approval requests are implemented, the target autonomous organization architecture is documented, the operational command center frontend is implemented, the mock-safe multi-agent orchestration infrastructure is implemented, the first Research + Content intelligence layer is implemented, the Organizational Memory & Reflection Intelligence layer is implemented, the Media Generation & Asset Pipeline layer is implemented, the Platform Operations & Publishing Infrastructure layer is implemented, and the Governance Approval & Safety Control layer is implemented.
+Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, all required authenticated routes now have route-specific surfaces, manual posting package detail/download is deployed, file registration is deployed, safe mock-agent draft creation is deployed, provider setup surfaces for Google Drive, OpenAI, n8n, and media tools are deployed, admin-only provider setup approval requests are implemented, the target autonomous organization architecture is documented, the operational command center frontend is implemented, the mock-safe multi-agent orchestration infrastructure is implemented, the first Research + Content intelligence layer is implemented, the Organizational Memory & Reflection Intelligence layer is implemented, the Media Generation & Asset Pipeline layer is implemented, the Platform Operations & Publishing Infrastructure layer is implemented, the Governance Approval & Safety Control layer is implemented, and the AI Provider Gateway & Execution Runtime is implemented.
 
 ## Current Save Point
 
-May 12, 2026. Latest completed slice is the Governance Approval & Safety Control update. Folqen now has a mock-safe governance policy engine, governance/sandbox queues, approval request/action flows, sandbox simulation, cost/provider governance, protected `/api/governance/*` routes, and live mock-safe controls on `/approvals`. No credentials, live migration application, production env, paid tools, provider activation, live embeddings, GPU execution, live ComfyUI execution, FFmpeg rendering, platform account access, analytics API read, scraping, public publishing, n8n execution, or binary storage write was enabled.
+May 13, 2026. Latest completed slice is the AI Provider Gateway & Execution Runtime update. Folqen now has a mock-safe provider gateway with provider adapters for mock, OpenRouter, Gemini, Claude, OpenAI-compatible APIs, and local/Ollama; LangGraph dry-run execution; fallback routing; budget governance; response validation; queue metadata; protected `/api/ai-gateway/*` routes; and live mock-safe controls on `/tools`. No credentials, live migration application, production env, paid tools, provider activation, live provider execution, live embeddings, GPU execution, live ComfyUI execution, FFmpeg rendering, platform account access, analytics API read, scraping, public publishing, n8n execution, or binary storage write was enabled.
 
-Latest feature commit for this slice: `4485e0d`.
+Latest feature commit for this slice: pending until this checkpoint is committed.
 
 ## Branch
 
@@ -22,6 +22,11 @@ Latest feature commit for this slice: `4485e0d`.
 - Added `docs/MEDIA_PIPELINE_ARCHITECTURE.md`.
 - Added `docs/PLATFORM_OPERATIONS_ARCHITECTURE.md`.
 - Added `docs/GOVERNANCE_SAFETY_ARCHITECTURE.md`.
+- Added `docs/AI_PROVIDER_GATEWAY_ARCHITECTURE.md`.
+- Added `src/lib/ai-gateway/*` for provider profiles, fallback routing, token/cost estimates, budget gates, response validation, LangGraph dry-run runtime flow, execution/retry service, dashboard read model, access checks, and tests.
+- Added `/api/ai-gateway/overview`, `/api/ai-gateway/providers`, `/api/ai-gateway/execute`, and `/api/ai-gateway/retry`.
+- Added `folqen.ai.runtime` and `folqen.ai.retry` to the orchestration queue registry.
+- Added live mock-safe AI Provider Gateway controls to `/tools`.
 - Added `src/lib/governance/*` for execution policy engine, action registry, role/permission matrix, approval workflow service, sandbox simulation, cost governance, provider governance, dashboard read model, access checks, and tests.
 - Added `/api/governance/overview`, `/api/governance/policy/evaluate`, `/api/governance/approvals/request`, `/api/governance/approvals/action`, and `/api/governance/sandbox`.
 - Added `folqen.governance` and `folqen.sandbox` to the orchestration queue registry.
@@ -66,6 +71,7 @@ Latest feature commit for this slice: `4485e0d`.
 - Latest verification after the Media Generation & Asset Pipeline layer: direct `eslint .` passed, direct `tsc --noEmit` passed, direct `tsx --test "src/**/*.test.ts"` passed with 80 tests, direct `prisma generate` plus `next build` passed on Next.js `16.2.6`, and `npm audit --audit-level=moderate` still reports the known nested Next/PostCSS moderate advisory.
 - Latest verification after the Platform Operations & Publishing Infrastructure layer: direct `eslint .` passed, direct `tsc --noEmit` passed, direct `tsx --test "src/**/*.test.ts"` passed with 88 tests, direct `prisma generate` plus `next build` passed on Next.js `16.2.6`, and `npm audit --audit-level=moderate` still reports the known nested Next/PostCSS moderate advisory.
 - Latest verification after the Governance Approval & Safety Control layer: direct `eslint .` passed, direct `tsc --noEmit` passed, direct `tsx --test "src/**/*.test.ts"` passed with 97 tests, direct `prisma generate` plus `next build` passed on Next.js `16.2.6`, and `npm audit --audit-level=moderate` still reports the known nested Next/PostCSS moderate advisory.
+- Latest verification after the AI Provider Gateway & Execution Runtime layer: direct `eslint .` passed, direct `tsc --noEmit` passed, direct `tsx --test "src/**/*.test.ts"` passed with 104 tests, direct `prisma generate` plus `next build` passed on Next.js `16.2.6`, focused AI gateway tests passed, local `/login` browser smoke passed with no console errors, and `npm audit --audit-level=moderate` still reports the known nested Next/PostCSS moderate advisory.
 - Added database-backed pipeline and library pages using existing Supabase records.
 - Added database-backed platforms and tools pages using existing Supabase records and runtime integration status.
 - Added database-backed notifications, analytics, errors, workflows, and upgrades pages using existing Supabase records.

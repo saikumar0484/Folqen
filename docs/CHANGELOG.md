@@ -1,5 +1,32 @@
 # Changelog
 
+## May 13, 2026 - AI Provider Gateway and Execution Runtime
+
+### Added
+
+- Added `src/lib/ai-gateway/*` with provider profiles, provider routing, fallback chains, token/cost estimation, budget and quota gates, response validation, LangGraph dry-run runtime flow, execution service, retry planning, dashboard read model, access helpers, and tests.
+- Added mock-safe provider infrastructure for Folqen Mock Runtime, OpenRouter, Gemini, Claude, OpenAI-compatible APIs, and local/Ollama-ready endpoints.
+- Added `folqen.ai.runtime` and `folqen.ai.retry` to the BullMQ orchestration queue registry.
+- Added protected `/api/ai-gateway/overview`, `/api/ai-gateway/providers`, `/api/ai-gateway/execute`, and `/api/ai-gateway/retry`.
+- Added an AI Provider Gateway panel to `/tools` with provider health, runtime simulation, execution traces, queue health, response validation, token/cost monitoring, and explicit status labels.
+- Added `docs/AI_PROVIDER_GATEWAY_ARCHITECTURE.md`.
+
+### Safety
+
+- No schema migration was added; runtime persistence uses existing `WorkflowRun`, `AnalyticsRecord`, `EventLog`, and `AuditLog` where available.
+- No OpenRouter, Gemini, Claude, OpenAI-compatible, Ollama/local, paid provider, credential, live model, or network provider call was enabled.
+- Provider credentials alone do not enable execution. Future live adapters must pass governance approval, budget checks, rate/concurrency limits, response validation, and audit logging immediately before every request.
+
+### Verification
+
+- Direct local `tsc --noEmit`: passed.
+- Direct local `tsx --test "src/lib/ai-gateway/**/*.test.ts"`: passed, 7 focused AI gateway tests.
+- Direct local `eslint .`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 104 tests.
+- Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`.
+- `npm audit --audit-level=moderate` still reports the known nested Next/PostCSS moderate advisory; no unsafe forced fix was applied.
+- Local in-app browser smoke for `/login`: passed with no browser console errors.
+
 ## May 12, 2026 - Governance Approval and Safety Control layer
 
 ### Added

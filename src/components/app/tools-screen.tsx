@@ -1,21 +1,26 @@
 import { Cpu, Gauge, LockKeyhole, PlugZap, Wrench } from "lucide-react";
 import { PageHeader } from "@/components/app/page-header";
+import { AiGatewayPanel } from "@/components/command-center/ai-gateway-panel";
 import { StatCard } from "@/components/app/stat-card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { routeById } from "@/lib/app-routes";
+import type { getAiGatewayDashboard } from "@/lib/ai-gateway/service";
 import type { getToolsData } from "@/lib/tools-data";
 
 type ToolsData = Awaited<ReturnType<typeof getToolsData>>;
+type AiGatewayDashboard = Awaited<ReturnType<typeof getAiGatewayDashboard>>;
 
 function statusTone(status: string) {
   if (status === "configured" || status === "live") return "safe" as const;
   return "warning" as const;
 }
 
-export function ToolsScreen({ data }: { data: ToolsData }) {
+export function ToolsScreen({ data, aiGateway }: { data: ToolsData; aiGateway: AiGatewayDashboard }) {
   return (
     <div className="space-y-5 pb-24">
       <PageHeader route={routeById.tools} />
+
+      <AiGatewayPanel dashboard={aiGateway} />
 
       <section className="grid gap-3 md:grid-cols-3">
         {data.stats.map((stat) => (

@@ -15,6 +15,8 @@ export const ORCHESTRATION_QUEUES = {
   publishingRetry: "folqen.publishing.retry",
   governance: "folqen.governance",
   sandbox: "folqen.sandbox",
+  aiRuntime: "folqen.ai.runtime",
+  aiRetry: "folqen.ai.retry",
   monitoring: "folqen.monitoring",
 } as const;
 
