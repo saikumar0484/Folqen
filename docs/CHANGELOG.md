@@ -1,5 +1,36 @@
 # Changelog
 
+## May 13, 2026 - Repository Audit and Bloat Reduction
+
+### Added
+
+- Added `docs/REPOSITORY_AUDIT_2026-05-13.md` with dependency/reference analysis before deletion.
+- Added `/archive/review-required/` for low-risk unimported component review instead of deletion.
+
+### Removed
+
+- Removed the generated `docs/prototypes/ai-studio-generated/**` scaffold after audit proof showed no active imports or runtime references.
+- Removed unused npm packages `@hookform/resolvers` and `@radix-ui/react-dialog`.
+
+### Changed
+
+- Moved unimported legacy app components into `archive/review-required/src/components/app/`.
+- Simplified TypeScript and ESLint excludes to ignore `archive/**` instead of stale prototype/root-scaffold paths.
+
+### Safety
+
+- No active route, API, runtime, governance, deployment, auth, observability, queue, Prisma, or dashboard file was deleted.
+- No live provider, publishing, rendering, browser automation, queue worker, or workflow execution flag was enabled.
+
+### Verification
+
+- `eslint .`: passed.
+- `tsc --noEmit`: passed.
+- `tsx --test "src/**/*.test.ts"`: passed, 151 tests.
+- `prisma generate`: passed.
+- `next build`: passed on Next.js `16.2.6`; protected routes and APIs remained in build output.
+- Local preview-demo auth smoke: `/dashboard`, `/audit`, `/browser-operations`, `/infrastructure`, `/api/auth/me`, `/api/deployment/preview`, and `/api/browser-ops/overview` returned `200` after login.
+
 ## May 13, 2026 - Preview Demo Auth for Safe Dashboard Access
 
 ### Added

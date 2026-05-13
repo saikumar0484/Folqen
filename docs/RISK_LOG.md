@@ -586,13 +586,13 @@
 - Rollback: Rotate the user password directly in Supabase or reseed with a new hash if needed.
 - Human approval trigger: Password rotation policy, account recovery decisions, or inviting additional real users.
 
-### Generated prototype files are preserved but not active
+### Repository cleanup can remove useful design context if done blindly
 
-- Risk: Prototype files under `docs/prototypes/ai-studio-generated/` may confuse future agents or TypeScript if included accidentally.
-- Prevention: `docs/prototypes/**` is excluded from active TypeScript compilation.
-- Verification: `npm run typecheck` and `npm run build` pass.
-- Rollback: Delete or archive the prototype folder after human approval if it is no longer needed.
-- Human approval trigger: Replacing active Folqen UI with prototype code.
+- Risk: Cleanup may remove old prototype/design files or legacy components that still contain useful design context for future UI work.
+- Prevention: A repository audit report was created before deletion. Only generated prototype scaffold files were deleted, while unimported active-tree components were moved to `archive/review-required/` instead of deleted.
+- Verification: Run lint, typecheck, tests, Prisma generate, and build after cleanup.
+- Rollback: Restore deleted prototype files from git history if a future design comparison is needed; restore archived components from `archive/review-required/` if they become useful again.
+- Human approval trigger: Any future deletion of architecture docs, governance/runtime systems, active routes, active services, deployment files, Prisma files, or archived review-required components.
 
 ### Real deployment requires secret handling
 
