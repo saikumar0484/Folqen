@@ -1,5 +1,33 @@
 # Changelog
 
+## May 13, 2026 - Production Governance & Trace Verification Hardening
+
+### Added
+
+- Expanded the operations trace read model with approval lifecycle summaries, approval verification indicators, rollback eligibility, operational correlations, trace integrity checks, production diagnostics, and pagination metadata.
+- Added protected `GET /api/operations/diagnostics` for read-only deployment/auth/database/queue/provider/governance diagnostics plus trace integrity status.
+- Added protected `GET /api/governance/approvals/read-model` for read-only approval lifecycle and verification data.
+- Upgraded `/audit` with approval timeline cards, trace integrity validation, production diagnostics, operational correlation graph, searchable/filterable trace explorer, and paginated trace loading.
+- Updated the route map so `/audit` is marked as a configured operational reliability surface instead of a mock audit placeholder.
+- Added tests for sensitive text redaction, approval lifecycle read models, and trace integrity detection for orphan workflows, approval mismatches, and queue failures.
+
+### Safety
+
+- This is still read-only governance hardening. No provider activation, live AI execution, publishing, rendering, queue mutation, workflow mutation, autonomous retry, platform access, n8n execution, or paid execution was enabled.
+- Diagnostics expose only status and evidence labels, never secret values.
+- Trace summaries redact secret-like text and metadata rendering still exposes only safe key names.
+- The new diagnostics and approval read-model APIs require authenticated access.
+
+### Verification
+
+- Direct local `eslint .`: passed.
+- Direct local `tsc --noEmit`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 129 tests.
+- Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`; `/api/operations/diagnostics` and `/api/governance/approvals/read-model` are included in the build output.
+- Unauthenticated checks for `/api/operations/diagnostics` and `/api/governance/approvals/read-model` returned `401`.
+- Local browser smoke loaded `/login` with no console errors. Authenticated `/audit` browser smoke still cannot be completed in this local environment because no `.env` with `AUTH_SECRET` and `DATABASE_URL` is present.
+- `npm audit --audit-level=moderate` still reports the known nested Next/PostCSS moderate advisory; no unsafe forced fix was applied.
+
 ## May 13, 2026 - Governed Operations Trace Center
 
 ### Added

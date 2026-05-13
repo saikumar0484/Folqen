@@ -2,6 +2,30 @@
 
 ## Current Risks
 
+### Production diagnostics could be misread as activation readiness
+
+- Risk: Deployment, auth, database, queue, provider, and governance diagnostics may look like Folqen is safe to execute live workflows when they are only operational readiness signals.
+- Prevention: `/audit` labels diagnostics as read-only and safe-action guidance. Provider diagnostics return `Needs approval` or `Not connected` instead of live-ready permission, and no mutation buttons were added.
+- Verification: The diagnostics routes are protected, build output includes them as dynamic server routes, unauthenticated checks return `401`, and tests verify trace integrity without enabling execution.
+- Rollback: Hide the diagnostics panel or disable `GET /api/operations/diagnostics` if operators confuse diagnostics with execution controls.
+- Human approval trigger: Any change that lets diagnostics activate providers, release kill switches, mutate queues, approve actions, render media, publish content, or spend money.
+
+### Trace integrity checks can create false positives
+
+- Risk: Current integrity checks operate on a bounded read window and may flag missing audit/event/error links when the linked record exists outside the query window or in future normalized tables.
+- Prevention: Issues are shown as review prompts only, not automatic rollback/retry/mutation instructions. The UI says integrity issues are diagnostics, and no autonomous retry or workflow mutation is attached.
+- Verification: Unit tests cover orphan workflow, queue mismatch, and approval mismatch detection. Full lint, typecheck, tests, build, and browser smoke passed.
+- Rollback: Increase query windows, tune issue rules, or temporarily hide noisy integrity checks while preserving raw read-only trace access.
+- Human approval trigger: Any request to auto-resolve, auto-retry, auto-rollback, auto-escalate, or auto-mutate workflows based on integrity findings.
+
+### Approval lifecycle read models may not be complete enough for legal/compliance use
+
+- Risk: Approval timelines are derived from current Approval, AuditLog, WorkflowRun, and ErrorLog rows. They are useful operationally but are not a legally hardened immutable ledger.
+- Prevention: Labels remain operational and read-only; raw decision execution still depends on existing approval APIs and audit logs. Future compliance-grade ledgers require reviewed schema/RLS work.
+- Verification: Tests cover lifecycle construction, verification status, rollback eligibility, and metadata redaction.
+- Rollback: Revert `GET /api/governance/approvals/read-model` and the approval lifecycle panel if the read model causes confusion.
+- Human approval trigger: Adding compliance/legal export, immutable ledger claims, raw metadata export, or schema/RLS migrations for approval history.
+
 ### Operations trace data can expose sensitive operational metadata
 
 - Risk: A unified trace center could accidentally reveal secrets, tokens, raw payloads, prompt contents, provider details, or user-sensitive operational context if it renders metadata directly.
