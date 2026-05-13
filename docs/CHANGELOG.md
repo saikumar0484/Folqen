@@ -19,7 +19,7 @@
 ### Deployment
 
 - Production alias: `https://folqen.vercel.app`
-- Deployment inspect URL: `https://vercel.com/rayalasai874-4182s-projects/folqen/HDjQ9gYDyibaYDXihcL2MXEVNJXs`
+- Deployment inspect URL: `https://vercel.com/rayalasai874-4182s-projects/folqen/BaNd96rKJWhjJxRxXB6SFwr6Da2H`
 - Temporary share URL (expires in 23h): `https://folqen.vercel.app/?_vercel_share=DWi8D4fTLwvKLSEqXNEKcdG5zqsXI2tF`
 
 ### Safety
