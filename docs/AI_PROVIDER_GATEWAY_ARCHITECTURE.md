@@ -104,3 +104,19 @@ A future live provider adapter must verify all of these immediately before execu
 8. Fallback routing cannot bypass approval or budget checks.
 
 No future provider should be called directly from a department service.
+
+## Controlled Activation Extension
+
+The controlled activation layer now lives in `src/lib/live-execution/*` and is documented in `docs/CONTROLLED_LIVE_EXECUTION_ARCHITECTURE.md`.
+
+The AI gateway remains the provider abstraction and validation layer, while live activation is responsible for:
+
+- stage gates
+- approval verification
+- provider enable/disable state
+- kill switch and emergency stop
+- quotas and budget ceilings
+- rollback/quarantine controls
+- limiting the first target to Gemini, Research Department, structured content ideation
+
+Departments still must not call provider adapters directly.

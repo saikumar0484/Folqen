@@ -1,5 +1,32 @@
 # Changelog
 
+## May 13, 2026 - Controlled Live Execution Activation Layer
+
+### Added
+
+- Added `src/lib/live-execution/*` with staged activation, first-target config, runtime quotas, readiness gates, Gemini-only live adapter, activation requests, sandbox promotion evaluation, controlled live execution, emergency stop, provider disable/quarantine/rollback, dashboard read model, access helpers, and tests.
+- Added protected `/api/live-execution/overview`, `/api/live-execution/activation/request`, `/api/live-execution/promote`, `/api/live-execution/execute`, `/api/live-execution/emergency-stop`, and `/api/live-execution/provider/action`.
+- Added live activation controls to `/tools`: activation stages, first-target status, readiness reasons, gated live test, emergency stop, budget monitor, rollback state, and recent controlled run traces.
+- Added env placeholders and validation for `ALLOW_LIVE_AI_EXECUTION`, `LIVE_AI_ACTIVATION_STAGE`, `AI_RUNTIME_KILL_SWITCH`, and `AI_RUNTIME_EMERGENCY_STOP`.
+- Added `docs/CONTROLLED_LIVE_EXECUTION_ARCHITECTURE.md`.
+
+### Safety
+
+- Providers remain off by default.
+- The only implemented live adapter is Gemini for Research Department structured content ideation.
+- Live execution is blocked unless the env flag, activation stage, credential, approval ID, sandbox pass, quota, budget, governance, and kill-switch gates all pass.
+- No schema migration, production deployment, credential change, real provider call, paid execution, public publishing, rendering, n8n execution, or platform account access was performed.
+
+### Verification
+
+- Direct local `tsc --noEmit`: passed.
+- Direct local `tsx --test "src/lib/live-execution/**/*.test.ts"`: passed, 8 focused live activation tests.
+- Direct local `eslint .`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 112 tests.
+- Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`.
+- `npm audit --audit-level=moderate` still reports the known nested Next/PostCSS moderate advisory; no unsafe forced fix was applied.
+- Local in-app browser smoke for `/login`: passed with no browser console errors.
+
 ## May 13, 2026 - AI Provider Gateway and Execution Runtime
 
 ### Added

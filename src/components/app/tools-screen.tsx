@@ -5,22 +5,24 @@ import { StatCard } from "@/components/app/stat-card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { routeById } from "@/lib/app-routes";
 import type { getAiGatewayDashboard } from "@/lib/ai-gateway/service";
+import type { getLiveExecutionDashboard } from "@/lib/live-execution/service";
 import type { getToolsData } from "@/lib/tools-data";
 
 type ToolsData = Awaited<ReturnType<typeof getToolsData>>;
 type AiGatewayDashboard = Awaited<ReturnType<typeof getAiGatewayDashboard>>;
+type LiveExecutionDashboard = Awaited<ReturnType<typeof getLiveExecutionDashboard>>;
 
 function statusTone(status: string) {
   if (status === "configured" || status === "live") return "safe" as const;
   return "warning" as const;
 }
 
-export function ToolsScreen({ data, aiGateway }: { data: ToolsData; aiGateway: AiGatewayDashboard }) {
+export function ToolsScreen({ data, aiGateway, liveExecution }: { data: ToolsData; aiGateway: AiGatewayDashboard; liveExecution: LiveExecutionDashboard }) {
   return (
     <div className="space-y-5 pb-24">
       <PageHeader route={routeById.tools} />
 
-      <AiGatewayPanel dashboard={aiGateway} />
+      <AiGatewayPanel dashboard={aiGateway} liveExecution={liveExecution} />
 
       <section className="grid gap-3 md:grid-cols-3">
         {data.stats.map((stat) => (

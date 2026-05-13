@@ -2,6 +2,30 @@
 
 ## Current Risks
 
+### Controlled live execution can spend money or leak prompts if gates are weakened
+
+- Risk: The new activation layer contains a real Gemini adapter, so weakening readiness checks could send prompts to a live provider or spend quota unexpectedly.
+- Prevention: Live execution is blocked unless `ALLOW_LIVE_AI_EXECUTION=true`, activation stage is at least `1`, Gemini credentials exist, approved activation ID is supplied, sandbox promotion passed, quotas/budgets pass, governance permits execution, and kill switches are off.
+- Verification: Focused live-execution tests assert default readiness blocks, non-target providers/departments block, promotion blocks without env/credentials, and controlled execution does not call providers by default.
+- Rollback: Engage emergency stop, disable/quarantine Gemini, set `AI_RUNTIME_KILL_SWITCH=true`, set `ALLOW_LIVE_AI_EXECUTION=false`, set `LIVE_AI_ACTIVATION_STAGE=0`, and revert `src/lib/live-execution`, `/api/live-execution`, and the Tools activation panel if needed.
+- Human approval trigger: Any real Gemini credential setup, any stage promotion above Stage 0, any production env change enabling live AI execution, or any request to run a real provider call.
+
+### Activation state is currently lightweight and should be persisted before production live use
+
+- Risk: Current activation registry uses in-memory/read-model state with existing audit/approval/event metadata; a server restart could reset activation state.
+- Prevention: This is acceptable while live execution remains blocked by env defaults. Before real activation, persist activation records through existing `Setting` or a reviewed migration with RLS.
+- Verification: Check that default env flags are false and that live requests still block after restart unless all gates are configured.
+- Rollback: Keep Stage 0 mock-only and do not provide live provider credentials until persisted state exists.
+- Human approval trigger: Adding activation tables/migrations, writing production activation settings, or using activation state for real provider execution.
+
+### Emergency controls must remain faster than execution expansion
+
+- Risk: Future workers or queues could keep processing after a provider should be disabled.
+- Prevention: Emergency stop updates provider state, queues rollback metadata, forces dry-run state, and documents kill-switch env flags. Future live workers must check kill-switch state before each job and between retries.
+- Verification: Tests cover emergency stop and provider rollback actions. Future Redis live-mode tests must verify queue draining/cancellation semantics before any live rollout.
+- Rollback: Engage emergency stop and force queue workers off through existing orchestration env flags.
+- Human approval trigger: Enabling live Redis workers, queue draining against production, or any automatic retry after a live provider failure.
+
 ### AI Provider Gateway live execution must stay blocked
 
 - Risk: Provider gateway infrastructure could be mistaken for permission to call OpenRouter, Gemini, Claude, OpenAI-compatible endpoints, or local/Ollama models.

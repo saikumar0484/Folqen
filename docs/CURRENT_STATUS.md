@@ -2,9 +2,9 @@
 
 ## Phase
 
-Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, every required authenticated route now has a route-specific or database-backed surface, the autonomous organization target architecture is documented, the operational command center frontend is implemented, the mock-safe multi-agent orchestration infrastructure is implemented, the first Research + Content operational intelligence layer is implemented, the Organizational Memory & Reflection Intelligence layer is implemented, the Media Generation & Asset Pipeline layer is implemented, the Platform Operations & Publishing Infrastructure layer is implemented, the Governance Approval & Safety Control layer is implemented, and the AI Provider Gateway & Execution Runtime is implemented on branch `build/phase-0-foundation`.
+Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, every required authenticated route now has a route-specific or database-backed surface, the autonomous organization target architecture is documented, the operational command center frontend is implemented, the mock-safe multi-agent orchestration infrastructure is implemented, the first Research + Content operational intelligence layer is implemented, the Organizational Memory & Reflection Intelligence layer is implemented, the Media Generation & Asset Pipeline layer is implemented, the Platform Operations & Publishing Infrastructure layer is implemented, the Governance Approval & Safety Control layer is implemented, the AI Provider Gateway & Execution Runtime is implemented, and the Controlled Live Execution Activation Layer is implemented on branch `build/phase-0-foundation`.
 
-Latest save point: May 13, 2026, after building the AI Provider Gateway & Execution Runtime. This was a backend/UI mock-safe implementation phase; no credentials, production database migration application, production settings, paid tools, provider connections, provider activation, live embeddings, GPU execution, live ComfyUI execution, FFmpeg rendering, platform account access, analytics API read, scraping, public publishing, or n8n execution were enabled.
+Latest save point: May 13, 2026, after building the Controlled Live Execution Activation Layer. This was a provider safety/control implementation phase; no credentials, production database migration application, production settings, paid tools, provider activation in production, live embeddings, GPU execution, live ComfyUI execution, FFmpeg rendering, platform account access, analytics API read, scraping, public publishing, or n8n execution were enabled.
 
 ## Completed Work
 
@@ -20,6 +20,8 @@ Latest save point: May 13, 2026, after building the AI Provider Gateway & Execut
 - Added `docs/GOVERNANCE_SAFETY_ARCHITECTURE.md`.
 - Added the AI Provider Gateway & Execution Runtime with provider adapters for mock, OpenRouter, Gemini, Claude, OpenAI-compatible APIs, and local/Ollama; LangGraph dry-run execution flow; fallback routing; budget and quota checks; response validation; runtime tracing; protected `/api/ai-gateway/*` routes; and a provider runtime panel on `/tools`.
 - Added `docs/AI_PROVIDER_GATEWAY_ARCHITECTURE.md`.
+- Added the Controlled Live Execution Activation Layer with staged activation records, first-target Gemini/Research/content-ideation limits, provider activation requests, sandbox-to-live promotion evaluation, strict quota/budget checks, runtime kill switch, emergency shutdown, provider disable/quarantine/rollback controls, protected `/api/live-execution/*` routes, and live activation controls on `/tools`.
+- Added `docs/CONTROLLED_LIVE_EXECUTION_ARCHITECTURE.md`.
 - Added the real Folqen orchestration layer shape with typed agent registry, hierarchy/departments, task orchestration service, event bus, Redis/BullMQ adapters, LangGraph dry-run flow, CrewAI-compatible coordination plan, incident recovery, monitoring hooks, memory hooks, protected APIs, and a worker entrypoint.
 - Added Redis to Docker Compose and orchestration environment defaults while keeping execution mock-safe by default.
 - Added `docs/ORCHESTRATION_ARCHITECTURE.md`.
@@ -115,7 +117,7 @@ Latest save point: May 13, 2026, after building the AI Provider Gateway & Execut
 
 ## App Status
 
-The app installs, lints, typechecks, tests, validates Prisma schema, builds successfully, deploys to Vercel, connects to Supabase, supports seeded database-backed login, has route-specific authenticated pages for dashboard, agents, departments, workflows, research intelligence, content studio, analytics, organizational memory, automations, incident center, infrastructure, settings, and the earlier MVP surfaces, and now exposes mock-safe orchestration, intelligence, memory, media, platform-operations, governance, and AI provider gateway APIs.
+The app installs, lints, typechecks, tests, validates Prisma schema, builds successfully, deploys to Vercel, connects to Supabase, supports seeded database-backed login, has route-specific authenticated pages for dashboard, agents, departments, workflows, research intelligence, content studio, analytics, organizational memory, automations, incident center, infrastructure, settings, and the earlier MVP surfaces, and now exposes orchestration, intelligence, memory, media, platform-operations, governance, AI provider gateway, and controlled live activation APIs.
 
 ## Safety Status
 
@@ -134,6 +136,7 @@ The app installs, lints, typechecks, tests, validates Prisma schema, builds succ
 - Platform operations and publishing workflows are dry-run only; no platform account access, credential use, n8n execution, browser automation, scraping, analytics API read, scheduling against real accounts, monetization account access, or public publishing is enabled.
 - Governance policies, approvals, and sandbox simulations are dry-run control infrastructure only; they do not activate providers, publish, run live workflows, access accounts, spend money, or execute media rendering.
 - AI provider gateway execution is mock-safe only; OpenRouter, Gemini, Claude, OpenAI-compatible, and local/Ollama adapters are status-aware placeholders and no model request, credential use, paid API call, or live local model call is executed.
+- Controlled live execution activation is implemented but blocked by default. The only live-capable code path is Gemini for Research Department structured content ideation, and it is unreachable unless `ALLOW_LIVE_AI_EXECUTION=true`, `LIVE_AI_ACTIVATION_STAGE >= 1`, server credentials, approved activation ID, sandbox promotion, budget/quota checks, governance checks, and kill-switch checks all pass.
 - Production `AUTH_SECRET` is configured in Vercel; its value was never printed or committed.
 - All integrations remain `Not connected` or `Mock`.
 - Database is the only live backend integration.
@@ -633,6 +636,23 @@ Latest May 13, 2026 AI Provider Gateway & Execution Runtime update:
 - Direct local `eslint .`: passed.
 - Direct local `tsx --test "src/**/*.test.ts"`: passed, 104 tests.
 - Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`; `/api/ai-gateway/*` routes are included in the build output.
+- `npm audit --audit-level=moderate` through the available npm CLI still reports the known nested Next/PostCSS moderate advisory; no unsafe forced fix was applied.
+- Local dev server smoke: `/login` returned 200 in the in-app browser and no browser console errors were reported. Authenticated `/tools` UI requires a configured local session/database to view interactively.
+
+Latest May 13, 2026 Controlled Live Execution Activation Layer update:
+
+- Added `src/lib/live-execution/*` with staged activation, first-target config, strict readiness gates, Gemini-only live adapter, activation requests, sandbox promotion, controlled live execution, emergency stop, provider disable/quarantine/rollback, dashboard read model, access helpers, and tests.
+- Added protected `/api/live-execution/overview`, `/api/live-execution/activation/request`, `/api/live-execution/promote`, `/api/live-execution/execute`, `/api/live-execution/emergency-stop`, and `/api/live-execution/provider/action`.
+- Added live activation controls, stage visualization, budget monitoring, readiness reasons, rollback state, and emergency stop controls to `/tools`.
+- Added env placeholders and validation for `ALLOW_LIVE_AI_EXECUTION`, `LIVE_AI_ACTIVATION_STAGE`, `AI_RUNTIME_KILL_SWITCH`, and `AI_RUNTIME_EMERGENCY_STOP`.
+- Added `docs/CONTROLLED_LIVE_EXECUTION_ARCHITECTURE.md`.
+- No schema migration was added; activation state uses in-memory fallback/read-model state and existing Approval/Audit/Event/Queue metadata when available.
+- No live provider execution was enabled by default. Gemini execution code exists but is gated behind all activation, approval, credential, budget, sandbox, governance, and kill-switch checks.
+- Direct local `tsc --noEmit`: passed.
+- Direct local `tsx --test "src/lib/live-execution/**/*.test.ts"`: passed, 8 focused live activation tests.
+- Direct local `eslint .`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 112 tests.
+- Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`; `/api/live-execution/*` routes are included in the build output.
 - `npm audit --audit-level=moderate` through the available npm CLI still reports the known nested Next/PostCSS moderate advisory; no unsafe forced fix was applied.
 - Local dev server smoke: `/login` returned 200 in the in-app browser and no browser console errors were reported. Authenticated `/tools` UI requires a configured local session/database to view interactively.
 

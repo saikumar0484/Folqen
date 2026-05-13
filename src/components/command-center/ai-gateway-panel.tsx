@@ -1,23 +1,36 @@
 "use client";
 
 import { useState } from "react";
-import { Activity, BrainCircuit, Coins, Cpu, Loader2, PlayCircle, RotateCcw, ShieldCheck, Zap } from "lucide-react";
+import { Activity, AlertTriangle, BrainCircuit, Coins, Cpu, Loader2, PauseCircle, PlayCircle, RotateCcw, ShieldCheck, Siren, Zap } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { mutationFetch } from "@/lib/client/mutation-fetch";
 import type { AiGatewayDashboard, AiRuntimeResult } from "@/lib/ai-gateway/types";
+import type { ControlledLiveExecutionResult, LiveExecutionDashboard } from "@/lib/live-execution/types";
 import { cn } from "@/lib/utils";
 
 type AiGatewayPanelProps = {
   dashboard: AiGatewayDashboard;
+  liveExecution: LiveExecutionDashboard;
 };
 
 type ExecuteResponse = {
   ok?: boolean;
   result?: AiRuntimeResult;
   retryRun?: AiRuntimeResult;
+  error?: string;
+  message?: string;
+};
+
+type LiveResponse = {
+  ok?: boolean;
+  result?: ControlledLiveExecutionResult;
+  readiness?: LiveExecutionDashboard["readiness"];
+  record?: unknown;
+  registry?: unknown;
+  approvalId?: string;
   error?: string;
   message?: string;
 };
@@ -29,11 +42,13 @@ function statusClass(status: string) {
   return "border-cyan-300/25 bg-cyan-300/10 text-cyan-100";
 }
 
-export function AiGatewayPanel({ dashboard }: AiGatewayPanelProps) {
+export function AiGatewayPanel({ dashboard, liveExecution }: AiGatewayPanelProps) {
   const [objective, setObjective] = useState("Generate a source-aware mystery content strategy outline without using paid providers.");
   const [provider, setProvider] = useState("mock");
   const [pending, setPending] = useState<string | null>(null);
   const [response, setResponse] = useState<ExecuteResponse | null>(null);
+  const [liveResponse, setLiveResponse] = useState<LiveResponse | null>(null);
+  const [liveRuns, setLiveRuns] = useState(liveExecution.recentRuns);
   const [executions, setExecutions] = useState(dashboard.recentExecutions);
 
   async function executeDryRun() {
@@ -81,6 +96,79 @@ export function AiGatewayPanel({ dashboard }: AiGatewayPanelProps) {
     setPending(null);
     setResponse(payload);
     if (payload.retryRun) setExecutions((items) => [payload.retryRun!, ...items].slice(0, 8));
+  }
+
+  async function requestActivation() {
+    setPending("request-activation");
+    setLiveResponse(null);
+    const request = await mutationFetch("/api/live-execution/activation/request", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        providerId: "gemini",
+        requestedStage: 1,
+        reason: "Request Stage 1 controlled Gemini activation for Research Department content ideation with strict budget and rollback gates.",
+      }),
+    });
+    const payload = (await request.json().catch(() => ({ error: "Invalid activation response." }))) as LiveResponse;
+    setPending(null);
+    setLiveResponse(payload);
+  }
+
+  async function promoteSandbox() {
+    setPending("promote");
+    setLiveResponse(null);
+    const request = await mutationFetch("/api/live-execution/promote", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        objective,
+        providerId: "gemini",
+        departmentId: "research",
+        workflowKind: "structured_generation",
+        taskType: "planning",
+        approvalStatus: "pending",
+        maxOutputTokens: 400,
+      }),
+    });
+    const payload = (await request.json().catch(() => ({ error: "Invalid promotion response." }))) as LiveResponse;
+    setPending(null);
+    setLiveResponse(payload);
+  }
+
+  async function executeControlledLive() {
+    setPending("controlled-live");
+    setLiveResponse(null);
+    const request = await mutationFetch("/api/live-execution/execute", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        objective,
+        providerId: "gemini",
+        departmentId: "research",
+        workflowKind: "structured_generation",
+        taskType: "planning",
+        approvalStatus: "pending",
+        maxOutputTokens: 400,
+      }),
+    });
+    const payload = (await request.json().catch(() => ({ error: "Invalid controlled execution response." }))) as LiveResponse;
+    setPending(null);
+    setLiveResponse(payload);
+    if (payload.result) setLiveRuns((items) => [payload.result!, ...items].slice(0, 8));
+  }
+
+  async function emergencyStop() {
+    setPending("emergency-stop");
+    setLiveResponse(null);
+    const request = await mutationFetch("/api/live-execution/emergency-stop", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reason: "Operator engaged emergency stop from the AI gateway control panel." }),
+    });
+    const payload = (await request.json().catch(() => ({ error: "Invalid emergency stop response." }))) as LiveResponse;
+    setPending(null);
+    setLiveResponse(payload);
   }
 
   return (
@@ -195,6 +283,108 @@ export function AiGatewayPanel({ dashboard }: AiGatewayPanelProps) {
           </CardContent>
         </Card>
       </div>
+
+      <Card className="border-amber-300/20 bg-amber-300/[0.04]">
+        <CardHeader>
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <div className="flex flex-wrap gap-2">
+                <Badge variant="warning">Controlled Live Activation</Badge>
+                <Badge variant="info">Sandbox-first</Badge>
+                <Badge variant="safe">Rollback ready</Badge>
+                <Badge variant="warning">Gemini / Research only</Badge>
+              </div>
+              <CardTitle className="mt-3 flex items-center gap-2">
+                <Siren className="h-5 w-5 text-amber-200" />
+                Live Execution Activation Layer
+              </CardTitle>
+              <CardDescription>Stage-gated activation for exactly one provider, one department, and one workflow. Defaults stay blocked until approval, budget, credential, kill-switch, and sandbox checks pass.</CardDescription>
+            </div>
+            <div className={cn("rounded-2xl border px-4 py-3 text-sm", statusClass(liveExecution.firstTarget.status))}>
+              <div className="font-mono text-[10px] uppercase tracking-widest">First target</div>
+              <div className="mt-1 font-medium">
+                {liveExecution.firstTarget.providerId} / {liveExecution.firstTarget.departmentId}
+              </div>
+              <div className="mt-1 text-xs opacity-80">{liveExecution.firstTarget.status}</div>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-3 md:grid-cols-5">
+            {liveExecution.activationStages.map((stage) => (
+              <div key={stage.stage} className={cn("rounded-2xl border p-3", statusClass(stage.status))}>
+                <div className="font-mono text-[10px] uppercase tracking-widest">Stage {stage.stage}</div>
+                <div className="mt-1 text-sm font-medium">{stage.label}</div>
+                <p className="mt-2 text-xs leading-5 opacity-80">{stage.description}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid gap-4 xl:grid-cols-[1fr_0.8fr]">
+            <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
+              <div className="flex flex-wrap gap-2">
+                <Button type="button" variant="secondary" onClick={requestActivation} disabled={Boolean(pending)}>
+                  {pending === "request-activation" ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
+                  Request activation
+                </Button>
+                <Button type="button" variant="ghost" onClick={promoteSandbox} disabled={Boolean(pending)}>
+                  {pending === "promote" ? <Loader2 className="h-4 w-4 animate-spin" /> : <PlayCircle className="h-4 w-4" />}
+                  Promote sandbox
+                </Button>
+                <Button type="button" onClick={executeControlledLive} disabled={Boolean(pending)}>
+                  {pending === "controlled-live" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
+                  Gated live test
+                </Button>
+                <Button type="button" variant="danger" onClick={emergencyStop} disabled={Boolean(pending)}>
+                  {pending === "emergency-stop" ? <Loader2 className="h-4 w-4 animate-spin" /> : <PauseCircle className="h-4 w-4" />}
+                  Emergency stop
+                </Button>
+              </div>
+              {liveResponse ? (
+                <div className={cn("mt-4 rounded-2xl border p-4", statusClass(liveResponse.error ? "Blocked" : liveResponse.result?.status ?? liveResponse.readiness?.status ?? "Needs approval"))}>
+                  <div className="font-medium">{liveResponse.error ? "Live control blocked" : "Live control recorded"}</div>
+                  <p className="mt-1 text-sm leading-6 opacity-85">
+                    {liveResponse.error ?? liveResponse.message ?? liveResponse.result?.validation.warnings[0] ?? liveResponse.readiness?.reasons[0] ?? "Activation control updated."}
+                  </p>
+                </div>
+              ) : null}
+              <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-3 text-xs leading-5 text-muted-foreground">
+                Readiness: {liveExecution.readiness.status}. {liveExecution.readiness.reasons[0] ?? "All live activation gates are currently satisfied."}
+              </div>
+            </div>
+
+            <div className="grid gap-3">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
+                <div className="flex items-center gap-2">
+                  <Coins className="h-4 w-4 text-neon" />
+                  <div className="text-sm font-medium">Live budget guard</div>
+                </div>
+                <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                  Today INR {liveExecution.budget.estimatedCostTodayInr} / {liveExecution.budget.maxDailyCostInr}; month INR {liveExecution.budget.estimatedCostThisMonthInr} / {liveExecution.budget.maxMonthlyCostInr}; requests {liveExecution.budget.requestsToday} / {liveExecution.budget.maxRequestsPerDay}.
+                </p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4 text-amber-200" />
+                  <div className="text-sm font-medium">Rollback controls</div>
+                </div>
+                <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                  Kill switch {liveExecution.rollback.killSwitch}; emergency stop {liveExecution.rollback.emergencyStop}; queue drain {liveExecution.rollback.queueDrain}; quarantine {liveExecution.rollback.providerQuarantine}.
+                </p>
+              </div>
+              {liveRuns.slice(0, 3).map((run) => (
+                <div key={run.runId} className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-sm font-medium">{run.providerId} controlled run</span>
+                    <Badge className={statusClass(run.status)}>{run.status.replaceAll("_", " ")}</Badge>
+                  </div>
+                  <p className="mt-1 text-xs text-muted-foreground">{run.readiness.reasons[0] ?? "Execution completed under controls."}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid gap-4 xl:grid-cols-3">
         <Card>

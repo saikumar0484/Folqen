@@ -2,11 +2,11 @@
 
 ## Immediate Next Phase
 
-Use `docs/AUTONOMOUS_ORGANIZATION_ARCHITECTURE.md`, `docs/ORCHESTRATION_ARCHITECTURE.md`, `docs/MEMORY_REFLECTION_ARCHITECTURE.md`, `docs/MEDIA_PIPELINE_ARCHITECTURE.md`, `docs/PLATFORM_OPERATIONS_ARCHITECTURE.md`, `docs/GOVERNANCE_SAFETY_ARCHITECTURE.md`, `docs/AI_PROVIDER_GATEWAY_ARCHITECTURE.md`, and the command-center frontend as the target design for the next implementation slices. The safest next engineering phase is to connect more dashboard/workflow panels to the new intelligence/orchestration/memory/media/platform-ops/governance/AI-gateway APIs while keeping provider execution blocked.
+Use `docs/AUTONOMOUS_ORGANIZATION_ARCHITECTURE.md`, `docs/ORCHESTRATION_ARCHITECTURE.md`, `docs/MEMORY_REFLECTION_ARCHITECTURE.md`, `docs/MEDIA_PIPELINE_ARCHITECTURE.md`, `docs/PLATFORM_OPERATIONS_ARCHITECTURE.md`, `docs/GOVERNANCE_SAFETY_ARCHITECTURE.md`, `docs/AI_PROVIDER_GATEWAY_ARCHITECTURE.md`, `docs/CONTROLLED_LIVE_EXECUTION_ARCHITECTURE.md`, and the command-center frontend as the target design for the next implementation slices. The safest next engineering phase is to add stronger approval-record verification and persisted activation state before any real provider activation attempt.
 
 Continue from provider setup surfaces into credential-backed integrations. All required authenticated routes now have dedicated pages, manual posting package creation/download is live, file registration is live, safe mock-agent draft creation is live, and setup panels exist for Google Drive storage, OpenAI model selection, n8n, and media tools. Binary object storage, paid AI calls, embedded n8n execution, rendering, and real automation are still pending.
 
-Current save point: May 13, 2026, after the AI Provider Gateway & Execution Runtime update. The latest live deployment remains `https://folqen.vercel.app`; no production deploy, live database migration application, credential change, paid tool activation, provider activation, live AI provider execution, live embeddings, live ComfyUI execution, GPU execution, FFmpeg rendering, platform account access, analytics API read, scraping, publishing change, or n8n execution was enabled in this slice.
+Current save point: May 13, 2026, after the Controlled Live Execution Activation Layer update. The latest live deployment remains `https://folqen.vercel.app`; no production deploy, live database migration application, credential change, paid tool activation, production provider activation, live AI provider execution, live embeddings, live ComfyUI execution, GPU execution, FFmpeg rendering, platform account access, analytics API read, scraping, publishing change, or n8n execution was enabled in this slice.
 
 The user now wants a 2-day launch sprint so Folqen can be used with the channel from day 3. Treat `docs/2_DAY_LAUNCH_PLAN.md` as the practical launch scope: protected planning, manual posting packages, approvals, audit, and provider setup testing if credentials are available. Do not promise full auto-publishing, real media rendering, or complete multi-platform automation inside 2 days. Folqen now has a `/settings` Connection Wizard for encrypted credential intake inside the app.
 
@@ -22,21 +22,23 @@ The `/platforms` tab now also has a social-platform Connection Wizard near the t
 6. Re-read `docs/PLATFORM_OPERATIONS_ARCHITECTURE.md` before enabling platform adapters, n8n publishing workflows, analytics ingestion, scheduling, monetization monitoring, or public publishing.
 7. Re-read `docs/GOVERNANCE_SAFETY_ARCHITECTURE.md` before changing approvals, policy decisions, provider activation, sandbox behavior, cost controls, or any live execution gate.
 8. Re-read `docs/AI_PROVIDER_GATEWAY_ARCHITECTURE.md` before changing provider adapters, fallback routing, model execution, token/cost estimates, or live provider behavior.
-9. Keep the current verified Next.js `16.2.6` baseline unless the human explicitly asks to downgrade.
-10. Check `https://folqen.vercel.app/api/health` and confirm database status remains `live`; if slow again, confirm `vercel inspect` still shows app functions in `icn1`.
-11. Review `supabase/migrations/20260512154500_add_memory_reflection_system.sql`, add RLS policies/grants if needed for the final access model, then apply it only after human approval.
-12. Add richer run history/read-model panels for `/research-intelligence`, `/content-studio`, `/organizational-memory`, media assets/renders, platform operations deployments, governance audit/policy history, and AI gateway execution traces.
-13. Connect dashboard/workflow/agent/incident/infrastructure command-center panels to `/api/orchestration/*`, `/api/intelligence/*`, `/api/memory/*`, `/api/media/*`, `/api/platform-ops/*`, `/api/governance/*`, and `/api/ai-gateway/*` where useful, without enabling provider execution.
-14. Run local Redis through Docker Compose and test live BullMQ queue movement only after explicitly setting `ORCHESTRATION_EXECUTION_MODE=live` in a local-safe environment.
-15. Add command-center loading and error segment states for the new route group.
-16. Get a new admin password from the human, then use `/settings` or a safe server-side flow to rotate the seeded admin password.
-17. Get explicit human approval to delete or rotate the temporary viewer test account, then verify login/audit behavior.
-18. Configure Google Drive OAuth values through secret env only, redeploy, then live-test one small private upload and verify `binaryStored: true`.
-19. Alternatively, use `/settings` Connection Wizard to enter Google Drive details inside Folqen, then live-test one small private upload and verify `binaryStored: true`.
-20. Use `/settings` Connection Wizard for n8n instance/webhook/secret, then test `POST /api/integrations/n8n/test`.
-21. Use `/settings` Connection Wizard for OpenAI/OpenRouter/Gemini/Claude/local provider settings only after paid-tool/provider approval, then add real provider adapters that still call the AI gateway, policy engine, and budget checks before every request.
-22. Configure local or Oracle worker endpoints for FFmpeg, ComfyUI, and TTS, then add test-only connection checks. Live rendering still needs explicit human approval.
-23. Continue broader security hardening, including stronger CSRF patterns, server-side action audits, and provider-secret isolation.
+9. Re-read `docs/CONTROLLED_LIVE_EXECUTION_ARCHITECTURE.md` before changing activation stages, provider promotion, live quotas, kill switch behavior, emergency stop, or rollback controls.
+10. Keep the current verified Next.js `16.2.6` baseline unless the human explicitly asks to downgrade.
+11. Check `https://folqen.vercel.app/api/health` and confirm database status remains `live`; if slow again, confirm `vercel inspect` still shows app functions in `icn1`.
+12. Before any real live activation, add persisted activation registry records or Setting-backed activation state, verify approval IDs against actual approved `Approval` rows, and require fresh policy evaluation at execution time.
+13. Review `supabase/migrations/20260512154500_add_memory_reflection_system.sql`, add RLS policies/grants if needed for the final access model, then apply it only after human approval.
+14. Add richer run history/read-model panels for `/research-intelligence`, `/content-studio`, `/organizational-memory`, media assets/renders, platform operations deployments, governance audit/policy history, AI gateway traces, and controlled live execution traces.
+15. Connect dashboard/workflow/agent/incident/infrastructure command-center panels to `/api/orchestration/*`, `/api/intelligence/*`, `/api/memory/*`, `/api/media/*`, `/api/platform-ops/*`, `/api/governance/*`, `/api/ai-gateway/*`, and `/api/live-execution/*` where useful.
+16. Run local Redis through Docker Compose and test live BullMQ queue movement only after explicitly setting `ORCHESTRATION_EXECUTION_MODE=live` in a local-safe environment.
+17. Add command-center loading and error segment states for the new route group.
+18. Get a new admin password from the human, then use `/settings` or a safe server-side flow to rotate the seeded admin password.
+19. Get explicit human approval to delete or rotate the temporary viewer test account, then verify login/audit behavior.
+20. Configure Google Drive OAuth values through secret env only, redeploy, then live-test one small private upload and verify `binaryStored: true`.
+21. Alternatively, use `/settings` Connection Wizard to enter Google Drive details inside Folqen, then live-test one small private upload and verify `binaryStored: true`.
+22. Use `/settings` Connection Wizard for n8n instance/webhook/secret, then test `POST /api/integrations/n8n/test`.
+23. Use `/settings` Connection Wizard for Gemini only after explicit provider approval, then run a local Stage 1 controlled live test only when `ALLOW_LIVE_AI_EXECUTION=true`, `LIVE_AI_ACTIVATION_STAGE=1`, an approved activation ID exists, and the kill switch is off.
+24. Configure local or Oracle worker endpoints for FFmpeg, ComfyUI, and TTS, then add test-only connection checks. Live rendering still needs explicit human approval.
+25. Continue broader security hardening, including stronger CSRF patterns, server-side action audits, and provider-secret isolation.
 
 ## Human Decisions Needed
 
@@ -55,6 +57,7 @@ Required before real provider testing:
 - Approval before destructive migrations, public publishing, paid tools, browser automation, or OAuth/platform connections.
 - Approval before changing governance policy from blocked/sandbox-only to any live execution path.
 - Approval before changing AI gateway provider adapters from mock/status-aware placeholders to live network execution.
+- Approval before enabling `ALLOW_LIVE_AI_EXECUTION`, setting `LIVE_AI_ACTIVATION_STAGE` above `0`, providing Gemini credentials, or running the first Stage 1 live execution.
 
 ## Credentials Needed
 
@@ -77,6 +80,10 @@ Needed through safe secret flow only:
 - `OPENAI_COMPATIBLE_BASE_URL`
 - `OPENAI_COMPATIBLE_API_KEY`
 - `OLLAMA_BASE_URL`
+- `ALLOW_LIVE_AI_EXECUTION` must stay `false` until explicit activation approval.
+- `LIVE_AI_ACTIVATION_STAGE` must stay `0` until explicit activation approval.
+- `AI_RUNTIME_KILL_SWITCH`
+- `AI_RUNTIME_EMERGENCY_STOP`
 - `LOCAL_WORKER_BASE_URL`
 - `LOCAL_WORKER_SHARED_SECRET`
 - `COMFYUI_BASE_URL`
@@ -94,10 +101,11 @@ Needed through safe secret flow only:
 - Platform analytics ingestion, monetization monitoring, policy/strike monitoring, and account automation.
 - Governance policy changes that could permit provider activation, queue live mode, or public execution.
 - AI gateway policy/routing changes that could permit live model execution, fallback bypass, uncontrolled retry, or spend.
+- Controlled live execution activation, including Gemini provider credentials, stage promotion, kill-switch release, budget threshold changes, or any execution with `ALLOW_LIVE_AI_EXECUTION=true`.
 - Paid tool enablement.
 - OAuth/platform account connections.
 - Production deployment secrets.
 
 ## Resume Command
 
-Continue from branch `build/phase-0-foundation`, read README, all root project docs, and checkpoint docs, run verification, then continue Google Drive storage, n8n embed/webhook setup, AI provider approval/runtime adapter planning, media worker setup, governance/AI-gateway read models, platform-ops read models, posting package polish, service-backed mock APIs, or role-aware UI/tests. All required authenticated pages are route-specific, provider setup panels exist, metadata-only file registration is verified, and safe mock-agent draft creation exists.
+Continue from branch `build/phase-0-foundation`, read README, all root project docs, and checkpoint docs, run verification, then continue persisted live activation state, approval-ID verification, Google Drive storage, n8n embed/webhook setup, AI provider approval/runtime adapter planning, media worker setup, governance/AI-gateway/live-execution read models, platform-ops read models, posting package polish, service-backed mock APIs, or role-aware UI/tests. All required authenticated pages are route-specific, provider setup panels exist, metadata-only file registration is verified, and safe mock-agent draft creation exists.
