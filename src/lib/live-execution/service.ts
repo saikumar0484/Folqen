@@ -66,7 +66,7 @@ const analyticsDataSourceKindSchema = z.enum(analyticsDataSourceKinds);
 export const controlledLiveExecutionSchema = z.object({
   objective: z.string().min(8).max(1500),
   providerId: providerIdSchema.default(FIRST_LIVE_TARGET.providerId),
-  departmentId: departmentIdSchema.default(FIRST_LIVE_TARGET.departmentId),
+  departmentId: departmentIdSchema.default(FIRST_LIVE_TARGET.departmentId as z.infer<typeof departmentIdSchema>),
   workflowKind: workflowKindSchema.default(FIRST_LIVE_TARGET.workflowKind),
   taskType: taskTypeSchema.default(FIRST_LIVE_TARGET.taskType),
   model: z.string().max(120).optional(),

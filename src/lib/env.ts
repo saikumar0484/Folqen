@@ -16,7 +16,12 @@ export const envSchema = z.object({
   ALLOW_PAID_TOOLS: booleanFlag("false"),
   ALLOW_BROWSER_AUTOMATION: booleanFlag("false"),
   DEFAULT_UPLOAD_PRIVACY: z.enum(["private", "unlisted", "public"]).default("private"),
-  FOLQEN_RUNTIME_PROFILE: z.enum(["local", "docker", "vps", "coolify", "vercel"]).default("local"),
+  FOLQEN_RUNTIME_PROFILE: z.enum(["local", "preview", "docker", "vps", "coolify", "vercel"]).default("local"),
+  PREVIEW_SAFE_MODE: booleanFlag("false"),
+  PREVIEW_FORCE_DRY_RUN: z
+    .enum(["true", "false"])
+    .default("true")
+    .transform((value) => value === "true"),
   REQUIRE_STARTUP_VALIDATION: z
     .enum(["true", "false"])
     .default("true")
@@ -36,6 +41,14 @@ export const envSchema = z.object({
   N8N_WEBHOOK_URL: z.string().optional(),
   N8N_WEBHOOK_SECRET: z.string().optional(),
   ORACLE_N8N_INSTANCE_URL: z.string().optional(),
+  BROWSER_OPERATIONS_SANDBOX_MODE: z
+    .enum(["true", "false"])
+    .default("true")
+    .transform((value) => value === "true"),
+  BROWSER_OPERATIONS_KILL_SWITCH: booleanFlag("false"),
+  BROWSER_OPERATIONS_MAX_SESSION_SECONDS: z.coerce.number().int().min(5).max(900).default(60),
+  BROWSER_OPERATIONS_ALLOWED_DOMAINS: z.string().default("localhost,127.0.0.1,folqen.vercel.app"),
+  BROWSER_OPERATIONS_BLOCKED_DOMAINS: z.string().default("accounts.google.com,facebook.com,instagram.com,youtube.com,x.com,twitter.com,linkedin.com,stripe.com,paypal.com"),
   LOCAL_WORKER_BASE_URL: z.string().optional(),
   LOCAL_WORKER_SHARED_SECRET: z.string().optional(),
   COMFYUI_BASE_URL: z.string().optional(),

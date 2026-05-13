@@ -13,6 +13,7 @@ test("command center exposes all operational pages with mock-safe data", () => {
     "analytics",
     "organizational-memory",
     "automations",
+    "browser-operations",
     "incident-center",
     "infrastructure",
     "settings",

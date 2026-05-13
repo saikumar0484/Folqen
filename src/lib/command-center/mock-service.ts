@@ -218,6 +218,14 @@ const pageCopy: Record<CommandCenterPageId, Pick<CommandCenterView, "title" | "e
     primaryAction: "Test connection",
     secondaryAction: "Create manual fallback",
   },
+  "browser-operations": {
+    title: "Browser Operations",
+    eyebrow: "Governed web interaction",
+    description: "Monitor isolated Playwright session plans, domain policies, screenshot audits, browser traces, quarantine controls, and dry-run web interaction workflows.",
+    status: "Mock",
+    primaryAction: "Run dry trace",
+    secondaryAction: "Review policy",
+  },
   "incident-center": {
     title: "Incident Center",
     eyebrow: "Failures and recovery",

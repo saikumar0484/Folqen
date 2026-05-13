@@ -114,6 +114,15 @@ function baseEnvironmentChecks(source: NodeJS.ProcessEnv): DeploymentCheck[] {
     check("upload_privacy", "security", "Upload privacy default", env.DEFAULT_UPLOAD_PRIVACY === "private" ? "Configured" : env.DEFAULT_UPLOAD_PRIVACY === "public" ? "Blocked" : "Needs approval", `Default upload privacy is ${env.DEFAULT_UPLOAD_PRIVACY}.`, [`DEFAULT_UPLOAD_PRIVACY=${env.DEFAULT_UPLOAD_PRIVACY}`], "Use DEFAULT_UPLOAD_PRIVACY=private until public publishing is explicitly approved."),
     check("startup_validation", "startup", "Startup validation", env.REQUIRE_STARTUP_VALIDATION ? "Configured" : production ? "Blocked" : "Needs approval", env.REQUIRE_STARTUP_VALIDATION ? "Startup validation is required." : "Startup validation can be bypassed.", [`REQUIRE_STARTUP_VALIDATION=${env.REQUIRE_STARTUP_VALIDATION}`], "Set REQUIRE_STARTUP_VALIDATION=true before deployment."),
     check("startup_safety_mode", "startup", "Startup safety mode", env.STARTUP_KILL_SWITCH ? "Blocked" : env.STARTUP_QUARANTINE_MODE || env.STARTUP_ROLLBACK_MODE || env.STARTUP_DRY_RUN_MODE ? "Configured" : production ? "Needs approval" : "Mock", "Startup safety controls are available without enabling dangerous runtime paths.", [`STARTUP_DRY_RUN_MODE=${env.STARTUP_DRY_RUN_MODE}`, `STARTUP_ROLLBACK_MODE=${env.STARTUP_ROLLBACK_MODE}`, `STARTUP_QUARANTINE_MODE=${env.STARTUP_QUARANTINE_MODE}`, `STARTUP_KILL_SWITCH=${env.STARTUP_KILL_SWITCH}`], "Use dry-run or rollback mode for first production boot, and engage kill switch only during incidents."),
+    check(
+      "preview_safe_mode",
+      "environment",
+      "Preview safe mode",
+      env.PREVIEW_SAFE_MODE || profile === "preview" || source.VERCEL_ENV === "preview" ? (env.PREVIEW_FORCE_DRY_RUN ? "Configured" : "Blocked") : "Mock",
+      env.PREVIEW_SAFE_MODE || profile === "preview" || source.VERCEL_ENV === "preview" ? "Preview deployment indicators are active." : "Preview mode is available but not active.",
+      [`PREVIEW_SAFE_MODE=${env.PREVIEW_SAFE_MODE}`, `PREVIEW_FORCE_DRY_RUN=${env.PREVIEW_FORCE_DRY_RUN}`, `VERCEL_ENV=${source.VERCEL_ENV ?? "unset"}`],
+      "Set PREVIEW_SAFE_MODE=true and PREVIEW_FORCE_DRY_RUN=true for Vercel preview deployments.",
+    ),
     check("live_ai_guard", "runtime", "Live AI runtime guard", env.ALLOW_LIVE_AI_EXECUTION || env.LIVE_AI_ACTIVATION_STAGE > 0 ? "Needs approval" : "Mock", env.ALLOW_LIVE_AI_EXECUTION ? "Live AI execution flag is on and still requires approvals, budgets, quotas, and provider checks." : "Live AI execution remains disabled by default.", [`ALLOW_LIVE_AI_EXECUTION=${env.ALLOW_LIVE_AI_EXECUTION}`, `LIVE_AI_ACTIVATION_STAGE=${env.LIVE_AI_ACTIVATION_STAGE}`], "Keep live AI disabled unless executing a previously approved Gemini-only workflow."),
     check("media_execution_guard", "runtime", "Media execution guard", env.ALLOW_CONTROLLED_MEDIA_EXECUTION || env.LIVE_MEDIA_ACTIVATION_STAGE > 0 ? "Needs approval" : "Mock", env.ALLOW_CONTROLLED_MEDIA_EXECUTION ? "Controlled media execution flag is on and requires render governance." : "Controlled rendering remains disabled by default.", [`ALLOW_CONTROLLED_MEDIA_EXECUTION=${env.ALLOW_CONTROLLED_MEDIA_EXECUTION}`, `LIVE_MEDIA_ACTIVATION_STAGE=${env.LIVE_MEDIA_ACTIVATION_STAGE}`], "Keep media execution disabled until the controlled rendering phase is approved."),
     check(
@@ -124,6 +133,15 @@ function baseEnvironmentChecks(source: NodeJS.ProcessEnv): DeploymentCheck[] {
       env.ALLOW_LIVE_THUMBNAIL_RENDERING ? "Live thumbnail rendering is enabled and still requires approval IDs, worker secrets, quotas, validation, and rollback controls." : "Live thumbnail rendering remains disabled by default.",
       [`ALLOW_LIVE_THUMBNAIL_RENDERING=${env.ALLOW_LIVE_THUMBNAIL_RENDERING}`, `LIVE_THUMBNAIL_RENDER_STAGE=${env.LIVE_THUMBNAIL_RENDER_STAGE}`, `THUMBNAIL_RENDER_PROVIDER=${env.THUMBNAIL_RENDER_PROVIDER}`],
       "Enable only the controlled local_worker thumbnail path after a supervised approval-gated render rehearsal.",
+    ),
+    check(
+      "browser_operations_guard",
+      "runtime",
+      "Browser operations guard",
+      env.ALLOW_BROWSER_AUTOMATION || !env.BROWSER_OPERATIONS_SANDBOX_MODE || env.BROWSER_OPERATIONS_KILL_SWITCH ? "Blocked" : "Mock",
+      env.ALLOW_BROWSER_AUTOMATION ? "Browser automation flag is enabled, but Browser Operations must remain dry-run in preview." : "Browser Operations remains dry-run and sandbox-only by default.",
+      [`ALLOW_BROWSER_AUTOMATION=${env.ALLOW_BROWSER_AUTOMATION}`, `BROWSER_OPERATIONS_SANDBOX_MODE=${env.BROWSER_OPERATIONS_SANDBOX_MODE}`, `BROWSER_OPERATIONS_KILL_SWITCH=${env.BROWSER_OPERATIONS_KILL_SWITCH}`],
+      "Keep ALLOW_BROWSER_AUTOMATION=false, sandbox mode true, and the kill switch clear unless intentionally isolating Browser Operations.",
     ),
     check("queue_startup", "runtime", "Queue startup mode", env.ORCHESTRATION_EXECUTION_MODE === "live" ? (env.REDIS_URL ? "Needs approval" : "Blocked") : "Mock", env.ORCHESTRATION_EXECUTION_MODE === "live" ? "Live orchestration queue mode has been requested." : "Orchestration queues are in mock-safe mode.", [`ORCHESTRATION_EXECUTION_MODE=${env.ORCHESTRATION_EXECUTION_MODE}`, `ORCHESTRATION_WORKER_ENABLED=${env.ORCHESTRATION_WORKER_ENABLED}`], "Use mock queue mode until Redis persistence, worker processes, and recovery checks pass."),
   ];

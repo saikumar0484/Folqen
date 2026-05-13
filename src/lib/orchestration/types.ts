@@ -14,6 +14,7 @@ export type DepartmentId =
   | "analytics"
   | "optimization"
   | "infrastructure"
+  | "browser_operations"
   | "error_recovery"
   | "organizational_memory";
 
@@ -47,6 +48,8 @@ export type Permission =
   | "optimization.propose"
   | "infrastructure.read"
   | "infrastructure.operate"
+  | "browser.observe"
+  | "browser.control"
   | "memory.read"
   | "memory.write"
   | "incident.report"
@@ -57,6 +60,7 @@ export type CommunicationChannel =
   | "executive-briefing"
   | "department-ops"
   | "workflow-events"
+  | "browser-ops"
   | "incident-response"
   | "memory-reflection"
   | "approval-gate";

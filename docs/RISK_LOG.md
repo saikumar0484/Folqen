@@ -2,6 +2,22 @@
 
 ## Current Risks
 
+### Browser Operations can be mistaken for unrestricted browser automation
+
+- Risk: A Browser Operations dashboard, Playwright controller label, action traces, and screenshot previews may make operators think Folqen can browse, click, type, upload files, scrape, or operate accounts.
+- Prevention: `ALLOW_BROWSER_AUTOMATION=false` remains the required default. Browser Operations uses `playwright-core` as a future controller dependency only; `POST /api/browser-ops/workflow` returns dry-run traces, simulated screenshot audits, mock queue metadata, and explicit evidence that no browser process launched and no website was contacted.
+- Verification: Browser Operations tests assert dry-run-only provider status, allowed-domain simulation, blocked non-allowlisted domains, approval requirements, secret masking, upload blocking, quarantine, and rollback controls.
+- Rollback: Hide `/browser-operations`, disable `/api/browser-ops/*`, set `BROWSER_OPERATIONS_KILL_SWITCH=true`, keep `ALLOW_BROWSER_AUTOMATION=false`, and revert `src/lib/browser-ops`, Browser Operations UI, and route map additions.
+- Human approval trigger: Any request to launch Playwright, browse live websites, use cookies, use account sessions, upload files, scrape/extract live site data, connect platform accounts, or enable browser automation flags.
+
+### Preview deployment can be misread as production readiness
+
+- Risk: A Vercel preview URL may look production-like and could be shared or promoted while only intended for UI preview, workflow visualization, and dry-run operational testing.
+- Prevention: `PREVIEW_SAFE_MODE=true` and `PREVIEW_FORCE_DRY_RUN=true` are documented for preview. `/infrastructure` now includes preview readiness diagnostics, `/api/deployment/preview` is read-only, and preview middleware marks protected responses with dry-run/noindex headers.
+- Verification: Preview tests assert safe preview flags pass and unsafe publishing/provider/render/browser/worker activation flags block preview readiness.
+- Rollback: Set `PREVIEW_FORCE_DRY_RUN=true`, `ALLOW_PUBLIC_PUBLISH=false`, `ALLOW_PAID_TOOLS=false`, `ALLOW_BROWSER_AUTOMATION=false`, `ORCHESTRATION_EXECUTION_MODE=mock`, `ORCHESTRATION_WORKER_ENABLED=false`, all live AI/media stages to `0`, then redeploy preview.
+- Human approval trigger: Any promotion from preview to production, adding production secrets to preview, enabling queue workers, enabling live provider execution, enabling rendering, enabling browser automation, or sharing preview for external/public use.
+
 ### First governed live thumbnail rendering can consume local worker resources if enabled carelessly
 
 - Risk: Folqen now contains a live-capable thumbnail rendering path for the Content Department through one controlled `local_worker` provider. If live thumbnail flags, worker URL, shared secret, approval IDs, and quotas are configured carelessly, the app could call a real worker and consume GPU/CPU time.

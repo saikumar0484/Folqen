@@ -10,6 +10,7 @@ export type CommandCenterPageId =
   | "analytics"
   | "organizational-memory"
   | "automations"
+  | "browser-operations"
   | "incident-center"
   | "infrastructure"
   | "settings";

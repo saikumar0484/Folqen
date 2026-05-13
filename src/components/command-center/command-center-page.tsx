@@ -17,6 +17,7 @@ import {
   MessageSquare,
   Network,
   RadioTower,
+  Globe2,
   RefreshCw,
   Search,
   Server,
@@ -48,6 +49,7 @@ const pageIcons: Record<CommandCenterPageId, typeof Sparkles> = {
   analytics: LineChart,
   "organizational-memory": Brain,
   automations: Zap,
+  "browser-operations": Globe2,
   "incident-center": AlertTriangle,
   infrastructure: Server,
   settings: LockKeyhole,
@@ -532,6 +534,7 @@ function PageBody({ view }: { view: CommandCenterView }) {
   if (view.id === "analytics") return <><AnalyticsGrid metrics={view.analytics} /><IntelligenceBoard view={view} /></>;
   if (view.id === "organizational-memory") return <><OperationalMatrix view={view} /><Timeline title="Memory and decision timeline" icon={Brain} items={view.timeline} /></>;
   if (view.id === "automations") return <><WorkflowCards workflows={view.workflows} /><InfrastructureGrid infrastructure={view.infrastructure.slice(0, 4)} /></>;
+  if (view.id === "browser-operations") return <><PanelsGrid view={view} /><OperationalMatrix view={view} /><Timeline title="Browser operation trace feed" icon={Globe2} items={view.timeline} /></>;
   if (view.id === "incident-center") return <><PanelsGrid view={view} /><WorkflowCards workflows={view.workflows.filter((workflow) => workflow.status !== "Configured")} /><Timeline title="Recovery log" icon={AlertTriangle} items={view.timeline} /></>;
   if (view.id === "infrastructure") return <><InfrastructureGrid infrastructure={view.infrastructure} /><WorkflowCards workflows={view.workflows} /></>;
   return <><PanelsGrid view={view} /><SettingsMatrix /></>;

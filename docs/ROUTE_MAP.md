@@ -15,6 +15,7 @@ All required MVP routes exist as Phase 2 placeholders under the app shell.
 | `/analytics` | CTR, retention, engagement, recommendations | Mock frontend |
 | `/organizational-memory` | Institutional memory, retrieval, reflection, experiments, prompt/version notes | Mock-safe backend/UI |
 | `/automations` | n8n, Redis/BullMQ, retry and fallback status | Not connected |
+| `/browser-operations` | Governed Playwright session plans, domain policy, browser traces, screenshot previews, and quarantine controls | Dry-run only |
 | `/incident-center` | Failed workflows, escalations, recovery | Mock frontend |
 | `/infrastructure` | Redis, queue, provider, worker, database health, deployment governance, startup integrity, and rollback readiness | Read-only diagnostics plus mock frontend |
 | `/settings` | Command settings plus live settings forms | Configured shell |
@@ -98,6 +99,16 @@ These command-center routes are API-ready mock frontend surfaces. They do not en
 | Route | Purpose | Current State |
 | --- | --- | --- |
 | `GET /api/deployment/readiness` | Environment validation, masked secret governance, startup integrity, Docker/VPS readiness, runtime diagnostics, and rollback readiness | Authenticated, read-only, no activation |
+| `GET /api/deployment/preview` | Safe preview readiness, disabled runtime checks, visible routes, and Vercel preview setup guidance | Authenticated, read-only, no activation |
+
+## Browser Operations API Routes
+
+| Route | Purpose | Current State |
+| --- | --- | --- |
+| `GET /api/browser-ops/overview` | Browser Operations dashboard, Playwright controller status, governance, sessions, queues, and traces | Authenticated, dry-run only |
+| `POST /api/browser-ops/session` | Create an isolated browser session plan | Admin/operator, no browser process launched |
+| `POST /api/browser-ops/workflow` | Simulate page observation, DOM inspection, structured extraction, screenshot audit, or navigation rehearsal | Admin/operator, approval-gated, no browsing/scraping |
+| `POST /api/browser-ops/control` | Kill switch, quarantine, release quarantine, rollback to dry-run, or recover session | Admin/operator, no live automation |
 
 ## MVP Routes
 

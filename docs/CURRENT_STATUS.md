@@ -2,9 +2,9 @@
 
 ## Phase
 
-Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, every required authenticated route now has a route-specific or database-backed surface, the autonomous organization target architecture is documented, the operational command center frontend is implemented, the mock-safe multi-agent orchestration infrastructure is implemented, the first Research + Content operational intelligence layer is implemented, the Organizational Memory & Reflection Intelligence layer is implemented, the Media Generation & Asset Pipeline layer is implemented, the Platform Operations & Publishing Infrastructure layer is implemented, the Governance Approval & Safety Control layer is implemented, the AI Provider Gateway & Execution Runtime is implemented, the Controlled Live Execution Activation Layer is implemented, the Governed Operations Trace Center is implemented, production governance/trace verification hardening is implemented, the Production Environment & Deployment Governance System is implemented, and the First Governed Live Thumbnail Rendering capability is implemented on branch `build/phase-0-foundation`.
+Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, every required authenticated route now has a route-specific or database-backed surface, the autonomous organization target architecture is documented, the operational command center frontend is implemented, the mock-safe multi-agent orchestration infrastructure is implemented, the first Research + Content operational intelligence layer is implemented, the Organizational Memory & Reflection Intelligence layer is implemented, the Media Generation & Asset Pipeline layer is implemented, the Platform Operations & Publishing Infrastructure layer is implemented, the Governance Approval & Safety Control layer is implemented, the AI Provider Gateway & Execution Runtime is implemented, the Controlled Live Execution Activation Layer is implemented, the Governed Operations Trace Center is implemented, production governance/trace verification hardening is implemented, the Production Environment & Deployment Governance System is implemented, the First Governed Live Thumbnail Rendering capability is implemented, and the Browser Operations Department plus Safe Preview Deployment profile are implemented on branch `build/phase-0-foundation`.
 
-Latest save point: May 13, 2026, after adding Folqen's First Governed Live Thumbnail Rendering capability. This added a live-capable code path for one controlled local-worker thumbnail provider only, but no credentials, production env changes, live worker endpoint, production database migration application, production settings, paid tools, live ComfyUI request, FFmpeg process spawn, unrestricted GPU execution, video generation, platform account access, live platform analytics API read, scraping, public publishing, autonomous retries, autonomous optimization execution, self-improvement mutation, workflow mutation, prompt mutation, queue mutation, or n8n execution were enabled.
+Latest save point: May 13, 2026, after adding Folqen's Browser Operations Department and Safe Preview Deployment profile. This added dry-run Playwright-controller infrastructure, Browser Operations APIs/UI, preview deployment diagnostics, preview env templates, and noindex/dry-run preview response headers, but no live browser execution, browsing, scraping, account automation, credentials, production env changes, live worker endpoint, production database migration application, production settings, paid tools, live ComfyUI request, FFmpeg process spawn, unrestricted GPU execution, video generation, platform account access, live platform analytics API read, public publishing, autonomous retries, autonomous optimization execution, self-improvement mutation, workflow mutation, prompt mutation, queue mutation, or n8n execution were enabled.
 
 ## Completed Work
 
@@ -26,6 +26,18 @@ Latest save point: May 13, 2026, after adding Folqen's First Governed Live Thumb
   - Added asset validation, render scoring, queue metadata, worker response validation, render observability, failed asset isolation, rollback-to-dry-run, queue drain, quarantine, and recovery planning without autonomous retry.
   - Added a live thumbnail section to `/content-studio` with provider/queue/budget/rollback diagnostics, thumbnail preview area, live run action, rollback action, quarantine action, recent runs, and explicit safety labels.
   - No direct ComfyUI execution, FFmpeg process, video generation, publishing, platform API, autonomous retry, unrestricted GPU access, or workflow mutation was enabled.
+- Added the Browser Operations Department:
+  - `playwright-core` is installed as a future controller dependency without browser binaries or live sessions.
+  - `src/lib/browser-ops/*` manages dry-run browser sessions, workflow simulations, action validation, allow/blocked domains, secret masking, screenshot audit placeholders, queue metadata, audit logs, quarantine controls, recovery controls, and tests.
+  - Protected APIs: `GET /api/browser-ops/overview`, `POST /api/browser-ops/session`, `POST /api/browser-ops/workflow`, and `POST /api/browser-ops/control`.
+  - `/browser-operations` shows live-feeling Browser Operations dashboard, session health, dry-run workflow console, screenshot preview, trace steps, governance policy, quarantine controls, and safety notes.
+  - Browser Operations remains dry-run only; no Playwright browser process, website contact, account session, cookie use, scraping, file upload, form submission, or unrestricted automation was enabled.
+- Added Safe Preview Deployment infrastructure:
+  - `src/lib/preview-deployment/*` and protected `GET /api/deployment/preview` for preview readiness checks.
+  - `/infrastructure` now includes a preview deployment readiness panel before production deployment diagnostics.
+  - `deploy/.env.preview.example` and `docs/SAFE_PREVIEW_DEPLOYMENT.md` document Vercel preview flags and forbidden runtime activation.
+  - Preview mode checks publishing, paid tools, live AI, rendering, browser execution, queue workers, and forced dry-run state.
+  - Protected preview responses add safe/dry-run/noindex headers when `PREVIEW_SAFE_MODE=true` or `VERCEL_ENV=preview`.
 - Added the Governed Operations Trace Center:
   - `src/lib/operations-trace/*` for a read-only operational read model over existing audit, event, workflow, error, approval, render, asset, and queue records.
   - Protected `GET /api/operations/traces` with auth-gated visibility and explicit safety labels.
@@ -171,13 +183,15 @@ Latest save point: May 13, 2026, after adding Folqen's First Governed Live Thumb
 
 ## App Status
 
-The app installs, lints, typechecks, tests, validates Prisma schema, builds successfully, deploys to Vercel, connects to Supabase, supports seeded database-backed login, has route-specific authenticated pages for dashboard, agents, departments, workflows, research intelligence, content studio, analytics, organizational memory, automations, incident center, infrastructure, settings, and the earlier MVP surfaces, and now exposes orchestration, intelligence, memory, media, platform-operations, governance, AI provider gateway, and controlled live activation APIs.
+The app installs, lints, typechecks, tests, validates Prisma schema, builds successfully, deploys to Vercel, connects to Supabase, supports seeded database-backed login, has route-specific authenticated pages for dashboard, agents, departments, workflows, research intelligence, content studio, analytics, organizational memory, automations, browser operations, incident center, infrastructure, settings, and the earlier MVP surfaces, and now exposes orchestration, intelligence, memory, media, platform-operations, governance, AI provider gateway, browser operations, deployment preview, and controlled live activation APIs.
 
 ## Safety Status
 
 - Public publishing remains disabled by default.
 - Paid tools remain disabled by default.
 - Browser automation remains disabled by default.
+- Browser Operations is dry-run only; `ALLOW_BROWSER_AUTOMATION=false` remains the required default, and no browser process launches.
+- Safe preview mode is visualization-only; it requires dry-run execution and keeps providers, workers, rendering, browser execution, publishing, and automation disabled.
 - Human approval remains required by default.
 - Supabase database is configured in Vercel production through an encrypted/sensitive env var.
 - Vercel production `DATABASE_URL` now uses the Supabase transaction pooler endpoint for the linked project; the secret value is not stored in git.
@@ -197,6 +211,17 @@ The app installs, lints, typechecks, tests, validates Prisma schema, builds succ
 - Database is the only live backend integration.
 
 ## Verification Status
+
+Latest May 13, 2026 Browser Operations Department and Safe Preview Deployment checkpoint:
+
+- Focused Browser/Preview tests passed with 9 tests.
+- Direct local `tsc --noEmit`: passed.
+- Direct local `eslint .`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 147 tests.
+- Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`; `/browser-operations`, `/api/browser-ops/overview`, `/api/browser-ops/session`, `/api/browser-ops/workflow`, `/api/browser-ops/control`, and `/api/deployment/preview` are included in the build output.
+- Local HTTP smoke returned `200` for `/login` and `/api/health`; anonymous `/api/browser-ops/overview` and `/api/deployment/preview` returned `401`.
+- Protected route smoke confirmed anonymous `/browser-operations` and `/infrastructure` redirect to `/login`.
+- `npm audit --audit-level=moderate` still reports the known nested Next/PostCSS moderate advisory; npm suggests an unsafe forced fix to an old Next version, so no forced fix was applied.
 
 Latest May 13, 2026 Production Governance & Trace Verification Hardening checkpoint:
 
@@ -796,6 +821,19 @@ Latest May 13, 2026 Controlled Media Execution & Asset Rendering System:
 - Local dev smoke: `/login` loaded in the in-app browser with no browser console errors.
 - `npm audit --audit-level=moderate` through the available npm CLI still reports the known nested Next/PostCSS moderate advisory; no unsafe forced fix was applied.
 
+Latest May 13, 2026 Browser Operations Department and Safe Preview Deployment:
+
+- Added the dry-run Browser Operations Department, `playwright-core` future controller dependency, Browser Operations APIs, and `/browser-operations`.
+- Added safe preview deployment readiness, `GET /api/deployment/preview`, `deploy/.env.preview.example`, preview diagnostics in `/infrastructure`, and preview response headers for protected pages.
+- Direct local `eslint .`: passed.
+- Direct local `tsc --noEmit`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 147 tests.
+- Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`; Browser Operations and preview deployment routes are included in the build output.
+- Local HTTP smoke: `/login` returned `200`, `/api/health` returned `200`, and anonymous `/api/browser-ops/overview` plus `/api/deployment/preview` returned `401`.
+- Protected route smoke: anonymous `/browser-operations` and `/infrastructure` redirected to `/login`.
+- `npm audit --audit-level=moderate` still reports the known nested Next/PostCSS moderate advisory; no unsafe forced fix was applied.
+- No Playwright browser process, website contact, account session, scraping, upload, queue worker, provider execution, rendering, publishing, or preview deployment was run.
+
 Latest May 13, 2026 First Governed Live Thumbnail Rendering capability:
 
 - Added the first live-capable creative production path for governed thumbnail rendering only.
@@ -816,7 +854,9 @@ Latest May 13, 2026 First Governed Live Thumbnail Rendering capability:
 
 - Supabase MCP documentation search failed in this session because the connected OAuth token was revoked, so Supabase-specific security notes in the architecture document rely on existing project practice and official-doc fallback knowledge rather than MCP snippets.
 - `npm` was not available on PATH in this shell session; package changes used a working npm CLI through `node "C:\Users\208X1\Documents\New project 3\.tools\package\bin\npm-cli.js"` and verification used direct `node_modules/.bin` executables.
-- Local authenticated browser smoke was blocked because the dev server did not have `AUTH_SECRET`/database env configured. React server-render smoke covered all 12 command-center views, and production build route output confirmed the new routes compile.
+- Local authenticated browser smoke was blocked because the dev server did not have `AUTH_SECRET`/database env configured. React server-render smoke covered all 13 command-center views, and production build route output confirmed the new routes compile.
+- Browser Operations is dry-run only. Playwright is installed as `playwright-core` for future controller architecture, but no browser binaries, live sessions, cookies, scraping, uploads, or account automation are enabled.
+- Safe Preview Deployment is prepared but not deployed in this slice. Vercel preview still needs preview-only `AUTH_SECRET`, `DATABASE_URL`, `NEXTAUTH_URL`, `APP_BASE_URL`, and `CREDENTIAL_ENCRYPTION_KEY` configured through Vercel preview env before a preview URL should be shared.
 - Orchestration APIs are backend-ready but the command-center UI still reads typed mock command-center data; connecting UI panels to the new APIs is the next safe slice.
 - Research Intelligence, Content Studio, and Analytics now have live mock-safe/governed controls, but the main command-center renderer still includes baseline mock telemetry around those controls.
 - Production deployment governance is implemented as read-only diagnostics and Docker/VPS configuration scaffolding. The production VPS/Coolify deployment has not been performed, no `.env.production` secrets exist in git, and rollback/backup restore still need a real rehearsal before public launch.
@@ -841,4 +881,4 @@ Latest May 13, 2026 First Governed Live Thumbnail Rendering capability:
 
 ## Safe To Stop
 
-Yes after this checkpoint commit is pushed. The First Governed Live Thumbnail Rendering capability is implemented behind strict gates, verification passed, the repo is safe to continue, and no source files are left half-edited.
+Yes after this checkpoint commit is pushed. Browser Operations and Safe Preview Deployment infrastructure are implemented behind dry-run/preview gates, verification passed, the repo is safe to continue, and no source files are left half-edited.

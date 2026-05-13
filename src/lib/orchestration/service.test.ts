@@ -8,7 +8,8 @@ describe("Folqen orchestration infrastructure", () => {
   it("models the required departments and hierarchy layers", () => {
     const snapshot = getAgentRegistrySnapshot();
 
-    assert.equal(snapshot.departments.length, 8);
+    assert.equal(snapshot.departments.length, 9);
+    assert.equal(snapshot.departments.some((department) => department.id === "browser_operations"), true);
     assert.equal(snapshot.hierarchy.executive.some((agent) => agent.id === "chief-creator-officer"), true);
     assert.equal(snapshot.hierarchy.errorRecoveryAgents.some((agent) => agent.id === "recovery-manager"), true);
     assert.equal(snapshot.agents.every((agent) => agent.permissions.length > 0), true);

@@ -6,6 +6,7 @@ export type AppRouteId =
   | "content-studio"
   | "organizational-memory"
   | "automations"
+  | "browser-operations"
   | "incident-center"
   | "infrastructure"
   | "agent"
@@ -521,6 +522,26 @@ export const appRoutes: RouteConfig[] = [
       { title: "Retry policy", description: "Retries must respect approvals and cost guards.", status: "Configured" },
     ],
     actions: ["Test connection", "View queue", "Create fallback"],
+  },
+  {
+    id: "browser-operations",
+    href: "/browser-operations",
+    label: "Browser Ops",
+    title: "Browser operations",
+    kicker: "Governed web interaction",
+    description: "Plan isolated Playwright browser sessions, domain validation, screenshot audits, DOM inspection, extraction traces, quarantine controls, and dry-run browser workflows.",
+    status: "Mock",
+    stats: [
+      { label: "Execution", value: "Dry-run", hint: "No browser process launched", tone: "safe" },
+      { label: "Provider", value: "Playwright", hint: "Controller prepared only", tone: "premium" },
+      { label: "Domains", value: "Guarded", hint: "Allow/block lists enforced", tone: "safe" },
+    ],
+    panels: [
+      { title: "Session manager", description: "Browser sessions are planned and observable but never opened in preview mode.", status: "Mock" },
+      { title: "Action validation", description: "Navigate, click, type, upload, screenshot, DOM inspect, and extraction actions are validated before simulation.", status: "Configured" },
+      { title: "Quarantine controls", description: "Suspicious sessions can be isolated, recovered, or rolled back to dry-run mode.", status: "Configured" },
+    ],
+    actions: ["Run dry trace", "Inspect policy", "Quarantine session"],
   },
   {
     id: "incident-center",

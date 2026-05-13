@@ -1,5 +1,34 @@
 # Changelog
 
+## May 13, 2026 - Browser Operations Department and Safe Preview Deployment
+
+### Added
+
+- Added `playwright-core` as the future Browser Operations controller dependency without installing browser binaries or enabling live browser execution.
+- Added `src/lib/browser-ops/*` with dry-run browser session management, workflow simulation, action validation, domain allow/block policy, secret masking, screenshot audit placeholders, queue metadata, audit logging, quarantine controls, recovery controls, and tests.
+- Added protected Browser Operations APIs: `GET /api/browser-ops/overview`, `POST /api/browser-ops/session`, `POST /api/browser-ops/workflow`, and `POST /api/browser-ops/control`.
+- Added `/browser-operations` with governed session monitoring, dry-run workflow console, screenshot preview panel, browser traces, policy cards, quarantine controls, and explicit safety labels.
+- Added `src/lib/preview-deployment/*`, `GET /api/deployment/preview`, `deploy/.env.preview.example`, and `docs/SAFE_PREVIEW_DEPLOYMENT.md` for preview-safe runtime diagnostics.
+- Added `docs/BROWSER_OPERATIONS_ARCHITECTURE.md`.
+- Updated preview/deployment env flags, Vercel config, route map, sidebar, command center routing, deployment governance diagnostics, orchestration queue registry, and proxy preview headers.
+
+### Safety
+
+- Browser Operations is dry-run only: no Playwright browser process is launched, no website is contacted, no account session/cookie is used, no scraping occurs, and no file upload is executed.
+- Preview deployment mode is visualization-only and keeps publishing, providers, rendering, browser automation, queue workers, autonomous retries, platform execution, and workflow mutation disabled.
+- Preview docs explicitly forbid production/provider/platform/render secrets in preview unless a future phase approves them.
+
+### Verification
+
+- Focused `tsx --test "src/lib/browser-ops/**/*.test.ts" "src/lib/preview-deployment/**/*.test.ts"`: passed, 9 tests.
+- `tsc --noEmit`: passed.
+- `eslint .`: passed.
+- `tsx --test "src/**/*.test.ts"`: passed, 147 tests.
+- `prisma generate && next build`: passed on Next.js `16.2.6`; Browser Operations and preview deployment routes are included in build output.
+- Local HTTP smoke: `/login` returned `200`, `/api/health` returned `200`, anonymous `/api/browser-ops/overview` returned `401`, and anonymous `/api/deployment/preview` returned `401`.
+- Protected route smoke: anonymous `/browser-operations` and `/infrastructure` redirected to `/login`.
+- `npm audit --audit-level=moderate`: still reports the known nested Next/PostCSS moderate advisory; no unsafe forced fix was applied.
+
 ## May 13, 2026 - First Governed Live Thumbnail Rendering
 
 ### Added

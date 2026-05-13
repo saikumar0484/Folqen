@@ -17,6 +17,8 @@ export const ORCHESTRATION_QUEUES = {
   sandbox: "folqen.sandbox",
   aiRuntime: "folqen.ai.runtime",
   aiRetry: "folqen.ai.retry",
+  browser: "folqen.browser",
+  browserTrace: "folqen.browser.trace",
   monitoring: "folqen.monitoring",
 } as const;
 

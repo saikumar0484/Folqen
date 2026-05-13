@@ -17,6 +17,7 @@ const protectedPrefixes = [
   "/errors",
   "/audit",
   "/workflows",
+  "/browser-operations",
   "/files",
   "/notifications",
   "/upgrades",
@@ -33,7 +34,13 @@ export function proxy(request: NextRequest) {
   const session = verifySessionToken(request.cookies.get(AUTH_COOKIE_NAME)?.value);
 
   if (session) {
-    return NextResponse.next();
+    const response = NextResponse.next();
+    if (process.env.PREVIEW_SAFE_MODE === "true" || process.env.VERCEL_ENV === "preview") {
+      response.headers.set("X-Folqen-Preview-Mode", "safe");
+      response.headers.set("X-Folqen-Execution-Mode", "dry-run");
+      response.headers.set("X-Robots-Tag", "noindex, nofollow");
+    }
+    return response;
   }
 
   const loginUrl = new URL("/login", request.url);
@@ -59,6 +66,7 @@ export const config = {
     "/errors/:path*",
     "/audit/:path*",
     "/workflows/:path*",
+    "/browser-operations/:path*",
     "/files/:path*",
     "/notifications/:path*",
     "/upgrades/:path*",
