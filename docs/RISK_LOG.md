@@ -2,6 +2,14 @@
 
 ## Current Risks
 
+### Public preview mode can be mistaken for production live capability
+
+- Risk: The public preview now loads command-center routes without login, so viewers may assume provider execution, rendering, publishing, or browser automation are live.
+- Prevention: Preview middleware stamps protected pages with `X-Folqen-Preview-Mode=public-safe` and `X-Folqen-Execution-Mode=dry-run`; preview diagnostics show 9/9 SAFE checks; critical mutation APIs still reject anonymous requests with `403`.
+- Verification: Live deployment checks confirmed required routes return `200`, deployment diagnostics are configured, `/api/auth/me` returns viewer role only, and unsafe mutation attempts are blocked.
+- Rollback: Set `PREVIEW_PUBLIC_MODE=false`, redeploy, and return to login-gated preview access via preview demo auth or database-backed auth.
+- Human approval trigger: Any request to keep preview-public access while enabling live execution, provider keys, rendering workers, or publishing workflows.
+
 ### Preview public mode can be misconfigured and overexpose internal dashboards
 
 - Risk: If `PREVIEW_PUBLIC_MODE=true` is enabled outside strict preview-safe constraints, protected UI pages could become unintentionally accessible.

@@ -1,5 +1,44 @@
 # Changelog
 
+## May 13, 2026 - Safe Public Preview Deployment and Demo Refinement
+
+### Added
+
+- Added cinematic route-level loading UI for authenticated app surfaces:
+  - `src/app/(app)/loading.tsx`
+  - `src/components/command-center/command-center-loading.tsx`
+- Expanded command-center mock operational data for richer demo visualization (agent workforce, workflow states, traces, communications, and metrics).
+- Added reduced-motion guardrail in global CSS for smoother accessibility and lower animation cost on constrained devices.
+
+### Changed
+
+- Refined command-center motion handling with reduced-motion-aware section/card transitions.
+- Hardened sparkline rendering for edge cases to avoid unstable visual calculations.
+- Deployed `build/phase-0-foundation` to Vercel with SAFE public preview runtime flags.
+
+### Deployment
+
+- Production alias: `https://folqen.vercel.app`
+- Deployment inspect URL: `https://vercel.com/rayalasai874-4182s-projects/folqen/HDjQ9gYDyibaYDXihcL2MXEVNJXs`
+- Temporary share URL (expires in 23h): `https://folqen.vercel.app/?_vercel_share=DWi8D4fTLwvKLSEqXNEKcdG5zqsXI2tF`
+
+### Safety
+
+- Confirmed preview public mode is active only with dry-run safeguards.
+- Confirmed dangerous runtime paths remain disabled: publishing, live provider execution, rendering execution, browser automation execution, queue workers, and autonomous retries.
+- Confirmed unsafe API mutation attempts from anonymous context are blocked with `403`.
+
+### Verification
+
+- `eslint .`: passed.
+- `tsc --noEmit`: passed.
+- `tsx --test "src/**/*.test.ts"`: passed, 153 tests.
+- `prisma generate`: passed.
+- `next build`: passed on Next.js `16.2.6`.
+- Live route verification: `/`, `/dashboard`, `/agents`, `/workflows`, `/research-intelligence`, `/content-studio`, `/analytics`, `/audit`, `/browser-operations`, `/infrastructure`, and `/approvals` returned `200`.
+- Middleware preview bypass verification: protected routes returned `X-Folqen-Preview-Mode=public-safe` and `X-Folqen-Execution-Mode=dry-run`.
+- Preview diagnostics: `/api/deployment/preview` returned `status=Configured` with 9/9 checks configured and 0 blocked.
+
 ## May 13, 2026 - Preview Public Mode and Command-Center UI Refinement
 
 ### Added
