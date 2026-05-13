@@ -14,6 +14,18 @@ import { enqueueOrchestrationJob, ORCHESTRATION_QUEUES } from "@/lib/orchestrati
 import type { DepartmentId } from "@/lib/orchestration/types";
 import { getMutationSafetyError } from "@/lib/security/request-guards";
 import { executeLiveProvider } from "./adapters";
+import {
+  analyticsDataSourceKinds,
+  analyticsOperationalResponseSchema,
+  analyticsOutputWarnings,
+  buildAnalyticsOperationsPrompt,
+  buildAnalyticsOperationsSystemPrompt,
+  LIVE_ANALYTICS_OPERATIONAL_CAPABILITY,
+  liveAnalyticsWorkflowKinds,
+  parseAnalyticsOperationsJson,
+  scoreAnalyticsOutput,
+  type AnalyticsMemoryContextItem,
+} from "./analytics-operations";
 import { defaultRuntimeQuota, FIRST_LIVE_TARGET, getConfiguredActivationStage, isLiveExecutionFlagEnabled, isRuntimeKillSwitchEnabled } from "./config";
 import {
   buildContentOperationsPrompt,
@@ -47,7 +59,9 @@ const workflowKindSchema = z.enum(["provider_execution", "structured_generation"
 const taskTypeSchema = z.enum(["text_generation", "structured_output", "planning", "classification", "summarization", "embedding"]);
 const liveResearchWorkflowKindSchema = z.enum(liveResearchWorkflowKinds);
 const liveContentWorkflowKindSchema = z.enum(liveContentWorkflowKinds);
+const liveAnalyticsWorkflowKindSchema = z.enum(liveAnalyticsWorkflowKinds);
 const contentPlatformTargetSchema = z.enum(contentPlatformTargets);
+const analyticsDataSourceKindSchema = z.enum(analyticsDataSourceKinds);
 
 export const controlledLiveExecutionSchema = z.object({
   objective: z.string().min(8).max(1500),
@@ -65,11 +79,14 @@ export const controlledLiveExecutionSchema = z.object({
   estimatedOutputTokens: z.coerce.number().int().min(1).max(defaultRuntimeQuota.maxOutputTokensPerRequest).optional(),
   researchWorkflowKind: liveResearchWorkflowKindSchema.default("content_ideation"),
   contentWorkflowKind: liveContentWorkflowKindSchema.default("hook_generation"),
+  analyticsWorkflowKind: liveAnalyticsWorkflowKindSchema.default("content_performance_analysis"),
   seedTopics: z.array(z.string().min(1).max(180)).max(12).default([]),
   competitors: z.array(z.string().min(1).max(180)).max(12).default([]),
   audienceNotes: z.array(z.string().min(1).max(500)).max(12).default([]),
   sourceReferences: z.array(z.string().min(1).max(500)).max(12).default([]),
   platformTargets: z.array(contentPlatformTargetSchema).max(5).default(["YOUTUBE_SHORTS", "INSTAGRAM_REELS", "THREADS"]),
+  analyticsSignals: z.array(z.string().min(1).max(700)).max(18).default([]),
+  analyticsDataSources: z.array(analyticsDataSourceKindSchema).max(5).default(["mock_ingestion", "workflow_analytics", "internal_execution_metrics"]),
 });
 
 export const activationRequestSchema = z.object({
@@ -90,7 +107,7 @@ const globalStore = globalThis as typeof globalThis & {
 };
 
 const ACTIVATION_SETTING_KEY = "live_execution.activation.gemini_research_ideation";
-const LIVE_EXECUTION_ALLOWED_DEPARTMENTS: DepartmentId[] = ["research", "content"];
+const LIVE_EXECUTION_ALLOWED_DEPARTMENTS: DepartmentId[] = ["research", "content", "analytics"];
 
 const usageZero: RuntimeUsageSnapshot = {
   requestsToday: 0,
@@ -122,7 +139,7 @@ const registryStore =
       quotas: defaultRuntimeQuota,
       usage: usageZero,
       lastUpdatedAt: new Date().toISOString(),
-      notes: ["Stage 0 mock-only by default. Stage 1 target is Gemini for approved Research and Content Department workflows only."],
+      notes: ["Stage 0 mock-only by default. Stage 1 target is Gemini for approved Research, Content, and Analytics Department workflows only."],
     },
   ];
 
@@ -163,16 +180,22 @@ function isApprovedLiveTask(input: ControlledLiveExecutionRequest) {
   if (input.departmentId === "content") {
     return input.taskType === "structured_output";
   }
+  if (input.departmentId === "analytics") {
+    return input.taskType === "structured_output";
+  }
   return false;
 }
 
 function liveExecutionWorkflowId(result: ControlledLiveExecutionResult) {
   if (result.departmentId === "content") return `live_execution.gemini_content.${result.contentWorkflowKind ?? "hook_generation"}`;
+  if (result.departmentId === "analytics") return `live_execution.gemini_analytics.${result.analyticsWorkflowKind ?? "content_performance_analysis"}`;
   return `live_execution.gemini_research.${result.researchWorkflowKind ?? "content_ideation"}`;
 }
 
 function liveExecutionMetricName(result: ControlledLiveExecutionResult) {
-  return result.departmentId === "content" ? "live_gemini_content_intelligence_cost_inr" : "live_gemini_research_ideation_cost_inr";
+  if (result.departmentId === "content") return "live_gemini_content_intelligence_cost_inr";
+  if (result.departmentId === "analytics") return "live_gemini_analytics_intelligence_cost_inr";
+  return "live_gemini_research_ideation_cost_inr";
 }
 
 function isProviderActivationRecord(value: unknown): value is ProviderActivationRecord {
@@ -346,6 +369,8 @@ async function persistLiveExecutionResult(input: ControlledLiveExecutionRequest,
           researchScore: result.researchScore,
           contentWorkflowKind: result.contentWorkflowKind,
           contentScore: result.contentScore,
+          analyticsWorkflowKind: result.analyticsWorkflowKind,
+          analyticsScore: result.analyticsScore,
         }),
       },
     });
@@ -480,6 +505,75 @@ async function retrieveContentMemory(input: ControlledLiveExecutionRequest): Pro
   return memoryItems.filter((item, index, all) => all.findIndex((candidate) => candidate.id === item.id) === index).slice(0, 8);
 }
 
+async function retrieveAnalyticsMemory(input: ControlledLiveExecutionRequest): Promise<AnalyticsMemoryContextItem[]> {
+  const query = [input.objective, input.analyticsWorkflowKind, ...(input.analyticsSignals ?? []), ...(input.analyticsDataSources ?? []), ...(input.platformTargets ?? [])].filter(Boolean).join(" ");
+  const memoryItems: AnalyticsMemoryContextItem[] = [];
+
+  try {
+    const search = await searchMemory({
+      query: query || "Analytics Department feedback intelligence",
+      categories: ["analytics", "workflow", "strategic", "organizational", "prompt"],
+      departmentId: "analytics",
+      tags: ["analytics", "performance", "retention", "ctr", "workflow", "experiment", "reflection", "platform"],
+      limit: 6,
+    });
+    memoryItems.push(
+      ...search.items.map((item) => ({
+        id: item.id,
+        title: item.title,
+        summary: item.summary,
+        relevance: Math.round((item.retrievalScore ?? 0) * 100),
+        category: item.category,
+      })),
+    );
+  } catch {
+    // Memory tables are optional until migration/application state is configured; workflow and metric history remain safe fallbacks.
+  }
+
+  if (hasDatabaseUrl()) {
+    try {
+      const rows = await getDb().workflowRun.findMany({
+        where: { workflowId: { startsWith: "live_execution.gemini_" } },
+        orderBy: { createdAt: "desc" },
+        take: 8,
+        select: { id: true, workflowId: true, status: true, createdAt: true },
+      });
+      for (const row of rows) {
+        memoryItems.push({
+          id: row.id,
+          title: row.workflowId,
+          summary: `Previous governed workflow ${row.status.toLowerCase()} at ${row.createdAt.toISOString()}.`,
+          relevance: row.workflowId.includes("analytics") ? 72 : 58,
+          category: "workflow",
+        });
+      }
+    } catch {
+      // Existing WorkflowRun history is best-effort observability only.
+    }
+
+    try {
+      const analytics = await getDb().analyticsRecord.findMany({
+        orderBy: { createdAt: "desc" },
+        take: 8,
+        select: { id: true, metric: true, value: true, period: true },
+      });
+      for (const row of analytics) {
+        memoryItems.push({
+          id: row.id,
+          title: row.metric,
+          summary: `Analytics metric ${row.metric} recorded ${row.value} for ${row.period}.`,
+          relevance: 66,
+          category: "analytics",
+        });
+      }
+    } catch {
+      // AnalyticsRecord is optional context, never a live platform API claim.
+    }
+  }
+
+  return memoryItems.filter((item, index, all) => all.findIndex((candidate) => candidate.id === item.id) === index).slice(0, 10);
+}
+
 export function evaluateLiveReadiness(rawInput: Partial<ControlledLiveExecutionRequest> = {}): LiveReadinessDecision {
   const input = controlledLiveExecutionSchema.partial({ objective: true }).parse(rawInput);
   const providerId = input.providerId ?? FIRST_LIVE_TARGET.providerId;
@@ -531,9 +625,9 @@ export function evaluateLiveReadiness(rawInput: Partial<ControlledLiveExecutionR
   if (!record.enabled) reasons.push("Provider activation record is not enabled.");
   if (record.stage < 1) reasons.push("Activation stage is still Stage 0 mock-only.");
   if (providerId !== FIRST_LIVE_TARGET.providerId) reasons.push("Only Gemini is supported as the first live activation target.");
-  if (!isApprovedLiveDepartment((input.departmentId ?? FIRST_LIVE_TARGET.departmentId) as DepartmentId)) reasons.push("Live activation is limited to approved Research or Content Department workflows.");
+  if (!isApprovedLiveDepartment((input.departmentId ?? FIRST_LIVE_TARGET.departmentId) as DepartmentId)) reasons.push("Live activation is limited to approved Research, Content, or Analytics Department workflows.");
   if ((input.workflowKind ?? FIRST_LIVE_TARGET.workflowKind) !== FIRST_LIVE_TARGET.workflowKind) reasons.push("Live activation is limited to governed structured-generation workflows.");
-  if (!isApprovedLiveTask(input as ControlledLiveExecutionRequest)) reasons.push("Live activation is limited to approved Research planning or Content structured-output tasks.");
+  if (!isApprovedLiveTask(input as ControlledLiveExecutionRequest)) reasons.push("Live activation is limited to approved Research planning, Content structured-output, or Analytics structured-output tasks.");
   if (!credentialConfigured(providerId)) reasons.push("Provider credential is not configured in server environment.");
   if ((input.approvalStatus ?? "pending") !== "approved" || !input.approvalId) reasons.push("Explicit approved activation approval ID is required.");
   if (!record.sandboxPassed) reasons.push("Sandbox execution must pass before live promotion.");
@@ -585,7 +679,7 @@ export async function requestProviderActivation(rawInput: unknown, actorId?: str
             requestedStage: input.requestedStage,
             firstTarget: FIRST_LIVE_TARGET,
             allowedDepartments: LIVE_EXECUTION_ALLOWED_DEPARTMENTS,
-            allowedWorkflows: ["research_intelligence", "content_intelligence"],
+            allowedWorkflows: ["research_intelligence", "content_intelligence", "analytics_intelligence"],
             quotas: defaultRuntimeQuota,
             liveExecution: false,
             queueJobId: queue.jobId,
@@ -681,6 +775,7 @@ export async function runControlledLiveExecution(rawInput: unknown, actorId?: st
   const input = controlledLiveExecutionSchema.parse(rawInput);
   const { readiness, approvalVerification } = await evaluateLiveReadinessForExecution(input);
   const isContentWorkflow = input.departmentId === "content";
+  const isAnalyticsWorkflow = input.departmentId === "analytics";
   const isResearchIdeationWorkflow = input.departmentId === "research" && input.researchWorkflowKind === "content_ideation";
   const queue = await enqueueOrchestrationJob({
     queueName: ORCHESTRATION_QUEUES.aiRuntime,
@@ -703,9 +798,10 @@ export async function runControlledLiveExecution(rawInput: unknown, actorId?: st
       status: readiness.allowed ? "warning" : "failed",
       warnings: readiness.allowed ? ["Live execution was attempted under constrained activation gates."] : readiness.reasons,
     },
-    liveCapability: isContentWorkflow ? LIVE_CONTENT_OPERATIONAL_CAPABILITY : isResearchIdeationWorkflow ? LIVE_RESEARCH_IDEATION_CAPABILITY : LIVE_RESEARCH_OPERATIONAL_CAPABILITY,
+    liveCapability: isAnalyticsWorkflow ? LIVE_ANALYTICS_OPERATIONAL_CAPABILITY : isContentWorkflow ? LIVE_CONTENT_OPERATIONAL_CAPABILITY : isResearchIdeationWorkflow ? LIVE_RESEARCH_IDEATION_CAPABILITY : LIVE_RESEARCH_OPERATIONAL_CAPABILITY,
     researchWorkflowKind: input.researchWorkflowKind,
     contentWorkflowKind: input.contentWorkflowKind,
+    analyticsWorkflowKind: input.analyticsWorkflowKind,
     approvalVerification,
     retryPolicy: {
       autonomousRetries: false,
@@ -724,6 +820,7 @@ export async function runControlledLiveExecution(rawInput: unknown, actorId?: st
     updateRecord(input.providerId, { usage: { ...recordBefore.usage, inFlight: recordBefore.usage.inFlight + 1 } });
     const researchMemoryContext = input.departmentId === "research" ? await retrieveResearchMemory(input) : [];
     const contentMemoryContext = isContentWorkflow ? await retrieveContentMemory(input) : [];
+    const analyticsMemoryContext = isAnalyticsWorkflow ? await retrieveAnalyticsMemory(input) : [];
     const normalized = normalizeAiGatewayInput({
       workflowKind: input.workflowKind,
       objective: input.objective,
@@ -732,7 +829,16 @@ export async function runControlledLiveExecution(rawInput: unknown, actorId?: st
       preferredProviders: [input.providerId],
       fallbackProviders: [],
       model: input.model,
-      prompt: isContentWorkflow
+      prompt: isAnalyticsWorkflow
+        ? buildAnalyticsOperationsPrompt({
+            workflowKind: input.analyticsWorkflowKind,
+            objective: input.objective,
+            performanceSignals: input.analyticsSignals,
+            sourceReferences: input.sourceReferences,
+            platformTargets: input.platformTargets,
+            memoryContext: analyticsMemoryContext,
+          })
+        : isContentWorkflow
         ? buildContentOperationsPrompt({
             workflowKind: input.contentWorkflowKind,
             objective: input.objective,
@@ -753,7 +859,7 @@ export async function runControlledLiveExecution(rawInput: unknown, actorId?: st
               sourceReferences: input.sourceReferences,
               memoryContext: researchMemoryContext,
             }),
-      systemPrompt: input.systemPrompt ?? (isContentWorkflow ? buildContentOperationsSystemPrompt() : isResearchIdeationWorkflow ? buildResearchIdeationSystemPrompt() : buildResearchOperationsSystemPrompt()),
+      systemPrompt: input.systemPrompt ?? (isAnalyticsWorkflow ? buildAnalyticsOperationsSystemPrompt() : isContentWorkflow ? buildContentOperationsSystemPrompt() : isResearchIdeationWorkflow ? buildResearchIdeationSystemPrompt() : buildResearchOperationsSystemPrompt()),
       maxOutputTokens: input.maxOutputTokens,
       estimatedInputTokens: input.estimatedInputTokens,
       estimatedOutputTokens: input.estimatedOutputTokens,
@@ -771,13 +877,15 @@ export async function runControlledLiveExecution(rawInput: unknown, actorId?: st
         input: normalized,
         timeoutMs: getAiProviderProfile(input.providerId)?.timeoutMs ?? 30_000,
         responseMimeType: "application/json",
-        responseSchema: isContentWorkflow ? contentOperationalResponseSchema : isResearchIdeationWorkflow ? researchIdeationResponseJsonSchema : researchOperationalResponseSchema,
+        responseSchema: isAnalyticsWorkflow ? analyticsOperationalResponseSchema : isContentWorkflow ? contentOperationalResponseSchema : isResearchIdeationWorkflow ? researchIdeationResponseJsonSchema : researchOperationalResponseSchema,
       });
-      const structuredOutput = isContentWorkflow ? parseContentOperationsJson(providerResponse.content) : isResearchIdeationWorkflow ? parseResearchIdeationJson(providerResponse.content) : parseResearchOperationsJson(providerResponse.content);
-      const researchOutput = !isContentWorkflow && !isResearchIdeationWorkflow ? parseResearchOperationsJson(providerResponse.content) : undefined;
+      const structuredOutput = isAnalyticsWorkflow ? parseAnalyticsOperationsJson(providerResponse.content) : isContentWorkflow ? parseContentOperationsJson(providerResponse.content) : isResearchIdeationWorkflow ? parseResearchIdeationJson(providerResponse.content) : parseResearchOperationsJson(providerResponse.content);
+      const researchOutput = input.departmentId === "research" && !isResearchIdeationWorkflow ? parseResearchOperationsJson(providerResponse.content) : undefined;
       const contentOutput = isContentWorkflow ? parseContentOperationsJson(providerResponse.content) : undefined;
+      const analyticsOutput = isAnalyticsWorkflow ? parseAnalyticsOperationsJson(providerResponse.content) : undefined;
       const researchWarnings = researchOutput ? researchOutputWarnings(researchOutput) : [];
       const contentWarnings = contentOutput ? contentOutputWarnings(contentOutput) : [];
+      const analyticsWarnings = analyticsOutput ? analyticsOutputWarnings(analyticsOutput) : [];
       const researchScore = researchOutput
         ? {
             qualityScore: scoreResearchOutput(researchOutput),
@@ -794,11 +902,22 @@ export async function runControlledLiveExecution(rawInput: unknown, actorId?: st
             duplicateSignals: contentOutput.duplicateSignals.length,
           }
         : undefined;
+      const analyticsScore = analyticsOutput
+        ? {
+            qualityScore: scoreAnalyticsOutput(analyticsOutput),
+            acceptance: analyticsWarnings.some((warning) => warning.includes("below the live acceptance threshold") || warning.includes("Mandatory analytics safety flags")) ? ("rejected" as const) : ("accepted" as const),
+            memoryItemsUsed: analyticsOutput.observability.memoryItemsUsed,
+            duplicateSignals: analyticsOutput.duplicateSignals.length,
+            optimizationConfidence: analyticsOutput.scoring.optimizationConfidenceScore,
+          }
+        : undefined;
       const validation = validateAiResponse(
         {
           expectedOutput: "json",
           responseSchema: {
-            required: isContentWorkflow
+            required: isAnalyticsWorkflow
+              ? ["workflowKind", "report", "insights", "optimizationRecommendations", "duplicateSignals", "memoryContext", "scoring", "observability", "safety"]
+              : isContentWorkflow
               ? ["workflowKind", "contentBrief", "drafts", "recommendations", "duplicateSignals", "memoryContext", "scoring", "observability", "safety"]
               : isResearchIdeationWorkflow
                 ? ["summary", "trendInsights", "topicSuggestions", "strategicRecommendations", "risks", "followUpResearch", "safety"]
@@ -807,8 +926,8 @@ export async function runControlledLiveExecution(rawInput: unknown, actorId?: st
         },
         { content: providerResponse.content, structured: structuredOutput },
       );
-      const validationWarnings = [...validation.warnings, ...researchWarnings, ...contentWarnings];
-      const outputRejected = researchScore?.acceptance === "rejected" || contentScore?.acceptance === "rejected";
+      const validationWarnings = [...validation.warnings, ...researchWarnings, ...contentWarnings, ...analyticsWarnings];
+      const outputRejected = researchScore?.acceptance === "rejected" || contentScore?.acceptance === "rejected" || analyticsScore?.acceptance === "rejected";
       result = {
         ...result,
         status: validation.status === "failed" || outputRejected ? "failed" : "completed_live",
@@ -816,6 +935,7 @@ export async function runControlledLiveExecution(rawInput: unknown, actorId?: st
         structuredOutput,
         researchScore,
         contentScore,
+        analyticsScore,
         validation: {
           status: validation.status === "failed" || outputRejected ? "failed" : validationWarnings.length ? "warning" : "passed",
           warnings: validationWarnings,
@@ -935,7 +1055,7 @@ export async function getLiveExecutionDashboard(): Promise<LiveExecutionDashboar
   return {
     activationStages: [
       { stage: 0, label: "Mock only", status: record.stage === 0 ? "Mock" : "Configured", description: "Dry-run and mock provider responses only." },
-      { stage: 1, label: "Single-provider limited execution", status: record.stage >= 1 ? record.status : "Blocked", description: "Gemini only, approved Research and Content workflows only, ultra-low volume." },
+      { stage: 1, label: "Single-provider limited execution", status: record.stage >= 1 ? record.status : "Blocked", description: "Gemini only, approved Research, Content, and Analytics workflows only, ultra-low volume." },
       { stage: 2, label: "Controlled workflow execution", status: "Blocked", description: "Future workflow-level activation after Stage 1 proves stable." },
       { stage: 3, label: "Department-limited activation", status: "Blocked", description: "Future department-scoped rollout with richer quotas and monitoring." },
       { stage: 4, label: "Full governance-approved execution", status: "Blocked", description: "Future broad execution after explicit approval and production readiness." },

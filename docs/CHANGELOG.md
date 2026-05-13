@@ -1,5 +1,31 @@
 # Changelog
 
+## May 13, 2026 - Governed Analytics Intelligence & Feedback Loop System
+
+### Added
+
+- Added `src/lib/live-execution/analytics-operations.ts` with approved Analytics workflow registry, structured Gemini output schema, memory-aware analytics prompt contract, duplicate/quality warning hooks, and feedback-loop scoring.
+- Added `GET/POST /api/live-execution/analytics/workflows` for governed Analytics-only workflows: content performance analysis, hook performance intelligence, audience retention analysis, platform performance, workflow performance analysis, strategic optimization recommendation, reflection-based analytics, and analytics quality scoring.
+- Extended controlled live execution results with `analyticsWorkflowKind`, `gemini_analytics_operational_intelligence`, and analytics quality/optimization metadata.
+- Added memory-aware Analytics retrieval from analytics, workflow, strategic, organizational, prompt memory, previous live workflow runs, and existing `AnalyticsRecord` snapshots.
+- Added `LiveAnalyticsOperationsPanel` to `/analytics` for live Analytics dashboard controls, mock/internal signal inputs, future-hook status labels, execution trace preview, recommendation panels, and confidence/quality display.
+
+### Safety
+
+- The expansion forces Gemini + Analytics Department + `structured_generation` + `structured_output` only.
+- Every workflow remains blocked unless the existing live activation gates pass: approval, persisted activation, credential, budget, quota, governance, provider health, sandbox promotion, and kill switches.
+- No publishing, rendering, scheduling, platform account access, platform analytics APIs, media generation, autonomous retries, fallback providers, autonomous optimization execution, prompt mutation, or workflow mutation was enabled.
+- Low-quality, low-confidence, duplicate-heavy, malformed, or unsafe analytics outputs are rejected as failed live executions.
+
+### Verification
+
+- Direct local `eslint .`: passed.
+- Direct local `tsc --noEmit`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 120 tests.
+- Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`; `/api/live-execution/analytics/workflows` is included in the build output.
+- Local dev smoke for `/login`: passed in the in-app browser with no browser console errors.
+- `npm audit --audit-level=moderate` still reports the known nested Next/PostCSS moderate advisory; no unsafe forced fix was applied.
+
 ## May 13, 2026 - Governed Live Content Intelligence System
 
 ### Added

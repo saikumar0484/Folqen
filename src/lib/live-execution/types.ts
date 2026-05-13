@@ -1,5 +1,6 @@
 import type { AiProviderId, AiProviderStatusLabel, AiTaskType, AiWorkflowKind } from "@/lib/ai-gateway/types";
 import type { DepartmentId } from "@/lib/orchestration/types";
+import type { AnalyticsDataSourceKind, AnalyticsOperationalOutput, LiveAnalyticsWorkflowKind } from "./analytics-operations";
 import type { ContentOperationalOutput, ContentPlatformTarget, LiveContentWorkflowKind } from "./content-operations";
 import type { LiveResearchWorkflowKind, ResearchOperationalOutput } from "./research-operations";
 
@@ -75,11 +76,14 @@ export type ControlledLiveExecutionRequest = {
   estimatedOutputTokens?: number;
   researchWorkflowKind?: LiveResearchWorkflowKind;
   contentWorkflowKind?: LiveContentWorkflowKind;
+  analyticsWorkflowKind?: LiveAnalyticsWorkflowKind;
   seedTopics?: string[];
   competitors?: string[];
   audienceNotes?: string[];
   sourceReferences?: string[];
   platformTargets?: ContentPlatformTarget[];
+  analyticsSignals?: string[];
+  analyticsDataSources?: AnalyticsDataSourceKind[];
 };
 
 export type LiveProviderResponse = {
@@ -111,10 +115,11 @@ export type ControlledLiveExecutionResult = {
     status: "passed" | "warning" | "failed";
     warnings: string[];
   };
-  liveCapability?: "gemini_research_content_ideation" | "gemini_research_operational_intelligence" | "gemini_content_operational_intelligence";
+  liveCapability?: "gemini_research_content_ideation" | "gemini_research_operational_intelligence" | "gemini_content_operational_intelligence" | "gemini_analytics_operational_intelligence";
   researchWorkflowKind?: LiveResearchWorkflowKind;
   contentWorkflowKind?: LiveContentWorkflowKind;
-  structuredOutput?: Record<string, unknown> | ResearchOperationalOutput | ContentOperationalOutput;
+  analyticsWorkflowKind?: LiveAnalyticsWorkflowKind;
+  structuredOutput?: Record<string, unknown> | ResearchOperationalOutput | ContentOperationalOutput | AnalyticsOperationalOutput;
   researchScore?: {
     qualityScore: number;
     acceptance: "accepted" | "rejected" | "blocked";
@@ -126,6 +131,13 @@ export type ControlledLiveExecutionResult = {
     acceptance: "accepted" | "rejected" | "blocked";
     memoryItemsUsed: number;
     duplicateSignals: number;
+  };
+  analyticsScore?: {
+    qualityScore: number;
+    acceptance: "accepted" | "rejected" | "blocked";
+    memoryItemsUsed: number;
+    duplicateSignals: number;
+    optimizationConfidence: number;
   };
   approvalVerification?: {
     verified: boolean;

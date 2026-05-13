@@ -2,6 +2,22 @@
 
 ## Current Risks
 
+### Governed live Analytics workflows can be mistaken for autonomous optimization
+
+- Risk: Performance reports, strategic optimization recommendations, and feedback-loop scores may look like Folqen is allowed to mutate prompts, workflows, schedules, or platform strategy automatically.
+- Prevention: `POST /api/live-execution/analytics/workflows` forces Gemini + Analytics + structured output, requires the same activation/approval/budget/governance/kill-switch gates, uses one queue attempt, has no fallback providers, and requires `noAutonomousOptimization`, `noPromptMutation`, `noWorkflowMutation`, `noPlatformApiAccess`, and `needsHumanReview` safety flags.
+- Verification: Focused tests assert Analytics workflows remain blocked without real approval verification, keep autonomous retries disabled, and require structured safety fields. Full verification must include lint, typecheck, tests, Prisma generate, build, browser smoke, and audit.
+- Rollback: Disable the Analytics workflow endpoint, engage emergency stop, set `ALLOW_LIVE_AI_EXECUTION=false`, quarantine Gemini, and revert `src/lib/live-execution/analytics-operations.ts`, `/api/live-execution/analytics/workflows`, and `LiveAnalyticsOperationsPanel`.
+- Human approval trigger: Any attempt to let Analytics recommendations mutate prompts, workflows, publishing plans, budgets, queue settings, schedules, platform accounts, or optimization rules automatically.
+
+### Mock and future-hook analytics can be over-trusted
+
+- Risk: Analytics workflows support mock ingestion and future YouTube/Instagram hook labels, but no live platform analytics API is connected. Users may over-trust directional signals as real account data.
+- Prevention: API/UI data-source labels show `Mock` or `Not connected`; prompts forbid claiming live YouTube, Instagram, platform API, scraping, publishing, or account access; outputs require limitations and evidence/confidence scoring.
+- Verification: Parser tests require limitations, data-source labels, confidence scoring, and no-platform-API safety flags.
+- Rollback: Restrict Analytics workflows to internal execution metrics only until real platform analytics connectors are explicitly approved and implemented.
+- Human approval trigger: Connecting real YouTube/Instagram analytics APIs, ingesting platform account data, applying platform credentials, or using analytics output for production scheduling/publishing decisions.
+
 ### Governed live Content workflows can look publish-ready
 
 - Risk: Hook, script, caption, metadata, thumbnail strategy, and platform adaptation outputs can look ready to post even though they are draft intelligence.

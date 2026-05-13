@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { resolveLiveExecutionAdminAccess, resolveLiveExecutionOperatorAccess, resolveLiveExecutionReadAccess } from "./api-handler";
+import { analyticsOperationalOutputSchema, analyticsOutputWarnings, parseAnalyticsOperationsJson, scoreAnalyticsOutput } from "./analytics-operations";
 import { FIRST_LIVE_TARGET } from "./config";
 import { contentOperationalOutputSchema, contentOutputWarnings, parseContentOperationsJson, scoreContentOutput } from "./content-operations";
 import { parseResearchIdeationJson, researchIdeationOutputSchema } from "./research-ideation";
@@ -70,7 +71,7 @@ test("first activation target blocks other providers and non-approved department
 
   assert.equal(readiness.allowed, false);
   assert.equal(readiness.reasons.some((reason) => reason.includes("Only Gemini")), true);
-  assert.equal(readiness.reasons.some((reason) => reason.includes("approved Research or Content Department")), true);
+  assert.equal(readiness.reasons.some((reason) => reason.includes("approved Research, Content, or Analytics Department")), true);
 });
 
 test("activation request creates approval metadata without enabling live execution", async () => {
@@ -252,6 +253,70 @@ test("governed Content workflows still block without real approval verification"
   assert.notEqual(result.status, "completed_live");
   assert.equal(result.liveCapability, "gemini_content_operational_intelligence");
   assert.equal(result.contentWorkflowKind, "hook_generation");
+  assert.equal(result.providerResponse, undefined);
+  assert.equal(result.retryPolicy.maxAttempts, 1);
+});
+
+test("Analytics operations parser scores governed feedback intelligence", () => {
+  const parsed = parseAnalyticsOperationsJson(
+    JSON.stringify({
+      workflowKind: "content_performance_analysis",
+      report: {
+        title: "Folklore shorts feedback loop report",
+        summary: "Mock/internal analytics suggest stronger source framing could improve retention without triggering platform execution.",
+        dataSources: ["mock_ingestion", "workflow_analytics", "internal_execution_metrics"],
+        confidence: 78,
+        limitations: ["No live platform analytics API access.", "Signals are directional until human-reviewed."],
+      },
+      insights: [
+        {
+          title: "Retention drop appears near proof transition",
+          metricFocus: "retention",
+          interpretation: "Viewer attention may fall when the story moves from hook to explanation without enough source context.",
+          historicalComparison: "Previous memory favored source cards for mystery claims.",
+          confidence: 80,
+          impact: "high",
+        },
+      ],
+      optimizationRecommendations: [
+        {
+          recommendation: "Add a 2-second source-context beat before the first claim.",
+          rationale: "This keeps mystery energy while reducing uncertainty around folklore versus verified history.",
+          confidence: 81,
+          expectedImpact: "medium",
+          executionStatus: "recommendation_only",
+        },
+      ],
+      duplicateSignals: ["Do not repeat the previous haunted fort cold-open pattern."],
+      memoryContext: { used: true, items: [{ id: "analytics_mem_1", title: "Source cards retained viewers", relevance: 82 }] },
+      scoring: { analyticsQualityScore: 82, confidenceScore: 78, evidenceScore: 74, optimizationConfidenceScore: 80, feedbackLoopQualityScore: 84 },
+      observability: { reasoningTrace: ["Validated mock data scope", "Compared memory", "Scored recommendation"], retrievalUsed: true, memoryItemsUsed: 1, workflowLatencyClass: "low" },
+      safety: { noPublishing: true, needsHumanReview: true, noPlatformApiAccess: true, noAutonomousOptimization: true, noPromptMutation: true, noWorkflowMutation: true },
+    }),
+  );
+
+  assert.equal(analyticsOperationalOutputSchema.safeParse(parsed).success, true);
+  assert.equal(scoreAnalyticsOutput(parsed) > 60, true);
+  assert.deepEqual(analyticsOutputWarnings(parsed), []);
+});
+
+test("governed Analytics workflows still block without real approval verification", async () => {
+  const result = await runControlledLiveExecution({
+    objective: "Analyze content performance only if every Analytics live gate is real.",
+    providerId: "gemini",
+    departmentId: "analytics",
+    workflowKind: "structured_generation",
+    taskType: "structured_output",
+    analyticsWorkflowKind: "content_performance_analysis",
+    approvalStatus: "approved",
+    approvalId: "approval_fake",
+    analyticsSignals: ["CTR 4.8 percent", "retention drop at 18 seconds"],
+  });
+
+  assert.equal(result.mode, "blocked");
+  assert.notEqual(result.status, "completed_live");
+  assert.equal(result.liveCapability, "gemini_analytics_operational_intelligence");
+  assert.equal(result.analyticsWorkflowKind, "content_performance_analysis");
   assert.equal(result.providerResponse, undefined);
   assert.equal(result.retryPolicy.maxAttempts, 1);
 });

@@ -117,7 +117,7 @@ The AI gateway remains the provider abstraction and validation layer, while live
 - kill switch and emergency stop
 - quotas and budget ceilings
 - rollback/quarantine controls
-- limiting Stage 1 to Gemini plus approved Research and Content Department structured workflows
+- limiting Stage 1 to Gemini plus approved Research, Content, and Analytics Department structured workflows
 
 Departments still must not call provider adapters directly.
 
@@ -139,3 +139,5 @@ The generic `/api/ai-gateway/*` endpoints remain mock-safe. Gemini live calls ar
 The Research Department expansion adds `POST /api/live-execution/research/workflows` for approved trend analysis, competitor insight, topic intelligence, audience insight, strategic recommendation, research reflection, memory-aware retrieval, and research scoring. This still uses Gemini only, Research only, structured JSON only, one queue attempt, no fallbacks, no publishing, no media generation, no platform APIs, and no workflow mutation.
 
 The Content Department expansion adds `POST /api/live-execution/content/workflows` for approved hook generation, script generation, caption generation, metadata optimization, thumbnail strategy, platform adaptation, content reflection, and content quality scoring. This still uses Gemini only, Content only, structured JSON only, one queue attempt, no fallbacks, no publishing, no rendering, no media generation, no platform APIs, no scheduling, and no workflow mutation.
+
+The Analytics Department expansion adds `POST /api/live-execution/analytics/workflows` for approved content performance analysis, hook performance intelligence, audience retention analysis, platform performance, workflow performance analysis, strategic optimization recommendation, reflection-based analytics, and analytics quality scoring. This still uses Gemini only, Analytics only, structured JSON only, one queue attempt, no fallbacks, mock/internal analytics inputs only, no live platform analytics APIs, no autonomous optimization execution, no prompt mutation, and no workflow mutation.
