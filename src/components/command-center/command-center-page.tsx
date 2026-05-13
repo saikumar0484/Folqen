@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import {
   Activity,
   AlertTriangle,
@@ -75,12 +75,6 @@ const statusTone = {
   Degraded: "danger",
   Blocked: "danger",
 } as const;
-
-const sectionAnimation = {
-  initial: false,
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.28 },
-};
 
 function StatusDot({ tone }: { tone: StatusTone }) {
   return <span className={cn("h-2.5 w-2.5 rounded-full", tone === "danger" ? "bg-rose-300" : tone === "warning" ? "bg-amber-300" : tone === "info" ? "bg-cyan-300" : "bg-neon")} />;
@@ -181,7 +175,7 @@ function ProgressRail({ value, tone = "safe" }: { value: number; tone?: StatusTo
 }
 
 function Sparkline({ values, tone }: { values: number[]; tone: StatusTone }) {
-  const max = Math.max(...values);
+  const max = Math.max(1, ...values);
 
   return (
     <div className="flex h-14 items-end gap-1" aria-label="Metric trend">
@@ -198,9 +192,15 @@ function Sparkline({ values, tone }: { values: number[]; tone: StatusTone }) {
 
 function PageHero({ view }: { view: CommandCenterView }) {
   const Icon = pageIcons[view.id];
+  const reduceMotion = useReducedMotion();
 
   return (
-    <motion.section {...sectionAnimation} className="command-panel relative overflow-hidden rounded-3xl p-5 md:p-6 xl:p-7">
+    <motion.section
+      initial={false}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: reduceMotion ? 0 : 0.28 }}
+      className="command-panel relative overflow-hidden rounded-3xl p-5 md:p-6 xl:p-7"
+    >
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-neon/70 to-transparent" />
       <div className="absolute right-[-12%] top-[-22%] h-80 w-80 rounded-full bg-neon/10 blur-3xl" />
       <div className="relative z-[1] grid gap-6 xl:grid-cols-[0.78fr_1fr] xl:items-end">
@@ -246,8 +246,15 @@ function PageHero({ view }: { view: CommandCenterView }) {
 }
 
 function MetricsGrid({ view }: { view: CommandCenterView }) {
+  const reduceMotion = useReducedMotion();
+
   return (
-    <motion.section {...sectionAnimation} className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+    <motion.section
+      initial={false}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: reduceMotion ? 0 : 0.28 }}
+      className="grid gap-3 md:grid-cols-2 xl:grid-cols-4"
+    >
       {view.metrics.map((metric, index) => (
         <Card key={metric.label} className={cn("overflow-hidden transition duration-300 hover:-translate-y-1 hover:border-neon/25", toneClasses[metric.tone])}>
           <CardContent className="p-4">
@@ -257,7 +264,7 @@ function MetricsGrid({ view }: { view: CommandCenterView }) {
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.28, delay: index * 0.04 }}
+                  transition={{ duration: reduceMotion ? 0 : 0.28, delay: reduceMotion ? 0 : index * 0.04 }}
                   className="mt-3 font-display text-3xl font-semibold tracking-[-0.03em]"
                 >
                   {metric.value}
@@ -501,6 +508,7 @@ function InfrastructureGrid({ infrastructure }: { infrastructure: Infrastructure
 }
 
 function RuntimeStatusStrip({ view }: { view: CommandCenterView }) {
+  const reduceMotion = useReducedMotion();
   const cells = [
     { label: "AI provider runtime", value: "Mock / approval gated", tone: "warning" as StatusTone },
     { label: "Browser operations", value: view.id === "browser-operations" ? "Sandbox trace only" : "Disabled by policy", tone: "info" as StatusTone },
@@ -509,7 +517,12 @@ function RuntimeStatusStrip({ view }: { view: CommandCenterView }) {
   ];
 
   return (
-    <motion.section {...sectionAnimation} className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+    <motion.section
+      initial={false}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: reduceMotion ? 0 : 0.28 }}
+      className="grid gap-3 md:grid-cols-2 xl:grid-cols-4"
+    >
       {cells.map((cell) => (
         <div key={cell.label} className={cn("rounded-2xl border px-4 py-3", toneClasses[cell.tone])}>
           <div className="flex items-center gap-2">

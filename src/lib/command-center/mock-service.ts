@@ -79,6 +79,72 @@ const agents: AgentNode[] = [
     performance: 80,
     autonomy: "Read/write mock memory only",
   },
+  {
+    id: "audience",
+    name: "Audience Insight Agent",
+    role: "Retention pattern analysis",
+    department: "Growth Analytics",
+    status: "Mock",
+    task: "Comparing drop-off points across 20 recent shorts",
+    memory: "Regional language intros raise watch-through in tier-2 cities",
+    performance: 83,
+    autonomy: "Recommendation-only",
+  },
+  {
+    id: "thumbnail",
+    name: "Thumbnail Strategy Agent",
+    role: "Visual packaging",
+    department: "Content Studio",
+    status: "Mock",
+    task: "Scoring thumbnail variants against folklore CTR benchmarks",
+    memory: "Green-highlighted focal point outperforms text-heavy covers",
+    performance: 87,
+    autonomy: "Draft-only render plans",
+  },
+  {
+    id: "browser-watch",
+    name: "Browser Observation Agent",
+    role: "Domain-safe web trace",
+    department: "Browser Operations",
+    status: "Configured",
+    task: "Running dry-run DOM extraction plan for allowed domains",
+    memory: "File uploads and credentialed automation remain blocked",
+    performance: 90,
+    autonomy: "Sandbox traces only",
+  },
+  {
+    id: "incident-triage",
+    name: "Incident Triage Agent",
+    role: "Failure recovery",
+    department: "Incident Center",
+    status: "Mock",
+    task: "Correlating queue lag with provider not-connected incidents",
+    memory: "Escalate when retries exceed policy ceiling",
+    performance: 89,
+    autonomy: "Escalate and isolate",
+  },
+  {
+    id: "policy",
+    name: "Governance Policy Agent",
+    role: "Execution policy checks",
+    department: "Approvals",
+    status: "Configured",
+    task: "Verifying preview-safe policy profile before deployment",
+    memory: "No live execution with preview public mode",
+    performance: 95,
+    autonomy: "Can block unsafe actions",
+  },
+  {
+    id: "platform-intel",
+    name: "Platform Intelligence Agent",
+    role: "Distribution adaptation",
+    department: "Platform Operations",
+    status: "Mock",
+    task: "Preparing per-platform metadata adaptation matrix",
+    memory: "Publishing remains manual package only",
+    performance: 82,
+    autonomy: "No account execution",
+  },
 ];
 
 const departments: DepartmentNode[] = [
@@ -95,6 +161,9 @@ const workflows: WorkflowNode[] = [
   { id: "wf-studio", name: "Script Package Generator", owner: "Content Studio", status: "Mock", progress: 64, retries: 1, currentStep: "Hook variant review", log: "Retry used for malformed metadata JSON" },
   { id: "wf-publish", name: "Manual Posting Package", owner: "Publishing", status: "Configured", progress: 92, retries: 0, currentStep: "Approval card creation", log: "API upload unavailable, package fallback selected" },
   { id: "wf-render", name: "Local Render Pipeline", owner: "Media Production", status: "Not connected", progress: 24, retries: 2, currentStep: "FFmpeg provider check", log: "Worker endpoint missing; public render blocked" },
+  { id: "wf-memory", name: "Reflection and Memory Capture", owner: "Organizational Memory", status: "Mock", progress: 71, retries: 0, currentStep: "Experiment note indexing", log: "Captured quality signals from latest hook trials" },
+  { id: "wf-browser", name: "Governed Browser Trace", owner: "Browser Operations", status: "Configured", progress: 88, retries: 0, currentStep: "Screenshot audit write", log: "Dry-run session completed with domain policy checks" },
+  { id: "wf-analytics", name: "Feedback Loop Intelligence", owner: "Growth Analytics", status: "Mock", progress: 67, retries: 1, currentStep: "Retention cohort scoring", log: "Low-confidence recommendation held for review" },
 ];
 
 const intelligence: IntelligenceSignal[] = [
@@ -104,9 +173,9 @@ const intelligence: IntelligenceSignal[] = [
 ];
 
 const analytics: AnalyticsMetric[] = [
-  { id: "ctr", label: "CTR", value: "8.4%", series: [42, 49, 46, 61, 58, 72, 84], recommendation: "Use curiosity gap thumbnails for folklore explainers.", tone: "safe" },
-  { id: "retention", label: "Retention", value: "61%", series: [61, 58, 63, 66, 62, 68, 71], recommendation: "Move the first reveal before second 9 in shorts.", tone: "info" },
-  { id: "engagement", label: "Engagement", value: "12.8%", series: [34, 38, 45, 51, 49, 57, 64], recommendation: "End with a question that invites local legend comments.", tone: "premium" },
+  { id: "ctr", label: "CTR", value: "8.9%", series: [42, 49, 46, 61, 58, 72, 84], recommendation: "Use curiosity gap thumbnails for folklore explainers.", tone: "safe" },
+  { id: "retention", label: "Retention", value: "63%", series: [61, 58, 63, 66, 62, 68, 71], recommendation: "Move the first reveal before second 9 in shorts.", tone: "info" },
+  { id: "engagement", label: "Engagement", value: "13.4%", series: [34, 38, 45, 51, 49, 57, 64], recommendation: "End with a question that invites local legend comments.", tone: "premium" },
   { id: "platform", label: "Platform Mix", value: "Manual", series: [20, 32, 27, 35, 39, 41, 43], recommendation: "Keep manual posting packages until APIs are configured.", tone: "warning" },
 ];
 
@@ -124,19 +193,23 @@ const timeline: TimelineItem[] = [
   { id: "tl-2", time: "10:18", title: "Publishing blocked safely", detail: "Manual package created because social APIs are not connected.", actor: "Safety Agent", tone: "safe" },
   { id: "tl-3", time: "11:05", title: "Render retry queued", detail: "FFmpeg worker is missing, so the retry is advisory only.", actor: "Reliability", tone: "warning" },
   { id: "tl-4", time: "12:31", title: "Upgrade proposal staged", detail: "Redis/BullMQ addition needs implementation review.", actor: "Chief Improvement Agent", tone: "premium" },
+  { id: "tl-5", time: "13:14", title: "Browser trace recorded", detail: "Dry-run screenshot path captured with safe-domain policy pass.", actor: "Browser Operations", tone: "info" },
+  { id: "tl-6", time: "14:02", title: "Approval queue synced", detail: "Three policy decisions linked to audit traces for review.", actor: "Governance", tone: "safe" },
 ];
 
 const communications: TimelineItem[] = [
   { id: "com-1", time: "Executive", title: "Prioritize sourced Indian folklore shorts this week.", detail: "Strategy asks research to avoid tragedy-adjacent claims.", actor: "Chief Creator Officer", tone: "premium" },
   { id: "com-2", time: "Research", title: "Need human review for one sensitive topic.", detail: "Confidence is high, but policy risk is not zero.", actor: "Source Quality Agent", tone: "warning" },
   { id: "com-3", time: "Studio", title: "Script package can proceed as draft-only.", detail: "No public posting or paid generation required.", actor: "Script Agent", tone: "safe" },
+  { id: "com-4", time: "Analytics", title: "Retention dip isolated to mid-video pacing.", detail: "Recommend moving second reveal earlier for mystery shorts.", actor: "Audience Insight Agent", tone: "info" },
+  { id: "com-5", time: "Governance", title: "Preview public mode validated for showcase.", detail: "All live execution switches remain blocked in deployment profile.", actor: "Policy Agent", tone: "safe" },
 ];
 
 const baseMetrics: MetricCard[] = [
-  { label: "Active agents", value: "6", delta: "+2 ready", tone: "premium", detail: "All execution is mock or approval-gated." },
-  { label: "Workflow health", value: "82%", delta: "1 degraded", tone: "info", detail: "Render and worker paths are not connected." },
+  { label: "Active agents", value: "12", delta: "+4 this phase", tone: "premium", detail: "All execution is mock or approval-gated." },
+  { label: "Workflow health", value: "86%", delta: "2 monitored", tone: "info", detail: "Render and worker paths are not connected." },
   { label: "Approval gates", value: "On", delta: "0 bypasses", tone: "safe", detail: "Publishing and paid tools are blocked." },
-  { label: "Incidents", value: "3", delta: "2 advisory", tone: "warning", detail: "No live automation was attempted." },
+  { label: "Incidents", value: "4", delta: "3 advisory", tone: "warning", detail: "No live automation was attempted." },
 ];
 
 const basePanels: PagePanel[] = [
