@@ -2,6 +2,14 @@
 
 ## Current Risks
 
+### Final cleanup can remove historical evidence if over-applied
+
+- Risk: Repository cleanup can accidentally remove root control docs, checkpoint docs, deployment guides, future-proofing guides, or archived audit evidence that future Codex sessions need for continuity.
+- Prevention: The final cleanup pass was limited to the user-named suspicious targets. Root control docs and operational docs were kept when referenced by README, AGENTS, handoff, checkpoint, implementation, future-proofing, deployment, launch, or testing flows. Only the already-reviewed `archive/review-required/` component archive was deleted, and the prior audit report was moved to `archive/final-cleanup/docs/REPOSITORY_AUDIT_2026-05-13.md`.
+- Verification: Reference checks confirmed no active imports of `DashboardScreen`, `LoadingSkeleton`, or `RoutePage`, and TypeScript/ESLint already exclude `archive/**`.
+- Rollback: Restore `archive/review-required/` from git history if a future design comparison is needed; move the historical audit report back from `archive/final-cleanup/docs/` only if active docs need it in `docs/`.
+- Human approval trigger: Any request to delete root instruction docs, checkpoint docs, deployment docs, env templates, runtime code, APIs, queues, Prisma, governance, browser operations, media, or AI runtime files.
+
 ### Preview demo auth can be mistaken for production authentication
 
 - Risk: A safe preview deployment without `DATABASE_URL` can use demo auth for dashboard visualization, which could be mistaken for production-grade user management.
