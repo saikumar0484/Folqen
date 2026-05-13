@@ -2,9 +2,9 @@
 
 ## Phase
 
-Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, every required authenticated route now has a route-specific or database-backed surface, the autonomous organization target architecture is documented, the operational command center frontend is implemented, the mock-safe multi-agent orchestration infrastructure is implemented, the first Research + Content operational intelligence layer is implemented, the Organizational Memory & Reflection Intelligence layer is implemented, the Media Generation & Asset Pipeline layer is implemented, the Platform Operations & Publishing Infrastructure layer is implemented, the Governance Approval & Safety Control layer is implemented, the AI Provider Gateway & Execution Runtime is implemented, and the Controlled Live Execution Activation Layer is implemented on branch `build/phase-0-foundation`.
+Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, every required authenticated route now has a route-specific or database-backed surface, the autonomous organization target architecture is documented, the operational command center frontend is implemented, the mock-safe multi-agent orchestration infrastructure is implemented, the first Research + Content operational intelligence layer is implemented, the Organizational Memory & Reflection Intelligence layer is implemented, the Media Generation & Asset Pipeline layer is implemented, the Platform Operations & Publishing Infrastructure layer is implemented, the Governance Approval & Safety Control layer is implemented, the AI Provider Gateway & Execution Runtime is implemented, the Controlled Live Execution Activation Layer is implemented, and the Governed Operations Trace Center is implemented on branch `build/phase-0-foundation`.
 
-Latest save point: May 13, 2026, after adding Folqen's Controlled Media Execution & Asset Rendering System. This was a governed media-runtime implementation phase; no credentials, production database migration application, production settings, paid tools, production provider activation, live embeddings, unrestricted GPU execution, live ComfyUI request, FFmpeg process spawn, binary media write, unrestricted video generation, platform account access, live platform analytics API read, scraping, public publishing, autonomous retries, autonomous optimization execution, self-improvement mutation, workflow mutation, prompt mutation, or n8n execution were enabled.
+Latest save point: May 13, 2026, after adding Folqen's Governed Operations Trace Center. This was a read-only operational hardening phase; no credentials, production database migration application, production settings, paid tools, production provider activation, live embeddings, unrestricted GPU execution, live ComfyUI request, FFmpeg process spawn, binary media write, unrestricted video generation, platform account access, live platform analytics API read, scraping, public publishing, autonomous retries, autonomous optimization execution, self-improvement mutation, workflow mutation, prompt mutation, queue mutation, or n8n execution were enabled.
 
 ## Completed Work
 
@@ -19,6 +19,11 @@ Latest save point: May 13, 2026, after adding Folqen's Controlled Media Executio
   - `GET/POST /api/media/controlled-render` and `POST /api/media/controlled-render/shutdown` for approval-gated render packets, render governance, quotas, provider checks, queue metadata, asset validation/scoring, observability, rollback, and emergency shutdown.
   - New media execution env defaults for activation stage, render kill switches, daily quota, concurrency, timeout, and GPU-minute budgets.
   - `ControlledMediaExecutionPanel` on `/content-studio` with approval ID input, render budget status, controlled workflow runner, scoring previews, blocked reasons, recent render packets, and shutdown controls.
+- Added the Governed Operations Trace Center:
+  - `src/lib/operations-trace/*` for a read-only operational read model over existing audit, event, workflow, error, approval, render, asset, and queue records.
+  - Protected `GET /api/operations/traces` with auth-gated visibility and explicit safety labels.
+  - Rebuilt `/audit` into a unified command-center trace surface with safety posture, queue observability, summary counts, and normalized trace feed.
+  - Added metadata key filtering so raw metadata values and secret-like key names are not shown in the UI.
 - Added the Platform Operations & Publishing Infrastructure layer with n8n-ready dry-run workflows, publishing/scheduling/retry queues, platform adaptation, deployment registry, analytics ingestion planning, monetization/policy hooks, protected `/api/platform-ops/*` routes, and `/platforms` controls.
 - Added `docs/PLATFORM_OPERATIONS_ARCHITECTURE.md`.
 - Added the Governance Approval & Safety Control layer with execution policy engine, governance/sandbox queues, approval workflow actions, role/permission matrix, cost/provider governance, sandbox simulation, protected `/api/governance/*` routes, and `/approvals` controls.
@@ -171,6 +176,15 @@ The app installs, lints, typechecks, tests, validates Prisma schema, builds succ
 - Database is the only live backend integration.
 
 ## Verification Status
+
+Latest May 13, 2026 Governed Operations Trace Center checkpoint:
+
+- Direct local `eslint .`: passed.
+- Direct local `tsc --noEmit`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 127 tests.
+- Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`; `/api/operations/traces` and `/audit` are included in the build output.
+- Local browser smoke loaded `/login` with no console errors. Authenticated `/audit` browser smoke could not be completed locally because this workspace has no `.env` with `AUTH_SECRET` and `DATABASE_URL`.
+- `npm audit --audit-level=moderate` still reports the known nested Next/PostCSS moderate advisory; npm suggests an unsafe forced fix to an old Next version, so no forced fix was applied.
 
 Commands run on May 5, 2026:
 

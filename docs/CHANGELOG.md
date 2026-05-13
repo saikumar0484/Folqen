@@ -1,5 +1,29 @@
 # Changelog
 
+## May 13, 2026 - Governed Operations Trace Center
+
+### Added
+
+- Added `src/lib/operations-trace/*` as a read-only operational trace read model over existing AuditLog, EventLog, WorkflowRun, ErrorLog, Approval, Render, Asset, and BullMQ queue health signals.
+- Added protected `GET /api/operations/traces`, returning normalized traces, safety posture, queue snapshots, summary counts, and explicit `Mock` / `Not connected` / `Needs approval` / `Configured` / `Blocked` labels.
+- Rebuilt `/audit` around `OperationsTracePanel`, giving Folqen a unified trace center for audit logs, events, workflow runs, approvals, incidents, render packets, assets, queues, and safety controls.
+- Added unit tests for trace status mapping, metadata key filtering, and safe fallback behavior.
+
+### Safety
+
+- The trace center is read-only and does not trigger providers, workflows, rendering, publishing, queue mutation, platform access, paid execution, or automation.
+- Raw metadata values are not rendered in the UI; only filtered metadata key names are surfaced, with secret/token/password/API-key-like keys removed.
+- If the database is unavailable, the dashboard returns an honest fallback instead of pretending live operational history exists.
+
+### Verification
+
+- Direct local `eslint .`: passed.
+- Direct local `tsc --noEmit`: passed.
+- Direct local `tsx --test "src/**/*.test.ts"`: passed, 127 tests.
+- Direct local `prisma generate` plus `next build`: passed on Next.js `16.2.6`; `/api/operations/traces` and `/audit` are included in the build output.
+- Local browser smoke loaded `/login` with no console errors. Authenticated `/audit` browser smoke could not be completed in this local environment because no `.env` with `AUTH_SECRET` and `DATABASE_URL` is present.
+- `npm audit --audit-level=moderate` still reports the known nested Next/PostCSS moderate advisory; no unsafe forced fix was applied.
+
 ## May 13, 2026 - Controlled Media Execution & Asset Rendering System
 
 ### Added

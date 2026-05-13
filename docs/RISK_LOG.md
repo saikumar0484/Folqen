@@ -2,6 +2,22 @@
 
 ## Current Risks
 
+### Operations trace data can expose sensitive operational metadata
+
+- Risk: A unified trace center could accidentally reveal secrets, tokens, raw payloads, prompt contents, provider details, or user-sensitive operational context if it renders metadata directly.
+- Prevention: `/audit` now renders only normalized read-model fields and filtered metadata key names. Secret-like key names such as token, password, API key, credential, and authorization are removed, and raw metadata values remain server-side.
+- Verification: Operations trace tests cover safe metadata key filtering, fallback behavior, and explicit read-only labels. Full verification must include lint, typecheck, tests, Prisma generate, build, browser smoke, and audit.
+- Rollback: Revert `src/lib/operations-trace/*`, `GET /api/operations/traces`, `OperationsTracePanel`, and the `/audit` page integration if any sensitive data appears in the UI.
+- Human approval trigger: Any request to show raw audit metadata, prompt bodies, provider payloads, secrets, credentials, access tokens, full trace payloads, or account data in the frontend.
+
+### Read-only trace center can be mistaken for execution control
+
+- Risk: Queue, render, approval, workflow, and safety posture panels may look like controls even though the trace center only observes state.
+- Prevention: The panel labels itself `Read-only`, exposes no mutation buttons, and notes that it does not trigger workflows, providers, rendering, publishing, queue mutation, or platform execution.
+- Verification: The route has no POST handler; tests assert fallback dashboard mode is `read_only`, and production build includes only the protected GET route.
+- Rollback: Hide `/audit` operations trace sections or return to a simple audit-list page if users confuse it with a control surface.
+- Human approval trigger: Adding any action button to `/audit` that mutates approvals, retries jobs, drains queues, activates providers, renders media, or publishes content.
+
 ### Controlled media execution can be mistaken for real rendering
 
 - Risk: Controlled render packets, asset scoring, and queue metadata may look like Folqen generated real thumbnails, images, subtitles, or rendered files.
