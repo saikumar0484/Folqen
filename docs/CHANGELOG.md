@@ -1906,6 +1906,8 @@
     - `FOLQEN_ADMIN_EMAIL`
     - `FOLQEN_ADMIN_PASSWORD`
     - `FOLQEN_ADMIN_NAME`
+- `prisma/schema.prisma`
+  - removed required `directUrl` datasource field so DB bootstrap works with `DATABASE_URL` alone.
 
 ### Verification
 
