@@ -2,6 +2,7 @@ import { Cloud, Eye, LockKeyhole, Rocket, ShieldCheck } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { toHonestStatus } from "@/lib/status-semantics";
 import type { PreviewDeploymentDashboard } from "@/lib/preview-deployment/types";
 
 type PreviewDeploymentPanelProps = {
@@ -10,7 +11,7 @@ type PreviewDeploymentPanelProps = {
 
 function statusClass(status: string) {
   if (status === "Configured") return "border-neon/25 bg-neon/10 text-neon";
-  if (status === "Needs approval" || status === "Mock") return "border-amber-300/25 bg-amber-300/10 text-amber-100";
+  if (status === "Needs approval") return "border-amber-300/25 bg-amber-300/10 text-amber-100";
   if (status === "Blocked") return "border-rose-300/25 bg-rose-300/10 text-rose-100";
   return "border-white/10 bg-white/[0.04] text-muted-foreground";
 }
@@ -27,7 +28,7 @@ export function PreviewDeploymentPanel({ dashboard }: PreviewDeploymentPanelProp
                   <Cloud className="h-3.5 w-3.5" />
                   Safe Preview Deployment
                 </Badge>
-                <Badge className={statusClass(dashboard.status)}>{dashboard.status}</Badge>
+                <Badge className={statusClass(toHonestStatus(dashboard.status))}>{toHonestStatus(dashboard.status)}</Badge>
                 <Badge variant="safe">Dry-run forced</Badge>
                 <Badge variant="safe">No live execution</Badge>
               </div>
@@ -67,7 +68,7 @@ export function PreviewDeploymentPanel({ dashboard }: PreviewDeploymentPanelProp
               <div key={check.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div className="text-sm font-medium">{check.label}</div>
-                  <Badge className={statusClass(check.status)}>{check.status}</Badge>
+                  <Badge className={statusClass(toHonestStatus(check.status))}>{toHonestStatus(check.status)}</Badge>
                 </div>
                 <p className="mt-2 text-xs leading-5 text-muted-foreground">{check.summary}</p>
                 <div className="mt-2 flex flex-wrap gap-1.5">

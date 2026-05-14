@@ -21,6 +21,10 @@ function flag(source: NodeJS.ProcessEnv, key: string) {
   return source[key] === "true";
 }
 
+function isExplicitPreviewRuntime(source: NodeJS.ProcessEnv) {
+  return source.FOLQEN_RUNTIME_PROFILE === "preview";
+}
+
 function constantTimeStringEqual(left: string, right: string) {
   const leftBytes = Buffer.from(left);
   const rightBytes = Buffer.from(right);
@@ -33,7 +37,7 @@ function constantTimeStringEqual(left: string, right: string) {
 }
 
 export function isPreviewDemoAuthEnabled(source: NodeJS.ProcessEnv = process.env) {
-  const previewRuntime = source.FOLQEN_RUNTIME_PROFILE === "preview" || source.VERCEL_ENV === "preview";
+  const previewRuntime = isExplicitPreviewRuntime(source);
   const executionDisabled =
     !flag(source, "ALLOW_PUBLIC_PUBLISH") &&
     !flag(source, "ALLOW_PAID_TOOLS") &&
@@ -48,7 +52,7 @@ export function isPreviewDemoAuthEnabled(source: NodeJS.ProcessEnv = process.env
 }
 
 export function isPreviewPublicModeEnabled(source: NodeJS.ProcessEnv = process.env) {
-  const previewRuntime = source.FOLQEN_RUNTIME_PROFILE === "preview" || source.VERCEL_ENV === "preview";
+  const previewRuntime = isExplicitPreviewRuntime(source);
   const executionDisabled =
     !flag(source, "ALLOW_PUBLIC_PUBLISH") &&
     !flag(source, "ALLOW_PAID_TOOLS") &&

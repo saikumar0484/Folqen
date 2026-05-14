@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { mutationFetch } from "@/lib/client/mutation-fetch";
 import { analyticsDataSourceKinds, liveAnalyticsWorkflowKinds, liveAnalyticsWorkflowLabels, type AnalyticsDataSourceKind, type AnalyticsOperationalOutput, type LiveAnalyticsWorkflowKind } from "@/lib/live-execution/analytics-operations";
 import type { ControlledLiveExecutionResult, LiveExecutionDashboard } from "@/lib/live-execution/types";
+import { toHonestStatus } from "@/lib/status-semantics";
 import { cn } from "@/lib/utils";
 
 type LiveAnalyticsOperationsPanelProps = {
@@ -23,7 +24,7 @@ type LiveAnalyticsResponse = {
 };
 
 const sourceLabels: Record<AnalyticsDataSourceKind, string> = {
-  mock_ingestion: "Mock ingestion",
+  mock_ingestion: "Simulated ingestion",
   future_youtube_hook: "YouTube future hook",
   future_instagram_hook: "Instagram future hook",
   workflow_analytics: "Workflow analytics",
@@ -46,7 +47,7 @@ function splitLines(value: string) {
 
 export function LiveAnalyticsOperationsPanel({ liveExecution }: LiveAnalyticsOperationsPanelProps) {
   const [workflowKind, setWorkflowKind] = useState<LiveAnalyticsWorkflowKind>("content_performance_analysis");
-  const [objective, setObjective] = useState("Interpret recent mock/internal performance signals and produce governed optimization recommendations for mystery folklore shorts.");
+  const [objective, setObjective] = useState("Interpret recent internal performance signals and produce governed optimization recommendations for mystery folklore shorts.");
   const [approvalId, setApprovalId] = useState("");
   const [signals, setSignals] = useState("CTR 4.8 percent on folklore hook test, retention drop at 18 seconds, comments mention wanting source context, render workflow failed twice last week");
   const [sources, setSources] = useState("Manual analytics note, workflow telemetry snapshot, previous content package review");
@@ -93,7 +94,7 @@ export function LiveAnalyticsOperationsPanel({ liveExecution }: LiveAnalyticsOpe
             Governed Live Analytics
           </Badge>
           <Badge variant="warning">Gemini only</Badge>
-          <Badge variant="info">Mock/internal data</Badge>
+          <Badge variant="info">Internal/simulated data</Badge>
           <Badge variant="safe">No autonomous optimization</Badge>
         </div>
         <CardTitle className="mt-3">Analytics Intelligence & Feedback Loop</CardTitle>
@@ -142,8 +143,8 @@ export function LiveAnalyticsOperationsPanel({ liveExecution }: LiveAnalyticsOpe
               {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <PlayCircle className="h-4 w-4" />}
               Run governed analytics workflow
             </Button>
-            <div className={cn("rounded-2xl border px-3 py-2 text-xs", statusClass(liveExecution.readiness.status))}>
-              {liveExecution.readiness.status}: {liveExecution.readiness.reasons[0] ?? "All gates ready."}
+            <div className={cn("rounded-2xl border px-3 py-2 text-xs", statusClass(toHonestStatus(liveExecution.readiness.status)))}>
+              {toHonestStatus(liveExecution.readiness.status)}: {liveExecution.readiness.reasons[0] ?? "All gates ready."}
             </div>
           </div>
         </div>
@@ -163,10 +164,10 @@ export function LiveAnalyticsOperationsPanel({ liveExecution }: LiveAnalyticsOpe
           </div>
 
           {response ? (
-            <div className={cn("rounded-2xl border p-4", statusClass(response.result?.status ?? "blocked"))}>
+            <div className={cn("rounded-2xl border p-4", statusClass(toHonestStatus(response.result?.status ?? "blocked")))}>
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-medium">{response.error ? "Workflow blocked" : selectedLabel}</span>
-                <Badge className={statusClass(response.result?.status ?? "blocked")}>{response.result?.status?.replaceAll("_", " ") ?? "blocked"}</Badge>
+                <Badge className={statusClass(toHonestStatus(response.result?.status ?? "blocked"))}>{toHonestStatus(response.result?.status ?? "blocked")}</Badge>
                 {response.result?.analyticsScore ? <Badge className={statusClass(response.result.analyticsScore.acceptance)}>score {response.result.analyticsScore.qualityScore}</Badge> : null}
               </div>
               <p className="mt-2 text-sm leading-6 opacity-85">{response.error ?? response.message ?? response.result?.validation.warnings[0] ?? structured?.report.summary}</p>

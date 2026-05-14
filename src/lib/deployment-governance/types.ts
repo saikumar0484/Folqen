@@ -1,6 +1,6 @@
 export type DeploymentGovernanceStatus = "Mock" | "Not connected" | "Needs approval" | "Configured" | "Blocked" | "Live";
 
-export type RuntimeProfile = "local" | "preview" | "docker" | "vps" | "coolify" | "vercel";
+export type RuntimeProfile = "local" | "preview" | "beta" | "docker" | "vps" | "coolify" | "vercel";
 
 export type DeploymentCheckSeverity = "info" | "warning" | "error" | "critical";
 

@@ -10,6 +10,7 @@ function user(role: CurrentUser["role"]): CurrentUser {
     email: `${role.toLowerCase()}@example.com`,
     name: role,
     role,
+    requiresPasswordChange: false,
   };
 }
 

@@ -1,24 +1,23 @@
+import { BetaAccessPanel } from "@/components/app/beta-access-panel";
 import { PasswordChangeForm } from "@/components/app/password-change-form";
 import { ConnectionWizard } from "@/components/app/connection-wizard";
 import { ProviderApprovalActions } from "@/components/app/provider-approval-actions";
 import { ProviderSetupPanel } from "@/components/app/provider-setup-panel";
 import { SettingsForm } from "@/components/app/settings-form";
-import { CommandCenterPage } from "@/components/command-center/command-center-page";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { getCommandCenterView } from "@/lib/command-center/mock-service";
+import { getCurrentUser } from "@/lib/auth/current-user";
 import { getProviderConfig } from "@/lib/provider-config";
 import { getFolqenSettings } from "@/lib/settings";
 
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
+  const user = await getCurrentUser();
   const settings = await getFolqenSettings();
   const providerConfig = getProviderConfig(settings.openAiModel);
 
   return (
     <div className="space-y-5 pb-24">
-      <CommandCenterPage view={getCommandCenterView("settings")} embedded />
-
       <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
@@ -55,6 +54,7 @@ export default async function SettingsPage() {
       <SettingsForm settings={settings} />
       <ProviderSetupPanel config={providerConfig} />
       <ProviderApprovalActions />
+      {user?.role === "ADMIN" || user?.role === "OPERATOR" ? <BetaAccessPanel /> : null}
       <PasswordChangeForm />
     </div>
   );

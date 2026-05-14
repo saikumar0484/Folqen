@@ -1,5 +1,203 @@
 # Handoff Log
 
+## Latest Handoff Entry (May 14, 2026 - De-Mocking Route Coverage Expansion)
+
+- Continued from the prior de-mocking checkpoint and completed route-level expansion for authenticated UX.
+- Replaced static/demo-backed route implementations with clean account-state-driven empty/setup surfaces on:
+  - `/calendar`, `/pipeline`, `/library`, `/platforms`, `/tools`, `/files`, `/notifications`, `/errors`, `/upgrades`, `/brand`, `/monetization`.
+- Expanded `SurfaceId` and copy overrides in:
+  - `src/lib/public-release/account-state.ts`
+  to support truthful guidance for all affected pages.
+- Updated active intelligence/media panels to normalize status labels through `toHonestStatus(...)` so authenticated surfaces do not regress to `Mock` badges:
+  - `intelligence-run-panel`
+  - `live-research-operations-panel`
+  - `live-content-operations-panel`
+  - `live-analytics-operations-panel`
+  - `controlled-media-execution-panel`
+- Verification completed successfully:
+  - `.\node_modules\.bin\eslint.cmd .` passed
+  - `.\node_modules\.bin\tsc.cmd --noEmit` passed
+  - `.\node_modules\.bin\tsx.cmd --test "src/**/*.test.ts"` passed (158)
+  - `.\node_modules\.bin\prisma.cmd generate` passed
+  - `.\node_modules\.bin\next.cmd build` passed
+- Safety posture unchanged: no publishing/render/browser/provider unrestricted execution activation; governance gates remain intact.
+
+## Latest Handoff Entry (May 14, 2026 - Authenticated UI De-Mocking Pass)
+
+- Implemented clean SaaS account de-mocking across authenticated surfaces.
+- Added shared account-state presenter:
+  - `src/lib/public-release/account-state.ts`
+  - `src/components/release/surface-empty-state.tsx`
+- Removed authenticated route usage of command-center mock service:
+  - rewired `/dashboard`, `/workflows`, `/research-intelligence`, `/content-studio`, `/analytics`, `/browser-operations`, `/infrastructure`, `/settings`.
+  - replaced mock-only pages `/agents`, `/departments`, `/incident-center`, `/automations`, `/organizational-memory` with onboarding-first, workspace-aware surfaces.
+- Replaced synthetic route metadata payloads:
+  - rebuilt `src/lib/app-routes.ts` to remove fake counters/panels/actions and keep clean route contracts.
+- Updated UI status semantics:
+  - removed `Mock` from user-facing `HonestStatus`.
+  - `mock` now normalizes to `Configured`; unknown states normalize to `Not connected`.
+  - updated `src/lib/status-semantics.ts` and `src/lib/status-semantics.test.ts`.
+- Removed visible mock wording from active creator surfaces:
+  - `src/components/app/command-palette.tsx`
+  - `src/components/app/notification-center.tsx`
+  - `src/components/app/agent-chat-panel.tsx`
+  - used command-center panels tied to active routes were adjusted to show honest labels.
+- Verification completed:
+  - `.\node_modules\.bin\eslint.cmd .` passed
+  - `.\node_modules\.bin\tsc.cmd --noEmit` passed
+  - `.\node_modules\.bin\tsx.cmd --test "src/**/*.test.ts"` passed (158)
+  - `.\node_modules\.bin\prisma.cmd generate` passed
+  - `.\node_modules\.bin\next.cmd build` passed
+- Safety posture unchanged:
+  - no publishing enablement
+  - no unrestricted provider/browser/render execution
+  - no autonomous retries/mutations enabled
+
+## Latest Handoff Entry (May 14, 2026 - Public Beta UX Acceleration)
+
+- Added creator-first first-run result UX:
+  - `src/components/release/first-run-result-experience.tsx`
+  - `src/components/release/types.ts`
+  - integrated through `src/components/release/creator-mission-control.tsx`
+- Added first-run outputs:
+  - workflow storytelling timeline
+  - script viewer
+  - thumbnail preview + revision flow
+  - YouTube draft package view
+  - export/copy actions
+  - conversational explanation and safety labels
+- Simplified high-traffic creator pages with advanced operations collapsed:
+  - dashboard, workflows, research-intelligence, content-studio, analytics, browser-operations, infrastructure.
+- Improved onboarding + conversational UX:
+  - local onboarding memory persistence in `onboarding-assistant`
+  - upgraded AI mini dock for creator prompts and mobile behavior.
+- Mobile polish:
+  - shell bottom spacing to prevent floating chat overlap
+  - mobile nav quick-path callout
+  - cleaner topbar creator messaging.
+- Verification completed:
+  - `eslint .` passed
+  - `tsc --noEmit` passed
+  - `tsx --test "src/**/*.test.ts"` passed (158)
+  - `prisma generate` passed
+  - `next build` passed
+- Safety posture unchanged:
+  - no unrestricted provider execution
+  - no unrestricted rendering
+  - no unrestricted browser automation
+  - no autonomous publishing
+  - no autonomous retries
+
+## Latest Handoff Entry (May 14, 2026 - Public Beta Productization Decision-Complete)
+
+- Implemented invite-only beta user lifecycle controls (admin/operator managed) with:
+  - `src/lib/beta/access.ts`
+  - `src/app/api/beta/users/route.ts`
+  - `src/app/api/beta/users/[id]/disable/route.ts`
+  - `src/app/api/beta/users/[id]/reset-password/route.ts`
+- Implemented first-run guided workflow endpoint:
+  - `src/app/api/beta/workflows/first-run/route.ts`
+  - Returns governed research + script + thumbnail + YouTube draft package outputs with trace/status contract.
+- Tightened preview bypass runtime guard:
+  - `src/lib/auth/preview-demo.ts`
+  - `src/proxy.ts`
+  - `src/app/(app)/layout.tsx`
+- Added forced password change behavior and UI support:
+  - `src/lib/auth/current-user.ts`
+  - `src/app/api/auth/login/route.ts`
+  - `src/app/api/auth/change-password/route.ts`
+  - `src/components/app/password-change-banner.tsx`
+  - `src/components/app/app-shell.tsx`
+- Added settings Beta Access panel:
+  - `src/components/app/beta-access-panel.tsx`
+  - `src/app/(app)/settings/page.tsx`
+- Added honest status utility and essential-mode normalization:
+  - `src/lib/status-semantics.ts`
+  - `src/components/command-center/command-center-page.tsx`
+  - `src/stores/command-center-store.ts`
+- Added dashboard mission-control first-run UI and expanded guided onboarding flow:
+  - `src/components/release/creator-mission-control.tsx`
+  - `src/components/release/onboarding-assistant.tsx`
+  - `src/app/(app)/dashboard/page.tsx`
+- Verification run complete:
+  - `.\node_modules\.bin\eslint.cmd .` passed
+  - `.\node_modules\.bin\tsc.cmd --noEmit` passed
+  - `.\node_modules\.bin\tsx.cmd --test "src/**/*.test.ts"` passed (158)
+  - `.\node_modules\.bin\prisma.cmd generate` passed
+  - `.\node_modules\.bin\next.cmd build` passed
+- Safety posture unchanged:
+  - no unrestricted provider execution
+  - no autonomous publishing
+  - no unrestricted browser automation
+  - no unrestricted rendering
+  - no queue-worker/autonomous retry activation
+
+## Latest Handoff Entry (May 14, 2026 - Supabase Integration)
+
+- Connected to Supabase project `Folqen` (`eobvgajgyvydqydlfken`) using the Supabase connector.
+- Applied migration `add_memory_reflection_system` on the project database.
+- Verified `MemoryEntry`, `MemoryReflection`, and `ExperimentRecord` now exist with RLS enabled.
+- Updated Prisma/env integration for pooled/direct URL split:
+  - `prisma/schema.prisma`: added `directUrl = env("DIRECT_URL")`.
+  - `src/lib/env.ts`: added `DIRECT_URL`.
+  - `.env.example`, `deploy/.env.preview.example`, `deploy/.env.production.example`: added `DIRECT_URL` placeholders.
+- No live publishing/rendering/browser/provider/queue activation was enabled in this slice.
+
+## Latest Handoff Entry (May 14, 2026 - Public Release Prep)
+
+- Completed creator onboarding and workspace activation slice for public beta preparation.
+- Added onboarding/workspace backend modules and APIs:
+  - `src/lib/public-release/types.ts`
+  - `src/lib/public-release/templates.ts`
+  - `src/lib/public-release/conversation.ts`
+  - `src/lib/public-release/workspace-service.ts`
+  - `src/app/api/onboarding/conversation/route.ts`
+  - `src/app/api/workspaces/route.ts`
+  - `src/app/api/workspaces/active/route.ts`
+- Added onboarding/workspace frontend integration:
+  - `src/app/(app)/onboarding/page.tsx`
+  - `src/components/release/onboarding-assistant.tsx`
+  - `src/components/release/workspace-launchpad.tsx`
+  - `src/components/release/workspace-switcher.tsx`
+  - Updated `src/components/app/topbar.tsx` and `src/app/(app)/dashboard/page.tsx`.
+- Added role guard hardening for workspace mutations (`canOperateWorkspaces`).
+- Added test coverage: `src/lib/public-release/conversation.test.ts`.
+- Verification completed:
+  - `.\node_modules\.bin\eslint.cmd .`
+  - `.\node_modules\.bin\tsc.cmd --noEmit`
+  - `.\node_modules\.bin\tsx.cmd --test "src/**/*.test.ts"` (155 passing)
+  - `.\node_modules\.bin\prisma.cmd generate`
+  - `.\node_modules\.bin\next.cmd build`
+- Preview-safe local smoke with preview profile flags: `/onboarding`, `/dashboard`, and `/api/workspaces` returned `200`.
+- Safety posture unchanged: no live publishing/rendering/browser/provider/worker activation; no schema migration.
+
+## Latest Handoff Entry (May 14, 2026)
+
+- Completed a true frontend reset redesign pass from scratch over Folqen shell + command surfaces.
+- Replaced UI foundations:
+  - `src/app/globals.css`
+  - `src/components/app/app-shell.tsx`
+  - `src/components/app/sidebar.tsx`
+  - `src/components/app/topbar.tsx`
+  - `src/components/app/mobile-sidebar-drawer.tsx`
+  - `src/components/command-center/command-center-page.tsx`
+  - `src/components/command-center/command-center-loading.tsx`
+  - `src/app/page.tsx`
+- Added global click/submit loading feedback:
+  - `src/components/app/navigation-feedback.tsx`
+  - integrated in `src/app/layout.tsx`
+- Updated command interaction surfaces:
+  - `src/components/app/command-search-trigger.tsx`
+  - `src/components/app/command-palette.tsx`
+  - `src/components/app/mini-agent-chat.tsx` (send spinner)
+- Verified locally:
+  - `.\node_modules\.bin\eslint.cmd .`
+  - `.\node_modules\.bin\tsc.cmd --noEmit`
+  - `.\node_modules\.bin\tsx.cmd --test "src/**/*.test.ts"` (153 passing)
+  - `.\node_modules\.bin\prisma.cmd generate`
+  - `.\node_modules\.bin\next.cmd build`
+- Safety posture unchanged: no live publishing, no live rendering, no browser execution, no unrestricted provider execution, no queue worker activation.
+
 ## Current Phase
 
 Phase 1 foundation verified. Phase 2 app shell placeholders started. Deployment/data foundation added. Phase 3 authentication foundation implemented. Supabase production database is connected, schema/seed are applied, production login is verified, the first real backend controls are live, all required authenticated routes now have route-specific surfaces, manual posting package detail/download is deployed, file registration is deployed, safe mock-agent draft creation is deployed, provider setup surfaces for Google Drive, OpenAI, n8n, and media tools are deployed, admin-only provider setup approval requests are implemented, the target autonomous organization architecture is documented, the operational command center frontend is implemented, the mock-safe multi-agent orchestration infrastructure is implemented, the first Research + Content intelligence layer is implemented, the Organizational Memory & Reflection Intelligence layer is implemented, the Media Generation & Asset Pipeline layer is implemented, the Controlled Media Execution & Asset Rendering System is implemented but blocked by default, the first governed live thumbnail rendering capability is implemented but blocked by default, the Browser Operations Department is implemented as dry-run only, the Safe Preview Deployment profile is implemented, preview public mode for safe no-login previews is implemented, the Platform Operations & Publishing Infrastructure layer is implemented, the Governance Approval & Safety Control layer is implemented, the AI Provider Gateway & Execution Runtime is implemented, the Controlled Live Execution Activation Layer is implemented, the first real live Gemini Research ideation capability is implemented but blocked by default, the governed live Research Department workflows are implemented but blocked by default, the governed live Content Department workflows are implemented but blocked by default, the governed live Analytics Department workflows are implemented but blocked by default, the Governed Operations Trace Center is implemented as a read-only `/audit` surface, production governance/trace verification hardening is implemented, and SAFE public preview deployment is live.

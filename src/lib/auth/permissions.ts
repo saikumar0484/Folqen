@@ -16,6 +16,14 @@ export function canCreateDraftContent(user: CurrentUser) {
   return user.role === "ADMIN" || user.role === "OPERATOR";
 }
 
+export function canOperateWorkspaces(_user: CurrentUser) {
+  return Boolean(_user);
+}
+
+export function canManageBetaAccess(user: CurrentUser) {
+  return user.role === "ADMIN" || user.role === "OPERATOR";
+}
+
 export function describeRoleLimit(user: CurrentUser, action: "approval" | "posting_package" | "settings" | "draft_content") {
   if (action === "settings" && !canManageSystem(user)) {
     return "Only admins can change system settings.";

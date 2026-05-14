@@ -36,7 +36,7 @@ function flag(key: string) {
 }
 
 function isPreviewPublicModeEnabledForProxy() {
-  const previewRuntime = process.env.FOLQEN_RUNTIME_PROFILE === "preview" || process.env.VERCEL_ENV === "preview";
+  const previewRuntime = process.env.FOLQEN_RUNTIME_PROFILE === "preview";
   const executionDisabled =
     !flag("ALLOW_PUBLIC_PUBLISH") &&
     !flag("ALLOW_PAID_TOOLS") &&

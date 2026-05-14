@@ -202,10 +202,10 @@ export function GovernanceControlPanel({ dashboard }: GovernanceControlPanelProp
               </Button>
             </div>
             {response ? (
-              <div className={cn("rounded-2xl border p-4", statusClass(response.error ? "Blocked" : response.result?.decision ?? response.policy?.decision ?? "Mock"))}>
+              <div className={cn("rounded-2xl border p-4", statusClass(response.error ? "Blocked" : response.result?.decision ?? response.policy?.decision ?? "Configured"))}>
                 <div className="font-medium">{response.error ? "Governance action blocked" : "Governance result captured"}</div>
                 <p className="mt-1 text-sm leading-6 opacity-85">
-                  {response.error ?? response.message ?? response.result?.reasons[0] ?? response.policy?.reasons[0] ?? `Queue job: ${response.queueJobId ?? "mock"}`}
+                  {response.error ?? response.message ?? response.result?.reasons[0] ?? response.policy?.reasons[0] ?? `Queue job: ${response.queueJobId ?? "pending"}`}
                 </p>
               </div>
             ) : null}
@@ -250,7 +250,7 @@ export function GovernanceControlPanel({ dashboard }: GovernanceControlPanelProp
           <CardContent className="space-y-3">
             <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
               <div className="font-mono text-3xl text-neon">₹{dashboard.costGovernance.estimatedUsedInr}</div>
-              <p className="mt-1 text-xs text-muted-foreground">Used of ₹{dashboard.costGovernance.monthlyBudgetInr} mock budget</p>
+              <p className="mt-1 text-xs text-muted-foreground">Used of ₹{dashboard.costGovernance.monthlyBudgetInr} monthly budget</p>
             </div>
             {dashboard.costGovernance.quotas.map((quota) => (
               <div key={quota.id} className="rounded-xl border border-white/10 bg-black/20 p-3 text-sm">

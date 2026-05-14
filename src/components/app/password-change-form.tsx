@@ -54,8 +54,8 @@ export function PasswordChangeForm() {
         </span>
         <div>
           <div className="font-mono text-[10px] uppercase tracking-widest text-neon">Security</div>
-          <h2 className="mt-1 font-display text-xl font-semibold">Change admin password</h2>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">Replace the seeded first-run password. This action is written to the audit log.</p>
+          <h2 className="mt-1 font-display text-xl font-semibold">Change password</h2>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">Use a new secure password for this account. This action is written to the audit log.</p>
         </div>
       </div>
 

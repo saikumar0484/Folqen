@@ -1,5 +1,128 @@
 # Current Status
 
+## Latest Update (May 14, 2026 - De-Mocking Coverage Expansion)
+
+- Expanded authenticated-route de-mocking to remove legacy static/demo page feeds on:
+  - `/calendar`
+  - `/pipeline`
+  - `/library`
+  - `/platforms`
+  - `/tools`
+  - `/files`
+  - `/notifications`
+  - `/errors`
+  - `/upgrades`
+  - `/brand`
+  - `/monetization`
+- These routes now render clean creator-first empty/setup states driven by:
+  - `resolveCreatorAccountState(...)`
+  - `buildEmptyStateModel(...)`
+  - `SurfaceEmptyState`
+- Extended account-state surface model coverage in:
+  - `src/lib/public-release/account-state.ts`
+  to support the expanded route set and keep truthful setup guidance.
+- Strengthened status honesty in active intelligence/media panels:
+  - mapped user-visible statuses through `toHonestStatus(...)` in live research/content/analytics and intelligence/media result panels.
+  - removed remaining user-facing `Mock` label drift on active authenticated workflow panels.
+- Kept governance/runtime safety posture unchanged:
+  - publishing disabled
+  - unrestricted browser automation disabled
+  - unrestricted rendering disabled
+  - unrestricted provider execution disabled
+  - autonomous retries/mutation disabled
+
+## Latest Update (May 14, 2026 - De-Mocking Productization Pass)
+
+- Removed authenticated UI dependency on command-center mock view composition:
+  - deleted `getCommandCenterView(...)` usage from all app routes.
+  - authenticated pages no longer render `src/lib/command-center/mock-service` payloads by default.
+- Added shared account-state presenter for onboarding-first empty UX:
+  - `src/lib/public-release/account-state.ts`
+  - `src/components/release/surface-empty-state.tsx`
+  - states: `needs_setup`, `ready_for_first_workflow`, `has_real_history`, `blocked_by_approval`, `integration_not_connected`.
+- Rebuilt route metadata to remove synthetic route stats/panels/actions payloads:
+  - replaced `src/lib/app-routes.ts` with clean route contracts (no fake counters/feed text).
+- Reworked authenticated surfaces to real-account behavior:
+  - new onboarding-first empty flow pages for `/agents`, `/departments`, `/incident-center`, `/automations`.
+  - `/workflows`, `/organizational-memory`, `/research-intelligence`, `/content-studio`, `/analytics`, `/browser-operations`, `/infrastructure` now use workspace-aware essential mode and no embedded mock command-center payloads.
+- Status semantics cleanup (user-facing):
+  - `Mock` removed from `HonestStatus`.
+  - normalized UI labels now: `Configured`, `Needs approval`, `Not connected`, `Blocked`.
+  - updated `src/lib/status-semantics.ts` and tests.
+- Removed remaining visible fake/mock wording from creator-facing components (command palette/notifications/agent chat + major operation panels used by app routes).
+
+## Latest Update (May 14, 2026 - Public Beta UX Acceleration Pass)
+
+- Implemented a creator-first first-run result experience with:
+  - cinematic workflow output presentation
+  - script viewer
+  - thumbnail preview + revision UX
+  - YouTube draft package viewer
+  - trace timeline + safety state display
+  - export/copy actions
+- Simplified creator-facing pages by moving advanced command-center operations under progressive-disclosure sections (`details`) on:
+  - `/dashboard`
+  - `/workflows`
+  - `/research-intelligence`
+  - `/content-studio`
+  - `/analytics`
+  - `/browser-operations`
+  - `/infrastructure`
+- Strengthened conversational onboarding with local onboarding memory persistence and resume behavior.
+- Improved mobile UX touchpoints:
+  - mobile chat dock refinements
+  - mobile navigation quick-path guidance
+  - extra shell bottom spacing to prevent chat overlap
+- No new backend infrastructure systems were added. Existing governance/orchestration/runtime restrictions remain unchanged.
+
+## Latest Update (May 14, 2026 - Public Beta Productization Decision-Complete)
+
+- Implemented invite-only beta access controls (admin/operator managed users only) with:
+  - `GET/POST /api/beta/users`
+  - `POST /api/beta/users/[id]/disable`
+  - `POST /api/beta/users/[id]/reset-password`
+- Added temporary-password lifecycle support with forced password change gating and a persistent banner reminder for affected users.
+- Tightened preview bypass behavior so preview/demo/public bypass only works in explicit preview runtime and not in beta runtime profile.
+- Added creator-first first-run workflow orchestration endpoint:
+  - `POST /api/beta/workflows/first-run`
+  - Composes governed research -> script -> thumbnail -> YouTube draft package (draft-only), with safety/trace/status output.
+- Added beta access management UI in Settings and dashboard creator mission-control entrypoint for first workflow runs.
+- Added honest status semantics utility (`Mock`, `Configured`, `Needs approval`, `Not connected`, `Blocked`) and wired command-center status normalization.
+- Added essential-mode progressive disclosure controls to reduce default operational density.
+- Expanded onboarding into a guided 4-step conversational flow and improved loading feedback.
+- No unsafe capability was enabled (publishing, unrestricted browser automation, unrestricted rendering, queue workers, autonomous retries, or unrestricted provider execution remain disabled).
+
+## Latest Update (May 14, 2026 - Supabase DB Integration)
+
+- Connected to Supabase project `Folqen` (`eobvgajgyvydqydlfken`) through the Supabase connector.
+- Applied pending migration `add_memory_reflection_system` to production database.
+- Verified new tables now exist and are RLS-enabled:
+  - `MemoryEntry`
+  - `MemoryReflection`
+  - `ExperimentRecord`
+- Updated Prisma/env integration for Supabase-compatible pooled/direct URL usage:
+  - Added `directUrl = env("DIRECT_URL")` in `prisma/schema.prisma`.
+  - Added `DIRECT_URL` to env schema and env templates (`.env.example`, `deploy/.env.preview.example`, `deploy/.env.production.example`).
+- No unsafe capability was enabled (publishing, rendering, browser execution, queue workers, or unrestricted provider execution remain disabled).
+
+## Latest Update (May 14, 2026)
+
+Completed a full frontend reset redesign pass for Folqen:
+
+- Replaced the full visual system (tokens, shell, navigation, command-center composition, landing page).
+- Rebuilt app shell surfaces from scratch: sidebar, topbar, mobile drawer, and dashboard composition layers.
+- Added global loading feedback (route progress + spinner overlay) for link clicks and form submits.
+- Added explicit action loading in the MiniAgentChat send flow.
+- Kept preview public mode and all execution safety restrictions intact (dry-run posture unchanged).
+
+Latest public release preparation slice completed:
+
+- Added creator onboarding APIs and flow at `/onboarding` with conversational setup planning and guided workspace creation.
+- Added workspace persistence/service layer using existing `Setting` + `AuditLog` models (no schema migration).
+- Added topbar workspace switcher with safe loading states and dashboard first-run launchpad CTA.
+- Added role-gated workspace mutation controls (admins/operators only) while keeping preview-safe restrictions.
+- Added onboarding conversation tests and kept full lint/type/test/build passing.
+
 ## Phase
 
 Phase 1 foundation verified, Phase 2 app shell placeholders started, deployment/data foundation added, Phase 3 authentication foundation implemented, Supabase-backed production login verified, first backend controls completed, every required authenticated route now has a route-specific or database-backed surface, the autonomous organization target architecture is documented, the operational command center frontend is implemented, the mock-safe multi-agent orchestration infrastructure is implemented, the first Research + Content operational intelligence layer is implemented, the Organizational Memory & Reflection Intelligence layer is implemented, the Media Generation & Asset Pipeline layer is implemented, the Platform Operations & Publishing Infrastructure layer is implemented, the Governance Approval & Safety Control layer is implemented, the AI Provider Gateway & Execution Runtime is implemented, the Controlled Live Execution Activation Layer is implemented, the Governed Operations Trace Center is implemented, production governance/trace verification hardening is implemented, the Production Environment & Deployment Governance System is implemented, the First Governed Live Thumbnail Rendering capability is implemented, the Browser Operations Department plus Safe Preview Deployment profile are implemented, the final production cleanup audit is complete on branch `build/phase-0-foundation`, the preview public mode plus premium command-center UI refinement slice is implemented, and Folqen is now deployed as a SAFE public preview on `https://folqen.vercel.app`.

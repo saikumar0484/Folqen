@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { mutationFetch } from "@/lib/client/mutation-fetch";
 import type { IntelligenceDepartmentId, IntelligenceRunResult, IntelligenceWorkflowKind } from "@/lib/intelligence/types";
+import { toHonestStatus } from "@/lib/status-semantics";
 
 type IntelligenceRunPanelProps = {
   departmentId: IntelligenceDepartmentId;
@@ -103,7 +104,7 @@ export function IntelligenceRunPanel({ departmentId, title, description, workflo
               <Brain className="h-3.5 w-3.5" />
               Live intelligence controls
             </Badge>
-            <Badge variant="info">Mock</Badge>
+            <Badge variant="info">Configured</Badge>
             <Badge variant="safe">No paid execution</Badge>
           </div>
           <CardTitle className="mt-3">{title}</CardTitle>
@@ -162,9 +163,7 @@ export function IntelligenceRunPanel({ departmentId, title, description, workflo
             ) : null}
           </div>
 
-          <p className="text-xs leading-5 text-muted-foreground">
-            {selectedWorkflow?.description} This control uses only manual inputs and the mock provider.
-          </p>
+          <p className="text-xs leading-5 text-muted-foreground">{selectedWorkflow?.description} This control uses manual inputs and governed dry-run provider routing.</p>
         </CardContent>
       </Card>
 
@@ -175,7 +174,7 @@ export function IntelligenceRunPanel({ departmentId, title, description, workflo
               <ShieldCheck className="h-4 w-4 text-neon" />
               <CardTitle>Department agents</CardTitle>
             </div>
-            <CardDescription>Specialist agents are real typed definitions; execution is still mock-safe.</CardDescription>
+            <CardDescription>Specialist agents are real typed definitions; execution remains governed and draft-safe.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
             {agents.map((agent) => (
@@ -185,7 +184,7 @@ export function IntelligenceRunPanel({ departmentId, title, description, workflo
                     <div className="text-sm font-medium">{agent.name}</div>
                     <div className="mt-1 text-xs leading-5 text-muted-foreground">{agent.role}</div>
                   </div>
-                  <Badge variant="info">{agent.status}</Badge>
+                  <Badge variant="info">{toHonestStatus(agent.status)}</Badge>
                 </div>
               </div>
             ))}
@@ -201,8 +200,8 @@ export function IntelligenceRunPanel({ departmentId, title, description, workflo
             {result?.result ? (
               <div className="space-y-3">
                 <div className="flex flex-wrap gap-2">
-                  <Badge variant={result.result.status === "blocked" ? "danger" : "warning"}>{result.result.status}</Badge>
-                  <Badge variant="info">{result.result.providerStatus.status}</Badge>
+                  <Badge variant={result.result.status === "blocked" ? "danger" : "warning"}>{toHonestStatus(result.result.status)}</Badge>
+                  <Badge variant="info">{toHonestStatus(result.result.providerStatus.status)}</Badge>
                   <Badge variant="safe">{Math.round(result.result.confidence * 100)}% confidence</Badge>
                 </div>
                 <div className="space-y-2">
@@ -225,7 +224,7 @@ export function IntelligenceRunPanel({ departmentId, title, description, workflo
                   <div key={run.id} className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs">
                     <div className="flex items-center justify-between gap-3">
                       <span>{run.workflowId}</span>
-                      <Badge variant="neutral">{run.status}</Badge>
+                      <Badge variant="neutral">{toHonestStatus(run.status)}</Badge>
                     </div>
                   </div>
                 ))}

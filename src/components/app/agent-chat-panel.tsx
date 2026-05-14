@@ -41,7 +41,7 @@ export function AgentChatPanel({ initialMessages }: { initialMessages: ChatMessa
 
       setActionMessage(`${body.content.title}: ${body.content.message}`);
       toast({
-        title: "Mock draft package created",
+        title: "Draft package created",
         description: "Human review is required before any public use.",
         tone: "success",
       });
@@ -55,7 +55,7 @@ export function AgentChatPanel({ initialMessages }: { initialMessages: ChatMessa
         <div className="border-b border-white/10 p-5">
           <div className="font-mono text-[10px] uppercase tracking-widest text-neon">Persistent chat</div>
           <h2 className="mt-1 font-display text-xl font-semibold">Folqen agent conversation</h2>
-          <p className="mt-2 text-sm text-muted-foreground">Messages save to Supabase. Replies are still mock until a real LLM provider is configured.</p>
+          <p className="mt-2 text-sm text-muted-foreground">Messages save to Supabase. Provider execution remains governed and blocked until explicitly approved.</p>
         </div>
 
         <div className="max-h-[560px] space-y-3 overflow-y-auto p-5">
@@ -108,7 +108,7 @@ export function AgentChatPanel({ initialMessages }: { initialMessages: ChatMessa
               }
 
               setMessages((current) => [...current, ...body.messages!]);
-              toast({ title: "Agent reply saved", description: "This is still a mock-agent response.", tone: "success" });
+              toast({ title: "Agent reply saved", description: "Draft-safe response saved for review.", tone: "success" });
               setContent("");
             });
           }}

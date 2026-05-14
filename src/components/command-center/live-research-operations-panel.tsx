@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { mutationFetch } from "@/lib/client/mutation-fetch";
 import { liveResearchWorkflowKinds, liveResearchWorkflowLabels, type LiveResearchWorkflowKind, type ResearchOperationalOutput } from "@/lib/live-execution/research-operations";
+import { toHonestStatus } from "@/lib/status-semantics";
 import type { ControlledLiveExecutionResult, LiveExecutionDashboard } from "@/lib/live-execution/types";
 import { cn } from "@/lib/utils";
 
@@ -123,8 +124,8 @@ export function LiveResearchOperationsPanel({ liveExecution }: LiveResearchOpera
               {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <PlayCircle className="h-4 w-4" />}
               Run governed workflow
             </Button>
-            <div className={cn("rounded-2xl border px-3 py-2 text-xs", statusClass(liveExecution.readiness.status))}>
-              {liveExecution.readiness.status}: {liveExecution.readiness.reasons[0] ?? "All gates ready."}
+            <div className={cn("rounded-2xl border px-3 py-2 text-xs", statusClass(toHonestStatus(liveExecution.readiness.status)))}>
+              {toHonestStatus(liveExecution.readiness.status)}: {liveExecution.readiness.reasons[0] ?? "All gates ready."}
             </div>
           </div>
         </div>
@@ -144,10 +145,10 @@ export function LiveResearchOperationsPanel({ liveExecution }: LiveResearchOpera
           </div>
 
           {response ? (
-            <div className={cn("rounded-2xl border p-4", statusClass(response.result?.status ?? "blocked"))}>
+            <div className={cn("rounded-2xl border p-4", statusClass(toHonestStatus(response.result?.status ?? "blocked")))}>
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-medium">{response.error ? "Workflow blocked" : selectedLabel}</span>
-                <Badge className={statusClass(response.result?.status ?? "blocked")}>{response.result?.status?.replaceAll("_", " ") ?? "blocked"}</Badge>
+                <Badge className={statusClass(toHonestStatus(response.result?.status ?? "blocked"))}>{toHonestStatus(response.result?.status ?? "blocked")}</Badge>
                 {response.result?.researchScore ? <Badge className={statusClass(response.result.researchScore.acceptance)}>score {response.result.researchScore.qualityScore}</Badge> : null}
               </div>
               <p className="mt-2 text-sm leading-6 opacity-85">{response.error ?? response.message ?? response.result?.validation.warnings[0] ?? structured?.summary}</p>

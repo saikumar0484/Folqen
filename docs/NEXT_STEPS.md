@@ -1,6 +1,91 @@
 # Next Steps
 
+## Immediate Follow-Up (May 14, 2026 - Post Coverage Expansion)
+
+1. Replace or archive now-unused legacy presentation modules:
+   - `src/components/app/foundation-pages-screens.tsx`
+   - `src/components/app/operations-screens.tsx`
+   - `src/components/app/library-screen.tsx`
+   - `src/components/app/pipeline-screen.tsx`
+   - `src/components/app/platforms-screen.tsx`
+   - `src/components/app/tools-screen.tsx`
+   - and related static data files (`foundation-pages-data`, `operations-data`, `library-data`, `pipeline-data`, `platforms-data`, `tools-data`)
+   after confirming no remaining imports.
+2. Add persisted creator-history cards for first-run outputs so refreshed sessions can reopen generated packages without export-only fallback.
+3. Add route smoke tests that assert empty-state CTAs appear for clean accounts on:
+   - `/calendar`, `/pipeline`, `/library`, `/platforms`, `/tools`, `/files`, `/notifications`, `/errors`, `/upgrades`.
+4. Keep status contract strict across authenticated UI:
+   - `Configured`, `Needs approval`, `Not connected`, `Blocked`
+   and block new user-facing `Mock` labels.
+5. Keep restricted capabilities blocked while continuing product UX polish.
+
+## Immediate Follow-Up (May 14, 2026 - Post De-Mocking)
+
+1. Add route-level persisted history cards for first-run outputs so users can reopen prior generated packages after refresh.
+2. Replace remaining non-critical legacy `command-center/*` demo panels with creator-focused empty/history views or archive them behind internal-only flags.
+3. Extend empty-state CTA guidance in:
+   - `/pipeline`
+   - `/library`
+   - `/calendar`
+   - `/notifications`
+   with direct onboarding/workflow actions.
+4. Add lightweight journey tests for clean-account UX:
+   - no fake stats/feed content rendered
+   - onboarding CTA appears when workspace is missing
+   - truthful status labels only (`Configured`, `Needs approval`, `Not connected`, `Blocked`).
+5. Keep all dangerous capabilities blocked (publishing, unrestricted rendering/browser/provider execution, autonomous retries, workflow mutation).
+
+## Immediate UX/Productization Follow-Up (May 14, 2026)
+
+1. Add route-level persistence for first-run outputs so users can revisit previous draft packages after navigation/reload.
+2. Add inline onboarding recovery controls (reset flow, edit earlier answers, continue from saved draft).
+3. Add focused creator QA pass on small-screen devices for:
+   - `/dashboard`
+   - `/onboarding`
+   - first-run result sections
+4. Add lightweight telemetry for first-run completion funnel (start -> run -> draft viewed -> export action) without changing safety model.
+5. Keep all restricted capabilities blocked (publishing, unrestricted rendering, unrestricted browser automation, unrestricted provider execution, autonomous retries).
+
+## Immediate Productization Follow-Up (May 14, 2026)
+
+1. Add route-level first-run workflow cards to `/research-intelligence` and `/content-studio` so users can inspect generated draft package artifacts from the beta run endpoint.
+2. Add explicit forced-password-change redirect UX (optional redirect to `/settings`) for invited users after first login.
+3. Add focused API tests for:
+   - beta user lifecycle endpoints
+   - first-run workflow blocked/approval-gate outputs
+4. Add lightweight dashboard/mobile polish for conversational dock and first-run result readability on small screens.
+5. Keep all dangerous execution flags disabled by default in beta runtime profile.
+
+## Immediate DB Follow-Up (May 14, 2026)
+
+1. Set both `DATABASE_URL` (pooler/runtime) and `DIRECT_URL` (direct CLI/migrations) in local and Vercel envs.
+2. Re-run `npm run db:generate` and `npm run db:seed` in any environment that still lacks seeded records.
+3. Verify login and protected dashboard routes against the same Supabase project after env sync.
+4. Keep all execution flags disabled in preview/public environments.
+
+## Latest Update (May 14, 2026)
+
+A full frontend reset redesign is now applied across Folqen's primary command surfaces:
+
+- New visual system tokens and futuristic panel hierarchy.
+- New shell/navigation architecture (sidebar, topbar, mobile drawer).
+- New command-center renderer composition for dashboard/agents/workflows/intelligence/infrastructure surfaces.
+- New landing page for product storytelling and demo readiness.
+- New global loading feedback for link clicks + form submits, plus action-level spinner feedback in mini chat.
+- New public-release onboarding flow (`/onboarding`) with conversational setup + workspace creation and topbar workspace switching.
+
+No unsafe execution capabilities were enabled during this redesign slice.
+
 ## Immediate Next Phase
+
+Public release preparation now continues with product activation, not infra expansion:
+
+1. Add creator onboarding recovery states (resume/edit draft after partial completion).
+2. Add workspace management surface (rename workspace, profile switch, operational profile adjustments).
+3. Add guided first-workflow generation panel from onboarding output to research/content workflow runners.
+4. Add channel connection architecture UX (safe setup wizard + `Not connected` honesty labels).
+5. Add public beta empty-state storytelling and mobile onboarding polish across onboarding/dashboard/topbar.
+6. Keep all dangerous execution disabled while improving usability and creator value delivery.
 
 Use `docs/AUTONOMOUS_ORGANIZATION_ARCHITECTURE.md`, `docs/ORCHESTRATION_ARCHITECTURE.md`, `docs/MEMORY_REFLECTION_ARCHITECTURE.md`, `docs/MEDIA_PIPELINE_ARCHITECTURE.md`, `docs/PLATFORM_OPERATIONS_ARCHITECTURE.md`, `docs/GOVERNANCE_SAFETY_ARCHITECTURE.md`, `docs/AI_PROVIDER_GATEWAY_ARCHITECTURE.md`, `docs/CONTROLLED_LIVE_EXECUTION_ARCHITECTURE.md`, `docs/PRODUCTION_DEPLOYMENT_GOVERNANCE.md`, `docs/BROWSER_OPERATIONS_ARCHITECTURE.md`, `docs/SAFE_PREVIEW_DEPLOYMENT.md`, and the command-center frontend as the target design for the next implementation slices. SAFE public preview deployment is now live on `https://folqen.vercel.app` with preview-public mode and dry-run guards. The first live provider capability still only covers governed Gemini intelligence paths and one governed live thumbnail path, all blocked by default until approvals/env/quotas pass. Browser Operations remains dry-run only. `/audit` has approval lifecycle read models, trace verification, diagnostics, correlations, and search. `/infrastructure` has preview deployment diagnostics plus production deployment governance, startup integrity, masked secret checks, Docker/VPS readiness, and rollback readiness. The safest next engineering phase is controlled internal activation rehearsal for one approved live path (Research or Thumbnail) with strict budget and kill-switch validation, plus final route-specific history panel integration.
 

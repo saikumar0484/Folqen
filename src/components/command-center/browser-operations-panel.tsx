@@ -6,6 +6,7 @@ import { Activity, Camera, Eye, Globe2, LockKeyhole, MousePointerClick, RotateCc
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { toHonestStatus } from "@/lib/status-semantics";
 import type { BrowserOpsDashboard, BrowserWorkflowResult } from "@/lib/browser-ops/types";
 
 type BrowserOperationsPanelProps = {
@@ -14,7 +15,7 @@ type BrowserOperationsPanelProps = {
 
 function statusClass(status: string) {
   if (status === "Configured") return "border-neon/25 bg-neon/10 text-neon";
-  if (status === "Mock" || status === "Needs approval") return "border-amber-300/25 bg-amber-300/10 text-amber-100";
+  if (status === "Needs approval") return "border-amber-300/25 bg-amber-300/10 text-amber-100";
   if (status === "Blocked") return "border-rose-300/25 bg-rose-300/10 text-rose-100";
   return "border-white/10 bg-white/[0.04] text-muted-foreground";
 }
@@ -94,7 +95,7 @@ export function BrowserOperationsPanel({ dashboard }: BrowserOperationsPanelProp
                   <Globe2 className="h-3.5 w-3.5" />
                   Browser Operations
                 </Badge>
-                <Badge className={statusClass(dashboard.department.status)}>{dashboard.department.status}</Badge>
+                <Badge className={statusClass(toHonestStatus(dashboard.department.status))}>{toHonestStatus(dashboard.department.status)}</Badge>
                 <Badge variant="safe">Dry-run only</Badge>
                 <Badge variant="safe">No account sessions</Badge>
               </div>
@@ -182,7 +183,7 @@ export function BrowserOperationsPanel({ dashboard }: BrowserOperationsPanelProp
             <div className="aspect-video rounded-2xl border border-neon/20 bg-[radial-gradient(circle_at_30%_20%,rgba(151,255,77,0.2),transparent_35%),linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] p-4">
               <div className="flex h-full flex-col justify-between rounded-xl border border-white/10 bg-black/35 p-4">
                 <div className="flex items-center justify-between gap-2">
-                  <Badge className={statusClass(result?.status === "simulated" ? "Mock" : result?.status === "blocked" ? "Blocked" : "Needs approval")}>{result?.status ?? "No run"}</Badge>
+                  <Badge className={statusClass(result?.status === "simulated" ? "Configured" : result?.status === "blocked" ? "Blocked" : "Needs approval")}>{result?.status ?? "No run"}</Badge>
                   <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">redacted screenshot</span>
                 </div>
                 <div>
@@ -224,7 +225,7 @@ export function BrowserOperationsPanel({ dashboard }: BrowserOperationsPanelProp
                 <div key={step.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="font-mono text-[10px] uppercase tracking-widest text-neon">{step.action}</div>
-                    <Badge className={statusClass(step.status === "blocked" ? "Blocked" : step.status === "needs_approval" ? "Needs approval" : "Mock")}>{step.status}</Badge>
+                    <Badge className={statusClass(step.status === "blocked" ? "Blocked" : step.status === "needs_approval" ? "Needs approval" : "Configured")}>{step.status}</Badge>
                   </div>
                   <p className="mt-2 text-sm leading-6">{step.summary}</p>
                   <p className="mt-1 break-all text-xs text-muted-foreground">{step.target}</p>
@@ -283,7 +284,7 @@ export function BrowserOperationsPanel({ dashboard }: BrowserOperationsPanelProp
                 <div key={policy.action} className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-mono text-[10px] uppercase tracking-widest text-neon">{policy.action}</span>
-                    <Badge className={statusClass(policy.status)}>{policy.status}</Badge>
+                    <Badge className={statusClass(toHonestStatus(policy.status))}>{toHonestStatus(policy.status)}</Badge>
                   </div>
                   <p className="mt-2 text-xs leading-5 text-muted-foreground">{policy.summary}</p>
                 </div>

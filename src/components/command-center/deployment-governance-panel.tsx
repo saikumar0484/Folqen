@@ -2,6 +2,7 @@ import { AlertTriangle, Database, KeyRound, LockKeyhole, RotateCcw, ServerCog, S
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { toHonestStatus } from "@/lib/status-semantics";
 import type { DeploymentGovernanceStatus, DeploymentReadinessDashboard } from "@/lib/deployment-governance/types";
 
 type DeploymentGovernancePanelProps = {
@@ -10,7 +11,7 @@ type DeploymentGovernancePanelProps = {
 
 function statusClass(status: DeploymentGovernanceStatus | string) {
   if (status === "Live" || status === "Configured") return "border-neon/25 bg-neon/10 text-neon";
-  if (status === "Needs approval" || status === "Mock") return "border-amber-300/25 bg-amber-300/10 text-amber-100";
+  if (status === "Needs approval") return "border-amber-300/25 bg-amber-300/10 text-amber-100";
   if (status === "Blocked") return "border-rose-300/25 bg-rose-300/10 text-rose-100";
   return "border-white/10 bg-white/[0.04] text-muted-foreground";
 }
@@ -40,7 +41,7 @@ export function DeploymentGovernancePanel({ dashboard }: DeploymentGovernancePan
                   <ServerCog className="h-3.5 w-3.5" />
                   Deployment Governance
                 </Badge>
-                <Badge className={statusClass(dashboard.readinessStatus)}>Readiness {dashboard.readinessStatus}</Badge>
+                <Badge className={statusClass(toHonestStatus(dashboard.readinessStatus))}>Readiness {toHonestStatus(dashboard.readinessStatus)}</Badge>
                 <Badge variant={dashboard.productionSafe ? "safe" : "warning"}>{dashboard.productionSafe ? "Production-safe flags" : "Preflight flags"}</Badge>
                 <Badge variant="safe">No activation</Badge>
               </div>
@@ -86,7 +87,7 @@ export function DeploymentGovernancePanel({ dashboard }: DeploymentGovernancePan
                     <div className="font-mono text-[10px] uppercase tracking-widest text-neon">{item.category}</div>
                     <div className="mt-1 text-sm font-medium">{item.label}</div>
                   </div>
-                  <Badge className={statusClass(item.status)}>{item.status}</Badge>
+                  <Badge className={statusClass(toHonestStatus(item.status))}>{toHonestStatus(item.status)}</Badge>
                 </div>
                 <p className="mt-2 text-xs leading-5 text-muted-foreground">{item.summary}</p>
                 <div className="mt-2 flex flex-wrap gap-1.5">
@@ -118,7 +119,7 @@ export function DeploymentGovernancePanel({ dashboard }: DeploymentGovernancePan
                     <div className="font-mono text-[10px] uppercase tracking-widest text-neon">{secret.envKey}</div>
                     <div className="mt-1 font-mono text-xs text-muted-foreground">{secret.maskedValue}</div>
                   </div>
-                  <Badge className={statusClass(secret.status)}>{secret.status}</Badge>
+                  <Badge className={statusClass(toHonestStatus(secret.status))}>{toHonestStatus(secret.status)}</Badge>
                 </div>
                 <p className="mt-2 text-xs leading-5 text-muted-foreground">{secret.summary}</p>
                 <p className="mt-2 text-[11px] leading-5 text-amber-100/80">{secret.rotationGuidance}</p>
@@ -142,7 +143,7 @@ export function DeploymentGovernancePanel({ dashboard }: DeploymentGovernancePan
               <div key={item.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
                 <div className="flex items-center justify-between gap-2">
                   <div className="text-sm font-medium">{item.label}</div>
-                  <Badge className={statusClass(item.status)}>{item.status}</Badge>
+                  <Badge className={statusClass(toHonestStatus(item.status))}>{toHonestStatus(item.status)}</Badge>
                 </div>
                 <p className="mt-2 text-xs leading-5 text-muted-foreground">{item.summary}</p>
                 <div className="mt-2 flex flex-wrap gap-1.5">
@@ -170,7 +171,7 @@ export function DeploymentGovernancePanel({ dashboard }: DeploymentGovernancePan
               <div key={item.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
                 <div className="flex items-center justify-between gap-2">
                   <div className="text-sm font-medium">{item.label}</div>
-                  <Badge className={statusClass(item.status)}>{item.status}</Badge>
+                  <Badge className={statusClass(toHonestStatus(item.status))}>{toHonestStatus(item.status)}</Badge>
                 </div>
                 <p className="mt-2 text-xs leading-5 text-muted-foreground">{item.summary}</p>
                 <p className="mt-2 text-[11px] leading-5 text-amber-100/80">{item.recoveryAction}</p>
@@ -192,7 +193,7 @@ export function DeploymentGovernancePanel({ dashboard }: DeploymentGovernancePan
               <div key={item.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
                 <div className="flex items-center justify-between gap-2">
                   <div className="text-sm font-medium">{item.label}</div>
-                  <Badge className={statusClass(item.status)}>{item.status}</Badge>
+                  <Badge className={statusClass(toHonestStatus(item.status))}>{toHonestStatus(item.status)}</Badge>
                 </div>
                 <p className="mt-2 text-xs leading-5 text-muted-foreground">{item.summary}</p>
                 <ol className="mt-2 space-y-1 text-[11px] leading-5 text-muted-foreground">
@@ -217,7 +218,7 @@ export function DeploymentGovernancePanel({ dashboard }: DeploymentGovernancePan
               <div key={profile.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="text-sm font-medium">{profile.name}</div>
-                  <Badge className={statusClass(profile.status)}>{profile.status}</Badge>
+                  <Badge className={statusClass(toHonestStatus(profile.status))}>{toHonestStatus(profile.status)}</Badge>
                 </div>
                 <p className="mt-2 text-xs leading-5 text-muted-foreground">Services: {profile.services.join(", ")}</p>
                 <p className="mt-1 text-xs leading-5 text-muted-foreground">Persistence: {profile.persistence.join(", ")}</p>
@@ -237,7 +238,7 @@ export function DeploymentGovernancePanel({ dashboard }: DeploymentGovernancePan
               <div key={item.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="text-sm font-medium">{item.target}</div>
-                  <Badge className={statusClass(item.status)}>{item.status}</Badge>
+                  <Badge className={statusClass(toHonestStatus(item.status))}>{toHonestStatus(item.status)}</Badge>
                 </div>
                 <p className="mt-2 text-xs leading-5 text-muted-foreground">{item.summary}</p>
                 <div className="mt-2 space-y-1 text-[11px] leading-5 text-muted-foreground">

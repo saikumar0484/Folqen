@@ -1,5 +1,332 @@
 # Changelog
 
+## May 14, 2026 - De-Mocking Productization (Coverage Expansion)
+
+### Changed
+
+- Replaced legacy static/demo page surfaces with real-account empty/setup UX on:
+  - `src/app/(app)/calendar/page.tsx`
+  - `src/app/(app)/pipeline/page.tsx`
+  - `src/app/(app)/library/page.tsx`
+  - `src/app/(app)/platforms/page.tsx`
+  - `src/app/(app)/tools/page.tsx`
+  - `src/app/(app)/files/page.tsx`
+  - `src/app/(app)/notifications/page.tsx`
+  - `src/app/(app)/errors/page.tsx`
+  - `src/app/(app)/upgrades/page.tsx`
+  - `src/app/(app)/brand/page.tsx`
+  - `src/app/(app)/monetization/page.tsx`
+- Expanded account-state/empty-state surface coverage:
+  - `src/lib/public-release/account-state.ts`
+- Standardized active panel status rendering through honest-status mapping:
+  - `src/components/command-center/intelligence-run-panel.tsx`
+  - `src/components/command-center/live-research-operations-panel.tsx`
+  - `src/components/command-center/live-content-operations-panel.tsx`
+  - `src/components/command-center/live-analytics-operations-panel.tsx`
+  - `src/components/command-center/controlled-media-execution-panel.tsx`
+
+### Safety
+
+- No new infrastructure systems added.
+- No unsafe execution path enabled.
+- Governance/orchestration/runtime restrictions preserved.
+
+### Verification
+
+- `.\node_modules\.bin\eslint.cmd .`: passed.
+- `.\node_modules\.bin\tsc.cmd --noEmit`: passed.
+- `.\node_modules\.bin\tsx.cmd --test "src/**/*.test.ts"`: passed, 158 tests.
+- `.\node_modules\.bin\prisma.cmd generate`: passed.
+- `.\node_modules\.bin\next.cmd build`: passed on Next.js `16.2.6`.
+
+## May 14, 2026 - De-Mocking Productization (Authenticated UI)
+
+### Added
+
+- Added shared account-state + empty-state presenter layer:
+  - `src/lib/public-release/account-state.ts`
+  - `src/components/release/surface-empty-state.tsx`
+
+### Changed
+
+- Removed authenticated route reliance on command-center mock payloads:
+  - `src/app/(app)/dashboard/page.tsx`
+  - `src/app/(app)/workflows/page.tsx`
+  - `src/app/(app)/research-intelligence/page.tsx`
+  - `src/app/(app)/content-studio/page.tsx`
+  - `src/app/(app)/analytics/page.tsx`
+  - `src/app/(app)/browser-operations/page.tsx`
+  - `src/app/(app)/infrastructure/page.tsx`
+  - `src/app/(app)/settings/page.tsx`
+  - `src/app/(app)/agents/page.tsx`
+  - `src/app/(app)/departments/page.tsx`
+  - `src/app/(app)/incident-center/page.tsx`
+  - `src/app/(app)/automations/page.tsx`
+  - `src/app/(app)/organizational-memory/page.tsx`
+- Rebuilt route metadata contract to remove synthetic operational payloads:
+  - `src/lib/app-routes.ts`
+- Updated status semantics contract to remove user-facing `Mock`:
+  - `src/lib/status-semantics.ts`
+  - `src/lib/status-semantics.test.ts`
+- Cleaned creator-facing copy and labels to avoid synthetic/mock wording:
+  - `src/components/app/command-palette.tsx`
+  - `src/components/app/notification-center.tsx`
+  - `src/components/app/agent-chat-panel.tsx`
+  - active command-center panels used by app routes.
+
+### Safety
+
+- No backend architecture expansion.
+- No new governance/orchestration/runtime systems.
+- No unsafe execution paths enabled.
+
+### Verification
+
+- `.\node_modules\.bin\eslint.cmd .`: passed.
+- `.\node_modules\.bin\tsc.cmd --noEmit`: passed.
+- `.\node_modules\.bin\tsx.cmd --test "src/**/*.test.ts"`: passed, 158 tests.
+- `.\node_modules\.bin\prisma.cmd generate`: passed.
+- `.\node_modules\.bin\next.cmd build`: passed on Next.js `16.2.6`.
+
+## May 14, 2026 - Public Beta UX Acceleration (Creator-First)
+
+### Added
+
+- Added cinematic first-run result surface:
+  - `src/components/release/first-run-result-experience.tsx`
+  - `src/components/release/types.ts`
+- Added creator-first mission-control flow integration:
+  - updated `src/components/release/creator-mission-control.tsx`
+- Added onboarding local resume memory:
+  - updated `src/components/release/onboarding-assistant.tsx`
+
+### Changed
+
+- Simplified dashboard and moved advanced operations under progressive disclosure:
+  - updated `src/app/(app)/dashboard/page.tsx`
+- Converted key creator pages to essential mode first, advanced operations second:
+  - `src/app/(app)/workflows/page.tsx`
+  - `src/app/(app)/research-intelligence/page.tsx`
+  - `src/app/(app)/content-studio/page.tsx`
+  - `src/app/(app)/analytics/page.tsx`
+  - `src/app/(app)/browser-operations/page.tsx`
+  - `src/app/(app)/infrastructure/page.tsx`
+- Improved mobile/polish surfaces:
+  - `src/components/app/mini-agent-chat.tsx`
+  - `src/components/app/mobile-sidebar-drawer.tsx`
+  - `src/components/app/app-shell.tsx`
+  - `src/components/app/topbar.tsx`
+- Extended empty-state component for guided CTA/suggestion messaging:
+  - `src/components/app/empty-state.tsx`
+- Adjusted command-center presentation hierarchy and coaching callouts:
+  - `src/components/command-center/command-center-page.tsx`
+
+### Safety
+
+- No new backend architecture systems were introduced.
+- No unsafe execution capability was enabled.
+- Existing governance/runtime restrictions remain intact.
+
+### Verification
+
+- `.\node_modules\.bin\eslint.cmd .`: passed.
+- `.\node_modules\.bin\tsc.cmd --noEmit`: passed.
+- `.\node_modules\.bin\tsx.cmd --test "src/**/*.test.ts"`: passed, 158 tests.
+- `.\node_modules\.bin\prisma.cmd generate`: passed.
+- `.\node_modules\.bin\next.cmd build`: passed on Next.js `16.2.6`.
+
+## May 14, 2026 - Public Beta Productization (Decision-Complete Slice)
+
+### Added
+
+- Added invite-only beta account management service:
+  - `src/lib/beta/access.ts`
+- Added beta user APIs:
+  - `GET/POST /api/beta/users`
+  - `POST /api/beta/users/[id]/disable`
+  - `POST /api/beta/users/[id]/reset-password`
+- Added creator-first beta workflow orchestration API:
+  - `POST /api/beta/workflows/first-run`
+- Added beta access management UI:
+  - `src/components/app/beta-access-panel.tsx`
+- Added forced password change UX banner:
+  - `src/components/app/password-change-banner.tsx`
+- Added status normalization utility + tests:
+  - `src/lib/status-semantics.ts`
+  - `src/lib/status-semantics.test.ts`
+- Added dashboard mission-control first-run panel:
+  - `src/components/release/creator-mission-control.tsx`
+
+### Changed
+
+- Tightened preview bypass logic so preview demo/public bypass only activates in explicit preview runtime, not beta runtime.
+- Updated current-user/auth flow to support beta-user disable and forced password change state.
+- Updated `/settings` to include role-gated Beta Access controls.
+- Updated command-center status rendering to honest status labels and added essential-mode progressive disclosure behavior.
+- Expanded onboarding assistant into a guided four-step conversational setup flow.
+- Updated login async feedback with explicit spinner state.
+
+### Safety
+
+- Kept publishing, unrestricted browser automation, unrestricted rendering, queue workers, autonomous retries, and unrestricted provider execution disabled by default.
+- No schema migration was introduced for this slice; persistence reuses existing models/settings.
+
+### Verification
+
+- `.\node_modules\.bin\eslint.cmd .`: passed.
+- `.\node_modules\.bin\tsc.cmd --noEmit`: passed.
+- `.\node_modules\.bin\tsx.cmd --test "src/**/*.test.ts"`: passed, 158 tests.
+- `.\node_modules\.bin\prisma.cmd generate`: passed.
+- `.\node_modules\.bin\next.cmd build`: passed on Next.js `16.2.6`.
+
+## May 14, 2026 - Supabase DB Integration Completion
+
+### Added
+
+- Added Prisma direct connection support for Supabase-compatible setup:
+  - `prisma/schema.prisma` now includes `directUrl = env("DIRECT_URL")`.
+- Added `DIRECT_URL` placeholders to:
+  - `.env.example`
+  - `deploy/.env.preview.example`
+  - `deploy/.env.production.example`
+- Added `DIRECT_URL` to runtime env validation in `src/lib/env.ts`.
+
+### Changed
+
+- Applied pending migration `add_memory_reflection_system` directly on Supabase project `eobvgajgyvydqydlfken`.
+
+### Verification
+
+- Supabase project lookup: passed.
+- Supabase migration apply: passed.
+- Supabase table verification: `MemoryEntry`, `MemoryReflection`, and `ExperimentRecord` present with RLS enabled.
+
+## May 14, 2026 - Public Release Preparation: Onboarding + Workspace Activation
+
+### Added
+
+- Added public-release domain layer:
+  - `src/lib/public-release/types.ts`
+  - `src/lib/public-release/templates.ts`
+  - `src/lib/public-release/conversation.ts`
+  - `src/lib/public-release/workspace-service.ts`
+- Added onboarding and workspace APIs:
+  - `GET/POST /api/workspaces`
+  - `POST /api/workspaces/active`
+  - `POST /api/onboarding/conversation`
+- Added onboarding/workspace frontend:
+  - `src/app/(app)/onboarding/page.tsx`
+  - `src/components/release/onboarding-assistant.tsx`
+  - `src/components/release/workspace-launchpad.tsx`
+  - `src/components/release/workspace-switcher.tsx`
+- Added onboarding test coverage:
+  - `src/lib/public-release/conversation.test.ts`
+
+### Changed
+
+- Updated `/dashboard` to show a first-run onboarding launchpad when no workspace exists.
+- Updated topbar to include workspace switching context.
+- Updated command palette with onboarding shortcut.
+- Enforced role checks for workspace mutations (admins/operators only).
+
+### Safety
+
+- No live publishing, rendering, browser execution, queue workers, or unrestricted provider execution was enabled.
+- Workspace persistence reuses existing `Setting`/`AuditLog` records; no Prisma migration was added.
+
+### Verification
+
+- `.\node_modules\.bin\eslint.cmd .`: passed.
+- `.\node_modules\.bin\tsc.cmd --noEmit`: passed.
+- `.\node_modules\.bin\tsx.cmd --test "src/**/*.test.ts"`: passed, 155 tests.
+- `.\node_modules\.bin\prisma.cmd generate`: passed.
+- `.\node_modules\.bin\next.cmd build`: passed on Next.js `16.2.6`.
+- Local preview-safe smoke (dev, preview profile): `/onboarding`, `/dashboard`, and `/api/workspaces` returned `200`.
+
+## May 14, 2026 - Full Frontend Reset Redesign + Global Loading Feedback
+
+### Added
+
+- Added global navigation/action feedback layer:
+  - `src/components/app/navigation-feedback.tsx`
+  - Route-progress bar and floating loading indicator for internal link clicks and form submits.
+- Added redesigned loading visual system:
+  - Rebuilt `src/components/command-center/command-center-loading.tsx` with animated spinner-first loading composition.
+
+### Changed
+
+- Replaced the frontend visual system from scratch while preserving Folqen feature/menu architecture:
+  - `src/app/globals.css` (new tokens, panel system, spacing rhythm, animation primitives)
+  - `src/components/app/app-shell.tsx`
+  - `src/components/app/sidebar.tsx`
+  - `src/components/app/topbar.tsx`
+  - `src/components/app/mobile-sidebar-drawer.tsx`
+  - `src/components/command-center/command-center-page.tsx`
+  - `src/app/page.tsx` (new cinematic landing page)
+- Updated interaction components for clearer operational feedback:
+  - `src/components/app/command-search-trigger.tsx`
+  - `src/components/app/command-palette.tsx`
+  - `src/components/app/mini-agent-chat.tsx` (send-button spinner state)
+- Root layout now includes global navigation feedback:
+  - `src/app/layout.tsx`
+
+### Safety
+
+- No backend governance policy behavior, orchestration behavior, publishing policy, provider activation policy, or runtime execution safety gates were relaxed.
+- Dry-run/preview safety posture remains unchanged.
+
+### Verification
+
+- `.\node_modules\.bin\eslint.cmd .`: passed.
+- `.\node_modules\.bin\tsc.cmd --noEmit`: passed.
+- `.\node_modules\.bin\tsx.cmd --test "src/**/*.test.ts"`: passed, 153 tests.
+- `.\node_modules\.bin\prisma.cmd generate`: passed.
+- `.\node_modules\.bin\next.cmd build`: passed on Next.js `16.2.6`.
+
+## May 13, 2026 - Complete UI/UX Redesign Pass (Landing + Command Center Surfaces)
+
+### Added
+
+- Replaced the landing page (`src/app/page.tsx`) with a fully new cinematic product narrative:
+  - Cinematic hero
+  - AI workforce visualization
+  - Autonomous workflow showcase
+  - Browser operations showcase
+  - Research to Content to Analytics flow
+  - Governance and safety visualization
+  - Operational intelligence section
+  - Conversational AI experience section
+  - Demo workflow timeline
+  - AI agent ecosystem visualization
+  - Footer CTA and runtime posture summary
+
+### Changed
+
+- Rebuilt `src/components/command-center/command-center-page.tsx` to reduce dashboard/card clutter and improve scan hierarchy:
+  - New large hero composition and cleaner status rail
+  - Reworked metric rail
+  - Reworked page-specific body layouts for dashboard, agents/departments, workflows/incidents, intelligence pages, and infrastructure/settings
+  - Improved timeline, workflow, agent, and insight presentation for readability and progressive disclosure
+- Refined shared UI primitives and shell presentation for stronger consistency:
+  - `src/components/ui/status-badge.tsx`
+  - `src/components/app/page-header.tsx`
+  - `src/components/app/stat-card.tsx`
+  - `src/components/app/empty-state.tsx`
+- Maintained preview-safe runtime behavior and execution guardrails while redesigning visual layers.
+
+### Safety
+
+- No backend orchestration, governance policy behavior, queue execution behavior, publishing behavior, rendering behavior, provider activation behavior, or auth architecture was removed or loosened.
+- Preview public mode behavior and dry-run runtime posture remain in place.
+
+### Verification
+
+- `.\node_modules\.bin\eslint.cmd .`: passed.
+- `.\node_modules\.bin\tsc.cmd --noEmit`: passed.
+- `.\node_modules\.bin\tsx.cmd --test "src/**/*.test.ts"`: passed, 153 tests.
+- `.\node_modules\.bin\prisma.cmd generate`: passed.
+- `.\node_modules\.bin\next.cmd build`: passed on Next.js `16.2.6`.
+
 ## May 13, 2026 - Safe Public Preview Deployment and Demo Refinement
 
 ### Added

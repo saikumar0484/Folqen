@@ -18,7 +18,7 @@ type MemoryIntelligencePanelProps = {
 type ClientResult = {
   title: string;
   body: string;
-  status: "Mock" | "Needs approval" | "Blocked" | "Configured";
+  status: "Configured" | "Needs approval" | "Blocked";
 };
 
 const categories = ["strategic", "workflow", "prompt", "analytics", "organizational"] as const;
@@ -62,7 +62,7 @@ export function MemoryIntelligencePanel({ dashboard }: MemoryIntelligencePanelPr
     }
 
     setSearchResults(payload.result.items);
-    setResult({ title: "Mock semantic search completed", body: payload.result.message, status: "Mock" });
+    setResult({ title: "Semantic search completed", body: payload.result.message, status: "Configured" });
   }
 
   async function ingest() {
@@ -89,7 +89,7 @@ export function MemoryIntelligencePanel({ dashboard }: MemoryIntelligencePanelPr
     }
 
     setSearchResults((items) => [payload.result.memory, ...items].slice(0, 6));
-    setResult({ title: "Memory captured", body: payload.result.message, status: "Mock" });
+    setResult({ title: "Memory captured", body: payload.result.message, status: "Configured" });
   }
 
   async function reflect() {
@@ -154,7 +154,7 @@ export function MemoryIntelligencePanel({ dashboard }: MemoryIntelligencePanelPr
                 <BrainCircuit className="h-5 w-5 text-neon" />
                 Reflection Intelligence System
               </CardTitle>
-              <CardDescription>Memory ingestion, retrieval, reflection, experiments, and prompt evolution are mock-safe and approval-gated.</CardDescription>
+              <CardDescription>Memory ingestion, retrieval, reflection, experiments, and prompt evolution are draft-safe and approval-gated.</CardDescription>
             </div>
             <div className="flex flex-wrap gap-2">
               <Badge variant="info">{dashboard.providerStatus.status}</Badge>
@@ -195,7 +195,7 @@ export function MemoryIntelligencePanel({ dashboard }: MemoryIntelligencePanelPr
             </div>
             <Button type="button" onClick={runSearch} disabled={loading === "search"}>
               <Search className="h-4 w-4" />
-              {loading === "search" ? "Searching" : "Run mock retrieval"}
+              {loading === "search" ? "Searching" : "Run retrieval"}
             </Button>
             <div className="space-y-2">
               {searchResults.length === 0 ? (

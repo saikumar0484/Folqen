@@ -3,6 +3,7 @@ import { z } from "zod";
 import { AUTH_COOKIE_NAME, createSessionToken, isAuthConfigured, SESSION_MAX_AGE_SECONDS } from "@/lib/auth/session";
 import { verifyPassword } from "@/lib/auth/password";
 import { getPreviewDemoUser, validatePreviewDemoCredentials } from "@/lib/auth/preview-demo";
+import { isBetaUserDisabled, requiresBetaPasswordChange } from "@/lib/beta/access";
 import { getDb, hasDatabaseUrl } from "@/lib/db";
 import { getMutationSafetyError } from "@/lib/security/request-guards";
 
@@ -42,7 +43,10 @@ export async function POST(request: Request) {
       role: user.role,
     });
     const response = NextResponse.json({
-      user,
+      user: {
+        ...user,
+        requiresPasswordChange: false,
+      },
       mode: "preview-demo",
       safety: {
         previewSafeMode: true,
@@ -79,6 +83,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid email or password." }, { status: 401 });
   }
 
+  const [disabled, requiresPasswordChange] = await Promise.all([isBetaUserDisabled(user.id), requiresBetaPasswordChange(user.id)]);
+  if (disabled) {
+    return NextResponse.json({ error: "This beta account is disabled. Contact Folqen support." }, { status: 403 });
+  }
+
   const token = createSessionToken({
     userId: user.id,
     email: user.email,
@@ -90,6 +99,7 @@ export async function POST(request: Request) {
       email: user.email,
       name: user.name,
       role: user.role,
+      requiresPasswordChange,
     },
   });
 

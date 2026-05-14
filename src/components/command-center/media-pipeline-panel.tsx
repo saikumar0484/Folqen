@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { mutationFetch } from "@/lib/client/mutation-fetch";
+import { toHonestStatus } from "@/lib/status-semantics";
 import type { MediaDashboard, MediaPipelineResult, MediaWorkflowKind } from "@/lib/media/types";
 import { cn } from "@/lib/utils";
 
@@ -105,7 +106,7 @@ export function MediaPipelinePanel({ dashboard }: MediaPipelinePanelProps) {
             <div>
               <div className="flex flex-wrap gap-2">
                 <Badge variant="premium">Media Production Department</Badge>
-                <Badge variant="info">Mock</Badge>
+                <Badge variant="info">Configured</Badge>
                 <Badge variant="warning">No live rendering</Badge>
                 <Badge variant="safe">Queue-ready</Badge>
               </div>
@@ -117,9 +118,9 @@ export function MediaPipelinePanel({ dashboard }: MediaPipelinePanelProps) {
             </div>
             <div className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
               {dashboard.providers.map((provider) => (
-                <div key={provider.id} className={cn("rounded-2xl border px-3 py-2", statusClass(provider.status))}>
+                <div key={provider.id} className={cn("rounded-2xl border px-3 py-2", statusClass(toHonestStatus(provider.status)))}>
                   <div className="font-medium">{provider.label}</div>
-                  <div className="mt-1 opacity-80">{provider.status}</div>
+                  <div className="mt-1 opacity-80">{toHonestStatus(provider.status)}</div>
                 </div>
               ))}
             </div>

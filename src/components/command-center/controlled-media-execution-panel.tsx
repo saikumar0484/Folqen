@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { mutationFetch } from "@/lib/client/mutation-fetch";
 import { controlledMediaWorkflowKinds, controlledMediaWorkflowLabels, type ControlledMediaWorkflowKind, type ControlledRenderResult, type MediaDashboard } from "@/lib/media/types";
+import { toHonestStatus } from "@/lib/status-semantics";
 import { cn } from "@/lib/utils";
 
 type ControlledMediaExecutionPanelProps = {
@@ -188,7 +189,7 @@ export function ControlledMediaExecutionPanel({ dashboard }: ControlledMediaExec
               {shutdownPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Square className="h-4 w-4" />}
               Emergency shutdown
             </Button>
-            {governance ? <div className={cn("rounded-2xl border px-3 py-2 text-xs", statusClass(governance.status))}>{governance.status}: {governance.reasons[0] ?? "All render gates ready."}</div> : null}
+            {governance ? <div className={cn("rounded-2xl border px-3 py-2 text-xs", statusClass(toHonestStatus(governance.status)))}>{toHonestStatus(governance.status)}: {governance.reasons[0] ?? "All render gates ready."}</div> : null}
           </div>
         </div>
 
@@ -209,10 +210,10 @@ export function ControlledMediaExecutionPanel({ dashboard }: ControlledMediaExec
           </div>
 
           {response ? (
-            <div className={cn("rounded-2xl border p-4", statusClass(response.result?.status ?? "blocked"))}>
+            <div className={cn("rounded-2xl border p-4", statusClass(toHonestStatus(response.result?.status ?? "blocked")))}>
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-medium">{response.error ? "Render blocked" : selectedLabel}</span>
-                {response.result ? <Badge className={statusClass(response.result.status)}>{response.result.status.replaceAll("_", " ")}</Badge> : null}
+                {response.result ? <Badge className={statusClass(toHonestStatus(response.result.status))}>{toHonestStatus(response.result.status)}</Badge> : null}
                 {response.result?.scoring ? <Badge className={statusClass(response.result.scoring.acceptance)}>score {response.result.scoring.qualityScore}</Badge> : null}
               </div>
               <p className="mt-2 text-sm leading-6 opacity-85">{response.error ?? response.message ?? response.result?.governance.reasons[0] ?? response.result?.validation.warnings[0] ?? "Controlled render packet captured."}</p>
@@ -245,7 +246,7 @@ export function ControlledMediaExecutionPanel({ dashboard }: ControlledMediaExec
           <Card className="mb-4 border-neon/20 bg-neon/[0.04]">
             <CardHeader>
               <div className="flex flex-wrap gap-2">
-                <Badge className={statusClass(liveThumbnail?.status ?? "Not connected")}>{liveThumbnail?.status ?? "Not connected"}</Badge>
+                <Badge className={statusClass(toHonestStatus(liveThumbnail?.status ?? "Not connected"))}>{toHonestStatus(liveThumbnail?.status ?? "Not connected")}</Badge>
                 <Badge variant="premium">Thumbnail only</Badge>
                 <Badge variant="warning">Approval mandatory</Badge>
                 <Badge variant="safe">Rollback ready</Badge>
@@ -263,7 +264,7 @@ export function ControlledMediaExecutionPanel({ dashboard }: ControlledMediaExec
                   </div>
                   <div className="rounded-2xl border border-white/10 bg-black/25 p-3">
                     <div className="text-xs text-muted-foreground">Queue</div>
-                    <div className="mt-1 text-sm font-medium">{liveThumbnail?.queue.mode ?? "mock"}</div>
+                    <div className="mt-1 text-sm font-medium">{liveThumbnail?.queue.mode ?? "not_connected"}</div>
                     <p className="mt-1 text-[11px] text-muted-foreground">{liveThumbnail ? `${liveThumbnail.queue.waiting} waiting, ${liveThumbnail.queue.failed} failed` : "No queue snapshot"}</p>
                   </div>
                   <div className="rounded-2xl border border-white/10 bg-black/25 p-3">
@@ -292,7 +293,7 @@ export function ControlledMediaExecutionPanel({ dashboard }: ControlledMediaExec
                 </div>
 
                 {liveThumbnail?.governance.reasons.length ? (
-                  <div className={cn("rounded-2xl border p-3 text-xs leading-5", statusClass(liveThumbnail.governance.status))}>{liveThumbnail.governance.reasons[0]}</div>
+                  <div className={cn("rounded-2xl border p-3 text-xs leading-5", statusClass(toHonestStatus(liveThumbnail.governance.status)))}>{liveThumbnail.governance.reasons[0]}</div>
                 ) : null}
               </div>
 
@@ -305,10 +306,10 @@ export function ControlledMediaExecutionPanel({ dashboard }: ControlledMediaExec
                   )}
                 </div>
                 {liveResponse ? (
-                  <div className={cn("rounded-2xl border p-4", statusClass(liveResponse.result?.status ?? "blocked"))}>
+                  <div className={cn("rounded-2xl border p-4", statusClass(toHonestStatus(liveResponse.result?.status ?? "blocked")))}>
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="font-medium">{liveResponse.error ? "Live thumbnail blocked" : "Live thumbnail result"}</span>
-                      {liveResponse.result ? <Badge className={statusClass(liveResponse.result.status)}>{liveResponse.result.status.replaceAll("_", " ")}</Badge> : null}
+                      {liveResponse.result ? <Badge className={statusClass(toHonestStatus(liveResponse.result.status))}>{toHonestStatus(liveResponse.result.status)}</Badge> : null}
                       {liveResponse.result?.scoring ? <Badge className={statusClass(liveResponse.result.scoring.acceptance)}>score {liveResponse.result.scoring.qualityScore}</Badge> : null}
                     </div>
                     <p className="mt-2 text-sm leading-6 opacity-85">{liveResponse.error ?? liveResponse.message ?? liveResponse.result?.governance.reasons[0] ?? "Live thumbnail trace captured."}</p>
@@ -322,7 +323,7 @@ export function ControlledMediaExecutionPanel({ dashboard }: ControlledMediaExec
                   {liveRuns.length ? (
                     liveRuns.map((run) => (
                       <div key={run.runId} className="rounded-2xl border border-white/10 bg-black/25 p-3">
-                        <Badge className={statusClass(run.status)}>{run.status.replaceAll("_", " ")}</Badge>
+                        <Badge className={statusClass(toHonestStatus(run.status))}>{toHonestStatus(run.status)}</Badge>
                         <div className="mt-2 text-sm font-medium">{run.asset.title}</div>
                         <p className="mt-1 text-xs leading-5 text-muted-foreground">{run.liveThumbnail?.previewUrl ?? run.liveThumbnail?.failedAssetIsolation ?? "No preview URL captured."}</p>
                         <div className="mt-3 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{run.queueJobId}</div>
@@ -347,7 +348,7 @@ export function ControlledMediaExecutionPanel({ dashboard }: ControlledMediaExec
               {controlledRuns.length ? (
                 controlledRuns.map((run) => (
                   <div key={run.runId} className="rounded-2xl border border-white/10 bg-black/25 p-3">
-                    <Badge className={statusClass(run.status)}>{run.status.replaceAll("_", " ")}</Badge>
+                    <Badge className={statusClass(toHonestStatus(run.status))}>{toHonestStatus(run.status)}</Badge>
                     <div className="mt-2 text-sm font-medium">{controlledMediaWorkflowLabels[run.workflowKind]}</div>
                     <p className="mt-1 text-xs leading-5 text-muted-foreground">{run.asset.title}</p>
                     <div className="mt-3 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{run.queueJobId}</div>

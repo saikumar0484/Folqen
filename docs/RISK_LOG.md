@@ -1,6 +1,104 @@
 # Risk Log
 
+## Current Risk Update (May 14, 2026 - Legacy Screen Regression Risk)
+
+### Unused static screen modules can be accidentally reattached
+
+- Risk: Legacy modules (`foundation-pages-screens`, `operations-screens`, and static `*-data` providers) remain in repo and could be re-imported into authenticated routes, reintroducing synthetic presentation patterns.
+- Prevention: Route pages were rewritten to use account-state-driven empty/setup UX and direct persisted record checks.
+- Verification: Lint/type/test/build passed after replacing the affected route implementations.
+- Rollback: Restore prior route files from git history if needed; keep legacy modules detached unless explicitly marked internal-preview-only.
+- Human approval trigger: Any request to bring back synthetic operational dashboards in authenticated product surfaces.
+
+## Current Risk Update (May 14, 2026 - De-Mocking UI Transition)
+
+### Legacy command-center demo surfaces can reintroduce synthetic states if reused
+
+- Risk: Legacy `src/components/command-center/*` demo-oriented panels still exist and may be accidentally reattached to authenticated routes.
+- Prevention: Authenticated app routes were rewired away from `getCommandCenterView(...)`; new route-level empty-state/account-state presenters now drive default UX.
+- Verification: Full lint/type/test/build passed after removing mock-view usage from authenticated routes.
+- Rollback: Reattach prior route files from git history if a regression appears; keep legacy demo components detached from app routing.
+- Human approval trigger: Any request to re-enable simulated operational feeds/counters in authenticated product surfaces.
+
+### Status contract drift risk
+
+- Risk: Future edits may reintroduce `Mock` as a user-facing label in creator surfaces.
+- Prevention: `HonestStatus` now excludes `Mock`; UI normalizes unknown/mock-like backend states to `Configured` or `Not connected`.
+- Verification: `status-semantics` tests updated and passing; app route metadata no longer contains fake/mock status values.
+- Rollback: Restore prior `status-semantics` behavior only for internal preview/debug contexts, not authenticated creator UX.
+- Human approval trigger: Any request to reintroduce mock-labeled status in authenticated product UI.
+
+## Current Risk Update (May 14, 2026 - First-Run UX Persistence Gap)
+
+### First-run result is currently session-local in the dashboard UX
+
+- Risk: Creator-generated first-run output can be lost from the immediate UI after refresh/navigation if the user does not export it.
+- Prevention: Added export/copy actions and clear draft package visibility; route-level persistence remains a next slice.
+- Verification: Full lint/type/test/build passed after result-experience integration.
+- Rollback: Revert mission-control/result UX files if regressions appear (`creator-mission-control`, `first-run-result-experience`, dashboard integration).
+- Human approval trigger: Any request to auto-save/share drafts across users or persist results externally.
+
+### Local onboarding memory depends on browser storage availability
+
+- Risk: Private browsing or restricted storage settings can disable onboarding memory persistence.
+- Prevention: Storage reads/writes are wrapped in try/catch with graceful fallback to default onboarding flow.
+- Verification: Full lint/type/test/build passed after onboarding memory integration.
+- Rollback: Remove local onboarding memory hooks and keep stateless onboarding if device-level storage behavior causes issues.
+- Human approval trigger: Any request to move onboarding memory into server-side persistent profile storage.
+
+## Current Risk Update (May 14, 2026 - Invite-Only Beta Activation)
+
+### Invite-only onboarding can regress into accidental open signup
+
+- Risk: New beta access APIs could be widened in future edits and unintentionally permit public user creation.
+- Prevention: Keep beta user management endpoints admin/operator protected and mutation-guarded; keep no public signup route.
+- Verification: Typecheck/tests/build passed with beta user lifecycle APIs and role guards active.
+- Rollback: Disable `/api/beta/users*` route handlers and keep user creation server-admin-only until controls are re-verified.
+- Human approval trigger: Any request to enable public signup, invite code self-serve signup, or anonymous account creation.
+
+### First-run orchestrator can be misread as autonomous execution
+
+- Risk: A single-click first-run flow may be interpreted as unrestricted autonomy or live publishing.
+- Prevention: Endpoint output explicitly marks blocked safety states and remains draft-only; publishing/browser automation/unrestricted rendering/autonomous retries/workflow mutation stay blocked.
+- Verification: Full test suite and build passed; first-run endpoint compiles with governed execution paths only.
+- Rollback: Hide first-run UI entrypoints and keep run invocation internal until additional approval UX is added.
+- Human approval trigger: Any request to auto-publish, auto-schedule, enable unrestricted rendering, or bypass approval/budget/provider gates.
+
+## Current Risk Update (May 14, 2026 - Supabase URL Split)
+
+### Runtime/CLI URL mismatch can break Prisma commands or runtime connections
+
+- Risk: If `DATABASE_URL` and `DIRECT_URL` are not both configured consistently, runtime access may work while Prisma CLI operations fail (or vice versa), especially with Supabase pooler/direct host combinations.
+- Prevention: Use pooled URL for `DATABASE_URL` and direct URL for `DIRECT_URL`, and set both in local + Vercel environments.
+- Verification: Migration was applied on Supabase project `eobvgajgyvydqydlfken`; memory tables exist with RLS enabled.
+- Rollback: Revert `prisma/schema.prisma` datasource `directUrl` addition and operate with one URL until envs are corrected.
+- Human approval trigger: Any production credential rotation or move between Supabase projects/environments.
+
 ## Current Risks
+
+### Public onboarding in preview mode can become an unintended mutation surface
+
+- Risk: If workspace create/switch APIs are not role-gated, preview/public viewers could mutate onboarding/workspace state.
+- Prevention: Workspace mutation endpoints now require authenticated admin/operator roles, same-origin checks, Folqen mutation headers, and rate limits.
+- Verification: Full lint/type/test/build passed; onboarding APIs compile; preview-safe route smoke confirms onboarding surfaces load while mutation APIs remain protected by role + mutation guards.
+- Rollback: Disable onboarding route links in preview mode and set workspace APIs to read-only until role/middleware strategy is adjusted.
+- Human approval trigger: Any request to allow anonymous/public workspace creation in preview or production.
+
+### New visual reset may mask unchanged backend execution restrictions
+
+- Risk: A significantly improved UI can be perceived as production-live automation despite backend execution still being dry-run/governed.
+- Prevention: Keep explicit status labels (`Mock`, `Not connected`, `Needs approval`, `Configured`, `Blocked`) and global safe-mode messaging in shell/command surfaces.
+- Verification: Full lint/type/test/build verification passed after redesign; no runtime safety flags were changed.
+- Rollback: Revert UI reset commits if any confusion blocks safe testing, or increase visible safety labels on hero/summary surfaces.
+- Human approval trigger: Any request to remove safety labels or hide execution restrictions while live capabilities remain disabled.
+
+### Premium redesign can be misinterpreted as live operational capability
+
+- Risk: A highly polished command center and cinematic landing page may make preview viewers assume providers, rendering, publishing, or browser automation are live.
+- Prevention: Keep explicit status honesty labels (`Mock`, `Not connected`, `Needs approval`, `Configured`, `Blocked`) and preserve dry-run safety messaging in key command-center surfaces.
+- Verification: Full frontend/type/test/build verification passed after redesign, and safety posture remained unchanged.
+- Rollback: Revert to prior UI commit or reintroduce stronger warning copy on affected panels if confusion increases in demos.
+- Human approval trigger: Any request to remove status honesty labels or soften dry-run warnings while execution remains blocked.
 
 ### Public preview mode can be mistaken for production live capability
 

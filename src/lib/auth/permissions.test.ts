@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { CurrentUser } from "@/lib/auth/current-user";
-import { canCreateDraftContent, canCreatePostingPackage, canManageSystem, canReviewApprovals, describeRoleLimit } from "@/lib/auth/permissions";
+import { canCreateDraftContent, canCreatePostingPackage, canManageBetaAccess, canManageSystem, canOperateWorkspaces, canReviewApprovals, describeRoleLimit } from "@/lib/auth/permissions";
 
 function user(role: CurrentUser["role"]): CurrentUser {
   return {
@@ -9,6 +9,7 @@ function user(role: CurrentUser["role"]): CurrentUser {
     email: `${role.toLowerCase()}@folqen.app`,
     name: role,
     role,
+    requiresPasswordChange: false,
   };
 }
 
@@ -34,6 +35,18 @@ test("admins and operators can create draft content", () => {
   assert.equal(canCreateDraftContent(user("ADMIN")), true);
   assert.equal(canCreateDraftContent(user("OPERATOR")), true);
   assert.equal(canCreateDraftContent(user("VIEWER")), false);
+});
+
+test("workspace operations are available to all signed-in beta users", () => {
+  assert.equal(canOperateWorkspaces(user("ADMIN")), true);
+  assert.equal(canOperateWorkspaces(user("OPERATOR")), true);
+  assert.equal(canOperateWorkspaces(user("VIEWER")), true);
+});
+
+test("beta access controls are restricted to admins and operators", () => {
+  assert.equal(canManageBetaAccess(user("ADMIN")), true);
+  assert.equal(canManageBetaAccess(user("OPERATOR")), true);
+  assert.equal(canManageBetaAccess(user("VIEWER")), false);
 });
 
 test("role limit messages are explicit", () => {

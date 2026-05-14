@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { getDb, hasDatabaseUrl } from "@/lib/db";
+import { isBetaUserDisabled, requiresBetaPasswordChange } from "@/lib/beta/access";
 import { getPreviewDemoUser, getPreviewPublicUser, isPreviewDemoAuthEnabled, isPreviewPublicModeEnabled, PREVIEW_DEMO_USER_ID } from "@/lib/auth/preview-demo";
 import { AUTH_COOKIE_NAME, verifySessionToken } from "@/lib/auth/session";
 
@@ -8,11 +9,12 @@ export type CurrentUser = {
   email: string;
   name: string | null;
   role: "ADMIN" | "OPERATOR" | "VIEWER";
+  requiresPasswordChange?: boolean;
 };
 
 export async function getCurrentUser(): Promise<CurrentUser | null> {
   if (isPreviewPublicModeEnabled()) {
-    return getPreviewPublicUser();
+    return { ...getPreviewPublicUser(), requiresPasswordChange: false };
   }
 
   const cookieStore = await cookies();
@@ -23,7 +25,7 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
   }
 
   if (isPreviewDemoAuthEnabled() && session.userId === PREVIEW_DEMO_USER_ID && session.email === getPreviewDemoUser().email) {
-    return getPreviewDemoUser();
+    return { ...getPreviewDemoUser(), requiresPasswordChange: false };
   }
 
   if (!hasDatabaseUrl()) {
@@ -41,7 +43,12 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
       },
     });
 
-    return user;
+    if (!user) return null;
+
+    const [disabled, requiresPasswordChange] = await Promise.all([isBetaUserDisabled(user.id), requiresBetaPasswordChange(user.id)]);
+    if (disabled) return null;
+
+    return { ...user, requiresPasswordChange };
   } catch {
     return null;
   }

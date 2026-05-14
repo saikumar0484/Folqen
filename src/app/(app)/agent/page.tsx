@@ -20,13 +20,13 @@ export default async function AgentPage() {
       <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <div className="font-mono text-[11px] uppercase tracking-widest text-neon">Persistent mock agent</div>
+            <div className="font-mono text-[11px] uppercase tracking-widest text-neon">Persistent agent workspace</div>
             <h1 className="mt-2 font-display text-3xl font-semibold md:text-4xl">Agent chat</h1>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground md:text-base">
-              Chat history now saves to Supabase. Responses are intentionally mock until a real AI provider is configured and approved.
+              Chat history saves to Supabase. Provider execution remains governed and blocked until setup and approvals are complete.
             </p>
           </div>
-          <StatusBadge tone="warning">Mock LLM</StatusBadge>
+          <StatusBadge tone="warning">Needs approval</StatusBadge>
         </div>
       </div>
 

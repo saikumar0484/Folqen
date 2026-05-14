@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { KeyRound, LockKeyhole, ShieldCheck, Sparkles } from "lucide-react";
+import { KeyRound, Loader2, LockKeyhole, ShieldCheck, Sparkles } from "lucide-react";
 import { mutationFetch } from "@/lib/client/mutation-fetch";
 
 export default function LoginPage() {
@@ -112,7 +112,7 @@ export default function LoginPage() {
             disabled={loading}
             className="mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-neon px-5 text-sm font-semibold text-primary-foreground shadow-glow transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            <KeyRound className="h-4 w-4" />
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <KeyRound className="h-4 w-4" />}
             {loading ? "Checking access..." : "Login"}
           </button>
 

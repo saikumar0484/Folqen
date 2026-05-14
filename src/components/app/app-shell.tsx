@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { MiniAgentChat } from "@/components/app/mini-agent-chat";
+import { PasswordChangeBanner } from "@/components/app/password-change-banner";
 import { Sidebar } from "@/components/app/sidebar";
 import { ToastProvider } from "@/components/app/toast-provider";
 import { Topbar } from "@/components/app/topbar";
@@ -7,20 +8,15 @@ import type { CurrentUser } from "@/lib/auth/current-user";
 
 export function AppShell({ children, user }: { children: ReactNode; user: CurrentUser }) {
   return (
-    <div className="min-h-screen overflow-x-hidden bg-background text-foreground selection:bg-neon/40 selection:text-primary-foreground">
-      <div
-        className="pointer-events-none fixed left-1/2 top-[-260px] -z-10 h-[620px] w-[980px] -translate-x-1/2 rounded-full opacity-80 blur-3xl"
-        style={{
-          background: "radial-gradient(ellipse at center, rgba(143,255,0,.18), rgba(27,214,162,.08) 38%, transparent 72%)",
-        }}
-      />
-      <div className="pointer-events-none fixed right-[-220px] top-1/4 -z-10 h-[520px] w-[520px] rounded-full bg-neon/[0.055] blur-3xl" />
+    <div className="min-h-screen overflow-x-hidden bg-background text-foreground selection:bg-neon/35 selection:text-primary-foreground">
+      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(45%_35%_at_12%_0%,rgba(118,243,162,.14),transparent_70%),radial-gradient(50%_40%_at_90%_10%,rgba(94,203,255,.12),transparent_70%)]" />
       <ToastProvider>
         <div className="flex min-h-screen">
           <Sidebar />
           <div className="flex min-w-0 flex-1 flex-col">
             <Topbar user={user} />
-            <main className="mx-auto w-full max-w-[1500px] flex-1 overflow-x-hidden px-3 py-4 sm:px-5 lg:px-7 xl:px-8">{children}</main>
+            <PasswordChangeBanner user={user} />
+            <main className="mx-auto w-full max-w-[1640px] flex-1 px-4 py-5 pb-28 sm:px-6 sm:py-6 sm:pb-24 lg:px-8 xl:px-10">{children}</main>
           </div>
         </div>
         <MiniAgentChat />

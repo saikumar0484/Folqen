@@ -11,11 +11,14 @@ export function CommandSearchTrigger({ className }: { className?: string }) {
     <button
       type="button"
       onClick={() => setCommandOpen(true)}
-      className={cn("min-w-0 flex-1 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.035] px-3 py-2 text-left shadow-[inset_0_1px_0_rgba(255,255,255,.04)] transition hover:border-neon/25 hover:bg-white/[0.06]", className)}
+      className={cn(
+        "min-w-0 flex-1 items-center gap-2 rounded-xl border border-white/12 bg-white/[0.05] px-3.5 py-2.5 text-left transition hover:border-white/20 hover:bg-white/[0.08]",
+        className,
+      )}
     >
       <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
-      <span className="truncate text-sm text-muted-foreground">Search agents, workflows, incidents, memory, infrastructure...</span>
-      <span className="ml-auto rounded-md border border-white/10 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">Ctrl K</span>
+      <span className="truncate text-sm text-muted-foreground">Search routes, agents, workflows, incidents, memory, diagnostics...</span>
+      <span className="ml-auto rounded-md border border-white/12 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">Ctrl K</span>
     </button>
   );
 }

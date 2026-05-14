@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { OperationsTraceDashboard, OperationsTraceItem, OperationsTraceSeverity, OperationsTraceSource, OperationsTraceStatus } from "@/lib/operations-trace/types";
+import { toHonestStatus } from "@/lib/status-semantics";
 
 type OperationsTracePanelProps = {
   dashboard: OperationsTraceDashboard;
@@ -14,7 +15,7 @@ type OperationsTracePanelProps = {
 
 function statusClass(status: OperationsTraceStatus | string) {
   if (status === "Live" || status === "Configured") return "border-neon/25 bg-neon/10 text-neon";
-  if (status === "Needs approval" || status === "Mock") return "border-amber-300/25 bg-amber-300/10 text-amber-100";
+  if (status === "Needs approval") return "border-amber-300/25 bg-amber-300/10 text-amber-100";
   if (status === "Blocked") return "border-rose-300/25 bg-rose-300/10 text-rose-100";
   return "border-white/10 bg-white/[0.04] text-muted-foreground";
 }
@@ -88,9 +89,9 @@ export function OperationsTracePanel({ dashboard }: OperationsTracePanelProps) {
                   <LockKeyhole className="h-3.5 w-3.5" />
                   Read-only
                 </Badge>
-                <Badge className={statusClass(dashboard.databaseStatus)}>Database {dashboard.databaseStatus}</Badge>
-                <Badge variant={dashboard.queueMode === "live" ? "safe" : "warning"}>{dashboard.queueMode === "live" ? "Queue Configured" : "Queue Mock"}</Badge>
-                <Badge className={statusClass(dashboard.integrity.status)}>Integrity {dashboard.integrity.status}</Badge>
+                <Badge className={statusClass(toHonestStatus(dashboard.databaseStatus))}>Database {toHonestStatus(dashboard.databaseStatus)}</Badge>
+                <Badge variant={dashboard.queueMode === "live" ? "safe" : "warning"}>{dashboard.queueMode === "live" ? "Queue Configured" : "Queue Not connected"}</Badge>
+                <Badge className={statusClass(toHonestStatus(dashboard.integrity.status))}>Integrity {toHonestStatus(dashboard.integrity.status)}</Badge>
                 <Badge variant="safe">No execution</Badge>
               </div>
               <CardTitle className="mt-3">Governed Operations Trace Center</CardTitle>
@@ -126,8 +127,8 @@ export function OperationsTracePanel({ dashboard }: OperationsTracePanelProps) {
                   <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <Badge className={statusClass(approval.status)}>{approval.rawStatus}</Badge>
-                        <Badge className={statusClass(approval.verificationStatus)}>verification {approval.verificationStatus}</Badge>
+                        <Badge className={statusClass(toHonestStatus(approval.status))}>{toHonestStatus(approval.rawStatus)}</Badge>
+                        <Badge className={statusClass(toHonestStatus(approval.verificationStatus))}>verification {toHonestStatus(approval.verificationStatus)}</Badge>
                         {approval.rollbackAvailable ? (
                           <Badge variant="warning">
                             <RotateCcw className="h-3.5 w-3.5" />
@@ -199,7 +200,7 @@ export function OperationsTracePanel({ dashboard }: OperationsTracePanelProps) {
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
                         <Badge variant={severityVariant(issue.severity)}>{issue.type.replaceAll("_", " ")}</Badge>
-                        <Badge className={statusClass(issue.status)}>{issue.status}</Badge>
+                        <Badge className={statusClass(toHonestStatus(issue.status))}>{toHonestStatus(issue.status)}</Badge>
                       </div>
                       <div className="mt-2 text-sm font-medium">{issue.title}</div>
                       <p className="mt-1 break-words text-xs leading-5 text-muted-foreground">{issue.summary}</p>
@@ -229,7 +230,7 @@ export function OperationsTracePanel({ dashboard }: OperationsTracePanelProps) {
                     <div className="font-mono text-[10px] uppercase tracking-widest text-neon">{item.category}</div>
                     <div className="mt-1 text-sm font-medium">{item.label}</div>
                   </div>
-                  <Badge className={statusClass(item.status)}>{item.status}</Badge>
+                  <Badge className={statusClass(toHonestStatus(item.status))}>{toHonestStatus(item.status)}</Badge>
                 </div>
                 <p className="mt-2 text-xs leading-5 text-muted-foreground">{item.summary}</p>
                 <div className="mt-2 flex flex-wrap gap-1.5">
@@ -259,7 +260,7 @@ export function OperationsTracePanel({ dashboard }: OperationsTracePanelProps) {
                       <div className="flex items-center gap-2">
                         <Link2 className="h-3.5 w-3.5 shrink-0 text-neon" />
                         <Badge variant="info">{edge.kind.replaceAll("_", " ")}</Badge>
-                        <Badge className={statusClass(edge.status)}>{edge.status}</Badge>
+                        <Badge className={statusClass(toHonestStatus(edge.status))}>{toHonestStatus(edge.status)}</Badge>
                       </div>
                       <p className="mt-2 text-xs leading-5 text-muted-foreground">{edge.label}</p>
                     </div>
@@ -291,7 +292,7 @@ export function OperationsTracePanel({ dashboard }: OperationsTracePanelProps) {
                     <div className="text-sm font-medium">{item.label}</div>
                     <p className="mt-1 text-xs leading-5 text-muted-foreground">{item.description}</p>
                   </div>
-                  <Badge className={statusClass(item.status)}>{item.status}</Badge>
+                  <Badge className={statusClass(toHonestStatus(item.status))}>{toHonestStatus(item.status)}</Badge>
                 </div>
               </div>
             ))}
@@ -404,7 +405,7 @@ export function OperationsTracePanel({ dashboard }: OperationsTracePanelProps) {
                       <div className="flex flex-wrap items-center gap-2">
                         <Icon className="h-4 w-4 shrink-0 text-neon" />
                         <Badge variant={severityVariant(trace.severity)}>{trace.source}</Badge>
-                        <Badge className={statusClass(trace.status)}>{trace.status}</Badge>
+                        <Badge className={statusClass(toHonestStatus(trace.status))}>{toHonestStatus(trace.status)}</Badge>
                         <span className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">{formatDate(trace.createdAt)}</span>
                       </div>
                       <h2 className="mt-2 break-words text-sm font-medium">{trace.title}</h2>

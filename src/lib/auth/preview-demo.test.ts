@@ -27,6 +27,7 @@ test("preview demo auth enables only in forced dry-run preview mode", () => {
 test("preview public mode enables only as a viewer in safe dry-run preview mode", () => {
   assert.equal(isPreviewPublicModeEnabled(safePreviewEnv), true);
   assert.equal(isPreviewPublicModeEnabled({ ...safePreviewEnv, PREVIEW_PUBLIC_MODE: "false" }), false);
+  assert.equal(isPreviewPublicModeEnabled({ ...safePreviewEnv, FOLQEN_RUNTIME_PROFILE: "beta", VERCEL_ENV: "preview" }), false);
   assert.equal(isPreviewPublicModeEnabled({ ...safePreviewEnv, PREVIEW_FORCE_DRY_RUN: "false" }), false);
   assert.equal(isPreviewPublicModeEnabled({ ...safePreviewEnv, ALLOW_BROWSER_AUTOMATION: "true" }), false);
   assert.deepEqual(getPreviewPublicUser(safePreviewEnv), {

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createAuditLog } from "@/lib/audit";
 import { getCurrentUser } from "@/lib/auth/current-user";
-import { canManageSystem } from "@/lib/auth/permissions";
+import { clearForcePasswordChange } from "@/lib/beta/access";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
 import { getDb } from "@/lib/db";
 import { getMutationSafetyError } from "@/lib/security/request-guards";
@@ -17,10 +17,6 @@ export async function POST(request: Request) {
 
   if (!user) {
     return NextResponse.json({ error: "Login required." }, { status: 401 });
-  }
-
-  if (!canManageSystem(user)) {
-    return NextResponse.json({ error: "Only admins can change the admin password." }, { status: 403 });
   }
 
   const safetyError = getMutationSafetyError(request, { key: `change-password:${user.id}`, limit: 5, windowMs: 60_000 });
@@ -52,13 +48,14 @@ export async function POST(request: Request) {
     where: { id: user.id },
     data: { passwordHash: await hashPassword(parsed.data.newPassword) },
   });
+  await clearForcePasswordChange(user.id);
 
   await createAuditLog({
     actorId: user.id,
     action: "auth.password_changed",
     target: user.email,
     riskLevel: "MEDIUM",
-    metadata: { source: "settings_page" },
+    metadata: { source: "settings_page", clearedForceChangeGate: true },
   });
 
   return NextResponse.json({ ok: true });
