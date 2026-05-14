@@ -1,0 +1,54 @@
+# Architecture
+
+Folqen is designed as a modular creator operations platform, not a hardcoded one-time app.
+
+For the full principal-engineer target design of Folqen as an autonomous AI creator organization operating system, read `docs/AUTONOMOUS_ORGANIZATION_ARCHITECTURE.md`.
+
+For the institutional memory, reflection, experiment, prompt-versioning, and pgvector-ready semantic retrieval layer, read `docs/MEMORY_REFLECTION_ARCHITECTURE.md`.
+
+For the creative production department, ComfyUI/FFmpeg-ready dry-run media workflows, render queue, asset registry, retry policy, and frontend media pipeline, read `docs/MEDIA_PIPELINE_ARCHITECTURE.md`.
+
+For the platform operations department, n8n-ready dry-run publishing workflows, scheduling queues, platform adaptation, distribution tracking, analytics ingestion, retry recovery, and monetization monitoring hooks, read `docs/PLATFORM_OPERATIONS_ARCHITECTURE.md`.
+
+For the governance, approval, policy, sandbox, cost-control, provider-access, and compliance monitoring layer, read `docs/GOVERNANCE_SAFETY_ARCHITECTURE.md`.
+
+## Layers
+
+```text
+UI Layer
+API Layer
+Agent Orchestration Layer
+Service Interfaces
+Provider Adapters / Plugins
+External Tools / Local Tools / Platforms
+```
+
+The UI does not call external tools directly. Pages call app services, services call provider interfaces, and provider adapters own tool-specific details.
+
+## Foundation Choices
+
+- Next.js App Router keeps route UI under `src/app`.
+- Vercel is the intended app hosting target.
+- Free PostgreSQL is the intended database target for MVP real data.
+- Oracle Free Tier n8n is the intended self-hosted workflow worker.
+- Heavy media/automation jobs stay outside Vercel Functions and run through worker/provider adapters.
+- Shared UI shell components live under `src/components/app`.
+- Reusable route definitions live in `src/lib/app-routes.ts`.
+- Provider registry types live in `src/lib/providers.ts`.
+- Environment validation lives in `src/lib/env.ts`.
+- Safety guard functions live in `src/lib/security/guards.ts`.
+- Prisma schema foundation lives in `prisma/schema.prisma`.
+- Lazy Prisma client and database status helpers live in `src/lib/db.ts`.
+- Integration status helpers live in `src/lib/integrations`.
+
+## Future-Proof Rules
+
+- Select providers by capability, not provider name.
+- Keep provider status honest: `not_connected`, `configured`, `testing`, `live`, `failed`, `disabled`, `deprecated`, or `needs_attention`.
+- Version settings and prompts.
+- Log meaningful events for content, approvals, publishing blocks, provider changes, upgrade proposals, and agent commands.
+- Keep risky features behind feature flags and human approvals.
+
+## Current Integration State
+
+All live integrations are intentionally `Not connected` or `Mock`. This includes YouTube, Instagram, Facebook, Snapchat, Threads, TikTok placeholder infrastructure, LinkedIn, X/Twitter, Substack, Bluesky, Lemon8, Kick, n8n, ComfyUI, FFmpeg, TTS, browser automation, and analytics providers.

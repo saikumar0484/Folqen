@@ -1,0 +1,106 @@
+# Execution Checklist
+
+## Phase 0 / Phase 1 Foundation
+
+- [x] Read root project instruction docs.
+- [x] Sync foundation branch with latest main instructions.
+- [x] Identify package manager.
+- [x] Install dependencies.
+- [x] Generate lockfile.
+- [x] Run lint.
+- [x] Run typecheck.
+- [x] Run tests.
+- [x] Run production build.
+- [x] Validate Prisma schema.
+- [x] Add safe `.env.example`.
+- [x] Add Docker Compose PostgreSQL setup.
+- [x] Add Prisma schema foundation.
+- [x] Add environment validation.
+- [x] Add safety guards.
+- [x] Add guard tests.
+- [x] Add README setup instructions.
+- [x] Add architecture/security/provider/plugin/upgrade docs.
+- [x] Add failure recovery playbook.
+
+## Phase 2 App Shell
+
+- [x] Add app shell.
+- [x] Add sidebar navigation.
+- [x] Add topbar.
+- [x] Add command palette shell.
+- [x] Add notification center shell.
+- [x] Add global mini agent chat shell.
+- [x] Add reusable stat/status/risk/empty/loading/confirm UI components.
+- [x] Add placeholders for all required routes.
+- [x] Start replacing placeholders with route-specific detailed pages.
+- [x] Add dedicated dashboard screen.
+- [x] Add mobile sidebar drawer behavior.
+- [x] Add toasts.
+- [x] Add richer dashboard widgets.
+- [x] Add operational command center frontend routes for agents, departments, workflows, research intelligence, content studio, analytics, organizational memory, automations, incident center, infrastructure, and settings.
+- [x] Add collapsible command-center sidebar navigation.
+- [x] Add Zustand UI store for command palette/sidebar/page state.
+- [x] Add typed mock command-center service and frontend tests.
+- [x] Add mock-safe multi-agent orchestration infrastructure with LangGraph, CrewAI-compatible planning, Redis/BullMQ adapters, event bus, incident recovery, memory hooks, monitoring, and APIs.
+- [x] Add Docker Compose Redis service for local queue testing.
+- [x] Add Research and Content intelligence layer with 11 agents, 8 mock-safe LangGraph workflows, provider guards, APIs, persistence through existing models, and UI run controls.
+- [x] Add Organizational Memory and Reflection Intelligence layer with pgvector-ready schema, mock semantic retrieval, LangGraph dry-run reflections, experiments, prompt versioning, APIs, and UI controls.
+- [x] Add Media Generation and Asset Pipeline layer with ComfyUI/FFmpeg-ready dry-run workflows, media queue, asset registry, render retry plans, APIs, and Content Studio controls.
+- [x] Add Platform Operations and Publishing Infrastructure layer with n8n-ready dry-run workflows, publishing/scheduling/retry queues, platform adaptation, analytics ingestion plans, monetization hooks, APIs, and Platforms controls.
+- [x] Add Governance, Approval and Safety Control layer with policy engine, governance/sandbox queues, approval actions, cost/provider governance, APIs, tests, and Approval Center controls.
+
+## Later Phases
+
+- [x] Choose Vercel + free database + Oracle n8n worker deployment model.
+- [x] Add deployment plan.
+- [x] Add real-data testing plan.
+- [x] Add database seed script.
+- [x] Add database and integration health/status APIs.
+- [x] Link Vercel project.
+- [x] Deploy production app to Vercel.
+- [x] Verify production `/` and `/api/health`.
+- [x] Move Vercel Functions close to Supabase database for faster DB-backed pages.
+- [x] Add non-secret production app URL env values.
+- [x] Configure free Postgres `DATABASE_URL`.
+- [x] Repair Vercel `DATABASE_URL` with verified Supabase transaction pooler.
+- [x] Connect fresh Supabase project.
+- [x] Verify Supabase linked query access.
+- [x] Apply Prisma schema to Supabase through Management API.
+- [x] Run database push against approved free database.
+- [x] Seed approved free database.
+- [ ] Configure Oracle n8n webhook env values.
+- [ ] Test Oracle n8n webhook from Folqen.
+- [x] Connect Research Intelligence and Content Studio pages to mock-safe intelligence APIs.
+- [ ] Connect remaining command-center UI panels to orchestration API endpoints.
+- [ ] Run Redis/BullMQ in live local mode after explicit environment setup.
+- [x] Authentication and roles foundation.
+- [x] Protected routes.
+- [x] Login/logout API foundation.
+- [x] Password change flow.
+- [x] Database-backed login verification.
+- [x] Database migrations and seed data.
+- [x] Settings persistence.
+- [x] Approval backend routes.
+- [x] Audit log page backed by database.
+- [x] Agent chat persistence.
+- [x] Test viewer account for dashboard testing.
+- [x] Dashboard backed by Supabase data.
+- [x] File upload validation.
+- [x] Metadata-only file registration.
+- [x] Service interfaces and provider adapters.
+- [x] Safe mock-agent draft content creation.
+- [x] n8n placeholder endpoints.
+- [x] n8n embedded builder UI surface.
+- [x] Google Drive storage setup surface.
+- [x] Google Drive private storage adapter.
+- [x] OpenAI model dropdown preference.
+- [x] Media tool setup/status surface.
+- [x] Provider setup approval request flow.
+- [x] Provider approval API authenticated tests.
+- [x] Posting package system.
+- [x] Posting package detail/download controls.
+- [x] Start security hardening with mutation same-origin checks and rate limits.
+- [x] Add app-marked mutation requests for browser UI actions.
+- [x] Add two-day/day-3 launch readiness plan and dashboard visibility.
+- [x] Add in-app encrypted connection wizard and credential intake API.
+- [ ] Complete broader security hardening.

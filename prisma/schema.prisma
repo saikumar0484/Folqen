@@ -1,0 +1,472 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum UserRole {
+  ADMIN
+  OPERATOR
+  VIEWER
+}
+
+enum TaskStatus {
+  QUEUED
+  RUNNING
+  PAUSED
+  COMPLETED
+  FAILED
+  CANCELED
+}
+
+enum ContentStatus {
+  IDEA
+  DRAFT
+  REVIEW
+  APPROVED
+  SCHEDULED
+  PUBLISHED
+  BLOCKED
+  ARCHIVED
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  EXPIRED
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum PlatformName {
+  YOUTUBE
+  INSTAGRAM
+  FACEBOOK
+  SNAPCHAT
+  THREADS
+  SUBSTACK
+  LINKEDIN
+  BLUESKY
+  LEMON8
+  KICK
+}
+
+enum ToolType {
+  LLM
+  IMAGE
+  VIDEO
+  VOICE
+  TRANSCRIPTION
+  CAPTION
+  RENDER
+  WORKFLOW
+  PUBLISHING
+  ANALYTICS
+  STORAGE
+  NOTIFICATION
+  AUTH
+  VECTOR_MEMORY
+  BROWSER_AUTOMATION
+}
+
+enum ConnectionStatus {
+  NOT_CONNECTED
+  CONFIGURED
+  TESTING
+  LIVE
+  FAILED
+  DISABLED
+  DEPRECATED
+  NEEDS_ATTENTION
+}
+
+enum ReviewStatus {
+  PENDING
+  PASSED
+  FAILED
+}
+
+enum ProviderStatus {
+  NOT_CONNECTED
+  CONFIGURED
+  TESTING
+  LIVE
+  FAILED
+  DISABLED
+  DEPRECATED
+  NEEDS_ATTENTION
+}
+
+enum UpgradeStatus {
+  RESEARCHING
+  DRAFTED
+  NEEDS_HUMAN_REVIEW
+  APPROVED
+  REJECTED
+  TESTING
+  IMPLEMENTED
+  ROLLED_BACK
+  DEFERRED
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  name          String?
+  passwordHash  String
+  role          UserRole       @default(VIEWER)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  messages      AgentMessage[]
+  approvals     Approval[]
+  auditLogs      AuditLog[]
+  notifications Notification[]
+}
+
+model AgentMessage {
+  id        String   @id @default(cuid())
+  userId    String?
+  role      String
+  content   String
+  metadata  Json?
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model AgentTask {
+  id          String      @id @default(cuid())
+  title       String
+  description String?
+  status      TaskStatus  @default(QUEUED)
+  riskLevel   RiskLevel   @default(LOW)
+  metadata    Json?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  contentId   String?
+  content     ContentItem? @relation(fields: [contentId], references: [id], onDelete: SetNull)
+}
+
+model ContentItem {
+  id              String         @id @default(cuid())
+  title           String
+  format          String
+  status          ContentStatus  @default(IDEA)
+  reviewStatus    ReviewStatus   @default(PENDING)
+  safetyStatus    ReviewStatus   @default(PENDING)
+  copyrightStatus ReviewStatus   @default(PENDING)
+  platformTargets PlatformName[]
+  metadata        Json?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  tasks           AgentTask[]
+  assets          Asset[]
+  renders         Render[]
+  approvals       Approval[]
+}
+
+model Asset {
+  id          String       @id @default(cuid())
+  contentId   String?
+  type        String
+  name        String
+  path        String
+  mimeType    String?
+  sizeBytes   Int?
+  metadata    Json?
+  createdAt   DateTime     @default(now())
+  content     ContentItem? @relation(fields: [contentId], references: [id], onDelete: SetNull)
+}
+
+model Render {
+  id          String       @id @default(cuid())
+  contentId   String?
+  status      TaskStatus   @default(QUEUED)
+  providerId  String?
+  outputPath  String?
+  logs        String?
+  metadata    Json?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  content     ContentItem? @relation(fields: [contentId], references: [id], onDelete: SetNull)
+}
+
+model Approval {
+  id          String         @id @default(cuid())
+  type        String
+  title       String
+  status      ApprovalStatus @default(PENDING)
+  riskLevel   RiskLevel      @default(MEDIUM)
+  reason      String?
+  payload     Json?
+  requestedBy String?
+  decidedById String?
+  decidedAt   DateTime?
+  createdAt   DateTime       @default(now())
+  contentId   String?
+  content     ContentItem?    @relation(fields: [contentId], references: [id], onDelete: SetNull)
+  decidedBy   User?           @relation(fields: [decidedById], references: [id], onDelete: SetNull)
+}
+
+model PlatformConnection {
+  id           String           @id @default(cuid())
+  platform     PlatformName
+  status       ConnectionStatus @default(NOT_CONNECTED)
+  authMethod   String?
+  capabilities Json?
+  metadata     Json?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+}
+
+model ToolLimit {
+  id          String   @id @default(cuid())
+  toolId      String
+  toolType    ToolType
+  label       String
+  limitValue  Int?
+  usedValue   Int      @default(0)
+  resetAt     DateTime?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AnalyticsRecord {
+  id        String        @id @default(cuid())
+  platform  PlatformName?
+  metric    String
+  value     Float
+  period    String
+  metadata  Json?
+  createdAt DateTime      @default(now())
+}
+
+model Setting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     Json
+  version   Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AuditLog {
+  id        String    @id @default(cuid())
+  actorId   String?
+  action    String
+  target    String?
+  riskLevel RiskLevel @default(LOW)
+  metadata  Json?
+  createdAt DateTime  @default(now())
+  actor     User?     @relation(fields: [actorId], references: [id], onDelete: SetNull)
+}
+
+model UploadedFile {
+  id        String   @id @default(cuid())
+  name      String
+  path      String
+  mimeType  String
+  sizeBytes Int
+  privacy   String   @default("private")
+  tags      String[]
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ErrorLog {
+  id        String    @id @default(cuid())
+  source    String
+  message   String
+  severity  RiskLevel @default(MEDIUM)
+  stack     String?
+  resolved  Boolean   @default(false)
+  metadata  Json?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String?
+  title     String
+  body      String
+  read      Boolean   @default(false)
+  riskLevel RiskLevel @default(LOW)
+  metadata  Json?
+  createdAt DateTime  @default(now())
+  user      User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model WorkflowRun {
+  id         String     @id @default(cuid())
+  providerId String?
+  workflowId String
+  status     TaskStatus @default(QUEUED)
+  input      Json?
+  output     Json?
+  logs       String?
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+}
+
+model UpgradeProposal {
+  id              String            @id @default(cuid())
+  title           String
+  summary         String
+  category        String
+  status          UpgradeStatus     @default(DRAFTED)
+  riskScore       Int               @default(0)
+  costScore       Int               @default(0)
+  benefitScore    Int               @default(0)
+  testingPlan     String?
+  rollbackPlan    String?
+  requiredApproval Boolean          @default(true)
+  metadata        Json?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  findings        ResearchFinding[]
+  runs            UpgradeRun[]
+}
+
+model ResearchFinding {
+  id          String           @id @default(cuid())
+  proposalId  String?
+  title       String
+  sourceUrl   String?
+  summary     String
+  confidence  Float            @default(0.5)
+  metadata    Json?
+  createdAt   DateTime         @default(now())
+  proposal    UpgradeProposal? @relation(fields: [proposalId], references: [id], onDelete: SetNull)
+}
+
+model UpgradeRun {
+  id          String           @id @default(cuid())
+  proposalId  String?
+  status      UpgradeStatus    @default(TESTING)
+  branchName  String?
+  logs        String?
+  metadata    Json?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  proposal    UpgradeProposal? @relation(fields: [proposalId], references: [id], onDelete: SetNull)
+}
+
+model ProviderRegistryItem {
+  id            String         @id
+  name          String
+  type          ToolType
+  status        ProviderStatus @default(NOT_CONNECTED)
+  version       String
+  capabilities  Json
+  costModel     String
+  rateLimits    Json?
+  commercialUse String
+  configSchema  Json?
+  metadata      Json?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model PromptVersion {
+  id        String   @id @default(cuid())
+  key       String
+  version   Int
+  content   String
+  metadata  Json?
+  active    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@unique([key, version])
+}
+
+model MemoryEntry {
+  id              String             @id @default(cuid())
+  category        String
+  scope           String             @default("organization")
+  subjectType     String?
+  subjectId       String?
+  departmentId    String?
+  agentId         String?
+  title           String
+  summary         String
+  content         String
+  tags            String[]
+  importance      Float              @default(0.5)
+  confidence      Float              @default(0.5)
+  sourceType      String
+  sourceId        String?
+  embedding       Unsupported("vector")?
+  embeddingModel  String?
+  embeddingStatus String             @default("mock")
+  metadata        Json?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  reflections     MemoryReflection[]
+  experiments     ExperimentRecord[]
+
+  @@index([category])
+  @@index([departmentId])
+  @@index([agentId])
+  @@index([sourceType, sourceId])
+}
+
+model MemoryReflection {
+  id              String       @id @default(cuid())
+  memoryId        String?
+  workflowRunId   String?
+  reflectionType  String
+  summary         String
+  qualityScore    Float        @default(0.5)
+  bottlenecks     Json?
+  recommendations Json?
+  strategyNotes   Json?
+  metadata        Json?
+  createdAt       DateTime     @default(now())
+  memory          MemoryEntry? @relation(fields: [memoryId], references: [id], onDelete: SetNull)
+
+  @@index([memoryId])
+  @@index([workflowRunId])
+  @@index([reflectionType])
+}
+
+model ExperimentRecord {
+  id             String       @id @default(cuid())
+  memoryId       String?
+  experimentType String
+  name           String
+  hypothesis     String
+  variants       Json
+  metrics        Json?
+  status         String       @default("draft")
+  winnerKey      String?
+  confidence     Float        @default(0.5)
+  recommendation String?
+  metadata       Json?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  memory         MemoryEntry? @relation(fields: [memoryId], references: [id], onDelete: SetNull)
+
+  @@index([memoryId])
+  @@index([experimentType])
+  @@index([status])
+}
+
+model EventLog {
+  id        String   @id @default(cuid())
+  type      String
+  subject   String?
+  payload   Json?
+  createdAt DateTime @default(now())
+}

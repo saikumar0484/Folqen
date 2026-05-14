@@ -1,0 +1,155 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { isGoogleDriveStorageConfigured, uploadPrivateFileToGoogleDrive } from "@/lib/storage/google-drive";
+import type { FolqenEnv } from "@/lib/env";
+
+const baseEnv: FolqenEnv = {
+  ALLOW_PUBLIC_PUBLISH: false,
+  REQUIRE_HUMAN_APPROVAL: true,
+  ALLOW_PAID_TOOLS: false,
+  ALLOW_BROWSER_AUTOMATION: false,
+  DEFAULT_UPLOAD_PRIVACY: "private",
+  FOLQEN_RUNTIME_PROFILE: "local",
+  PREVIEW_SAFE_MODE: false,
+  PREVIEW_PUBLIC_MODE: false,
+  PREVIEW_DEMO_AUTH: false,
+  PREVIEW_FORCE_DRY_RUN: true,
+  REQUIRE_STARTUP_VALIDATION: true,
+  STARTUP_DRY_RUN_MODE: true,
+  STARTUP_ROLLBACK_MODE: false,
+  STARTUP_QUARANTINE_MODE: false,
+  STARTUP_KILL_SWITCH: false,
+  SELF_IMPROVEMENT_ENABLED: true,
+  AUTO_EXECUTE_UPGRADES: false,
+  REQUIRE_UPGRADE_APPROVAL: true,
+  ALLOW_PAID_RESEARCH_TOOLS: false,
+  MAX_MONTHLY_RESEARCH_COST_INR: 0,
+  BULLMQ_PREFIX: "folqen",
+  ORCHESTRATION_EXECUTION_MODE: "mock",
+  ORCHESTRATION_WORKER_ENABLED: false,
+  BROWSER_OPERATIONS_SANDBOX_MODE: true,
+  BROWSER_OPERATIONS_KILL_SWITCH: false,
+  BROWSER_OPERATIONS_MAX_SESSION_SECONDS: 60,
+  BROWSER_OPERATIONS_ALLOWED_DOMAINS: "localhost,127.0.0.1,folqen.vercel.app",
+  BROWSER_OPERATIONS_BLOCKED_DOMAINS: "accounts.google.com,facebook.com,instagram.com,youtube.com,x.com,twitter.com,linkedin.com,stripe.com,paypal.com",
+  ALLOW_CONTROLLED_MEDIA_EXECUTION: false,
+  ALLOW_LIVE_THUMBNAIL_RENDERING: false,
+  LIVE_MEDIA_ACTIVATION_STAGE: 0,
+  LIVE_THUMBNAIL_RENDER_STAGE: 0,
+  THUMBNAIL_RENDER_PROVIDER: "local_worker",
+  THUMBNAIL_RENDER_SANDBOX_FALLBACK: true,
+  MEDIA_RENDER_KILL_SWITCH: false,
+  MEDIA_RENDER_EMERGENCY_STOP: false,
+  MEDIA_RENDER_MAX_DAILY_RUNS: 3,
+  MEDIA_RENDER_MAX_CONCURRENCY: 1,
+  MEDIA_RENDER_MAX_SECONDS: 120,
+  MEDIA_RENDER_MAX_ESTIMATED_GPU_MINUTES: 2,
+  ALLOW_LIVE_AI_EXECUTION: false,
+  LIVE_AI_ACTIVATION_STAGE: 0,
+  AI_RUNTIME_KILL_SWITCH: false,
+  AI_RUNTIME_EMERGENCY_STOP: false,
+  MEMORY_EMBEDDINGS_PROVIDER: "mock",
+  MEMORY_EMBEDDING_DIMENSIONS: 1536,
+};
+
+const driveEnv: FolqenEnv = {
+  ...baseEnv,
+  GOOGLE_DRIVE_CLIENT_ID: "client-id",
+  GOOGLE_DRIVE_CLIENT_SECRET: "client-secret",
+  GOOGLE_DRIVE_REFRESH_TOKEN: "refresh-token",
+  GOOGLE_DRIVE_FOLDER_ID: "folder-id",
+};
+
+test("Google Drive storage reports not connected without every secret", () => {
+  assert.equal(isGoogleDriveStorageConfigured(baseEnv), false);
+  assert.equal(isGoogleDriveStorageConfigured({ ...driveEnv, GOOGLE_DRIVE_REFRESH_TOKEN: "" }), false);
+  assert.equal(isGoogleDriveStorageConfigured(driveEnv), true);
+});
+
+test("Google Drive upload returns not connected without secrets", async () => {
+  const result = await uploadPrivateFileToGoogleDrive(
+    {
+      name: "story.txt",
+      mimeType: "text/plain",
+      sizeBytes: 5,
+      data: new TextEncoder().encode("story").buffer,
+    },
+    {
+      env: baseEnv,
+      fetchImpl: async () => {
+        throw new Error("fetch should not be called");
+      },
+    },
+  );
+
+  assert.equal(result.ok, false);
+  assert.equal(result.status, "not_connected");
+});
+
+test("Google Drive upload uses token refresh and resumable private folder upload", async () => {
+  const calls: Array<{ url: string; init: RequestInit }> = [];
+  const fetchImpl = async (url: string | URL | Request, init?: RequestInit) => {
+    calls.push({ url: String(url), init: init ?? {} });
+
+    if (String(url).includes("oauth2.googleapis.com/token")) {
+      return new Response(JSON.stringify({ access_token: "access-token" }), { status: 200 });
+    }
+
+    if (String(url).includes("uploadType=resumable")) {
+      return new Response(null, {
+        status: 200,
+        headers: { location: "https://upload.example/session" },
+      });
+    }
+
+    return new Response(
+      JSON.stringify({
+        id: "drive-file-id",
+        name: "story.txt",
+        mimeType: "text/plain",
+        size: "5",
+        webViewLink: "https://drive.google.com/file/d/drive-file-id/view",
+      }),
+      { status: 200 },
+    );
+  };
+
+  const result = await uploadPrivateFileToGoogleDrive(
+    {
+      name: "story.txt",
+      mimeType: "text/plain",
+      sizeBytes: 5,
+      data: new TextEncoder().encode("story").buffer,
+    },
+    { env: driveEnv, fetchImpl: fetchImpl as typeof fetch },
+  );
+
+  assert.equal(result.ok, true);
+  assert.equal(result.data?.path, "google-drive://drive-file-id");
+  assert.equal(calls.length, 3);
+  assert.match(String(calls[0].init.body), /grant_type=refresh_token/);
+  assert.match(String(calls[1].init.body), /folder-id/);
+  assert.equal(calls[1].init.headers && "Authorization" in calls[1].init.headers, true);
+  assert.equal(String(calls[2].url), "https://upload.example/session");
+});
+
+test("Google Drive upload does not expose configured secrets in failure messages", async () => {
+  const result = await uploadPrivateFileToGoogleDrive(
+    {
+      name: "story.txt",
+      mimeType: "text/plain",
+      sizeBytes: 5,
+      data: new TextEncoder().encode("story").buffer,
+    },
+    {
+      env: driveEnv,
+      fetchImpl: async () => new Response("nope", { status: 401 }),
+    },
+  );
+
+  const serialized = JSON.stringify(result);
+
+  assert.equal(result.ok, false);
+  assert.doesNotMatch(serialized, /client-secret/);
+  assert.doesNotMatch(serialized, /refresh-token/);
+});
