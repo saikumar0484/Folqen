@@ -18,7 +18,7 @@ export function MiniAgentChat() {
   return (
     <div className="fixed bottom-4 right-4 z-40">
       {open ? (
-        <section className="glass-heavy mb-3 w-[min(420px,calc(100vw-1rem))] overflow-hidden rounded-2xl border border-white/20 shadow-[0_24px_80px_rgba(0,0,0,0.52)] md:w-[min(420px,calc(100vw-2rem))]">
+        <section className="mb-3 w-[min(420px,calc(100vw-1rem))] overflow-hidden rounded-2xl border-2 border-white/35 bg-[#0a1711]/92 shadow-[0_28px_96px_rgba(0,0,0,0.62)] backdrop-blur-[34px] md:w-[min(420px,calc(100vw-2rem))]">
           <div className="flex items-center gap-3 border-b border-white/10 px-4 py-3">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-neon text-primary-foreground">
               <Bot className="h-4 w-4" />
@@ -36,7 +36,7 @@ export function MiniAgentChat() {
           </div>
 
           <div className="max-h-[56vh] space-y-3 overflow-auto p-4 sm:max-h-[52vh]">
-            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-sm leading-6 text-muted-foreground">
+            <div className="rounded-xl border border-white/18 bg-[#122119]/82 p-3 text-sm leading-6 text-muted-foreground">
               I can guide onboarding, explain workflow results, refine scripts and thumbnails, and keep your beta run safe with clear approval boundaries.
             </div>
             <div className="grid gap-2 sm:grid-cols-2">
@@ -45,13 +45,13 @@ export function MiniAgentChat() {
                   key={command}
                   type="button"
                   onClick={() => setMessage(command)}
-                  className="rounded-lg border border-white/10 bg-white/[0.03] px-2 py-2 text-left text-[11px] text-muted-foreground transition hover:bg-white/[0.07] hover:text-foreground"
+                  className="rounded-lg border border-white/16 bg-[#122119]/78 px-2 py-2 text-left text-[11px] text-muted-foreground transition hover:bg-[#1a2a20]/88 hover:text-foreground"
                 >
                   {command}
                 </button>
               ))}
             </div>
-            <div className="rounded-xl border border-dashed border-white/10 p-3 text-xs text-muted-foreground">
+            <div className="rounded-xl border border-dashed border-white/16 bg-[#101d16]/72 p-3 text-xs text-muted-foreground">
               Voice, image, and file inputs are still safe placeholders. Live browser execution, autonomous publishing, and unrestricted provider execution remain blocked.
             </div>
           </div>
@@ -79,7 +79,7 @@ export function MiniAgentChat() {
               value={message}
               onChange={(event) => setMessage(event.target.value)}
               placeholder="Ask Folqen to guide your next creator action..."
-              className="min-w-0 flex-1 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus:border-neon/40"
+              className="min-w-0 flex-1 rounded-xl border border-white/18 bg-[#122119]/82 px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus:border-neon/50"
             />
             <button
               type="submit"
