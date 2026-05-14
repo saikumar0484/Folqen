@@ -1,5 +1,26 @@
 # Current Status
 
+## Latest Update (May 14, 2026 - Global Palette Pass)
+
+- Applied requested Folqen palette across core UI tokens and shared components:
+  - deep cinematic dark base
+  - restrained lime-green accent system
+  - reduced blue-tone drift in key controls
+- Updated global theme variables and reusable utility surfaces in:
+  - `src/app/globals.css`
+- Updated shared UI primitives to inherit the same visual identity:
+  - `src/components/ui/button.tsx`
+  - `src/components/ui/badge.tsx`
+  - `src/components/ui/status-badge.tsx`
+- Verification status:
+  - lint: passed
+  - typecheck: passed
+  - tests: passed (158)
+  - prisma generate: passed
+  - production build: passed
+- Safety/runtime posture unchanged:
+  - no provider/publishing/render/browser execution flags were enabled.
+
 ## Latest Update (May 14, 2026 - De-Mocking Coverage Expansion)
 
 - Expanded authenticated-route de-mocking to remove legacy static/demo page feeds on:

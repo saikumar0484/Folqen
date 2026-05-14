@@ -8,9 +8,9 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-neon text-primary-foreground shadow-[0_10px_28px_rgba(124,247,169,.24)] hover:-translate-y-0.5 hover:bg-neon-strong",
-        secondary: "border border-white/10 bg-white/[0.05] text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,.04)] hover:border-white/20 hover:bg-white/[0.08]",
-        ghost: "text-muted-foreground hover:bg-white/[0.06] hover:text-foreground",
+        default: "bg-neon text-primary-foreground shadow-[0_10px_28px_rgba(158,255,47,.24)] hover:-translate-y-0.5 hover:bg-neon-strong",
+        secondary: "border border-[#b7c7ba]/20 bg-[#111d17]/70 text-foreground shadow-[inset_0_1px_0_rgba(221,244,219,.05)] hover:border-neon/35 hover:bg-[#16241d]/80",
+        ghost: "text-muted-foreground hover:bg-[#152219]/70 hover:text-foreground",
         danger: "border border-rose-400/25 bg-rose-400/10 text-rose-100 hover:bg-rose-400/15",
       },
       size: {

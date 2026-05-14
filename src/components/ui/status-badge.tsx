@@ -10,8 +10,8 @@ const tones = {
   safe: "border-neon/28 bg-neon/[0.11] text-neon",
   warning: "border-amber-300/30 bg-amber-300/[0.1] text-amber-100",
   danger: "border-rose-300/30 bg-rose-300/[0.11] text-rose-100",
-  neutral: "border-white/12 bg-white/[0.035] text-muted-foreground",
-  premium: "border-white/15 bg-white/[0.06] text-foreground",
+  neutral: "border-[#b7c7ba]/20 bg-[#122018]/70 text-muted-foreground",
+  premium: "border-neon/30 bg-[#16261b]/85 text-foreground",
 };
 
 export function StatusBadge({ children, tone = "neutral" }: StatusBadgeProps) {

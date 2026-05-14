@@ -1,5 +1,25 @@
 # Changelog
 
+## May 14, 2026 - Global Palette Unification (Cinematic Green System)
+
+### Changed
+
+- Applied a full global color-token refresh to match the requested Folqen palette direction (deep cinematic dark + restrained lime-green accent):
+  - `src/app/globals.css`
+- Updated shared interaction and badge surfaces to align with the same palette:
+  - `src/components/ui/button.tsx`
+  - `src/components/ui/badge.tsx`
+  - `src/components/ui/status-badge.tsx`
+- Added missing token coverage for `--neon-strong` to keep neon hover states consistent and prevent token drift.
+
+### Verification
+
+- `.\node_modules\.bin\eslint.cmd .`: passed
+- `.\node_modules\.bin\tsc.cmd --noEmit`: passed
+- `.\node_modules\.bin\tsx.cmd --test "src/**/*.test.ts"`: passed (158/158)
+- `.\node_modules\.bin\prisma.cmd generate`: passed
+- `.\node_modules\.bin\next.cmd build`: passed (Next.js 16.2.6)
+
 ## May 14, 2026 - De-Mocking Productization (Coverage Expansion)
 
 ### Changed

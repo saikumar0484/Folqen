@@ -1,5 +1,28 @@
 # Handoff Log
 
+## Latest Handoff Entry (May 14, 2026 - Global Palette Application)
+
+- Implemented requested color palette globally across Folqen core theme and shared UI primitives.
+- Updated files:
+  - `src/app/globals.css`
+  - `src/components/ui/button.tsx`
+  - `src/components/ui/badge.tsx`
+  - `src/components/ui/status-badge.tsx`
+- Scope:
+  - deep dark cinematic backgrounds
+  - restrained neon-lime accent usage
+  - panel/glass/border/glow alignment
+  - route progress/loading accent alignment
+  - neutralized secondary button/neutral badge surfaces to match the same identity
+- Verification run:
+  - `.\node_modules\.bin\eslint.cmd .` passed
+  - `.\node_modules\.bin\tsc.cmd --noEmit` passed
+  - `.\node_modules\.bin\tsx.cmd --test "src/**/*.test.ts"` passed (158)
+  - `.\node_modules\.bin\prisma.cmd generate` passed
+  - `.\node_modules\.bin\next.cmd build` passed
+- Safety posture unchanged:
+  - no auth/governance/orchestration/runtime/publishing/rendering flags modified.
+
 ## Latest Handoff Entry (May 14, 2026 - De-Mocking Route Coverage Expansion)
 
 - Continued from the prior de-mocking checkpoint and completed route-level expansion for authenticated UX.

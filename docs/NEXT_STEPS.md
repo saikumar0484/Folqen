@@ -1,5 +1,13 @@
 # Next Steps
 
+## Immediate Follow-Up (May 14, 2026 - Palette Propagation QA)
+
+1. Run a page-by-page visual QA pass to catch any remaining hardcoded non-palette tones on:
+   - `/dashboard`, `/onboarding`, `/workflows`, `/research-intelligence`, `/content-studio`, `/analytics`, `/browser-operations`, `/infrastructure`.
+2. Replace remaining blue/cyan accents in secondary charts/icons where they are not semantically required.
+3. Add optional chart color fallback helpers tied to `--chart-*` tokens so visual consistency survives future component additions.
+4. Keep loading/empty/error states consistent with the same palette while preserving accessibility contrast.
+
 ## Immediate Follow-Up (May 14, 2026 - Post Coverage Expansion)
 
 1. Replace or archive now-unused legacy presentation modules:

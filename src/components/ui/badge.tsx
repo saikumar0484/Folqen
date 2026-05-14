@@ -6,7 +6,7 @@ const badgeVariants = cva("inline-flex items-center gap-1.5 rounded-full border 
   variants: {
     variant: {
       safe: "border-neon/30 bg-neon/10 text-neon",
-      info: "border-cyan-300/25 bg-cyan-300/10 text-cyan-100",
+      info: "border-[#c9ff8f]/35 bg-[#c9ff8f]/12 text-[#e8ffc8]",
       warning: "border-amber-300/25 bg-amber-300/10 text-amber-100",
       danger: "border-rose-300/25 bg-rose-300/10 text-rose-100",
       neutral: "border-white/10 bg-white/[0.04] text-muted-foreground",

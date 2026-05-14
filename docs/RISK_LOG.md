@@ -1,5 +1,15 @@
 # Risk Log
 
+## Current Risk Update (May 14, 2026 - Global Palette Consistency Risk)
+
+### Residual hardcoded accent colors may create visual drift
+
+- Risk: Some route-level components may still contain local hardcoded color classes that do not match the new global palette, causing inconsistent UX.
+- Prevention: Core token system and shared primitives were updated first (`globals.css`, `button`, `badge`, `status-badge`) so most surfaces inherit automatically.
+- Verification: Lint/type/test/build all passed after palette update; no runtime behavior changed.
+- Rollback: Revert only the palette token/primitives commit if contrast or readability regressions appear.
+- Human approval trigger: Any request to switch to a radically different brand palette that impacts accessibility and component semantics.
+
 ## Current Risk Update (May 14, 2026 - Legacy Screen Regression Risk)
 
 ### Unused static screen modules can be accidentally reattached
