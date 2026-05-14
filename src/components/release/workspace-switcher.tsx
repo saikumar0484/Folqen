@@ -112,10 +112,10 @@ export function WorkspaceSwitcher() {
   }
 
   return (
-    <div className="hidden items-center gap-2 rounded-xl border border-white/12 bg-white/[0.04] px-3 py-2 lg:flex">
-      <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Workspace</span>
+    <div className="hidden max-w-[min(50vw,34rem)] items-center gap-2 rounded-xl border border-white/12 bg-white/[0.04] px-3 py-2 lg:flex">
+      <span className="hidden font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground xl:inline">Workspace</span>
       <select
-        className="min-w-[180px] bg-transparent text-xs text-foreground outline-none"
+        className="min-w-[128px] max-w-[220px] truncate bg-transparent text-xs text-foreground outline-none"
         value={activeWorkspaceId}
         disabled={pending || !canOperate}
         onChange={(event) => switchWorkspace(event.target.value)}
@@ -128,7 +128,9 @@ export function WorkspaceSwitcher() {
       </select>
       {pending ? <Loader2 className="h-3.5 w-3.5 animate-spin text-neon" /> : null}
       {activeWorkspace ? (
-        <span className="rounded-md border border-white/12 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-neon">{activeWorkspace.nicheTemplateId}</span>
+        <span className="hidden rounded-md border border-white/12 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-neon 2xl:inline-flex">
+          {activeWorkspace.nicheTemplateId}
+        </span>
       ) : null}
     </div>
   );

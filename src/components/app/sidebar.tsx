@@ -192,7 +192,7 @@ export function Sidebar() {
       <button
         type="button"
         onClick={toggleSidebar}
-        className="absolute -right-3 top-5 inline-flex h-7 w-7 items-center justify-center rounded-full border border-white/12 bg-[#0d131b] text-muted-foreground transition hover:text-foreground"
+        className="absolute right-2 top-5 inline-flex h-7 w-7 items-center justify-center rounded-full border border-white/12 bg-[#0d131b] text-muted-foreground transition hover:text-foreground"
         aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
       >
         {sidebarCollapsed ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronLeft className="h-3.5 w-3.5" />}
