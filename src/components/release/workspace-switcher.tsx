@@ -77,7 +77,7 @@ export function WorkspaceSwitcher() {
 
   if (loading) {
     return (
-      <div className="hidden items-center gap-2 rounded-xl border border-white/12 bg-white/[0.04] px-3 py-2 text-xs text-muted-foreground lg:flex">
+      <div className="hidden items-center gap-2 rounded-xl border border-white/12 bg-white/[0.04] px-3 py-2 text-xs text-muted-foreground xl:flex">
         <Loader2 className="h-3.5 w-3.5 animate-spin text-neon" />
         Loading workspace
       </div>
@@ -88,7 +88,7 @@ export function WorkspaceSwitcher() {
     return (
       <Link
         href="/onboarding"
-        className="hidden items-center gap-2 rounded-xl border border-amber-300/30 bg-amber-300/[0.09] px-3 py-2 text-xs text-amber-100 transition hover:bg-amber-300/[0.14] lg:flex"
+        className="hidden items-center gap-2 rounded-xl border border-amber-300/30 bg-amber-300/[0.09] px-3 py-2 text-xs text-amber-100 transition hover:bg-amber-300/[0.14] xl:flex"
       >
         Setup workspace
       </Link>
@@ -98,24 +98,24 @@ export function WorkspaceSwitcher() {
   if (workspaces.length === 0) {
     if (!canOperate) {
       return (
-        <div className="hidden items-center gap-2 rounded-xl border border-white/12 bg-white/[0.04] px-3 py-2 text-xs text-muted-foreground lg:flex">
+        <div className="hidden items-center gap-2 rounded-xl border border-white/12 bg-white/[0.04] px-3 py-2 text-xs text-muted-foreground xl:flex">
           Workspace view only
         </div>
       );
     }
 
     return (
-      <Link href="/onboarding" className="hidden items-center gap-2 rounded-xl border border-white/12 bg-white/[0.04] px-3 py-2 text-xs text-muted-foreground transition hover:bg-white/[0.08] lg:flex">
+      <Link href="/onboarding" className="hidden items-center gap-2 rounded-xl border border-white/12 bg-white/[0.04] px-3 py-2 text-xs text-muted-foreground transition hover:bg-white/[0.08] xl:flex">
         Create workspace
       </Link>
     );
   }
 
   return (
-    <div className="hidden max-w-[min(50vw,34rem)] items-center gap-2 rounded-xl border border-white/12 bg-white/[0.04] px-3 py-2 lg:flex">
+    <div className="hidden w-[13.5rem] shrink-0 items-center gap-2 overflow-hidden rounded-xl border border-white/12 bg-white/[0.04] px-3 py-2 xl:flex 2xl:w-[18rem]">
       <span className="hidden font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground xl:inline">Workspace</span>
       <select
-        className="min-w-[128px] max-w-[220px] truncate bg-transparent text-xs text-foreground outline-none"
+        className="min-w-0 flex-1 truncate bg-transparent text-xs text-foreground outline-none"
         value={activeWorkspaceId}
         disabled={pending || !canOperate}
         onChange={(event) => switchWorkspace(event.target.value)}

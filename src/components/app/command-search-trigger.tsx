@@ -12,7 +12,7 @@ export function CommandSearchTrigger({ className }: { className?: string }) {
       type="button"
       onClick={() => setCommandOpen(true)}
       className={cn(
-        "min-w-0 flex-1 items-center gap-2 rounded-xl border border-white/12 bg-white/[0.05] px-3.5 py-2.5 text-left transition hover:border-white/20 hover:bg-white/[0.08]",
+        "min-w-0 w-full items-center gap-2 rounded-xl border border-white/12 bg-white/[0.05] px-3.5 py-2.5 text-left transition hover:border-white/20 hover:bg-white/[0.08]",
         className,
       )}
     >

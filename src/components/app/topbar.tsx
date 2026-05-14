@@ -31,13 +31,13 @@ export function Topbar({ user }: { user: CurrentUser }) {
             </div>
           </div>
 
-          <CommandSearchTrigger className="hidden lg:flex lg:max-w-[30rem] xl:max-w-[38rem]" />
+          <CommandSearchTrigger className="hidden 2xl:flex 2xl:w-[34rem]" />
         </div>
 
         <div className="ml-auto flex min-w-0 items-center gap-2">
           <WorkspaceSwitcher />
 
-          <div className="hidden items-center gap-2 rounded-xl border border-white/12 bg-white/[0.04] px-3 py-2 text-xs xl:flex">
+          <div className="hidden items-center gap-2 rounded-xl border border-white/12 bg-white/[0.04] px-3 py-2 text-xs 2xl:flex">
             {previewPublic ? <RadioTower className="h-4 w-4 text-neon" /> : <ShieldCheck className="h-4 w-4 text-neon" />}
             <span className="text-muted-foreground">{previewPublic ? "Preview mode" : "Governed runtime"}</span>
           </div>
