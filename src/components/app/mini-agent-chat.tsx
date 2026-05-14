@@ -18,7 +18,7 @@ export function MiniAgentChat() {
   return (
     <div className="fixed bottom-4 right-4 z-40">
       {open ? (
-        <section className="glass-heavy mb-3 w-[min(420px,calc(100vw-1rem))] overflow-hidden rounded-2xl border border-white/12 shadow-2xl md:w-[min(420px,calc(100vw-2rem))]">
+        <section className="glass-heavy mb-3 w-[min(420px,calc(100vw-1rem))] overflow-hidden rounded-2xl border border-white/20 shadow-[0_24px_80px_rgba(0,0,0,0.52)] md:w-[min(420px,calc(100vw-2rem))]">
           <div className="flex items-center gap-3 border-b border-white/10 px-4 py-3">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-neon text-primary-foreground">
               <Bot className="h-4 w-4" />
@@ -95,7 +95,7 @@ export function MiniAgentChat() {
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex h-14 items-center gap-3 rounded-2xl border border-white/15 bg-white/[0.08] px-4 font-medium text-foreground transition hover:bg-white/[0.14]"
+        className="inline-flex h-14 items-center gap-3 rounded-2xl border border-white/30 bg-[#132019]/88 px-4 font-medium text-foreground shadow-[0_12px_34px_rgba(0,0,0,0.45)] backdrop-blur-2xl transition hover:border-neon/45 hover:bg-[#18271f]/92"
       >
         <span className="pulse-dot h-2 w-2 rounded-full bg-neon" />
         <Bot className="h-5 w-5 text-neon" />
