@@ -69,32 +69,29 @@ const iconMap: Record<AppRouteId, ComponentType<{ className?: string }>> = {
   upgrades: Sparkles,
 };
 
-const commandCenterRouteIds: AppRouteId[] = [
+const creatorRouteIds: AppRouteId[] = [
   "dashboard",
-  "agents",
-  "departments",
-  "workflows",
   "research-intelligence",
   "content-studio",
+  "workflows",
+  "platforms",
+  "library",
   "analytics",
-  "organizational-memory",
-  "automations",
-  "browser-operations",
-  "incident-center",
-  "infrastructure",
+  "audit",
+  "approvals",
   "settings",
 ];
 
-const operationsRouteIds: AppRouteId[] = ["agent", "calendar", "pipeline", "library", "approvals", "platforms", "tools", "files"];
-const controlRouteIds: AppRouteId[] = ["notifications", "audit", "errors", "upgrades", "monetization", "brand"];
+const workspaceRouteIds: AppRouteId[] = ["agent", "pipeline", "calendar", "files", "notifications"];
+const moreRouteIds: AppRouteId[] = ["agents", "organizational-memory", "browser-operations", "infrastructure", "automations", "tools", "brand", "monetization", "upgrades", "incident-center", "errors", "departments"];
 
 function routeGroup(ids: AppRouteId[]) {
   return ids.map((id) => appRoutes.find((route) => route.id === id)).filter((route): route is (typeof appRoutes)[number] => Boolean(route));
 }
 
-const commandCenterRoutes = routeGroup(commandCenterRouteIds);
-const operationsRoutes = routeGroup(operationsRouteIds);
-const controlRoutes = routeGroup(controlRouteIds);
+const creatorRoutes = routeGroup(creatorRouteIds);
+const workspaceRoutes = routeGroup(workspaceRouteIds);
+const moreRoutes = routeGroup(moreRouteIds);
 
 function NavList({ routes, collapsed, onNavigate }: { routes: typeof appRoutes; collapsed: boolean; onNavigate?: () => void }) {
   const pathname = usePathname();
@@ -156,23 +153,23 @@ export function SidebarContent({ collapsed, onNavigate }: { collapsed?: boolean;
         </span>
         <span className={cn(isCollapsed && "sr-only")}>
           <span className="block font-display text-lg font-semibold tracking-[-0.02em]">Folqen</span>
-          <span className="block font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Command OS</span>
+          <span className="block font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Creator OS</span>
         </span>
       </Link>
 
       <div className="mt-4 min-h-0 flex-1 overflow-y-auto pr-1 [scrollbar-width:thin] [scrollbar-color:rgba(255,255,255,.2)_transparent]">
-        <Group title="Command Center" routes={commandCenterRoutes} collapsed={isCollapsed} onNavigate={onNavigate} />
-        <Group title="Operations" routes={operationsRoutes} collapsed={isCollapsed} onNavigate={onNavigate} />
-        <Group title="Governance" routes={controlRoutes} collapsed={isCollapsed} onNavigate={onNavigate} />
+        <Group title="Create" routes={creatorRoutes} collapsed={isCollapsed} onNavigate={onNavigate} />
+        <Group title="Workspace" routes={workspaceRoutes} collapsed={isCollapsed} onNavigate={onNavigate} />
+        <Group title="More" routes={moreRoutes} collapsed={isCollapsed} onNavigate={onNavigate} />
       </div>
 
       <div className={cn("mt-4 rounded-xl border border-white/12 bg-white/[0.035] p-3", isCollapsed && "p-2")}>
         <div className="flex items-center gap-2 text-xs font-medium text-neon">
           <LockKeyhole className="h-4 w-4" />
-          <span className={cn(isCollapsed && "sr-only")}>Safety gates live</span>
+          <span className={cn(isCollapsed && "sr-only")}>Creator safety active</span>
         </div>
         <p className={cn("mt-2 text-[11px] leading-5 text-muted-foreground", isCollapsed && "sr-only")}>
-          Paid tools, rendering, browser execution, and publishing stay blocked unless explicitly approved.
+          Sensitive actions require explicit approval. Draft creation stays available so you can keep building.
         </p>
       </div>
     </>

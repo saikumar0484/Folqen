@@ -24,7 +24,7 @@ export default async function ToolsPage() {
         <CardContent className="py-5">
           <h1 className="font-display text-2xl font-semibold tracking-[-0.03em]">Tools</h1>
           <p className="mt-2 max-w-3xl text-sm leading-7 text-muted-foreground">
-            Connect providers intentionally. Folqen keeps paid and live execution paths blocked until explicit approval.
+            Connect the tools you need for your creator workflow. Advanced capabilities expand as your setup is completed.
           </p>
         </CardContent>
       </Card>

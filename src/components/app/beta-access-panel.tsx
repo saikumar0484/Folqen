@@ -67,15 +67,15 @@ export function BetaAccessPanel() {
     <section className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <div className="font-mono text-[10px] uppercase tracking-widest text-neon">Invite-only beta access</div>
-          <h2 className="mt-1 font-display text-xl font-semibold">Beta user management</h2>
+          <div className="font-mono text-[10px] uppercase tracking-widest text-neon">Invite-only beta</div>
+          <h2 className="mt-1 font-display text-xl font-semibold">Invite creators</h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
-            Create invite-only beta users, disable access, and reset temporary passwords. Public signup remains disabled.
+            Welcome new creators, manage invite access, and issue temporary sign-in credentials when needed.
           </p>
         </div>
         <span className="inline-flex items-center gap-2 rounded-xl border border-neon/20 bg-neon/10 px-3 py-2 text-xs text-neon">
           <ShieldCheck className="h-4 w-4" />
-          Admin/operator protected
+          Team access only
         </span>
       </div>
 
@@ -123,7 +123,7 @@ export function BetaAccessPanel() {
             value={name}
             onChange={(event) => setName(event.target.value)}
             className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm outline-none focus:border-neon/40"
-            placeholder="Creator name"
+            placeholder="Creator display name"
           />
         </label>
         <label className="space-y-1.5">
@@ -143,7 +143,7 @@ export function BetaAccessPanel() {
           className="inline-flex h-[42px] items-center justify-center gap-2 self-end rounded-xl bg-neon px-4 text-sm font-semibold text-black disabled:opacity-60"
         >
           <Plus className="h-4 w-4" />
-          {loading ? "Inviting..." : "Invite"}
+          {loading ? "Sending..." : "Send invite"}
         </button>
       </form>
 
@@ -151,12 +151,12 @@ export function BetaAccessPanel() {
         <div className="mt-4 rounded-2xl border border-amber-300/30 bg-amber-500/10 p-4 text-sm text-amber-100">
           <div className="inline-flex items-center gap-2 font-semibold">
             <AlertTriangle className="h-4 w-4" />
-            Temporary credentials (show once)
+            Temporary sign-in details (shown once)
           </div>
           <div className="mt-2 space-y-1 text-xs">
             <div>Email: {createdCredential.email}</div>
             <div>Password: {createdCredential.password}</div>
-            <div className="text-amber-200/90">User must change this password on first login.</div>
+            <div className="text-amber-200/90">The creator will be asked to update this password at first sign-in.</div>
           </div>
         </div>
       ) : null}
@@ -167,9 +167,9 @@ export function BetaAccessPanel() {
           Beta users
         </div>
         {loadingUsers ? (
-          <div className="text-sm text-muted-foreground">Loading beta users...</div>
+          <div className="text-sm text-muted-foreground">Loading invites...</div>
         ) : users.length === 0 ? (
-          <div className="text-sm text-muted-foreground">No beta users yet.</div>
+          <div className="text-sm text-muted-foreground">No invites yet. Add your first creator above.</div>
         ) : (
           <div className="space-y-2">
             {users.map((user) => (
@@ -195,12 +195,12 @@ export function BetaAccessPanel() {
                         const response = await mutationFetch(`/api/beta/users/${user.id}/reset-password`, { method: "POST" });
                         const body = (await response.json().catch(() => ({}))) as { error?: string; temporaryPassword?: string };
                         if (!response.ok || !body.temporaryPassword) {
-                          toast({ title: "Reset failed", description: body.error ?? "Unable to reset password.", tone: "error" });
+                          toast({ title: "Reset didn't go through", description: body.error ?? "Unable to reset password.", tone: "error" });
                           return;
                         }
                         updateLocalUser(user.id, { forcePasswordChange: true });
                         setCreatedCredential({ email: user.email, password: body.temporaryPassword });
-                        toast({ title: "Password reset", description: "Temporary password regenerated.", tone: "success" });
+                        toast({ title: "Temporary password reset", description: "A fresh sign-in password is ready to share securely.", tone: "success" });
                       });
                     }}
                   >
@@ -219,13 +219,13 @@ export function BetaAccessPanel() {
                         });
                         const body = (await response.json().catch(() => ({}))) as { error?: string };
                         if (!response.ok) {
-                          toast({ title: "Update failed", description: body.error ?? "Unable to update user status.", tone: "error" });
+                          toast({ title: "Status update failed", description: body.error ?? "Unable to update user access.", tone: "error" });
                           return;
                         }
                         await refreshUsers();
                         toast({
-                          title: user.disabled ? "User enabled" : "User disabled",
-                          description: user.disabled ? "Beta access restored." : "Login blocked for this account.",
+                          title: user.disabled ? "Access restored" : "Access paused",
+                          description: user.disabled ? "The creator can sign in again." : "Sign-in is paused for this invite.",
                           tone: "success",
                         });
                       });

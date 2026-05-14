@@ -34,9 +34,9 @@ export default async function PlatformsPage() {
     <div className="section-space pb-8">
       <Card className="panel-soft">
         <CardContent className="py-5">
-          <h1 className="font-display text-2xl font-semibold tracking-[-0.03em]">Platforms</h1>
+          <h1 className="font-display text-2xl font-semibold tracking-[-0.03em]">Publishing</h1>
           <p className="mt-2 max-w-3xl text-sm leading-7 text-muted-foreground">
-            Platform connections remain explicit and governed. Folqen never claims publishing unless accounts are verified.
+            Connect your channels and prepare review-ready publishing packages from your creator workflow outputs.
           </p>
         </CardContent>
       </Card>

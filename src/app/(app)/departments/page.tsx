@@ -13,8 +13,8 @@ export default async function DepartmentsPage() {
     <div className="section-space pb-8">
       <Card className="panel-soft">
         <CardContent className="py-5">
-          <h1 className="font-display text-2xl font-semibold tracking-[-0.03em]">Departments</h1>
-          <p className="mt-2 max-w-3xl text-sm leading-7 text-muted-foreground">Departments are configured from your workspace strategy. Operational history appears only after real workflow activity.</p>
+          <h1 className="font-display text-2xl font-semibold tracking-[-0.03em]">Workflow Templates</h1>
+          <p className="mt-2 max-w-3xl text-sm leading-7 text-muted-foreground">Choose guided templates based on your niche and content goals. Your setup grows as you complete real workflow runs.</p>
         </CardContent>
       </Card>
       <SurfaceEmptyState model={model} />

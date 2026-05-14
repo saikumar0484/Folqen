@@ -16,10 +16,10 @@ const createBetaUserSchema = z.object({
 export async function GET() {
   const user = await getCurrentUser();
   if (!user) {
-    return NextResponse.json({ error: "Login required." }, { status: 401 });
+    return NextResponse.json({ error: "Please sign in to continue." }, { status: 401 });
   }
   if (!canManageBetaAccess(user)) {
-    return NextResponse.json({ error: "Only admins and operators can access beta user controls." }, { status: 403 });
+    return NextResponse.json({ error: "You don't have access to invite management." }, { status: 403 });
   }
 
   const users = await listBetaUsers();
@@ -29,10 +29,10 @@ export async function GET() {
 export async function POST(request: Request) {
   const user = await getCurrentUser();
   if (!user) {
-    return NextResponse.json({ error: "Login required." }, { status: 401 });
+    return NextResponse.json({ error: "Please sign in to continue." }, { status: 401 });
   }
   if (!canManageBetaAccess(user)) {
-    return NextResponse.json({ error: "Only admins and operators can invite beta users." }, { status: 403 });
+    return NextResponse.json({ error: "You don't have access to invite management." }, { status: 403 });
   }
 
   const safetyError = getMutationSafetyError(request, { key: `beta-users-create:${user.id}`, limit: 12, windowMs: 60_000 });
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
 
   const parsed = createBetaUserSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
-    return NextResponse.json({ error: "Enter a valid email and optional name for invite-only beta access." }, { status: 400 });
+    return NextResponse.json({ error: "Please enter a valid email and creator name." }, { status: 400 });
   }
 
   const result = await createBetaUser({
@@ -58,6 +58,6 @@ export async function POST(request: Request) {
     ok: true,
     user: result.user,
     temporaryPassword: result.temporaryPassword,
-    note: "Share this temporary password securely. The user is required to change it at first login.",
+    note: "Share this temporary password securely. The creator will be asked to update it at first sign-in.",
   });
 }

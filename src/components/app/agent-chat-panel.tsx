@@ -55,7 +55,7 @@ export function AgentChatPanel({ initialMessages }: { initialMessages: ChatMessa
         <div className="border-b border-white/10 p-5">
           <div className="font-mono text-[10px] uppercase tracking-widest text-neon">Persistent chat</div>
           <h2 className="mt-1 font-display text-xl font-semibold">Folqen agent conversation</h2>
-          <p className="mt-2 text-sm text-muted-foreground">Messages save to Supabase. Provider execution remains governed and blocked until explicitly approved.</p>
+          <p className="mt-2 text-sm text-muted-foreground">Messages save to your workspace so you can keep refining ideas and drafts over time.</p>
         </div>
 
         <div className="max-h-[560px] space-y-3 overflow-y-auto p-5">
@@ -148,7 +148,7 @@ export function AgentChatPanel({ initialMessages }: { initialMessages: ChatMessa
           </button>
         ))}
         <div className="rounded-2xl border border-dashed border-white/10 p-4 text-xs leading-5 text-muted-foreground">
-          Voice, image, and file inputs remain placeholders until upload validation is built.
+          Voice and advanced media tools are expanding soon. Text-first drafting is available today.
         </div>
       </aside>
     </section>

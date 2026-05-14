@@ -1,7 +1,7 @@
 "use client";
 
 import { create } from "zustand";
-import type { CommandCenterPageId } from "@/lib/command-center/types";
+import type { AppRouteId } from "@/lib/app-routes";
 
 type Density = "comfortable" | "compact";
 
@@ -12,7 +12,7 @@ type CommandCenterState = {
   query: string;
   selectedDepartment: string;
   density: Density;
-  lastVisitedPage: CommandCenterPageId;
+  lastVisitedPage: AppRouteId;
   toggleSidebar: () => void;
   toggleEssentialMode: () => void;
   setSidebarCollapsed: (value: boolean) => void;
@@ -20,7 +20,7 @@ type CommandCenterState = {
   setQuery: (value: string) => void;
   setSelectedDepartment: (value: string) => void;
   setDensity: (value: Density) => void;
-  setLastVisitedPage: (value: CommandCenterPageId) => void;
+  setLastVisitedPage: (value: AppRouteId) => void;
 };
 
 export const useCommandCenterStore = create<CommandCenterState>((set) => ({

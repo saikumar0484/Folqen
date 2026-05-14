@@ -61,7 +61,7 @@ export function CreatorMissionControl({ defaultObjective }: { defaultObjective?:
               <MessageSquareText className="h-4 w-4 text-neon" />
               Conversational Command Dock
             </div>
-            <CardDescription>Tell Folqen what you want to build and launch the first creator workflow with governed safety checks.</CardDescription>
+            <CardDescription>Tell Folqen what you want to build and launch your first creator workflow.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <label className="block space-y-2">
@@ -137,7 +137,7 @@ export function CreatorMissionControl({ defaultObjective }: { defaultObjective?:
           <CardContent className="py-10 text-center">
             <h3 className="font-display text-xl font-semibold tracking-[-0.02em]">Your first workflow story will appear here</h3>
             <p className="mx-auto mt-2 max-w-xl text-sm leading-7 text-muted-foreground">
-              Folqen will generate a complete creator package with research insight, script drafts, thumbnail strategy, and a YouTube draft package while keeping risky actions blocked.
+              Folqen will generate a complete creator package with research insight, script drafts, thumbnail strategy, and a YouTube draft package.
             </p>
           </CardContent>
         </Card>

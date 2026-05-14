@@ -12,10 +12,10 @@ type ProviderApprovalAction = {
 };
 
 const actions: ProviderApprovalAction[] = [
-  { requestType: "google_drive_storage", label: "Request Drive approval" },
-  { requestType: "openai_paid_agent", label: "Request OpenAI approval" },
-  { requestType: "n8n_workflow_access", label: "Request n8n approval" },
-  { requestType: "media_worker", label: "Request media approval" },
+  { requestType: "google_drive_storage", label: "Request Drive access" },
+  { requestType: "openai_paid_agent", label: "Request AI access" },
+  { requestType: "n8n_workflow_access", label: "Request automation access" },
+  { requestType: "media_worker", label: "Request media access" },
 ];
 
 export function ProviderApprovalActions() {
@@ -38,16 +38,16 @@ export function ProviderApprovalActions() {
       const body = (await response.json().catch(() => ({}))) as { error?: string; duplicate?: boolean };
 
       if (!response.ok) {
-        setMessage(body.error ?? "Approval request failed.");
-        toast({ title: "Approval request blocked", description: body.error ?? "Approval request failed.", tone: "error" });
+        setMessage(body.error ?? "We couldn't submit this request right now.");
+        toast({ title: "Request not sent", description: body.error ?? "We couldn't submit this request right now.", tone: "error" });
         setPendingType(null);
         return;
       }
 
-      setMessage(body.duplicate ? "A pending approval already exists." : "Approval request created.");
+      setMessage(body.duplicate ? "A request is already waiting for review." : "Your access request was sent.");
       toast({
-        title: body.duplicate ? "Approval already pending" : "Approval request created",
-        description: "No secrets were stored and no provider was connected.",
+        title: body.duplicate ? "Already in review" : "Request sent",
+        description: "We’ll notify you when this access is approved.",
         tone: "success",
       });
       setPendingType(null);
@@ -59,11 +59,9 @@ export function ProviderApprovalActions() {
     <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
-          <div className="font-mono text-[10px] uppercase tracking-widest text-neon">Approval-first setup</div>
-          <h2 className="mt-1 font-display text-xl font-semibold">Request provider approvals</h2>
-          <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
-            These buttons create approval records only. They do not save secrets, call OpenAI, run n8n, render media, upload files, or publish content.
-          </p>
+          <div className="font-mono text-[10px] uppercase tracking-widest text-neon">Connected tools</div>
+          <h2 className="mt-1 font-display text-xl font-semibold">Request access when you are ready</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">Requests are reviewed before new tools are activated for your workspace.</p>
         </div>
       </div>
 

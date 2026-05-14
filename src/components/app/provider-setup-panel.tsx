@@ -42,19 +42,19 @@ export function ProviderSetupPanel({ config }: { config: ProviderConfig }) {
           <SecretRow label="Private Drive folder" configured={config.storage.googleDrive.folderConfigured} />
         </div>
         <div className="mt-4 rounded-xl border border-neon/20 bg-neon/[0.06] p-3 text-xs leading-5 text-muted-foreground">
-          Recommended setup: use a dedicated Google Drive folder for Folqen, keep all uploads private, and add OAuth secrets only through Vercel environment variables.
+          Recommended setup: use a dedicated private folder for Folqen uploads and keep account access scoped to what you need.
         </div>
       </div>
 
       <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
         <div className="flex items-center gap-2">
           <Bot className="h-4 w-4 text-neon" />
-          <h2 className="font-display text-xl font-semibold">OpenAI agent</h2>
+          <h2 className="font-display text-xl font-semibold">AI writing assistant</h2>
         </div>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">{config.ai.openai.note}</p>
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <StatusBadge tone={statusTone(config.ai.openai.status)}>{config.ai.openai.status.replaceAll("_", " ")}</StatusBadge>
-          <StatusBadge tone="warning">Paid tool guard blocked</StatusBadge>
+          <StatusBadge tone="warning">Paid access paused</StatusBadge>
           <StatusBadge tone="premium">{config.ai.openai.selectedModel}</StatusBadge>
         </div>
         <div className="mt-4 grid gap-2">
@@ -73,7 +73,7 @@ export function ProviderSetupPanel({ config }: { config: ProviderConfig }) {
       <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
         <div className="flex items-center gap-2">
           <Workflow className="h-4 w-4 text-neon" />
-          <h2 className="font-display text-xl font-semibold">n8n inside Folqen</h2>
+          <h2 className="font-display text-xl font-semibold">Workflow automations</h2>
         </div>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">{config.workflow.n8n.note}</p>
         <div className="mt-4">
@@ -84,7 +84,7 @@ export function ProviderSetupPanel({ config }: { config: ProviderConfig }) {
           <SecretRow label="n8n webhook secret" configured={config.workflow.n8n.webhookConfigured} />
         </div>
         <div className="mt-4 rounded-xl border border-neon/20 bg-neon/[0.06] p-3 text-xs leading-5 text-muted-foreground">
-          To build workflows inside Folqen, your n8n instance must allow iframe embedding and still require n8n login. Folqen will not store your n8n admin password.
+          Keep your automation account secure. Folqen never asks for your n8n admin password.
         </div>
       </div>
 
@@ -106,17 +106,17 @@ export function ProviderSetupPanel({ config }: { config: ProviderConfig }) {
         </div>
         <div className="mt-4 flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.02] p-3 text-xs leading-5 text-muted-foreground">
           <HardDrive className="h-4 w-4 text-neon" />
-          Media jobs are planned for worker execution, because Vercel Functions should not run long video/render tasks.
+          Larger media jobs run through dedicated workers so your app stays fast and stable.
         </div>
       </div>
 
       <div className="rounded-3xl border border-amber-400/20 bg-amber-400/[0.06] p-5 xl:col-span-2">
         <div className="flex items-center gap-2">
           <KeyRound className="h-4 w-4 text-amber-200" />
-          <h2 className="font-display text-xl font-semibold">Secrets needed later</h2>
+          <h2 className="font-display text-xl font-semibold">What you can connect later</h2>
         </div>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
-          Add real keys through Vercel environment variables only: Google Drive OAuth values, OpenAI API key, n8n URL/secret, local worker shared secret, ComfyUI URL, FFmpeg worker path, and TTS endpoint.
+          When you are ready, connect Drive, AI, and media tools from secure account settings.
         </p>
       </div>
     </section>

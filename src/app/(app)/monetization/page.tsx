@@ -24,7 +24,7 @@ export default async function MonetizationPage() {
         <CardContent className="py-5">
           <h1 className="font-display text-2xl font-semibold tracking-[-0.03em]">Monetization</h1>
           <p className="mt-2 max-w-3xl text-sm leading-7 text-muted-foreground">
-            Monetization controls stay gated until platform connections, governance policies, and safety checks are complete.
+            Track monetization readiness as your channels and creator workflows mature.
           </p>
         </CardContent>
       </Card>

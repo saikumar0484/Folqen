@@ -1,6 +1,5 @@
 import { ApprovalStatus } from "@prisma/client";
 import { ApprovalActions } from "@/components/app/approval-actions";
-import { GovernanceControlPanel } from "@/components/command-center/governance-control-panel";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { canReviewApprovals, describeRoleLimit } from "@/lib/auth/permissions";
@@ -44,7 +43,7 @@ export default async function ApprovalsPage() {
             <div className="font-mono text-[11px] uppercase tracking-widest text-neon">Human decision gate</div>
             <h1 className="mt-2 font-display text-4xl font-semibold tracking-[-0.035em] md:text-6xl">Approval center</h1>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground md:text-base">
-              Approve or reject important decisions. Approval records are real database rows and every decision writes an audit log.
+              Review sensitive actions before they proceed. Every decision is saved to your account history.
             </p>
           </div>
           <StatusBadge tone={pending ? "warning" : "safe"}>{pending} pending</StatusBadge>
@@ -75,8 +74,14 @@ export default async function ApprovalsPage() {
           </article>
         ))}
       </div>
-
-      <GovernanceControlPanel dashboard={governanceDashboard} />
+      <div className="command-panel rounded-3xl p-5 text-sm text-muted-foreground">
+        <div className="font-semibold text-foreground">Approval summary</div>
+        <div className="mt-2 grid gap-2 sm:grid-cols-3">
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">Total requests: {approvals.length}</div>
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">Policy checks: {governanceDashboard.policySummary.length}</div>
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">Budget checks: {governanceDashboard.costGovernance.quotas.length}</div>
+        </div>
+      </div>
     </div>
   );
 }

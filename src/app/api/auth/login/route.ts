@@ -23,7 +23,7 @@ export async function POST(request: Request) {
   if (!isAuthConfigured()) {
     return NextResponse.json(
       {
-        error: "Authentication is not configured. Set AUTH_SECRET before login.",
+        error: "Sign-in is temporarily unavailable. Please try again shortly.",
       },
       { status: 503 },
     );
@@ -69,7 +69,7 @@ export async function POST(request: Request) {
   if (!hasDatabaseUrl()) {
     return NextResponse.json(
       {
-        error: "Database is not connected. Set DATABASE_URL and seed the admin user before login, or enable preview demo auth for safe preview deployments.",
+        error: "Sign-in is temporarily unavailable. Please try again shortly.",
       },
       { status: 503 },
     );
@@ -85,7 +85,7 @@ export async function POST(request: Request) {
 
   const [disabled, requiresPasswordChange] = await Promise.all([isBetaUserDisabled(user.id), requiresBetaPasswordChange(user.id)]);
   if (disabled) {
-    return NextResponse.json({ error: "This beta account is disabled. Contact Folqen support." }, { status: 403 });
+    return NextResponse.json({ error: "This invite is currently paused. Please contact your workspace admin." }, { status: 403 });
   }
 
   const token = createSessionToken({

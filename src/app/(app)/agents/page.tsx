@@ -14,7 +14,7 @@ export default async function AgentsPage() {
       <Card className="panel-soft">
         <CardContent className="py-5">
           <h1 className="font-display text-2xl font-semibold tracking-[-0.03em]">Agent Workforce</h1>
-          <p className="mt-2 max-w-3xl text-sm leading-7 text-muted-foreground">Folqen configures specialist agents from your workspace mission. No synthetic activity is shown before real runs.</p>
+          <p className="mt-2 max-w-3xl text-sm leading-7 text-muted-foreground">Folqen configures specialist creator roles from your workspace mission and evolves with your real workflow activity.</p>
         </CardContent>
       </Card>
       <SurfaceEmptyState model={model} />

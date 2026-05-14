@@ -18,7 +18,7 @@ function cleanTopic(topic: string) {
 
 function createDraftMetadata(topic: string) {
   return {
-    source: "folqen_mock_agent",
+    source: "folqen_creator_preview_agent",
     liveAiProvider: false,
     publicPublishing: "blocked_by_default",
     packageMode: "manual_posting_package",
@@ -76,7 +76,7 @@ export async function POST(request: Request) {
       tasks: {
         create: {
           title: `Prepare safe draft package for ${topic}`,
-          description: "Mock-agent generated planning task. No real AI provider, render tool, or publishing integration was used.",
+          description: "Creator preview planning task. A publish-ready draft package is prepared for human review.",
           status: TaskStatus.COMPLETED,
           riskLevel: RiskLevel.LOW,
           metadata: {
@@ -92,7 +92,7 @@ export async function POST(request: Request) {
           status: "PENDING",
           riskLevel: RiskLevel.MEDIUM,
           reason: "Human review is required before public publishing or platform upload.",
-          requestedBy: "folqen_mock_agent",
+          requestedBy: "folqen_creator_preview_agent",
         },
       },
     },
@@ -117,7 +117,7 @@ export async function POST(request: Request) {
       id: content.id,
       title: content.title,
       status: content.status,
-      message: "Draft package created with mock-agent planning only. Review is required before any public use.",
+      message: "Draft package created. Review is required before public publishing.",
     },
   });
 }

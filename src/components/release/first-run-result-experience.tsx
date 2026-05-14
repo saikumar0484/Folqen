@@ -21,12 +21,12 @@ function buildExplanation(result: FirstRunResponse) {
   const blocked = Object.values(result.statuses).filter((item) => item === "Blocked").length;
   const needsApproval = Object.values(result.statuses).filter((item) => item === "Needs approval").length;
   if (blocked > 0) {
-    return "Folqen prepared a complete draft package while keeping restricted execution paths blocked. Approvals and provider gates still protect high-risk actions.";
+    return "Your first package is ready. Some sensitive actions are still protected until approvals are complete.";
   }
   if (needsApproval > 0) {
-    return "Folqen completed the guided draft path and is waiting on explicit approvals for controlled live actions before any sensitive execution.";
+    return "Great progress. Folqen completed the guided path and is waiting for your approvals on sensitive actions.";
   }
-  return "Folqen completed the first creator workflow with governed controls and draft-only outputs. Publishing remains blocked by design.";
+  return "Success. Folqen completed your first creator workflow and prepared a draft package ready for review.";
 }
 
 type LiveThumbnailResponse = {
@@ -67,7 +67,7 @@ export function FirstRunResultExperience({ objective, result, onRetry, retrying 
       { label: "Script drafts generated", done: toHonestStatus(result.statuses.script ?? "Configured") !== "Blocked" },
       { label: "Thumbnail draft available", done: Boolean(thumbnailPreview) },
       { label: "YouTube draft package assembled", done: true },
-      { label: "Safety and governance checks recorded", done: true },
+      { label: "Safety checks recorded", done: true },
     ],
     [result.statuses, thumbnailPreview],
   );
@@ -142,7 +142,7 @@ export function FirstRunResultExperience({ objective, result, onRetry, retrying 
               <Sparkles className="h-4.5 w-4.5" />
             </span>
             <div>
-              <h2 className="font-display text-2xl font-semibold tracking-[-0.03em] md:text-3xl">First Workflow Result</h2>
+              <h2 className="font-display text-2xl font-semibold tracking-[-0.03em] md:text-3xl">Your First Workflow Is Ready</h2>
               <CardDescription>Research → Script → Thumbnail → YouTube draft package</CardDescription>
             </div>
           </div>
@@ -160,7 +160,7 @@ export function FirstRunResultExperience({ objective, result, onRetry, retrying 
           <div className="rounded-xl border border-white/12 bg-white/[0.03] p-4 text-sm text-muted-foreground">
             <div className="inline-flex items-center gap-2 text-foreground">
               <ShieldCheck className="h-4 w-4 text-neon" />
-              AI explanation
+                Folqen summary
             </div>
             <p className="mt-2 leading-7">{explanation}</p>
           </div>
@@ -207,7 +207,7 @@ export function FirstRunResultExperience({ objective, result, onRetry, retrying 
         <Card className="panel-soft">
           <CardHeader>
             <h3 className="text-base font-semibold">Workflow Trace Timeline</h3>
-            <CardDescription>Transparent, step-by-step run visibility.</CardDescription>
+            <CardDescription>A clear step-by-step story of what Folqen completed.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
             {result.trace.map((item, index) => (
@@ -229,7 +229,7 @@ export function FirstRunResultExperience({ objective, result, onRetry, retrying 
         <Card className="panel">
           <CardHeader>
             <h3 className="text-lg font-semibold">Thumbnail Generation & Revision</h3>
-            <CardDescription>Single-provider governed path only. Rendering and publishing safety gates remain active.</CardDescription>
+            <CardDescription>Generate and refine thumbnail drafts for this package.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="grid gap-3 sm:grid-cols-2">
@@ -334,7 +334,7 @@ export function FirstRunResultExperience({ objective, result, onRetry, retrying 
             </div>
 
             <div className="rounded-xl border border-amber-300/25 bg-amber-300/[0.08] p-3 text-xs text-amber-100">
-              Draft-only mode: autonomous publishing remains blocked until explicit human approval and platform connection checks pass.
+              Creator preview: publishing stays manual until account connections and approvals are complete.
             </div>
 
             <div className="flex flex-wrap gap-2">

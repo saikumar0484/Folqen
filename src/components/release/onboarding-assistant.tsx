@@ -250,7 +250,7 @@ export function OnboardingAssistant({ initialDraft }: { initialDraft: Onboarding
                 </select>
               </label>
               <div className="rounded-xl border border-white/12 bg-white/[0.03] p-3 text-xs text-muted-foreground">
-                Folqen will configure a safe AI workforce preset with research, script, thumbnail, metadata, and governance controls.
+                Folqen will configure a creator-focused AI workforce preset for research, script, thumbnail, and metadata workflows.
               </div>
             </div>
           ) : null}

@@ -16,7 +16,7 @@ export async function POST(request: Request) {
   const user = await getCurrentUser();
 
   if (!user) {
-    return NextResponse.json({ error: "Login required." }, { status: 401 });
+    return NextResponse.json({ error: "Your session expired. Please sign in again." }, { status: 401 });
   }
 
   const safetyError = getMutationSafetyError(request, { key: `change-password:${user.id}`, limit: 5, windowMs: 60_000 });
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
   }
 
   if (parsed.data.currentPassword === parsed.data.newPassword) {
-    return NextResponse.json({ error: "New password must be different from the current password." }, { status: 400 });
+    return NextResponse.json({ error: "Choose a new password that's different from your current one." }, { status: 400 });
   }
 
   const dbUser = await getDb().user.findUnique({
@@ -41,7 +41,7 @@ export async function POST(request: Request) {
   });
 
   if (!dbUser || !(await verifyPassword(parsed.data.currentPassword, dbUser.passwordHash))) {
-    return NextResponse.json({ error: "Current password is incorrect." }, { status: 400 });
+    return NextResponse.json({ error: "Your current password doesn't match. Please try again." }, { status: 400 });
   }
 
   await getDb().user.update({

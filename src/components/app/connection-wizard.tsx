@@ -17,8 +17,8 @@ type ConnectionWizardProps = {
 export function ConnectionWizard({
   providerIds,
   initialProvider,
-  title = "Connect Folqen to your accounts",
-  description = "Choose a provider, enter the details Folqen asks for, and Folqen stores sensitive values encrypted. Social accounts use setup metadata now and official OAuth later. Never enter social media passwords.",
+  title = "Connect your creator tools",
+  description = "Add the tools you want to use in Folqen. Sensitive details are stored securely. Never enter social platform passwords here.",
 }: ConnectionWizardProps) {
   const { toast } = useToast();
   const visibleDefinitions = providerIds?.length ? connectionDefinitions.filter((definition) => providerIds.includes(definition.id)) : connectionDefinitions;
@@ -40,7 +40,7 @@ export function ConnectionWizard({
           <h2 className="mt-3 font-display text-2xl font-semibold">{title}</h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">{description}</p>
         </div>
-        <StatusBadge tone="warning">Approval gated</StatusBadge>
+        <StatusBadge tone="warning">Review required</StatusBadge>
       </div>
 
       <div className="mt-5 grid gap-4 xl:grid-cols-[320px_1fr]">
@@ -84,16 +84,16 @@ export function ConnectionWizard({
               const body = (await response.json().catch(() => ({}))) as { error?: string; message?: string };
 
               if (!response.ok) {
-                setError(body.error ?? "Connection details could not be saved.");
-                toast({ title: "Connection setup blocked", description: body.error ?? "Connection details could not be saved.", tone: "error" });
+                setError(body.error ?? "We couldn't save these details right now.");
+                toast({ title: "Connection not saved", description: body.error ?? "We couldn't save these details right now.", tone: "error" });
                 return;
               }
 
               form.reset();
-              setMessage(body.message ?? "Connection details saved encrypted.");
+              setMessage(body.message ?? "Connection details saved.");
               toast({
                 title: "Connection details saved",
-                description: "Test the provider before enabling real automation.",
+                description: "You can finish setup whenever you're ready.",
                 tone: "success",
               });
             });
@@ -132,7 +132,7 @@ export function ConnectionWizard({
             </button>
             <div className="flex items-center gap-2 text-xs leading-5 text-muted-foreground">
               <ShieldCheck className="h-4 w-4 text-neon" />
-              Saving does not publish, spend credits, or run workflows.
+              Saving details will not publish content or run creator workflows.
             </div>
           </div>
 

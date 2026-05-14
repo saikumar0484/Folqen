@@ -52,7 +52,7 @@ export function MiniAgentChat() {
               ))}
             </div>
             <div className="rounded-xl border border-dashed border-white/16 bg-[#101d16]/72 p-3 text-xs text-muted-foreground">
-              Voice, image, and file inputs are still safe placeholders. Live browser execution, autonomous publishing, and unrestricted provider execution remain blocked.
+              Voice and media tools are expanding in beta. Folqen keeps sensitive actions gated while you build publish-ready drafts.
             </div>
           </div>
 
@@ -66,13 +66,13 @@ export function MiniAgentChat() {
               setMessage("");
             }}
           >
-            <button type="button" className="text-muted-foreground" aria-label="Voice input placeholder">
+            <button type="button" className="text-muted-foreground" aria-label="Voice input">
               <Mic className="h-4 w-4" />
             </button>
-            <button type="button" className="text-muted-foreground" aria-label="Image upload placeholder">
+            <button type="button" className="text-muted-foreground" aria-label="Image upload">
               <ImageIcon className="h-4 w-4" />
             </button>
-            <button type="button" className="text-muted-foreground" aria-label="File upload placeholder">
+            <button type="button" className="text-muted-foreground" aria-label="File upload">
               <Paperclip className="h-4 w-4" />
             </button>
             <input

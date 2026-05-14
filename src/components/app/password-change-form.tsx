@@ -33,16 +33,16 @@ export function PasswordChangeForm() {
           const body = (await response.json().catch(() => ({}))) as { error?: string };
 
           if (!response.ok) {
-            setError(body.error ?? "Password update failed.");
-            toast({ title: "Password not changed", description: body.error ?? "Password update failed.", tone: "error" });
+            setError(body.error ?? "We couldn't update your password right now.");
+            toast({ title: "Password not updated", description: body.error ?? "We couldn't update your password right now.", tone: "error" });
             return;
           }
 
           form.reset();
-          setMessage("Password changed. Use the new password next time you login.");
+          setMessage("Password updated. You’re all set for your next sign-in.");
           toast({
             title: "Password changed",
-            description: "Use the new password next time you log in.",
+            description: "You can now sign in with your new password.",
             tone: "success",
           });
         });
@@ -54,8 +54,8 @@ export function PasswordChangeForm() {
         </span>
         <div>
           <div className="font-mono text-[10px] uppercase tracking-widest text-neon">Security</div>
-          <h2 className="mt-1 font-display text-xl font-semibold">Change password</h2>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">Use a new secure password for this account. This action is written to the audit log.</p>
+          <h2 className="mt-1 font-display text-xl font-semibold">Password</h2>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">Keep your creator workspace secure with a fresh password.</p>
         </div>
       </div>
 
@@ -84,7 +84,7 @@ export function PasswordChangeForm() {
 
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <button type="submit" disabled={isPending} className="rounded-xl bg-neon px-4 py-2 text-sm font-medium text-primary-foreground shadow-glow disabled:opacity-60">
-          {isPending ? "Saving..." : "Change password"}
+          {isPending ? "Saving..." : "Save password"}
         </button>
         {message ? <span className="text-sm text-neon">{message}</span> : null}
         {error ? <span className="text-sm text-rose-200">{error}</span> : null}

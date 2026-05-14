@@ -2,22 +2,22 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Bot, Brain, CheckCircle2, FileText, Loader2, Network, Search, ShieldAlert, Siren, Sparkles, Wrench, X, Zap } from "lucide-react";
+import { Bot, Brain, CheckCircle2, FileText, Loader2, Search, ShieldAlert, Sparkles, Wrench, X, Zap } from "lucide-react";
 import { useToast } from "@/components/app/toast-provider";
 import { appRoutes } from "@/lib/app-routes";
 import { useCommandCenterStore } from "@/stores/command-center-store";
 
 const quickCommands = [
-  { label: "Open operational command center", href: "/dashboard", status: "Configured", icon: Network },
-  { label: "Inspect agent hierarchy", href: "/agents", status: "Configured", icon: Bot },
-  { label: "Open organizational memory", href: "/organizational-memory", status: "Configured", icon: Brain },
-  { label: "Review incident center", href: "/incident-center", status: "Configured", icon: Siren },
+  { label: "Open creator dashboard", href: "/dashboard", status: "Configured", icon: Sparkles },
+  { label: "Open research workspace", href: "/research-intelligence", status: "Configured", icon: Brain },
+  { label: "Open script and thumbnail workspace", href: "/content-studio", status: "Configured", icon: Bot },
+  { label: "Open workflow history", href: "/workflows", status: "Configured", icon: FileText },
   { label: "Start creator onboarding", href: "/onboarding", status: "Configured", icon: Sparkles },
-  { label: "Create content package", href: "/agent", status: "Configured", icon: Bot },
-  { label: "Review latest draft", href: "/approvals", status: "Needs approval", icon: ShieldAlert },
-  { label: "Show tool limits", href: "/tools", status: "Not connected", icon: Wrench },
+  { label: "Create first content package", href: "/agent", status: "Configured", icon: Bot },
+  { label: "Review latest draft checklist", href: "/approvals", status: "Needs approval", icon: ShieldAlert },
+  { label: "Open integrations setup", href: "/tools", status: "Not connected", icon: Wrench },
   { label: "Show pending approvals", href: "/approvals", status: "Needs approval", icon: CheckCircle2 },
-  { label: "Open posting packages", href: "/library", status: "Configured", icon: FileText },
+  { label: "Open creator library", href: "/library", status: "Configured", icon: FileText },
   { label: "Explain analytics", href: "/analytics", status: "Configured", icon: Zap },
 ];
 
@@ -68,7 +68,7 @@ export function CommandPalette() {
     setTimeout(() => setPendingLabel(null), 900);
     toast({
       title: command.label,
-      description: command.status === "Not connected" ? "This area is still setup-gated and will stay honest until credentials are configured." : "Opening the selected Folqen workspace.",
+      description: command.status === "Not connected" ? "This area unlocks after setup is completed." : "Opening your selected creator workspace.",
       tone: command.status === "Not connected" ? "info" : "success",
     });
   }
@@ -93,7 +93,7 @@ export function CommandPalette() {
                 autoFocus
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="Run a safe Folqen command..."
+                placeholder="Ask Folqen to open a workspace or next action..."
                 className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
               />
               <button

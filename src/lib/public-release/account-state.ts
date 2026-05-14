@@ -76,7 +76,7 @@ const defaultCopyByState: Record<CreatorAccountState, Omit<EmptyStateModel, "sta
   has_real_history: {
     status: "Configured",
     title: "Operational history will appear as you create",
-    description: "No synthetic activity is shown. This view only reflects real records from your account.",
+    description: "This view reflects real records from your account as you create and review content.",
     suggestion: "Keep running guided workflows and approvals to build traceable history.",
     actionLabel: "Run first workflow",
     actionHref: "/dashboard",
@@ -116,9 +116,9 @@ const surfaceOverrides: Partial<Record<SurfaceId, Partial<Record<CreatorAccountS
   },
   browser: {
     integration_not_connected: {
-      title: "Browser operations are sandbox-only",
-      description: "No live browser automation runs in beta. This surface shows governed dry-run readiness only.",
-      suggestion: "Keep browser execution disabled and use workflow previews for testing.",
+      title: "Web assistant is in early beta",
+      description: "Use this space to preview guided web actions while full account connections are still being expanded.",
+      suggestion: "Continue with creator workflows and return here when your web assistant setup is complete.",
     },
   },
   calendar: {

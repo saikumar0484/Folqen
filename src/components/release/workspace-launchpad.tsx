@@ -15,7 +15,7 @@ export function WorkspaceLaunchpad({ hasWorkspace }: { hasWorkspace: boolean }) 
           </span>
           <div>
             <h2 className="text-xl font-semibold">Create your first creator workspace</h2>
-            <CardDescription>Set your niche, AI workforce, and first workflow stack before running command-center operations.</CardDescription>
+            <CardDescription>Set your niche, creator style, and first workflow so Folqen can guide your next content run.</CardDescription>
           </div>
         </div>
       </CardHeader>

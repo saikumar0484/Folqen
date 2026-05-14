@@ -10,11 +10,11 @@ export function PasswordChangeBanner({ user }: { user: CurrentUser }) {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="inline-flex items-center gap-2">
           <AlertTriangle className="h-4 w-4 text-amber-300" />
-          <span>This beta account uses a temporary password. Change it now to continue safely.</span>
+          <span>Your workspace invite used a temporary password. Update it once to keep your account secure.</span>
         </div>
         <Link href="/settings" className="inline-flex items-center gap-2 rounded-lg border border-amber-300/30 bg-black/20 px-3 py-1.5 text-xs font-semibold text-amber-100 transition hover:bg-black/35">
           <KeyRound className="h-3.5 w-3.5" />
-          Change password
+          Update password
         </Link>
       </div>
     </div>

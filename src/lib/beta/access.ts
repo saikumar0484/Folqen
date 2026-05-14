@@ -122,13 +122,13 @@ export async function listBetaUsers(): Promise<BetaUserSummary[]> {
 
 export async function createBetaUser(input: CreateBetaUserInput) {
   if (!hasDatabaseUrl()) {
-    return { ok: false as const, error: "Database is not configured." };
+    return { ok: false as const, error: "Invite management is temporarily unavailable." };
   }
 
   const email = normalizeEmail(input.email);
   const existing = await getDb().user.findUnique({ where: { email }, select: { id: true } });
   if (existing) {
-    return { ok: false as const, error: "A user with this email already exists." };
+    return { ok: false as const, error: "That email already has workspace access." };
   }
 
   const temporaryPassword = generateTemporaryPassword();
@@ -182,11 +182,12 @@ export async function createBetaUser(input: CreateBetaUserInput) {
 
 export async function setBetaUserDisabled(userId: string, disabled: boolean, actorId: string) {
   if (!hasDatabaseUrl()) {
-    return { ok: false as const, error: "Database is not configured." };
+    return { ok: false as const, error: "Invite management is temporarily unavailable." };
   }
 
   const user = await getDb().user.findUnique({ where: { id: userId }, select: { id: true, email: true } });
-  if (!user) return { ok: false as const, error: "User not found." };
+  if (!user) return { ok: false as const, error: "We couldn't find that invite." };
+
 
   const state = await readState();
   const disabledUserIds = disabled ? uniq([...state.disabledUserIds, userId]) : state.disabledUserIds.filter((id) => id !== userId);
@@ -209,14 +210,14 @@ export async function setBetaUserDisabled(userId: string, disabled: boolean, act
 
 export async function resetBetaUserPassword(userId: string, actorId: string) {
   if (!hasDatabaseUrl()) {
-    return { ok: false as const, error: "Database is not configured." };
+    return { ok: false as const, error: "Password reset is temporarily unavailable." };
   }
 
   const user = await getDb().user.findUnique({
     where: { id: userId },
     select: { id: true, email: true },
   });
-  if (!user) return { ok: false as const, error: "User not found." };
+  if (!user) return { ok: false as const, error: "We couldn't find that invite." };
 
   const temporaryPassword = generateTemporaryPassword();
   await getDb().user.update({

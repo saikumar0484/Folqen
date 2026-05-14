@@ -49,15 +49,15 @@ export function SettingsForm({ settings }: { settings: FolqenSettings }) {
           const body = (await response.json().catch(() => ({}))) as { error?: string };
 
           if (!response.ok) {
-            setError(body.error ?? "Settings save failed.");
-            toast({ title: "Settings not saved", description: body.error ?? "Settings save failed.", tone: "error" });
+            setError(body.error ?? "We couldn't save your preferences right now.");
+            toast({ title: "Couldn't save changes", description: body.error ?? "We couldn't save your preferences right now.", tone: "error" });
             return;
           }
 
-          setMessage("Settings saved. Risky automation switches remain blocked.");
+          setMessage("Preferences saved. Your creator workspace is up to date.");
           toast({
             title: "Settings saved",
-            description: "Risky automation flags remain locked off.",
+            description: "Your workspace preferences are updated.",
             tone: "success",
           });
           router.refresh();
@@ -66,9 +66,9 @@ export function SettingsForm({ settings }: { settings: FolqenSettings }) {
     >
       <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
         <div>
-          <div className="font-mono text-[10px] uppercase tracking-widest text-neon">Database-backed settings</div>
-          <h2 className="mt-1 font-display text-xl font-semibold">Creator command settings</h2>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">These values save to Supabase. Dangerous automation flags stay locked off in this phase.</p>
+          <div className="font-mono text-[10px] uppercase tracking-widest text-neon">Workspace preferences</div>
+          <h2 className="mt-1 font-display text-xl font-semibold">Profile and publishing defaults</h2>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">Set your creator identity, preferred workflow style, and draft publishing defaults.</p>
         </div>
         <button type="submit" disabled={isPending} className="rounded-xl bg-neon px-4 py-2 text-sm font-medium text-primary-foreground shadow-glow disabled:opacity-60">
           {isPending ? "Saving..." : "Save settings"}
@@ -89,7 +89,7 @@ export function SettingsForm({ settings }: { settings: FolqenSettings }) {
           <input name="timezone" defaultValue={settings.timezone} className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm outline-none focus:border-neon/40" />
         </label>
         <label className="space-y-1.5">
-          <span className="text-xs font-medium text-muted-foreground">Autonomy level</span>
+          <span className="text-xs font-medium text-muted-foreground">Workflow style</span>
           <select name="autonomyLevel" defaultValue={settings.autonomyLevel} className="w-full rounded-xl border border-white/10 bg-surface px-3 py-2 text-sm outline-none focus:border-neon/40">
             {autonomyOptions.map(([value, label]) => (
               <option key={value} value={value}>
@@ -99,7 +99,7 @@ export function SettingsForm({ settings }: { settings: FolqenSettings }) {
           </select>
         </label>
         <label className="space-y-1.5">
-          <span className="text-xs font-medium text-muted-foreground">Default upload privacy</span>
+          <span className="text-xs font-medium text-muted-foreground">Default publishing privacy</span>
           <select name="defaultUploadPrivacy" defaultValue={settings.defaultUploadPrivacy} className="w-full rounded-xl border border-white/10 bg-surface px-3 py-2 text-sm outline-none focus:border-neon/40">
             <option value="private">Private</option>
             <option value="unlisted">Unlisted</option>
@@ -112,7 +112,7 @@ export function SettingsForm({ settings }: { settings: FolqenSettings }) {
           </select>
         </label>
         <label className="space-y-1.5">
-          <span className="text-xs font-medium text-muted-foreground">OpenAI model dropdown</span>
+          <span className="text-xs font-medium text-muted-foreground">Preferred model</span>
           <select name="openAiModel" defaultValue={settings.customOpenAiModel ? "custom" : settings.openAiModel} className="w-full rounded-xl border border-white/10 bg-surface px-3 py-2 text-sm outline-none focus:border-neon/40">
             {openAiModelOptions.map((model) => (
               <option key={model.id} value={model.id}>
@@ -123,11 +123,11 @@ export function SettingsForm({ settings }: { settings: FolqenSettings }) {
           </select>
         </label>
         <label className="space-y-1.5">
-          <span className="text-xs font-medium text-muted-foreground">Custom OpenAI model id</span>
+          <span className="text-xs font-medium text-muted-foreground">Custom model ID</span>
           <input
             name="customOpenAiModel"
             defaultValue={settings.customOpenAiModel}
-            placeholder="Optional, for future model IDs"
+            placeholder="Optional model ID"
             className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm outline-none focus:border-neon/40"
           />
         </label>
@@ -137,11 +137,11 @@ export function SettingsForm({ settings }: { settings: FolqenSettings }) {
         {[
           ["Public publishing", settings.allowPublicPublish],
           ["Paid tools", settings.allowPaidTools],
-          ["Browser automation", settings.allowBrowserAutomation],
+          ["Web automation", settings.allowBrowserAutomation],
         ].map(([label]) => (
           <div key={String(label)} className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
             <div className="text-sm font-medium">{label}</div>
-            <div className="mt-2 font-mono text-[11px] uppercase tracking-widest text-neon">Locked off</div>
+            <div className="mt-2 font-mono text-[11px] uppercase tracking-widest text-neon">Guarded</div>
           </div>
         ))}
       </div>

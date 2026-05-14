@@ -10,7 +10,7 @@ const messageSchema = z.object({
   pageContext: z.string().max(80).optional(),
 });
 
-function createMockAgentReply(content: string) {
+function createGuidedAgentReply(content: string) {
   const lower = content.toLowerCase();
 
   if (lower.includes("publish") || lower.includes("post")) {
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Write a message before sending." }, { status: 400 });
   }
 
-  const reply = createMockAgentReply(parsed.data.content);
+  const reply = createGuidedAgentReply(parsed.data.content);
 
   const [userMessage, agentMessage] = await getDb().$transaction([
     getDb().agentMessage.create({
@@ -80,7 +80,7 @@ export async function POST(request: Request) {
         role: "assistant",
         content: reply,
         metadata: {
-          model: "mock-agent",
+          model: "creator-preview-agent",
           liveTools: false,
           publicPublishing: "blocked",
         },
