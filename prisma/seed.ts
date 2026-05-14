@@ -17,17 +17,19 @@ import { hashPassword } from "../src/lib/auth/password";
 const prisma = new PrismaClient();
 
 async function main() {
-  const seededAdminPasswordHash = await hashPassword("ChangeMe123!");
+  const adminEmail = process.env.FOLQEN_ADMIN_EMAIL?.trim().toLowerCase() || "admin@folqen.app";
+  const adminPassword = process.env.FOLQEN_ADMIN_PASSWORD?.trim() || "ChangeMe123!";
+  const seededAdminPasswordHash = await hashPassword(adminPassword);
 
   const admin = await prisma.user.upsert({
-    where: { email: "admin@example.com" },
+    where: { email: adminEmail },
     update: {
       name: "Folqen Admin",
       role: UserRole.ADMIN,
       passwordHash: seededAdminPasswordHash,
     },
     create: {
-      email: "admin@example.com",
+      email: adminEmail,
       name: "Folqen Admin",
       passwordHash: seededAdminPasswordHash,
       role: UserRole.ADMIN,

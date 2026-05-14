@@ -220,3 +220,34 @@ Needed through safe secret flow only:
 ## Resume Command
 
 Continue from branch `build/phase-0-foundation`, read README, all root project docs, and checkpoint docs, run verification, then continue safe Vercel preview deployment rehearsal, Browser Operations trace polish, controlled thumbnail worker setup/rehearsal planning, production readiness rehearsal, VPS/Coolify secret setup guidance, production trace verification, approval decision UX polish, local Stage 1 rehearsal planning, Google Drive storage, n8n embed/webhook setup, AI provider runtime hardening, route-specific read models, platform-ops read models, posting package polish, service-backed mock APIs, or role-aware UI/tests. All required authenticated pages are route-specific, `/browser-operations` is dry-run only, `/audit` has approval lifecycles, trace verification, diagnostics, correlations, and search, `/infrastructure` has preview plus deployment governance diagnostics, `/content-studio` has governed live thumbnail controls, provider setup panels exist, metadata-only file registration is verified, and safe mock-agent draft creation exists.
+
+## Immediate Follow-Up (May 14, 2026 - Final Beta UX Cleanup)
+
+1. Remove or archive unreferenced legacy `src/components/command-center/*` view panels after one final import check.
+2. Remove or archive unreferenced legacy app screen modules (`foundation-pages-screens`, `tools-screen`, `platforms-screen`, `pipeline-screen`) if still detached.
+3. Add route-smoke assertions that authenticated surfaces do not show fake activity/counters/charts by default for new accounts.
+4. Keep status contract strict in authenticated UX: `Configured`, `Needs approval`, `Not connected`, `Blocked`.
+5. Continue polish on first-run package persistence/history cards without changing backend architecture.
+
+## Immediate Follow-Up (May 14, 2026 - Auth UX Finalization)
+
+1. Add email delivery integration for password reset and beta invite requests (currently request capture + secure token flow without outbound email provider wiring).
+2. Add route-level visual QA on mobile keyboards for `/login`, `/join-beta`, `/forgot-password`, `/reset-password`.
+3. Add focused tests for new auth endpoints (`request-beta-access`, `request-reset`, `reset-password`).
+4. Add account menu/profile chip polish for signed-in topbar.
+5. Keep security posture unchanged while polishing copy and transitions.
+
+## Immediate Follow-Up (May 14, 2026 - Post-Auth Stabilization)
+
+1. Run visual QA for topbar spacing across 1280/1366/1440/1536 widths and mobile breakpoints.
+2. Add API tests for happy-path reset completion with a seeded token in a DB-backed test harness (optional, post-beta hardening).
+3. Continue creator-facing copy cleanup on remaining operational pages and remove any lingering infra-heavy phrasing.
+4. Keep workspace switcher UX visible only where density supports it; avoid reintroducing crowded header layouts.
+
+## Immediate Follow-Up (May 14, 2026 - Login DB Live Connection)
+
+1. Reconnect Supabase MCP connector and target the intended Folqen DB project.
+2. Run `npm run db:setup:login` against the live Supabase `DATABASE_URL`.
+3. Set Vercel project `folqen` env vars for `DATABASE_URL`, `DIRECT_URL`, `AUTH_SECRET`, and admin seed vars.
+4. Trigger deployment and verify `/login` -> `/dashboard` with the seeded admin credentials.
+5. Rotate temporary admin password immediately after first sign-in.

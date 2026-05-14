@@ -1788,3 +1788,129 @@
 - `npm run test`: passed, 6 tests.
 - `prisma validate`: passed with local development `DATABASE_URL`.
 - `npm run build`: passed, 23 app routes generated.
+
+## May 14, 2026 - Creator-First De-Mocking UX Pass
+
+### Changed
+
+- Deleted command-center mock service files:
+  - `src/lib/command-center/mock-service.ts`
+  - `src/lib/command-center/mock-service.test.ts`
+- Updated creator-facing language and navigation labels in:
+  - `src/lib/app-routes.ts`
+  - `src/components/app/sidebar.tsx`
+  - `src/components/app/topbar.tsx`
+  - `src/components/app/command-palette.tsx`
+- Rewrote landing and login messaging to product-first creator positioning:
+  - `src/app/page.tsx`
+  - `src/app/login/page.tsx`
+- Replaced command-center-heavy authenticated route surfaces with onboarding-first + real-record summaries on:
+  - `src/app/(app)/research-intelligence/page.tsx`
+  - `src/app/(app)/content-studio/page.tsx`
+  - `src/app/(app)/analytics/page.tsx`
+  - `src/app/(app)/browser-operations/page.tsx`
+  - `src/app/(app)/infrastructure/page.tsx`
+  - `src/app/(app)/organizational-memory/page.tsx`
+  - `src/app/(app)/audit/page.tsx`
+  - `src/app/(app)/approvals/page.tsx`
+
+### Verification
+
+- `eslint .`: passed
+- `tsc --noEmit`: passed
+- `tsx --test "src/**/*.test.ts"`: passed (156/156)
+- `prisma generate`: passed
+- `next build`: passed
+
+## May 14, 2026 - Authentication and Account UX Premium Pass
+
+### Added
+
+- New auth shell + forms:
+  - `src/components/auth/auth-shell.tsx`
+  - `src/components/auth/login-form.tsx`
+  - `src/components/auth/join-beta-form.tsx`
+  - `src/components/auth/forgot-password-form.tsx`
+  - `src/components/auth/reset-password-form.tsx`
+- New auth pages:
+  - `src/app/join-beta/page.tsx`
+  - `src/app/forgot-password/page.tsx`
+  - `src/app/reset-password/page.tsx`
+- New auth APIs:
+  - `src/app/api/auth/request-beta-access/route.ts`
+  - `src/app/api/auth/request-reset/route.ts`
+  - `src/app/api/auth/reset-password/route.ts`
+- New reset-token service using existing settings storage:
+  - `src/lib/auth/password-reset.ts`
+
+### Changed
+
+- Rebuilt `src/app/login/page.tsx` as server-side, session-aware redirect + premium auth layout.
+- Updated auth copy/error tone in:
+  - `src/app/api/auth/login/route.ts`
+  - `src/app/api/auth/change-password/route.ts`
+  - `src/app/api/beta/users/route.ts`
+  - `src/lib/beta/access.ts`
+- Refined settings/account language and information grouping for profile, tools, invite management, and security.
+- Added logout transition feedback in `src/components/app/logout-button.tsx`.
+
+### Verification
+
+- `eslint .`: passed
+- `tsc --noEmit`: passed
+- `tsx --test "src/**/*.test.ts"`: passed (156/156)
+- `prisma generate`: passed
+- `next build`: passed
+
+## May 14, 2026 - Auth Route Tests and Topbar Overlap Hardening
+
+### Added
+
+- `src/app/api/auth/routes.test.ts`
+  - validates `request-beta-access`, `request-reset`, and `reset-password` route safety and user-facing behavior.
+
+### Changed
+
+- `src/components/app/topbar.tsx`
+  - simplified row density to prevent command/search/workspace overlap on medium-large screens.
+- `src/components/release/workspace-switcher.tsx`
+  - moved switcher visibility to `2xl+` and adjusted width treatment for better stability.
+
+### Verification
+
+- `eslint .`: passed
+- `tsc --noEmit`: passed
+- `tsx --test "src/**/*.test.ts"`: passed (162/162)
+- `prisma generate`: passed
+- `next build`: passed
+
+## May 14, 2026 - Login DB Bootstrap Hardening
+
+### Added
+
+- `prisma/seed-login.ts`
+  - auth-focused DB bootstrap (admin user + safety/beta settings) without requiring full demo seed content.
+
+### Changed
+
+- `prisma/seed.ts`
+  - admin seed now uses env-configurable values:
+    - `FOLQEN_ADMIN_EMAIL`
+    - `FOLQEN_ADMIN_PASSWORD`
+- `package.json`
+  - added:
+    - `db:seed:login`
+    - `db:setup:login`
+- `.env.example`
+  - added:
+    - `FOLQEN_ADMIN_EMAIL`
+    - `FOLQEN_ADMIN_PASSWORD`
+    - `FOLQEN_ADMIN_NAME`
+
+### Verification
+
+- `eslint .`: passed
+- `tsc --noEmit`: passed
+- `tsx --test "src/**/*.test.ts"`: passed (162/162)
+- `prisma generate`: passed
+- `next build`: passed

@@ -859,3 +859,43 @@
 - Verification: Documentation and readiness panel compile in the production build; no destructive backup/restore command was run.
 - Rollback: Keep the existing Vercel deployment as the safe baseline until VPS/Coolify backup and rollback rehearsal passes.
 - Human approval trigger: Any database restore, backup retention change, off-host backup setup containing credentials, or production rollback affecting real users.
+
+## Current Risk Update (May 14, 2026 - Legacy Command-Center Residue)
+
+### Detached command-center modules may be accidentally reintroduced
+
+- Risk: Legacy `src/components/command-center/*` components still in repo can be re-imported and reintroduce simulator-style UX.
+- Prevention: Authenticated routes no longer depend on command-center mock service; mock service files were deleted.
+- Verification: Full lint/type/test/build passed after route rewrites.
+- Rollback: Revert route rewrites only if regression appears; keep legacy modules detached from authenticated routing.
+- Human approval trigger: Any request to re-enable synthetic operational dashboards for creator-facing beta UX.
+
+## Current Risk Update (May 14, 2026 - Password Reset Delivery Gap)
+
+### Reset and invite request capture is implemented, but outbound email delivery is not wired yet
+
+- Risk: Users can request reset/invite flows, but production email dispatch is not configured in this slice.
+- Prevention: API responses remain generic and secure; reset token flow uses existing guarded storage and expiry checks.
+- Verification: Full lint/type/test/build passed and new auth routes compile.
+- Rollback: Disable `/forgot-password` and `/reset-password` routes if messaging causes confusion until email delivery is connected.
+- Human approval trigger: Any email provider integration, production domain mail setup, or third-party email spend.
+
+## Current Risk Update (May 14, 2026 - Header Density Regression)
+
+### Topbar crowding can regress UX on mid-width laptops
+
+- Risk: Reintroducing wide header elements (search bars, workspace badges, multi-chip telemetry) can cause overlap and clipping around 1280-1440px.
+- Prevention: Keep topbar in essential mode, limit always-visible controls, and gate dense workspace switcher UI to `2xl+`.
+- Verification: Current pass compiles clean and route builds succeed with updated topbar/workspace switcher breakpoints.
+- Rollback: Revert topbar and workspace switcher changes if any navigation action becomes inaccessible.
+- Human approval trigger: None required for cosmetic density tuning; escalate only if role/security actions become less discoverable.
+
+## Current Risk Update (May 14, 2026 - Login DB Misconfiguration in Deployment)
+
+### Vercel can build while login still fails if DB/auth secrets are missing
+
+- Risk: App deploys successfully but `/login` returns service unavailable if `DATABASE_URL` or `AUTH_SECRET` is absent/placeholder.
+- Prevention: Added dedicated login bootstrap flow (`db:setup:login`) and env defaults for admin seed identity.
+- Verification: Local lint/type/test/build pass; login bootstrap code path compiles with Prisma client.
+- Rollback: Keep preview/demo auth mode for temporary access while DB/env wiring is corrected.
+- Human approval trigger: setting real DB credentials/secrets in Vercel and rotating admin password post-bootstrap.

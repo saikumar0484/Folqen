@@ -782,3 +782,73 @@ Implemented a read-only production deployment governance layer for Folqen. This 
 ### Resume Guidance
 
 Next safe work: production readiness rehearsal against `https://folqen.vercel.app` after deploy, VPS/Coolify dry-run planning, authenticated `/api/deployment/readiness` verification, backup/restore rehearsal planning, approval UX polish, and credential setup guidance. Do not enable Docker worker profiles, live Redis mode, Gemini credentials, controlled rendering, public publishing, or platform account automation without explicit human approval.
+
+## Latest Handoff Entry (May 14, 2026 - Productization De-Mocking Pass Complete)
+
+- Completed creator-first simplification without backend/infrastructure expansion.
+- Deleted command-center mock service files and removed their authenticated UX role.
+- Repositioned route language and key surfaces to onboarding-first creator workflow experience.
+- Rewrote landing/login copy to remove runtime/env/debug exposure.
+- Updated approvals/research/content pages to compile against current service contracts.
+- Verification completed successfully:
+  - `eslint .` passed
+  - `tsc --noEmit` passed
+  - `tsx --test "src/**/*.test.ts"` passed (156 tests)
+  - `prisma generate` passed
+  - `next build` passed
+- Safety unchanged: no unsafe execution paths enabled.
+
+## Latest Handoff Entry (May 14, 2026 - Auth + Account UX Public Beta Polish)
+
+- Completed a creator-first authentication UX pass without changing backend security architecture.
+- Added new premium auth pages (`/join-beta`, `/forgot-password`, `/reset-password`) and rebuilt `/login` as server-side session-aware.
+- Added secure auth APIs for beta access requests and password reset request/complete flows.
+- Added token-reset state service backed by existing `Setting` model (no Prisma migration).
+- Refined settings/account language and information grouping for profile, tools, invite management, and security.
+- Added logout loading transition polish.
+- Verification completed:
+  - `eslint .` passed
+  - `tsc --noEmit` passed
+  - `tsx --test "src/**/*.test.ts"` passed (156)
+  - `prisma generate` passed
+  - `next build` passed
+- Safety unchanged: no auth bypass, no weakened guards, no unsafe execution activation.
+
+## Latest Handoff Entry (May 14, 2026 - Auth Tests + Header Layout Stability)
+
+- Added new focused auth route tests in `src/app/api/auth/routes.test.ts`:
+  - beta access valid/invalid payload handling
+  - reset request mutation-header enforcement
+  - reset password validation and invalid-token message behavior
+- Topbar density reduced to avoid overlap on laptop widths:
+  - removed wide command search trigger from header row
+  - moved workspace switcher visibility to `2xl+`
+  - tightened account chip width/breakpoints
+- Updated files:
+  - `src/components/app/topbar.tsx`
+  - `src/components/release/workspace-switcher.tsx`
+  - `src/app/api/auth/routes.test.ts`
+- Verification completed:
+  - `eslint .` passed
+  - `tsc --noEmit` passed
+  - `tsx --test "src/**/*.test.ts"` passed (162)
+  - `prisma generate` passed
+  - `next build` passed
+- Safety unchanged: no backend architecture expansion, no security bypass, no live execution unlocks.
+
+## Latest Handoff Entry (May 14, 2026 - Login DB Bootstrap Integration)
+
+- Added dedicated login bootstrap seed:
+  - `prisma/seed-login.ts`
+- Added scripts:
+  - `db:seed:login`
+  - `db:setup:login`
+- Updated admin defaults in `prisma/seed.ts` to `admin@folqen.app` with env-overridable password.
+- Added admin seed env keys in `.env.example`.
+- Full verification passed:
+  - `eslint .`
+  - `tsc --noEmit`
+  - `tsx --test "src/**/*.test.ts"` (162 pass)
+  - `prisma generate`
+  - `next build`
+- Remaining external blocker: live Supabase connector/tools and Vercel env management must be available to execute DB bootstrap and publish a working login deployment.

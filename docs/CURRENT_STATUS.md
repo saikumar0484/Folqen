@@ -1030,3 +1030,87 @@ Latest May 13, 2026 First Governed Live Thumbnail Rendering capability:
 ## Safe To Stop
 
 Yes after this checkpoint commit is pushed. Browser Operations and Safe Preview Deployment infrastructure are implemented behind dry-run/preview gates, verification passed, the repo is safe to continue, and no source files are left half-edited.
+
+## Latest Update (May 14, 2026 - Creator UX De-Mocking and Simplification)
+
+- Removed authenticated creator UX reliance on command-center mock service and deleted:
+  - `src/lib/command-center/mock-service.ts`
+  - `src/lib/command-center/mock-service.test.ts`
+- Repositioned product language to creator-first (research/script/thumbnail/publishing/library/history) and reduced infra-centric wording.
+- Rebuilt landing and login UX copy to remove runtime/env/debug exposure and operational-heavy language.
+- Converted key authenticated surfaces to onboarding-first empty states + real record summaries (`research-intelligence`, `content-studio`, `analytics`, `browser-operations`, `infrastructure`, `organizational-memory`, `audit`, `approvals`).
+- Safety architecture unchanged: no new infra systems, no new orchestration layers, no unsafe execution enablement.
+- Verification now passes end-to-end:
+  - `eslint .`
+  - `tsc --noEmit`
+  - `tsx --test "src/**/*.test.ts"` (156 passing)
+  - `prisma generate`
+  - `next build`
+
+## Latest Update (May 14, 2026 - Auth and Account UX Productization)
+
+- Rebuilt authentication surfaces for a creator-first premium flow:
+  - new `/login` server-rendered redirect-aware experience
+  - added `/join-beta`, `/forgot-password`, `/reset-password`
+- Added secure public auth endpoints (with existing mutation safety guards):
+  - `POST /api/auth/request-beta-access`
+  - `POST /api/auth/request-reset`
+  - `POST /api/auth/reset-password`
+- Added token-based password reset state using existing `Setting` model (no schema migration).
+- Refined account/settings UX language and grouping for:
+  - profile/workspace preferences
+  - connected tools
+  - invite management
+  - security
+- Updated auth/session UX polish:
+  - server-side login redirect when session exists
+  - logout loading state
+  - calmer human-readable auth error copy
+- Verification:
+  - `eslint .` passed
+  - `tsc --noEmit` passed
+  - `tsx --test "src/**/*.test.ts"` passed (156)
+  - `prisma generate` passed
+  - `next build` passed
+- Safety unchanged:
+  - no security weakening
+  - no auth bypass
+  - no provider/publishing/render/browser unrestricted activation
+
+## Latest Update (May 14, 2026 - Auth Route Test Coverage + Topbar Stability)
+
+- Added focused auth API handler tests:
+  - `src/app/api/auth/routes.test.ts`
+  - coverage includes valid and invalid beta access requests, reset request mutation-header protection, and reset-password validation behavior.
+- Hardened topbar layout to prevent mid-width overlap/crowding:
+  - removed wide search-trigger surface from the topbar row
+  - moved workspace switcher visibility to `2xl+`
+  - tightened account chip sizing and made responsive breakpoints calmer.
+- Updated files:
+  - `src/components/app/topbar.tsx`
+  - `src/components/release/workspace-switcher.tsx`
+  - `src/app/api/auth/routes.test.ts`
+- Verification passed:
+  - `eslint .`
+  - `tsc --noEmit`
+  - `tsx --test "src/**/*.test.ts"` (162 passing)
+  - `prisma generate`
+  - `next build`
+
+## Latest Update (May 14, 2026 - Login DB Integration Prep)
+
+- Added a dedicated auth bootstrap seed (`prisma/seed-login.ts`) to initialize login-critical tables/data paths safely:
+  - admin user upsert
+  - `safety.defaults` setting
+  - `beta.access.v1` setting
+  - auth bootstrap audit log
+- Added login-focused scripts:
+  - `npm run db:seed:login`
+  - `npm run db:setup:login`
+- Standardized admin seed identity defaults to `admin@folqen.app` (env-overridable).
+- Verified all code checks/build:
+  - `eslint .`
+  - `tsc --noEmit`
+  - `tsx --test "src/**/*.test.ts"`
+  - `prisma generate`
+  - `next build`
